@@ -15,7 +15,7 @@ export default function CompleteProfile() {
   const email = location.state?.email || "";
 
   const [role, setRole] = useState("farmer");
-  const [form, setForm] = useState({ name: "", phone: "", location: "" });
+  const [form, setForm] = useState({ name: "", phone: "", district: "", state: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,10 +27,11 @@ export default function CompleteProfile() {
     try {
       const token = localStorage.getItem("agroconnect_token");
       if (!token) { navigate("/login"); return; }
+      const locationStr = [form.district, form.state].filter(Boolean).join(", ");
       const r = await fetch(`${API_URL}/api/profile/complete`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ ...form, role }),
+        body: JSON.stringify({ ...form, location: locationStr, role }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.message || "Unable to complete profile");
@@ -167,9 +168,15 @@ export default function CompleteProfile() {
                 <label className="cp-field-label">Mobile Number *</label>
                 <input name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" className="cp-input" />
               </div>
-              <div>
-                <label className="cp-field-label">City / District *</label>
-                <input name="location" required value={form.location} onChange={handleChange} placeholder="e.g. Bengaluru, Karnataka" className="cp-input" />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div>
+                  <label className="cp-field-label">District *</label>
+                  <input name="district" required value={form.district} onChange={handleChange} placeholder="e.g. Bengaluru Urban" className="cp-input" />
+                </div>
+                <div>
+                  <label className="cp-field-label">State *</label>
+                  <input name="state" required value={form.state} onChange={handleChange} placeholder="e.g. Karnataka" className="cp-input" />
+                </div>
               </div>
             </div>
 

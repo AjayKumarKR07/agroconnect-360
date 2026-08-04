@@ -28,6 +28,18 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    district: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    state: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     role: {
       type: String,
       enum: [

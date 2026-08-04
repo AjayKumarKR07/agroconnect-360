@@ -7,14 +7,23 @@ const completeProfile = async (req, res) => {
       name,
       phone,
       location,
+      district,
+      state,
       role,
     } = req.body;
 
-    if (!name || !location || !role) {
+    const finalDistrict = district?.trim() || "";
+    const finalState = state?.trim() || "";
+    let finalLocation = location?.trim() || "";
+    if (!finalLocation && (finalDistrict || finalState)) {
+      finalLocation = [finalDistrict, finalState].filter(Boolean).join(", ");
+    }
+
+    if (!name || (!finalLocation && !finalDistrict) || !role) {
       return res.status(400).json({
         success: false,
         message:
-          "Name, location and role are required",
+          "Name, district, state and role are required",
       });
     }
 
@@ -46,7 +55,9 @@ const completeProfile = async (req, res) => {
 
     user.name = name.trim();
     user.phone = phone?.trim() || "";
-    user.location = location.trim();
+    user.district = finalDistrict;
+    user.state = finalState;
+    user.location = finalLocation;
     user.role = role;
     user.profileCompleted = true;
 
@@ -61,6 +72,8 @@ const completeProfile = async (req, res) => {
         email: user.email,
         name: user.name,
         phone: user.phone,
+        district: user.district,
+        state: user.state,
         location: user.location,
         role: user.role,
         profileCompleted:
@@ -91,6 +104,8 @@ const getProfile = async (req, res) => {
         email: req.user.email,
         name: req.user.name,
         phone: req.user.phone,
+        district: req.user.district,
+        state: req.user.state,
         location: req.user.location,
         role: req.user.role,
         profileCompleted:
