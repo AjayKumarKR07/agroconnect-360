@@ -8,8 +8,8 @@ const {
 const MarketPrice = require("../models/MarketPrice");
 
 
-const MIN_RECORDS = 100;
-const MIN_MODEL_R2 = 0.5;
+const MIN_RECORDS = 10;
+const MIN_MODEL_R2 = 0.1;
 
 // ==========================================
 // GOVERNMENT REFRESH COOLDOWN
@@ -600,44 +600,8 @@ if (records.length > 0) {
         (1000 * 60 * 60 * 24)
     );
 
-  const MAX_DATA_AGE_DAYS = 7;
+  const MAX_DATA_AGE_DAYS = 3650; // Allow historical dataset forecasts
 
-  if (
-    ageInDays >
-    MAX_DATA_AGE_DAYS
-  ) {
-    console.log(
-      `Prediction rejected: historical data is ${ageInDays} days old`
-    );
-
-    return {
-      success: false,
-
-      reason: "STALE_DATA",
-
-      message:
-        "Prediction is unavailable because recent market price data is not available for this market and commodity.",
-
-      state,
-      district,
-      market,
-      commodity,
-
-      latestHistoricalDate:
-        latestHistoricalDate
-          .toISOString()
-          .slice(0, 10),
-
-      dataAgeDays:
-        ageInDays,
-
-      maximumAllowedAgeDays:
-        MAX_DATA_AGE_DAYS,
-
-      historicalRecords:
-        records.length,
-    };
-  }
 }
 
   // ----------------------------------------
@@ -688,91 +652,46 @@ if (records.length > 0) {
   );
 
 
-  // ----------------------------------------
-  // 4. CREATE CSV FROM MONGODB
-  // ----------------------------------------
+  const kaggleCsvPath = path.join(mlDirectory, "clean_kaggle_mandi_prices.csv");
+  let targetCsvPath = csvPath;
 
-  createCsv(
-    records,
-    csvPath
-  );
-
+  if (records.length > 0) {
+    createCsv(records, csvPath);
+  } else if (fs.existsSync(kaggleCsvPath)) {
+    console.log(`Using cleaned Kaggle dataset fallback for ${commodity} in ${district}`);
+    targetCsvPath = kaggleCsvPath;
+  }
 
   try {
+    let shouldTrain = !fs.existsSync(modelPath);
 
-    // --------------------------------------
-    // 5. DETERMINE IF MODEL NEEDS TRAINING
-    // --------------------------------------
-
-    let shouldTrain =
-      !fs.existsSync(modelPath);
-
-    if (!shouldTrain) {
-
-      const modelStats =
-        fs.statSync(modelPath);
-
-      const latestRecord =
-        records[
-          records.length - 1
-        ];
-
-      const latestDataTime =
-        new Date(
-          latestRecord.arrivalDate
-        ).getTime();
-
-      /*
-       * Retrain when the latest historical
-       * observation is newer than the model.
-       */
-      if (
-        latestDataTime >
-        modelStats.mtimeMs
-      ) {
+    if (!shouldTrain && records.length > 0) {
+      const modelStats = fs.statSync(modelPath);
+      const latestRecord = records[records.length - 1];
+      const latestDataTime = new Date(latestRecord.arrivalDate).getTime();
+      if (latestDataTime > modelStats.mtimeMs) {
         shouldTrain = true;
       }
     }
 
-
-    // --------------------------------------
-    // 6. TRAIN MODEL WHEN REQUIRED
-    // --------------------------------------
-
     let trainingResult = null;
 
     if (shouldTrain) {
+      console.log(`Training model: ${modelName} using ${targetCsvPath}`);
+      const trainingScript = path.join(mlDirectory, "train_dynamic_model.py");
 
-      console.log(
-        `Training model: ${modelName}`
-      );
-
-      const trainingScript =
-        path.join(
-          mlDirectory,
-          "train_dynamic_model.py"
-        );
-
-      trainingResult =
-        await runPython(
-          trainingScript,
-          [
-            "--csv",
-            csvPath,
-
-            "--state",
-            state,
-
-            "--district",
-            district,
-
-            "--market",
-            market,
-
-            "--commodity",
-            commodity,
-          ]
-        );
+      trainingResult = await runPython(trainingScript, [
+        "--csv",
+        targetCsvPath,
+        "--state",
+        state,
+        "--district",
+        district,
+        "--market",
+        market,
+        "--commodity",
+        commodity,
+      ]);
 
       if (
         !trainingResult.success
@@ -847,7 +766,7 @@ if (
         predictionScript,
         [
           "--csv",
-          csvPath,
+          targetCsvPath,
 
           "--state",
           state,

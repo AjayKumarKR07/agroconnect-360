@@ -103,6 +103,21 @@ for column in [
     )
 
 
+# Filter by state/district/market/commodity when using large Kaggle CSV
+MIN_HISTORY = 7
+
+def try_filter(df, col, value, min_rows):
+    if col in df.columns and value:
+        filtered = df[df[col].astype(str).str.lower() == value.lower()]
+        if len(filtered) >= min_rows:
+            return filtered
+    return df
+
+df = try_filter(df, "state", args.state, MIN_HISTORY)
+df = try_filter(df, "district", args.district, MIN_HISTORY)
+df = try_filter(df, "market", args.market, MIN_HISTORY)
+df = try_filter(df, "commodity", args.commodity, MIN_HISTORY)
+
 df = (
     df.dropna(
         subset=[

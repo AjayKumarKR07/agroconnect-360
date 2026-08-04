@@ -15,6 +15,11 @@ const {
 );
 
 const {
+  ALL_INDIA_STATES,
+  POPULAR_DISTRICTS,
+} = require("../utils/indiaData");
+
+const {
   generateDynamicPrediction,
 } = require(
   "../services/dynamicPredictionService"
@@ -965,45 +970,27 @@ const getPriceCommodities =
 // GET /api/prices/catalog/states
 // ==========================================
 
-const getCatalogStates =
-  async (
-    req,
-    res
-  ) => {
-    try {
-      const states =
-        await getLocalStates();
+const getCatalogStates = async (req, res) => {
+  try {
+    const localStates = await getLocalStates();
+    const allStates = [...new Set([...localStates, ...ALL_INDIA_STATES])].sort((a, b) =>
+      a.localeCompare(b)
+    );
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-
-          source:
-            "mongodb",
-
-          count:
-            states.length,
-
-          states,
-        });
-
-    } catch (error) {
-      console.error(
-        "Catalog states error:",
-        error
-      );
-
-      return res
-        .status(500)
-        .json({
-          success: false,
-
-          message:
-            "Unable to retrieve states.",
-        });
-    }
-  };
+    return res.status(200).json({
+      success: true,
+      source: "mongodb+allindia",
+      count: allStates.length,
+      states: allStates,
+    });
+  } catch (error) {
+    console.error("Catalog states error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve states.",
+    });
+  }
+};
 
 
 // ==========================================
@@ -1012,51 +999,36 @@ const getCatalogStates =
 // GET /api/prices/catalog/districts
 // ==========================================
 
-const getCatalogDistricts =
-  async (
-    req,
-    res
-  ) => {
+const getCatalogDistricts = async (req, res) => {
+  try {
+    const { state } = req.query;
+
+    if (!state) {
+      return res.status(400).json({
+        success: false,
+        message: "State is required",
+      });
+    }
+
+    let districts = [];
     try {
-      const {
-        state,
-      } = req.query;
+      const result = await getHybridDistricts(state);
+      districts = result.districts || [];
+    } catch (e) {
+      console.log(`Hybrid districts check failed for ${state}, using defaults`);
+    }
 
-      if (!state) {
-        return res
-          .status(400)
-          .json({
-            success:
-              false,
+    const popular = POPULAR_DISTRICTS[state] || [];
+    const combinedDistricts = [...new Set([...districts, ...popular])].sort((a, b) =>
+      a.localeCompare(b)
+    );
 
-            message:
-              "State is required",
-          });
-      }
-
-      const result =
-        await getHybridDistricts(
-          state
-        );
-
-      const districts =
-        result.districts;
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-
-          source:
-            result.source,
-
-          state,
-
-          count:
-            districts.length,
-
-          districts,
-        });
+    return res.status(200).json({
+      success: true,
+      state,
+      count: combinedDistricts.length,
+      districts: combinedDistricts,
+    });
 
     } catch (error) {
       console.error(
@@ -1248,10 +1220,55 @@ const getDistrictInsights = async (req, res) => {
       });
     }
 
-    const prices = await MarketPrice.find({
+    let prices = await MarketPrice.find({
       state,
       district,
     }).lean();
+
+    // Live Fallback to data.gov.in if local DB has no records for this state & district
+    if (!prices.length) {
+      try {
+        console.log(`No local DB records for ${district}, ${state}. Fetching live data from data.gov.in...`);
+        const liveRecords = await getLiveMandiPrices({
+          state,
+          district,
+          limit: 300,
+        });
+
+        if (liveRecords && liveRecords.length > 0) {
+          const newDocs = [];
+          liveRecords.forEach((item) => {
+            const minP = Number(item.min_price || item.Min_Price || 0);
+            const maxP = Number(item.max_price || item.Max_Price || 0);
+            const modP = Number(item.modal_price || item.Modal_Price || 0);
+            if (maxP > 0 || minP > 0 || modP > 0) {
+              const doc = {
+                state: item.state || item.State || state,
+                district: item.district || item.District || district,
+                market: item.market || item.Market || "APMC",
+                commodity: item.commodity || item.Commodity || "Crop",
+                variety: item.variety || item.Variety || "",
+                grade: item.grade || item.Grade || "",
+                arrivalDate: item.arrival_date ? new Date(item.arrival_date) : new Date(),
+                minPrice: minP,
+                maxPrice: maxP,
+                modalPrice: modP,
+                unit: "quintal",
+                source: "data.gov.in",
+              };
+              newDocs.push(doc);
+            }
+          });
+
+          if (newDocs.length > 0) {
+            prices = newDocs;
+            MarketPrice.insertMany(newDocs, { ordered: false }).catch(() => {});
+          }
+        }
+      } catch (liveErr) {
+        console.error(`Live Mandi fetch failed for ${district}, ${state}:`, liveErr.message);
+      }
+    }
 
     if (!prices.length) {
       return res.status(200).json({
@@ -1325,14 +1342,24 @@ return res.status(200).json({
 const getMarketTrends = async (req, res) => {
   try {
 
+    const { state, district } = req.query;
+
+    // Build a base match stage for filtering
+    const baseMatch = {};
+    if (state) baseMatch.state = { $regex: new RegExp(`^${state}$`, "i") };
+    if (district) baseMatch.district = { $regex: new RegExp(`^${district}$`, "i") };
+    const matchStage = Object.keys(baseMatch).length > 0 ? [{ $match: baseMatch }] : [];
+
     // Top Highest Price Crops
     const topHighest = await MarketPrice.aggregate([
+      ...matchStage,
       {
         $group: {
           _id: {
             commodity: "$commodity",
             variety: "$variety",
             market: "$market",
+            district: "$district",
           },
           maxPrice: { $max: "$maxPrice" },
         },
@@ -1343,6 +1370,7 @@ const getMarketTrends = async (req, res) => {
           commodity: "$_id.commodity",
           variety: "$_id.variety",
           market: "$_id.market",
+          district: "$_id.district",
           maxPrice: 1,
         },
       },
@@ -1352,12 +1380,14 @@ const getMarketTrends = async (req, res) => {
 
     // Top Lowest Price Crops
     const topLowest = await MarketPrice.aggregate([
+      ...matchStage,
       {
         $group: {
           _id: {
             commodity: "$commodity",
             variety: "$variety",
             market: "$market",
+            district: "$district",
           },
           minPrice: { $min: "$minPrice" },
         },
@@ -1368,6 +1398,7 @@ const getMarketTrends = async (req, res) => {
           commodity: "$_id.commodity",
           variety: "$_id.variety",
           market: "$_id.market",
+          district: "$_id.district",
           minPrice: 1,
         },
       },
@@ -1377,6 +1408,7 @@ const getMarketTrends = async (req, res) => {
 
     // Commodity Average
     const commodityAverage = await MarketPrice.aggregate([
+      ...matchStage,
       {
         $group: {
           _id: "$commodity",
@@ -1390,6 +1422,7 @@ const getMarketTrends = async (req, res) => {
 
     // Market Statistics
     const marketStats = await MarketPrice.aggregate([
+      ...matchStage,
       {
         $group: {
           _id: "$market",
@@ -1402,6 +1435,7 @@ const getMarketTrends = async (req, res) => {
 
     // District Statistics
     const districtStats = await MarketPrice.aggregate([
+      ...matchStage,
       {
         $group: {
           _id: "$district",
@@ -1422,11 +1456,11 @@ const getMarketTrends = async (req, res) => {
     ]);
 
     // Latest Prices
-    const latestPrices = await MarketPrice.find()
+    const latestPrices = await MarketPrice.find(baseMatch)
       .sort({ arrivalDate: -1 })
       .limit(20)
       .select(
-        "commodity variety market district modalPrice arrivalDate"
+        "commodity variety market district state modalPrice minPrice maxPrice arrivalDate"
       )
       .lean();
 

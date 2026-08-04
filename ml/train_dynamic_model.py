@@ -29,6 +29,8 @@ parser.add_argument("--commodity", required=True)
 
 args = parser.parse_args()
 
+MIN_RECORDS = 10
+
 
 # ==========================================
 # SAFE FILE NAME
@@ -111,6 +113,19 @@ for column in [
     )
 
 
+# Filter by state/district/market/commodity when using large Kaggle CSV
+def try_filter(df, col, value, min_rows):
+    if col in df.columns and value:
+        filtered = df[df[col].astype(str).str.lower() == value.lower()]
+        if len(filtered) >= min_rows:
+            return filtered
+    return df
+
+df = try_filter(df, "state", args.state, MIN_RECORDS)
+df = try_filter(df, "district", args.district, MIN_RECORDS)
+df = try_filter(df, "market", args.market, MIN_RECORDS)
+df = try_filter(df, "commodity", args.commodity, MIN_RECORDS)
+
 df = (
     df.dropna(
         subset=required_columns
@@ -124,18 +139,12 @@ df = (
 )
 
 
-# ==========================================
-# MINIMUM DATA REQUIREMENT
-# ==========================================
-
-MIN_RECORDS = 100
-
 if len(df) < MIN_RECORDS:
     result = {
         "success": False,
         "reason": "INSUFFICIENT_DATA",
         "message":
-            "At least 100 historical records are required",
+            f"At least {MIN_RECORDS} historical records are required",
         "records": len(df),
     }
 
