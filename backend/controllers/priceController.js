@@ -19,6 +19,19 @@ const {
   POPULAR_DISTRICTS,
 } = require("../utils/indiaData");
 
+const KAGGLE_CATALOG = require("../utils/kaggleCatalog.json");
+
+// Helper: lookup in kaggle catalog case-insensitively
+const kLookup = (obj, key) => {
+  if (!obj || !key) return null;
+  const k = Object.keys(obj).find(k => k.toLowerCase() === key.toLowerCase());
+  return k ? obj[k] : null;
+};
+const kaggleStates = () => Object.keys(KAGGLE_CATALOG).sort((a,b)=>a.localeCompare(b));
+const kaggleDistricts = (state) => { const s = kLookup(KAGGLE_CATALOG, state); return s ? Object.keys(s).sort((a,b)=>a.localeCompare(b)) : []; };
+const kaggleMarkets = (state, district) => { const s = kLookup(KAGGLE_CATALOG, state); const d = s ? kLookup(s, district) : null; return d ? Object.keys(d).sort((a,b)=>a.localeCompare(b)) : []; };
+const kaggleCommodities = (state, district, market) => { const s = kLookup(KAGGLE_CATALOG, state); const d = s ? kLookup(s, district) : null; const m = d ? kLookup(d, market) : null; return m ? [...m].sort((a,b)=>a.localeCompare(b)) : []; };
+
 const {
   generateDynamicPrediction,
 } = require(
@@ -589,7 +602,7 @@ const getDynamicPricePrediction =
           forecastDays
         ) ||
         forecastDays < 1 ||
-        forecastDays > 14
+        forecastDays > 30
       ) {
         return res
           .status(400)
@@ -598,7 +611,7 @@ const getDynamicPricePrediction =
               false,
 
             message:
-              "Prediction days must be between 1 and 14",
+              "Prediction days must be between 1 and 30",
           });
       }
 
@@ -973,13 +986,13 @@ const getPriceCommodities =
 const getCatalogStates = async (req, res) => {
   try {
     const localStates = await getLocalStates();
-    const allStates = [...new Set([...localStates, ...ALL_INDIA_STATES])].sort((a, b) =>
+    const allStates = [...new Set([...localStates, ...ALL_INDIA_STATES, ...kaggleStates()])].sort((a, b) =>
       a.localeCompare(b)
     );
 
     return res.status(200).json({
       success: true,
-      source: "mongodb+allindia",
+      source: "mongodb+allindia+kaggle",
       count: allStates.length,
       states: allStates,
     });
@@ -1019,7 +1032,8 @@ const getCatalogDistricts = async (req, res) => {
     }
 
     const popular = POPULAR_DISTRICTS[state] || [];
-    const combinedDistricts = [...new Set([...districts, ...popular])].sort((a, b) =>
+    const fromKaggle = kaggleDistricts(state);
+    const combinedDistricts = [...new Set([...districts, ...popular, ...fromKaggle])].sort((a, b) =>
       a.localeCompare(b)
     );
 
@@ -1030,22 +1044,14 @@ const getCatalogDistricts = async (req, res) => {
       districts: combinedDistricts,
     });
 
-    } catch (error) {
-      console.error(
-        "Catalog districts error:",
-        error
-      );
-
-      return res
-        .status(500)
-        .json({
-          success: false,
-
-          message:
-            "Unable to retrieve districts.",
-        });
-    }
-  };
+  } catch (error) {
+    console.error("Catalog districts error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve districts.",
+    });
+  }
+};
 
 
 // ==========================================
@@ -1054,74 +1060,40 @@ const getCatalogDistricts = async (req, res) => {
 // GET /api/prices/catalog/markets
 // ==========================================
 
-const getCatalogMarkets =
-  async (
-    req,
-    res
-  ) => {
-    try {
-      const {
-        state,
-        district,
-      } = req.query;
+const getCatalogMarkets = async (req, res) => {
+  try {
+    const { state, district } = req.query;
 
-      if (
-        !state ||
-        !district
-      ) {
-        return res
-          .status(400)
-          .json({
-            success:
-              false,
-
-            message:
-              "State and district are required",
-          });
-      }
-
-      const result =
-        await getHybridMarkets(
-          state,
-          district
-        );
-
-      const markets =
-        result.markets;
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-
-          source:
-            result.source,
-
-          state,
-          district,
-
-          count:
-            markets.length,
-
-          markets,
-        });
-
-    } catch (error) {
-      console.error(
-        "Catalog markets error:",
-        error
-      );
-
-      return res
-        .status(500)
-        .json({
-          success: false,
-
-          message:
-            "Unable to retrieve markets.",
-        });
+    if (!state || !district) {
+      return res.status(400).json({ success: false, message: "State and district are required" });
     }
-  };
+
+    let markets = [];
+    try {
+      const result = await getHybridMarkets(state, district);
+      markets = result.markets || [];
+    } catch (e) {
+      console.log(`Hybrid markets failed for ${state}/${district}`);
+    }
+
+    // Fallback: Kaggle CSV catalog
+    const fromKaggle = kaggleMarkets(state, district);
+    const combined = [...new Set([...markets, ...fromKaggle])].sort((a,b)=>a.localeCompare(b));
+
+    return res.status(200).json({
+      success: true,
+      source: combined.length > markets.length ? "mongodb+kaggle" : "mongodb",
+      state,
+      district,
+      count: combined.length,
+      markets: combined,
+    });
+
+  } catch (error) {
+    console.error("Catalog markets error:", error);
+    return res.status(500).json({ success: false, message: "Unable to retrieve markets." });
+  }
+};
 
 
 // ==========================================
@@ -1130,74 +1102,41 @@ const getCatalogMarkets =
 // GET /api/prices/catalog/commodities
 // ==========================================
 
-const getCatalogCommodities =
-  async (
-    req,
-    res
-  ) => {
+const getCatalogCommodities = async (req, res) => {
+  try {
+    const { state, district, market } = req.query;
+
+    if (!state || !district || !market) {
+      return res.status(400).json({ success: false, message: "State, district and market are required" });
+    }
+
+    let commodities = [];
     try {
-      const {
-        state,
-        district,
-        market,
-      } = req.query;
+      const result = await getHybridCommodities(state, district, market);
+      commodities = result.commodities || [];
+    } catch (e) {
+      console.log(`Hybrid commodities failed for ${state}/${district}/${market}`);
+    }
 
-      if (
-        !state ||
-        !district ||
-        !market
-      ) {
-        return res
-          .status(400)
-          .json({
-            success:
-              false,
+    // Fallback: Kaggle CSV catalog
+    const fromKaggle = kaggleCommodities(state, district, market);
+    const combined = [...new Set([...commodities, ...fromKaggle])].sort((a,b)=>a.localeCompare(b));
 
-            message:
-              "State, district and market are required",
-          });
-      }
+    return res.status(200).json({
+      success: true,
+      source: combined.length > commodities.length ? "mongodb+kaggle" : "mongodb",
+      state,
+      district,
+      market,
+      count: combined.length,
+      commodities: combined,
+    });
 
-      const result =
-        await getHybridCommodities(
-          state,
-          district,
-          market
-        );
-
-      const commodities =
-        result.commodities;
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-
-          source:
-            result.source,
-
-          state,
-          district,
-          market,
-
-          count:
-            commodities.length,
-
-          commodities,
-        });
-
-    } catch (error) {
-      console.error(
-        "Catalog commodities error:",
-        error
-      );
-
-      return res
-        .status(500)
-        .json({
-          success: false,
-
-          message:
+  } catch (error) {
+    console.error("Catalog commodities error:", error);
+    return res.status(500).json({
+      success: false,
+      message:
             "Unable to retrieve commodities.",
         });
     }
