@@ -1,80 +1,132 @@
 import { Link } from "react-router-dom";
-import { Leaf, Menu } from "lucide-react";
 import { useState } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Track scroll for background change
+  if (typeof window !== "undefined") {
+    window.addEventListener("scroll", () => {
+      setScrolled(window.scrollY > 20);
+    }, { passive: true });
+  }
 
   return (
-    <nav className="fixed left-0 top-0 z-50 w-full border-b border-green-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <>
+      <style>{`
+        .navbar {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+          transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+          border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+          background: rgba(5,10,14,0.85);
+          backdrop-filter: blur(20px);
+          border-color: rgba(255,255,255,0.08);
+        }
+        .navbar-inner {
+          max-width: 1280px; margin: 0 auto;
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 18px 32px;
+        }
+        .nav-brand {
+          display: flex; align-items: center; gap: 10px;
+          text-decoration: none; font-family: 'Space Grotesk', sans-serif;
+        }
+        .nav-logo {
+          width: 38px; height: 38px; border-radius: 10px;
+          background: linear-gradient(135deg, #16a34a, #059669);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 18px; box-shadow: 0 4px 14px rgba(34,197,94,0.35);
+        }
+        .nav-brand-text { font-size: 18px; font-weight: 800; color: #fff; }
+        .nav-brand-sub { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: -2px; }
 
-        <Link to="/" className="flex items-center gap-2">
-          <div className="rounded-xl bg-green-600 p-2 text-white">
-            <Leaf size={24} />
-          </div>
+        .nav-links {
+          display: flex; align-items: center; gap: 36px; list-style: none;
+        }
+        .nav-link {
+          font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.65);
+          text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em;
+        }
+        .nav-link:hover { color: #fff; }
 
-          <div>
-            <h1 className="text-xl font-bold text-green-800">
-              AgroConnect 360
-            </h1>
-            <p className="text-xs text-gray-500">Smart Agriculture</p>
-          </div>
-        </Link>
+        .nav-cta {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: linear-gradient(135deg, #16a34a, #059669);
+          color: #fff; font-weight: 700; font-size: 14px;
+          padding: 10px 22px; border-radius: 10px; text-decoration: none;
+          box-shadow: 0 4px 16px rgba(34,197,94,0.3);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .nav-cta:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 24px rgba(34,197,94,0.4);
+        }
 
-        <div className="hidden items-center gap-8 md:flex">
-          <a href="#features" className="text-gray-600 hover:text-green-600">
-            Features
-          </a>
+        .nav-hamburger {
+          display: none; background: none; border: none; cursor: pointer;
+          padding: 4px; color: #fff; font-size: 22px;
+        }
 
-          <a href="#roles" className="text-gray-600 hover:text-green-600">
-            Users
-          </a>
+        .nav-mobile {
+          background: rgba(5,10,14,0.97); backdrop-filter: blur(20px);
+          border-top: 1px solid rgba(255,255,255,0.08);
+          padding: 20px 32px; display: flex; flex-direction: column; gap: 14px;
+        }
+        .nav-mobile a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 16px; padding: 8px 0; }
+        .nav-mobile-cta {
+          margin-top: 8px; background: linear-gradient(135deg, #16a34a, #059669);
+          color: #fff; font-weight: 700; padding: 13px; border-radius: 10px;
+          text-align: center; text-decoration: none;
+        }
 
-          <a href="#ai" className="text-gray-600 hover:text-green-600">
-            AI Solutions
-          </a>
+        @media (max-width: 768px) {
+          .nav-links, .nav-cta { display: none; }
+          .nav-hamburger { display: block; }
+          .navbar-inner { padding: 14px 20px; }
+        }
+      `}</style>
 
-          <a href="#about" className="text-gray-600 hover:text-green-600">
-            About
-          </a>
+      <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+        <div className="navbar-inner">
+          <Link to="/" className="nav-brand">
+            <div className="nav-logo">🌱</div>
+            <div>
+              <div className="nav-brand-text">AgroConnect 360</div>
+              <div className="nav-brand-sub">Smart Agriculture</div>
+            </div>
+          </Link>
+
+          <ul className="nav-links">
+            <li><a href="#features" className="nav-link">Features</a></li>
+            <li><a href="#users" className="nav-link">Who It's For</a></li>
+            <li><a href="#ai" className="nav-link">AI Tools</a></li>
+            <li><a href="#how" className="nav-link">How It Works</a></li>
+          </ul>
+
+          <Link to="/login" className="nav-cta" id="navbar-login-btn">
+            Login / Get Started →
+          </Link>
+
+          <button className="nav-hamburger" onClick={() => setOpen(!open)}>
+            {open ? "✕" : "☰"}
+          </button>
         </div>
 
-        <div className="hidden items-center md:flex">
-  <Link
-    to="/login"
-    className="rounded-lg bg-green-600 px-6 py-2.5 font-semibold text-white transition hover:bg-green-700"
-  >
-    Login / Get Started
-  </Link>
-</div>
-
-<button
-  onClick={() => setOpen(!open)}
-  className="md:hidden"
->
-  <Menu />
-</button>
-</div>
-
-{open && (
-  <div className="border-t bg-white px-6 py-5 md:hidden">
-    <div className="flex flex-col gap-4">
-      <a href="#features">Features</a>
-      <a href="#roles">Users</a>
-      <a href="#ai">AI Solutions</a>
-      <a href="#about">About</a>
-
-      <Link
-        to="/login"
-        onClick={() => setOpen(false)}
-        className="rounded-lg bg-green-600 px-4 py-2 text-center font-semibold text-white"
-      >
-        Login / Get Started
-      </Link>
-    </div>
-  </div>
-)}
-</nav>
-);
+        {open && (
+          <div className="nav-mobile">
+            <a href="#features" onClick={() => setOpen(false)}>Features</a>
+            <a href="#users" onClick={() => setOpen(false)}>Who It's For</a>
+            <a href="#ai" onClick={() => setOpen(false)}>AI Tools</a>
+            <a href="#how" onClick={() => setOpen(false)}>How It Works</a>
+            <Link to="/login" className="nav-mobile-cta" onClick={() => setOpen(false)}>
+              Login / Get Started
+            </Link>
+          </div>
+        )}
+      </nav>
+    </>
+  );
 }

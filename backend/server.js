@@ -27,16 +27,44 @@ const diagnosisRoutes = require(
 const priceRoutes = require(
   "./routes/priceRoutes"
 );
+const assistantRoutes = require(
+  "./routes/assistantRoutes"
+);
+const inputRoutes = require(
+  "./routes/inputRoutes"
+);
+const sellerRoutes = require(
+  "./routes/sellerRoutes"
+);
+const exporterRoutes = require(
+  "./routes/exporterRoutes"
+);
+
 
 // Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
+// Middleware — allow any localhost Vite dev port (5173-5179)
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:5176",
+  "http://localhost:5177",
+  "http://localhost:5178",
+  "http://localhost:5179",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. curl, Postman)
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   })
 );
@@ -57,6 +85,23 @@ app.use(
   "/api/prices",
   priceRoutes
 );
+app.use(
+  "/api/assistant",
+  assistantRoutes
+);
+app.use(
+  "/api/inputs",
+  inputRoutes
+);
+app.use(
+  "/api/seller",
+  sellerRoutes
+);
+app.use(
+  "/api/exporter",
+  exporterRoutes
+);
+
 
 
 console.log(

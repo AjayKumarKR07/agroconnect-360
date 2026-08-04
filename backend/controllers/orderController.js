@@ -1,0 +1,748 @@
+const Order = require("../models/Order");
+const Crop  = require("../models/Crop");
+
+// ==========================================
+// GET FARMER ORDERS
+// GET /api/orders/farmer
+// ==========================================
+const getFarmerOrders = async (req, res) => {
+  try {
+    if (req.user.role !== "farmer") {
+      return res.status(403).json({
+        success: false,
+        message: "Farmer access required",
+      });
+    }
+
+    const orders = await Order.find({
+      "items.farmer": req.user._id,
+    })
+      .populate("buyer", "name email phone")
+      .sort({ createdAt: -1 });
+
+    // Flatten each order so the frontend can read it directly
+    const farmerOrders = [];
+
+    orders.forEach((order) => {
+      const orderObj = order.toObject();
+      const farmerItems = orderObj.items.filter(
+        (item) => item.farmer.toString() === req.user._id.toString()
+      );
+
+      // One flat entry per item so the UI card is simple
+      farmerItems.forEach((item) => {
+        farmerOrders.push({
+          _id: order._id,
+          status: order.status,
+          createdAt: order.createdAt,
+          updatedAt: order.updatedAt,
+          // flat fields the frontend reads directly
+          cropName: item.cropName || item.crop?.name || "Crop",
+          quantity: item.quantity,
+          unit: item.unit,
+          pricePerUnit: item.price,
+          totalAmount: item.subtotal || item.quantity * item.price,
+          // buyer info
+          buyerName: orderObj.buyer?.name || orderObj.deliveryAddress?.name || "Buyer",
+          buyerPhone: orderObj.buyer?.phone || orderObj.deliveryAddress?.phone || "",
+          deliveryAddress:
+            orderObj.deliveryAddress
+              ? `${orderObj.deliveryAddress.address || ""}, ${orderObj.deliveryAddress.city || ""}`
+              : "",
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          // keep nested too for backward compat
+          buyer: orderObj.buyer,
+          items: farmerItems,
+        });
+      });
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: farmerOrders.length,
+      orders: farmerOrders,
+    });
+  } catch (error) {
+    console.error("Get farmer orders error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to load orders",
+    });
+  }
+};
+
+// ==========================================
+// GET SINGLE FARMER ORDER
+// GET /api/orders/farmer/:id
+// ==========================================
+const getFarmerOrderById = async (
+  req,
+  res
+) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      "items.farmer": req.user._id,
+    }).populate(
+      "buyer",
+      "name email phone"
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const orderObject = order.toObject();
+
+    orderObject.items =
+      orderObject.items.filter(
+        (item) =>
+          item.farmer.toString() ===
+          req.user._id.toString()
+      );
+
+    return res.status(200).json({
+      success: true,
+      order: orderObject,
+    });
+  } catch (error) {
+    console.error(
+      "Get order error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to load order",
+    });
+  }
+};
+
+// ==========================================
+// UPDATE ORDER STATUS
+// PATCH /api/orders/farmer/:id/status
+// ==========================================
+const updateFarmerOrderStatus = async (
+  req,
+  res
+) => {
+  try {
+    if (req.user.role !== "farmer") {
+      return res.status(403).json({
+        success: false,
+        message: "Farmer access required",
+      });
+    }
+
+    const { status } = req.body;
+
+    // Accept both old status names and new frontend status names
+    const statusMap = {
+      confirmed: "accepted",
+      cancelled: "rejected",
+    };
+    const normalizedStatus = statusMap[status] || status;
+
+    const allowedStatuses = [
+      "accepted",
+      "rejected",
+      "processing",
+      "shipped",
+      "delivered",
+      "confirmed",
+      "cancelled",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order status",
+      });
+    }
+
+    // Support both /farmer/:id/status and /:id/status path params
+    const orderId = req.params.id;
+
+    const order = await Order.findOne({
+      _id: orderId,
+      "items.farmer": req.user._id,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Store the human-readable status the frontend sent
+    order.status = status;
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Order ${status} successfully`,
+      order,
+    });
+  } catch (error) {
+    console.error(
+      "Update order status error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to update order status",
+    });
+  }
+};
+
+// ==========================================
+// CREATE TEST ORDER
+// POST /api/orders/test
+// DEVELOPMENT ONLY
+// ==========================================
+const createTestOrder = async (req, res) => {
+  try {
+    const Crop = require("../models/Crop");
+
+    const {
+      cropId,
+      quantity,
+    } = req.body;
+
+    if (!cropId || !quantity) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Crop ID and quantity are required",
+      });
+    }
+
+    const crop = await Crop.findById(cropId);
+
+    if (!crop) {
+      return res.status(404).json({
+        success: false,
+        message: "Crop not found",
+      });
+    }
+
+    const orderQuantity = Number(quantity);
+
+    if (
+      !Number.isFinite(orderQuantity) ||
+      orderQuantity <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid quantity",
+      });
+    }
+
+    if (orderQuantity > crop.quantity) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Requested quantity exceeds available stock",
+      });
+    }
+
+    const subtotal =
+      orderQuantity * crop.price;
+
+    const order = await Order.create({
+      // Temporary:
+      // logged-in farmer acts as test buyer.
+      // Real marketplace will replace this.
+      buyer: req.user._id,
+
+      items: [
+        {
+          crop: crop._id,
+          farmer: crop.farmer,
+          cropName: crop.name,
+          quantity: orderQuantity,
+          unit: crop.unit,
+          price: crop.price,
+          subtotal,
+        },
+      ],
+
+      totalAmount: subtotal,
+
+      deliveryAddress: {
+        name: "Test Buyer",
+        phone: "9999999999",
+        address: "Test Address",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pincode: "560001",
+      },
+
+      paymentMethod: "cod",
+      paymentStatus: "pending",
+      status: "pending",
+
+      notes:
+        "Development test order",
+    });
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Test order created successfully",
+      order,
+    });
+  } catch (error) {
+    console.error(
+      "Create test order error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to create test order",
+    });
+  }
+};
+// ==========================================
+// GET FARMER INCOME
+// GET /api/orders/farmer/income
+// ==========================================
+const getFarmerIncome = async (req, res) => {
+  try {
+    if (req.user.role !== "farmer") {
+      return res.status(403).json({
+        success: false,
+        message: "Farmer access required",
+      });
+    }
+
+    // Get delivered orders containing
+    // products belonging to this farmer
+    const orders = await Order.find({
+      "items.farmer": req.user._id,
+      status: "delivered",
+    })
+      .populate(
+        "buyer",
+        "name email phone"
+      )
+      .sort({
+        updatedAt: -1,
+      });
+
+    let totalIncome = 0;
+    let totalQuantitySold = 0;
+
+    const transactions = [];
+
+    orders.forEach((order) => {
+      // Only items belonging to logged-in farmer
+      const farmerItems = order.items.filter(
+        (item) =>
+          item.farmer.toString() ===
+          req.user._id.toString()
+      );
+
+      const farmerAmount = farmerItems.reduce(
+        (total, item) =>
+          total + Number(item.subtotal || 0),
+        0
+      );
+
+      const quantitySold = farmerItems.reduce(
+        (total, item) =>
+          total + Number(item.quantity || 0),
+        0
+      );
+
+      totalIncome += farmerAmount;
+      totalQuantitySold += quantitySold;
+
+      transactions.push({
+        orderId: order._id,
+
+        buyer: {
+          name:
+            order.buyer?.name ||
+            order.deliveryAddress?.name ||
+            "Buyer",
+
+          email:
+            order.buyer?.email || "",
+
+          phone:
+            order.buyer?.phone ||
+            order.deliveryAddress?.phone ||
+            "",
+        },
+
+        items: farmerItems,
+
+        amount: farmerAmount,
+
+        paymentStatus:
+          order.paymentStatus,
+
+        paymentMethod:
+          order.paymentMethod,
+
+        deliveredAt:
+          order.updatedAt,
+
+        // ── Flat fields for frontend Income table ──
+        date: order.updatedAt,
+        cropName: farmerItems[0]?.cropName || farmerItems[0]?.crop?.name || "Crop",
+        buyerName:
+          order.buyer?.name ||
+          order.deliveryAddress?.name ||
+          "Buyer",
+        quantity: farmerItems.reduce((s, i) => s + (i.quantity || 0), 0),
+        unit: farmerItems[0]?.unit || "kg",
+        totalAmount: farmerAmount,
+      });
+    });
+
+    // ======================================
+    // CURRENT MONTH INCOME
+    // ======================================
+
+    const now = new Date();
+
+    const currentMonthIncome =
+      transactions.reduce(
+        (total, transaction) => {
+          const date = new Date(
+            transaction.deliveredAt
+          );
+
+          const isCurrentMonth =
+            date.getMonth() ===
+              now.getMonth() &&
+            date.getFullYear() ===
+              now.getFullYear();
+
+          return isCurrentMonth
+            ? total +
+                Number(
+                  transaction.amount || 0
+                )
+            : total;
+        },
+        0
+      );
+
+    return res.status(200).json({
+      success: true,
+
+      summary: {
+        totalIncome,
+        currentMonthIncome,
+        completedOrders:
+          transactions.length,
+        totalQuantitySold,
+      },
+
+      transactions,
+    });
+  } catch (error) {
+    console.error(
+      "Get farmer income error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to load income information",
+    });
+  }
+};
+// ==========================================
+// GET FARMER DASHBOARD STATS
+// GET /api/orders/farmer/dashboard-stats
+// ==========================================
+const getFarmerDashboardStats = async (req, res) => {
+  try {
+    if (req.user.role !== "farmer") {
+      return res.status(403).json({
+        success: false,
+        message: "Farmer access required",
+      });
+    }
+
+    const Crop = require("../models/Crop");
+
+    // --------------------------------------
+    // CROP STATISTICS
+    // --------------------------------------
+
+    const totalCrops = await Crop.countDocuments({
+      farmer: req.user._id,
+    });
+
+    const activeCrops = await Crop.countDocuments({
+      farmer: req.user._id,
+      status: {
+        $in: ["growing", "available"],
+      },
+    });
+
+    // --------------------------------------
+    // ORDER STATISTICS
+    // --------------------------------------
+
+    const totalOrders = await Order.countDocuments({
+      "items.farmer": req.user._id,
+    });
+
+    const pendingOrders =
+      await Order.countDocuments({
+        "items.farmer": req.user._id,
+        status: "pending",
+      });
+
+    const deliveredOrders =
+      await Order.find({
+        "items.farmer": req.user._id,
+        status: "delivered",
+      });
+
+    // --------------------------------------
+    // INCOME
+    // --------------------------------------
+
+    let totalIncome = 0;
+
+    deliveredOrders.forEach((order) => {
+      order.items.forEach((item) => {
+        if (
+          item.farmer.toString() ===
+          req.user._id.toString()
+        ) {
+          totalIncome += Number(
+            item.subtotal || 0
+          );
+        }
+      });
+    });
+
+    // --------------------------------------
+    // RECENT ORDERS
+    // --------------------------------------
+
+    const recentOrders = await Order.find({
+      "items.farmer": req.user._id,
+    })
+      .populate(
+        "buyer",
+        "name email phone"
+      )
+      .sort({
+        createdAt: -1,
+      })
+      .limit(5);
+
+    return res.status(200).json({
+      success: true,
+
+      stats: {
+        totalCrops,
+        activeCrops,
+        totalOrders,
+        pendingOrders,
+        totalIncome,
+      },
+
+      recentOrders,
+    });
+  } catch (error) {
+    console.error(
+      "Farmer dashboard stats error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Unable to load dashboard statistics",
+    });
+  }
+};
+
+// ==========================================
+// GET SELLER ORDERS
+// GET /api/orders/seller
+// Returns all orders that contain items from this seller/farmer
+// ==========================================
+const getSellerOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ "items.farmer": req.user._id })
+      .populate("buyer", "name email phone")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const sellerId = req.user._id.toString();
+
+    // Flatten to per-item rows the seller cares about
+    const sellerOrders = [];
+    orders.forEach((o) => {
+      const myItems = o.items.filter((it) => it.farmer.toString() === sellerId);
+      if (!myItems.length) return;
+
+      myItems.forEach((item) => {
+        sellerOrders.push({
+          _id: o._id,
+          itemId: item._id,
+          cropName: item.cropName,
+          quantity: item.quantity,
+          unit: item.unit,
+          price: item.price,
+          subtotal: item.subtotal,
+          totalPrice: item.subtotal,
+          status: o.status,
+          buyerName: o.buyer?.name || "Buyer",
+          buyerEmail: o.buyer?.email || "",
+          buyerPhone: o.buyer?.phone || "",
+          deliveryAddress: [
+            o.deliveryAddress?.address,
+            o.deliveryAddress?.city,
+            o.deliveryAddress?.state,
+            o.deliveryAddress?.pincode,
+          ].filter(Boolean).join(", "),
+          paymentMethod: o.paymentMethod,
+          createdAt: o.createdAt,
+        });
+      });
+    });
+
+    return res.status(200).json({ success: true, orders: sellerOrders });
+  } catch (error) {
+    console.error("Seller orders error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load seller orders" });
+  }
+};
+
+// ==========================================
+// GET BUYER ORDERS
+// GET /api/orders/buyer
+// ==========================================
+const getBuyerOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ buyer: req.user._id })
+      .populate("items.farmer", "name")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ success: true, orders });
+  } catch (error) {
+    console.error("Buyer orders error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load orders" });
+  }
+};
+
+// ==========================================
+// CREATE ORDER (Buyer checkout)
+// POST /api/orders
+// ==========================================
+const createOrder = async (req, res) => {
+  try {
+    const { items, deliveryAddress, paymentMethod, notes } = req.body;
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: "Your cart is empty" });
+    }
+
+    if (!deliveryAddress || !deliveryAddress.name || !deliveryAddress.phone ||
+        !deliveryAddress.address || !deliveryAddress.city ||
+        !deliveryAddress.state || !deliveryAddress.pincode) {
+      return res.status(400).json({ success: false, message: "Complete delivery address required" });
+    }
+
+    const { Types } = require("mongoose");
+    const orderItems = [];
+    let totalAmount = 0;
+
+    for (const item of items) {
+      const rawId = item.cropId || item._id;
+
+      if (!rawId || !Types.ObjectId.isValid(rawId)) {
+        return res.status(400).json({
+          success: false,
+          message: `Outdated item found in cart ("${rawId || 'unknown'}"). Please clear your cart and re-add products from the Browse page.`,
+        });
+      }
+
+      const crop = await Crop.findById(rawId);
+      if (!crop) {
+        return res.status(404).json({
+          success: false,
+          message: `Product "${item.name || rawId}" is no longer available.`,
+        });
+      }
+
+      const qty = Math.max(1, Number(item.qty || item.quantity || 1));
+      const price = Number(crop.price || 0);
+      const subtotal = qty * price;
+      totalAmount += subtotal;
+
+      orderItems.push({
+        crop:     crop._id,
+        farmer:   crop.farmer || req.user._id,
+        cropName: crop.name || "Crop Item",
+        quantity: qty,
+        unit:     crop.unit || "kg",
+        price,
+        subtotal,
+      });
+    }
+
+    const order = await Order.create({
+      buyer:           req.user._id,
+      items:           orderItems,
+      totalAmount,
+      deliveryAddress: {
+        name:    String(deliveryAddress.name).trim(),
+        phone:   String(deliveryAddress.phone).trim(),
+        address: String(deliveryAddress.address).trim(),
+        city:    String(deliveryAddress.city).trim(),
+        state:   String(deliveryAddress.state).trim(),
+        pincode: String(deliveryAddress.pincode).trim(),
+      },
+      paymentMethod:   paymentMethod || "cod",
+      notes:           notes || "",
+      status:          "pending",
+      paymentStatus:   "pending",
+    });
+
+    return res.status(201).json({ success: true, message: "Order placed successfully", order });
+  } catch (error) {
+    console.error("Create order error:", error);
+    return res.status(400).json({ success: false, message: error.message || "Failed to place order. Please try again." });
+  }
+};
+
+
+module.exports = {
+  getFarmerOrders,
+  getFarmerOrderById,
+  updateFarmerOrderStatus,
+  createTestOrder,
+  getFarmerIncome,
+  getFarmerDashboardStats,
+  getSellerOrders,
+  getBuyerOrders,
+  createOrder,
+};

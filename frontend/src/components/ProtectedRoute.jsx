@@ -1,38 +1,38 @@
 import { Navigate } from "react-router-dom";
 
-export default function ProtectedRoute({
-  children,
-  allowedRole,
-}) {
+// Role → home dashboard mapping
+const ROLE_HOME = {
+  farmer:   "/farmer/dashboard",
+  seller:   "/seller/dashboard",
+  exporter: "/exporter/dashboard",
+  admin:    "/admin/dashboard",
+  user:     "/user/dashboard",
+};
+
+export default function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("agroconnect_token");
 
-  const user = JSON.parse(
-    localStorage.getItem("agroconnect_user") || "null"
-  );
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem("agroconnect_user") || "null");
+  } catch {
+    user = null;
+  }
 
-  // Not logged in
+  // Not logged in → go to login
   if (!token || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Wrong role
+  // No role yet → complete profile
+  if (!user.role) {
+    return <Navigate to="/complete-profile" replace />;
+  }
+
+  // Wrong role → redirect to their own dashboard (or select-role if unknown)
   if (allowedRole && user.role !== allowedRole) {
-    switch (user.role) {
-      case "farmer":
-        return <Navigate to="/farmer/dashboard" replace />;
-
-      case "seller":
-        return <Navigate to="/seller/dashboard" replace />;
-
-      case "exporter":
-        return <Navigate to="/exporter/dashboard" replace />;
-
-      case "user":
-        return <Navigate to="/user/dashboard" replace />;
-
-      default:
-        return <Navigate to="/complete-profile" replace />;
-    }
+    const home = ROLE_HOME[user.role];
+    return <Navigate to={home || "/select-role"} replace />;
   }
 
   return children;
