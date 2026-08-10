@@ -46,6 +46,7 @@ const createCrop = async (req, res) => {
       sowingDate,
       harvestDate,
       description,
+      status,       // farmer can choose: 'listed', 'growing', 'ready'
     } = req.body;
 
     // Basic validation
@@ -92,23 +93,22 @@ const createCrop = async (req, res) => {
 
     // Create crop only AFTER image is ready
     const crop = await Crop.create({
-      farmer: req.user._id,
+      farmer: req.user._id,  // always from authenticated session
 
       name,
-      category,
+      category: (category || "").toLowerCase().trim(),  // normalize: 'Vegetables' → 'vegetables'
       quantity,
       unit,
       price,
       location,
 
-      sowingDate:
-        sowingDate || undefined,
+      // Accept farmer-chosen status; default to 'listed' so crops are
+      // immediately visible in the buyer marketplace.
+      status: ["listed", "growing", "ready"].includes(status) ? status : "listed",
 
-      harvestDate:
-        harvestDate || undefined,
-
-      description:
-        description || "",
+      sowingDate:   sowingDate  || undefined,
+      harvestDate:  harvestDate || undefined,
+      description:  description || "",
 
       image,
     });
@@ -351,9 +351,18 @@ const getListedCrops = async (req, res) => {
     const { status, category, search } = req.query;
 
     const filter = {};
-    if (status)   filter.status   = status;           // 'listed', 'growing', etc.
-    if (category) filter.category = category;
-    if (search)   filter.name     = { $regex: search, $options: "i" };
+
+    // When buyer queries ?status=listed, show ALL crops available for purchase:
+    // both 'listed' (explicitly published) AND 'ready' (harvested, ready to sell).
+    // This is the marketplace availability query — 'growing' and 'sold' are excluded.
+    if (status === "listed") {
+      filter.status = { $in: ["listed", "ready"] };
+    } else if (status) {
+      filter.status = status;
+    }
+
+    if (category)  filter.category = { $regex: `^${category}$`, $options: "i" }; // case-insensitive
+    if (search)    filter.name     = { $regex: search, $options: "i" };
 
     const crops = await Crop.find(filter)
       .populate("farmer", "name location")

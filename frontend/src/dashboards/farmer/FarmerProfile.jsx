@@ -50,9 +50,12 @@ export default function FarmerProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const sanitized = name === "phone"
+      ? value.replace(/\D/g, "").slice(0, 10)
+      : value;
     setForm(p => ({
       ...p,
-      [name]: value,
+      [name]: sanitized,
       // clear district when state changes
       ...(name === "state" ? { district: "" } : {}),
     }));
@@ -141,7 +144,7 @@ export default function FarmerProfile() {
               {/* Phone */}
               <div className="pf-group">
                 <label className="field-label">Mobile Number</label>
-                <input name="phone" type="tel" value={form.phone} onChange={handleChange} className="field-input" placeholder="+91 XXXXX XXXXX" />
+                <input name="phone" type="tel" value={form.phone} onChange={handleChange} className="field-input" placeholder="9876543210" maxLength={10} />
               </div>
 
               {/* State — dynamic from APMC catalog */}

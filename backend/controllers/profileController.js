@@ -19,11 +19,10 @@ const completeProfile = async (req, res) => {
       finalLocation = [finalDistrict, finalState].filter(Boolean).join(", ");
     }
 
-    if (!name || (!finalLocation && !finalDistrict) || !role) {
+    if (!name || !role) {
       return res.status(400).json({
         success: false,
-        message:
-          "Name, district, state and role are required",
+        message: "Name and role are required",
       });
     }
 
@@ -66,9 +65,9 @@ const completeProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Profile completed successfully",
-
       user: {
-        id: user._id,
+        _id: user._id,
+        id:  user._id,
         email: user.email,
         name: user.name,
         phone: user.phone,
@@ -76,8 +75,9 @@ const completeProfile = async (req, res) => {
         state: user.state,
         location: user.location,
         role: user.role,
-        profileCompleted:
-          user.profileCompleted,
+        profileCompleted: user.profileCompleted,
+        profileComplete:  user.profileCompleted,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -98,9 +98,9 @@ const getProfile = async (req, res) => {
   try {
     return res.status(200).json({
       success: true,
-
       user: {
-        id: req.user._id,
+        _id: req.user._id,
+        id:  req.user._id,
         email: req.user.email,
         name: req.user.name,
         phone: req.user.phone,
@@ -108,8 +108,9 @@ const getProfile = async (req, res) => {
         state: req.user.state,
         location: req.user.location,
         role: req.user.role,
-        profileCompleted:
-          req.user.profileCompleted,
+        profileCompleted: req.user.profileCompleted,
+        profileComplete:  req.user.profileCompleted,
+        createdAt: req.user.createdAt,
       },
     });
   } catch (error) {

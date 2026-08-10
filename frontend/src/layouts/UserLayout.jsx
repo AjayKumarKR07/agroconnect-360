@@ -5,7 +5,15 @@ export default function UserLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("agroconnect_user") || "{}"));
+
+  // Re-read user from localStorage whenever profile is saved
+  useEffect(() => {
+    const refresh = () => setUser(JSON.parse(localStorage.getItem("agroconnect_user") || "{}"));
+    window.addEventListener("ac_user_update", refresh);
+    window.addEventListener("storage", refresh);
+    return () => { window.removeEventListener("ac_user_update", refresh); window.removeEventListener("storage", refresh); };
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("agroconnect_token");
@@ -15,7 +23,7 @@ export default function UserLayout() {
 
   const nav = [
     { emoji: "🏠", name: "Home",        path: "/user/dashboard" },
-    { emoji: "🛒", name: "Browse",      path: "/user/browse" },
+    { emoji: "🔍", name: "Browse",      path: "/user/browse" },
     { emoji: "🛍️", name: "My Orders",   path: "/user/orders" },
     { emoji: "❤️", name: "Wishlist",    path: "/user/wishlist" },
     { emoji: "🛒", name: "Cart",        path: "/user/cart" },

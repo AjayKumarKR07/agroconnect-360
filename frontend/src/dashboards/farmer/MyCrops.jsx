@@ -33,16 +33,30 @@ export default function MyCrops() {
     finally { setDeletingId(null); }
   };
 
+  const listForSale = async (crop) => {
+    try {
+      const token = localStorage.getItem("agroconnect_token");
+      const r = await fetch(`${API_URL}/api/crops/${crop._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status: "listed" }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.message || "Failed to list");
+      setCrops((prev) => prev.map((c) => c._id === crop._id ? { ...c, status: "listed" } : c));
+    } catch (e) { setError(e.message); }
+  };
+
   const filtered = crops.filter((c) =>
     c.name?.toLowerCase().includes(search.toLowerCase()) ||
     c.category?.toLowerCase().includes(search.toLowerCase())
   );
 
   const statusBadge = (s) => {
-    if (s === "listed")  return <span className="badge badge-green">● Listed</span>;
-    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}>● Ready</span>;
-    if (s === "sold")    return <span className="badge badge-red">● Sold</span>;
-    return <span className="badge badge-amber">● Growing</span>;
+    if (s === "listed")  return <span className="badge badge-green">🟢 Listed</span>;
+    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}>⚡ Ready</span>;
+    if (s === "sold")    return <span className="badge badge-red">🔴 Sold</span>;
+    return <span className="badge badge-amber">🌱 Growing</span>;
   };
 
   return (
@@ -57,6 +71,23 @@ export default function MyCrops() {
         </div>
         <Link to="/farmer/crops/add" className="btn-green" id="add-crop-btn">➕ Add New Crop</Link>
       </div>
+
+      {/* Summary row */}
+      {!loading && crops.length > 0 && (
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
+          {[
+            { label: "Total", count: crops.length, color: "#38bdf8" },
+            { label: "Listed", count: crops.filter(c => c.status === "listed").length, color: "#4ade80" },
+            { label: "Ready (unlisted)", count: crops.filter(c => c.status === "ready").length, color: "#38bdf8" },
+            { label: "Growing", count: crops.filter(c => c.status === "growing").length, color: "#fbbf24" },
+            { label: "Sold", count: crops.filter(c => c.status === "sold").length, color: "#f87171" },
+          ].filter(x => x.count > 0).map(({ label, count, color }) => (
+            <div key={label} style={{ padding: "6px 14px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 12, fontWeight: 700, color }}>
+              {count} {label}
+            </div>
+          ))}
+        </div>
+      )}
 
       {error && <div className="alert-error">⚠️ {error}</div>}
 
@@ -141,7 +172,18 @@ export default function MyCrops() {
                   </p>
                 )}
 
-                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {/* List for Sale — shown only when not yet listed */}
+                  {(crop.status === "ready" || crop.status === "growing") && (
+                    <button
+                      onClick={() => listForSale(crop)}
+                      className="btn-green"
+                      style={{ flex: 1, justifyContent: "center", fontSize: 12 }}
+                      title="Publish this crop to the buyer marketplace"
+                    >
+                      🟢 List for Sale
+                    </button>
+                  )}
                   <button onClick={() => navigate(`/farmer/crops/${crop._id}`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center" }}>👁 View</button>
                   <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#4ade80", borderColor: "rgba(34,197,94,0.2)" }}>✏️ Edit</button>
                   <button onClick={() => handleDelete(crop)} disabled={deletingId === crop._id} className="btn-danger" style={{ flex: 1, justifyContent: "center" }}>

@@ -36,16 +36,20 @@ export default function UserOrders() {
   const [expanded, setExpanded] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
 
+  const load = async () => {
+    try {
+      const r = await fetch(`${API_URL}/api/orders/buyer`, { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      if (d.success) setOrders(d.orders || []);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
+
   useEffect(() => {
-    const load = async () => {
-      try {
-        const r = await fetch(`${API_URL}/api/orders/buyer`, { headers: { Authorization: `Bearer ${token}` } });
-        const d = await r.json();
-        if (d.success) setOrders(d.orders || []);
-      } catch (e) { console.error(e); }
-      finally { setLoading(false); }
-    };
     load();
+    // Auto-refresh every 30s so farmer status changes appear promptly
+    const interval = setInterval(load, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const filtered = orders.filter(o => filter === "all" || o.status === filter);
@@ -87,7 +91,10 @@ export default function UserOrders() {
           <h1 className="pg-title">📦 My Orders</h1>
           <p className="pg-sub">Track all your purchases and delivery status.</p>
         </div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0ea5e9" }}>{orders.length} total</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0ea5e9" }}>{orders.length} total</div>
+          <button className="tab-btn" onClick={load} style={{ fontSize: 12 }}>🔄 Refresh</button>
+        </div>
       </div>
 
       {/* Filter tabs */}
@@ -180,6 +187,38 @@ export default function UserOrders() {
                 {o.status === "pending" && (
                   <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#f87171", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
                     🚫 Cancel Order
+                  </button>
+                )}
+                {/* Reorder button for delivered orders */}
+                {o.status === "delivered" && (
+                  <button
+                    onClick={() => {
+                      const cart = JSON.parse(localStorage.getItem("ac_cart") || "[]");
+                      let updated = [...cart];
+                      (o.items || []).forEach(it => {
+                        const existing = updated.find(c => c._id === (it.crop?._id || it.crop));
+                        if (existing) {
+                          updated = updated.map(c => c._id === existing._id ? { ...c, qty: (c.qty || 1) + (it.quantity || 1) } : c);
+                        } else {
+                          updated.push({
+                            _id: it.crop?._id || it.crop,
+                            name: it.cropName || "Crop",
+                            price: it.price || 0,
+                            unit: it.unit || "kg",
+                            qty: it.quantity || 1,
+                            category: it.category || "other",
+                            location: it.location || "",
+                            image: it.image || { url: "" },
+                          });
+                        }
+                      });
+                      localStorage.setItem("ac_cart", JSON.stringify(updated));
+                      window.dispatchEvent(new Event("ac_cart_update"));
+                      alert("✅ Items added to cart! Head to your cart to checkout.");
+                    }}
+                    style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.25)", background: "rgba(14,165,233,0.07)", color: "#38bdf8", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                  >
+                    🔄 Reorder
                   </button>
                 )}
               </div>

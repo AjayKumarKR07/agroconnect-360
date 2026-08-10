@@ -680,9 +680,11 @@ const createOrder = async (req, res) => {
     }
 
     const { Types } = require("mongoose");
+    const Crop = require("../models/Crop");
     const orderItems = [];
     let totalAmount = 0;
 
+    // ── Phase 1: Validate ALL items before touching the database ──
     for (const item of items) {
       const rawId = item.cropId || item._id;
 
@@ -701,25 +703,54 @@ const createOrder = async (req, res) => {
         });
       }
 
+      // Crop must be available for purchase (listed OR ready-to-sell)
+      if (!["listed", "ready"].includes(crop.status)) {
+        return res.status(409).json({
+          success: false,
+          message: `"${crop.name}" is not available for purchase (status: ${crop.status}).`,
+        });
+      }
+
+      // Farmer reference must exist on the crop document
+      if (!crop.farmer) {
+        return res.status(404).json({
+          success: false,
+          message: `"${crop.name}" has no associated farmer. Cannot place order.`,
+        });
+      }
+
       const qty = Math.max(1, Number(item.qty || item.quantity || 1));
-      const price = Number(crop.price || 0);
+
+      // Oversell guard — check available stock
+      if (qty > crop.quantity) {
+        return res.status(409).json({
+          success: false,
+          message: `Only ${crop.quantity} ${crop.unit} of "${crop.name}" available. You requested ${qty}.`,
+        });
+      }
+
+      const price    = Number(crop.price || 0);  // always use DB price
       const subtotal = qty * price;
-      totalAmount += subtotal;
+      totalAmount   += subtotal;
 
       orderItems.push({
         crop:     crop._id,
-        farmer:   crop.farmer || req.user._id,
+        farmer:   crop.farmer,           // strictly from DB — buyer cannot override
         cropName: crop.name || "Crop Item",
         quantity: qty,
         unit:     crop.unit || "kg",
         price,
         subtotal,
+        _cropRef: crop,                  // temp ref for stock deduction (not saved)
       });
     }
 
+    // ── Phase 2: Create the order ──
+    const savedItems = orderItems.map(({ _cropRef, ...rest }) => rest); // strip temp ref
+
     const order = await Order.create({
       buyer:           req.user._id,
-      items:           orderItems,
+      items:           savedItems,
       totalAmount,
       deliveryAddress: {
         name:    String(deliveryAddress.name).trim(),
@@ -734,6 +765,20 @@ const createOrder = async (req, res) => {
       status:          "pending",
       paymentStatus:   "pending",
     });
+
+    // ── Phase 3: Atomically deduct stock for each crop ──
+    for (const oi of orderItems) {
+      const crop = oi._cropRef;
+      const remaining = crop.quantity - oi.quantity;
+
+      await Crop.findByIdAndUpdate(
+        crop._id,
+        {
+          $inc: { quantity: -oi.quantity },
+          ...(remaining <= 0 ? { status: "sold", quantity: 0 } : {}),
+        }
+      );
+    }
 
     return res.status(201).json({ success: true, message: "Order placed successfully", order });
   } catch (error) {

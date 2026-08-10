@@ -8,7 +8,7 @@ const UNITS = ["kg","quintal","ton"];
 
 export default function AddCrop() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name:"", category:"", quantity:"", unit:"kg", price:"", location:"", sowingDate:"", harvestDate:"", description:"" });
+  const [form, setForm] = useState({ name:"", category:"", quantity:"", unit:"kg", price:"", location:"", sowingDate:"", harvestDate:"", description:"", status:"listed" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [image, setImage] = useState(null);
@@ -108,6 +108,14 @@ export default function AddCrop() {
               <div className="form-group">
                 <label className="field-label">Expected Harvest Date</label>
                 <input name="harvestDate" type="date" value={form.harvestDate} onChange={handleChange} className="field-input" />
+              </div>
+              <div className="form-group">
+                <label className="field-label">Listing Status *</label>
+                <select name="status" value={form.status} onChange={handleChange} required className="field-input field-select">
+                  <option value="listed">🟢 Listed — Visible to buyers now</option>
+                  <option value="growing">🌱 Growing — Not yet ready</option>
+                  <option value="ready">⚡ Ready — Harvested, listing soon</option>
+                </select>
               </div>
               <div className="form-group full">
                 <label className="field-label">Description</label>

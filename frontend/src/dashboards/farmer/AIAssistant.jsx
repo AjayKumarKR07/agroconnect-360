@@ -1,36 +1,274 @@
 import { useState, useRef, useEffect } from "react";
 import { API_URL } from "../../config/api";
-import { DS } from "../../styles/ds";
 
 const QUICK_PROMPTS = [
-  "What crops should I grow in Kharif season?",
-  "How to treat yellowing leaves on tomato?",
-  "Best fertilizer for wheat crop?",
-  "When should I harvest onion?",
-  "How to prevent pest attack in cotton?",
-  "What is MSP for paddy this year?",
+  { icon: "🌱", text: "Kharif season crops?" },
+  { icon: "🍅", text: "Tomato yellowing leaves?" },
+  { icon: "🌾", text: "Best wheat fertilizer?" },
+  { icon: "🧅", text: "When to harvest onion?" },
+  { icon: "🐛", text: "Cotton pest control?" },
+  { icon: "💰", text: "MSP for paddy this year?" },
 ];
 
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
+
+  .ai-wrap {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 140px);
+    min-height: 560px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(160deg, rgba(2,8,18,0.95) 0%, rgba(1,10,20,0.97) 100%);
+    border: 1px solid rgba(14,165,233,0.15);
+    box-shadow: 0 0 0 1px rgba(14,165,233,0.05), 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  /* animated bg grid */
+  .ai-wrap::before {
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image: linear-gradient(rgba(14,165,233,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(14,165,233,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .ai-header {
+    position: relative;
+    z-index: 2;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(14,165,233,0.1);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .ai-avatar-ring {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0284c7, #0ea5e9, #0d9488);
+    padding: 2px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .ai-avatar-ring::after {
+    content:'';
+    position:absolute;
+    inset:-3px;
+    border-radius:50%;
+    border:2px solid rgba(14,165,233,0.4);
+    animation: pulseRing 2s ease infinite;
+  }
+  @keyframes pulseRing{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.08);opacity:1}}
+  .ai-avatar-inner {
+    width:100%;height:100%;border-radius:50%;
+    background:rgba(0,0,0,0.6);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+  }
+
+  .ai-status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: blink 1.8s ease infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+
+  .ai-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 24px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .ai-body::-webkit-scrollbar { width: 3px; }
+  .ai-body::-webkit-scrollbar-track { background: transparent; }
+  .ai-body::-webkit-scrollbar-thumb { background: rgba(14,165,233,0.2); border-radius: 2px; }
+
+  .msg-row { display: flex; gap: 12px; align-items: flex-start; }
+  .msg-row.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0; margin-top: 2px;
+  }
+  .msg-avatar.ai  { background: linear-gradient(135deg,#0284c730,#0ea5e920); border: 1px solid rgba(14,165,233,0.2); }
+  .msg-avatar.user{ background: linear-gradient(135deg,rgba(14,165,233,0.15),rgba(56,189,248,0.15)); border: 1px solid rgba(56,189,248,0.15); }
+
+  .bubble-wrap { max-width: 74%; display: flex; flex-direction: column; }
+  .msg-row.user .bubble-wrap { align-items: flex-end; }
+
+  .bubble {
+    padding: 13px 18px;
+    font-size: 14px;
+    line-height: 1.75;
+    word-break: break-word;
+    font-family: 'Inter', sans-serif;
+  }
+  .bubble.ai {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(14,165,233,0.12);
+    border-radius: 4px 18px 18px 18px;
+    color: #e2fef0;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .bubble.user {
+    background: linear-gradient(135deg,#0284c7,#0ea5e9);
+    border-radius: 18px 4px 18px 18px;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(14,165,233,0.35);
+  }
+
+  .msg-meta {
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 5px;
+    padding: 0 4px;
+    font-family: 'Inter',sans-serif;
+  }
+
+  /* Typing animation */
+  .typing-pill {
+    padding: 12px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(14,165,233,0.12);
+    border-radius: 4px 18px 18px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+  }
+  .td { width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; animation: td 1.2s infinite; }
+  .td:nth-child(2){ animation-delay:.2s; }
+  .td:nth-child(3){ animation-delay:.4s; }
+  @keyframes td{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-7px);opacity:1}}
+
+  /* Footer */
+  .ai-footer {
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(14,165,233,0.08);
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+  }
+
+  .quick-row {
+    display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 13px;
+  }
+  .quick-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 13px;
+    background: rgba(14,165,233,0.06);
+    border: 1px solid rgba(14,165,233,0.15);
+    color: #7dd3fc;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.18s;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .quick-chip:hover {
+    background: rgba(14,165,233,0.14);
+    border-color: rgba(14,165,233,0.35);
+    color: #38bdf8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14,165,233,0.15);
+  }
+
+  .input-row {
+    display: flex; gap: 10px; align-items: flex-end;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(14,165,233,0.18);
+    border-radius: 16px;
+    padding: 8px 8px 8px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-row:focus-within {
+    border-color: rgba(14,165,233,0.45);
+    box-shadow: 0 0 0 4px rgba(14,165,233,0.07);
+  }
+  .ai-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: #fff; font-size: 14.5px; font-family: 'Inter',sans-serif;
+    resize: none; line-height: 1.5; padding: 4px 0; max-height: 110px; overflow: auto;
+  }
+  .ai-input::placeholder { color: rgba(255,255,255,0.22); }
+
+  .send-btn {
+    width: 42px; height: 42px; border-radius: 12px; border: none; cursor: pointer;
+    background: linear-gradient(135deg,#0284c7,#0ea5e9);
+    color: #fff; font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(14,165,233,0.4);
+  }
+  .send-btn:hover:not(:disabled){ transform: scale(1.06); box-shadow: 0 6px 20px rgba(14,165,233,0.55); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .clear-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    border: 1px solid rgba(239,68,68,0.2);
+    background: rgba(239,68,68,0.06);
+    color: #f87171; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter',sans-serif;
+    transition: all 0.2s;
+  }
+  .clear-btn:hover{ background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); }
+
+  /* Gemini badge */
+  .gemini-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: linear-gradient(90deg,#8b5cf6,#06b6d4,#38bdf8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Markdown-like code blocks inside bubble */
+  .bubble code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 6px; border-radius: 5px;
+    font-family: monospace; font-size: 12.5px; color: #7dd3fc;
+  }
+`;
+
+const INIT_MSG = { role: "assistant", text: "👋 Hello! I'm your AgroConnect AI assistant powered by Gemini. Ask me anything about farming — crop care, weather, pest control, market prices, government schemes, and more!", time: new Date() };
+
 export default function AIAssistant() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", text: "👋 Hello! I'm your AgroConnect AI assistant. Ask me anything about farming — crop care, weather, pest control, market prices, and more!", time: new Date() }
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef(null);
-  const token = localStorage.getItem("agroconnect_token");
+  const [messages, setMessages] = useState([INIT_MSG]);
+  const [input, setInput]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const bottomRef               = useRef(null);
+  const inputRef                = useRef(null);
+  const token                   = localStorage.getItem("agroconnect_token");
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
   const sendMessage = async (text) => {
     const msg = (text || input).trim();
-    if (!msg) return;
+    if (!msg || loading) return;
     setInput("");
-    setMessages((p) => [...p, { role: "user", text: msg, time: new Date() }]);
+    setMessages(p => [...p, { role: "user", text: msg, time: new Date() }]);
     setLoading(true);
-
     try {
       const r = await fetch(`${API_URL}/api/assistant/chat`, {
         method: "POST",
@@ -38,95 +276,146 @@ export default function AIAssistant() {
         body: JSON.stringify({ message: msg }),
       });
       const d = await r.json();
-      // Backend always sends a 'reply' field (even on error)
       const reply = d.reply || d.message || "Sorry, I couldn't get a response. Please try again.";
-      setMessages((p) => [...p, { role: "assistant", text: reply, time: new Date() }]);
-    } catch (e) {
-      setMessages((p) => [...p, { role: "assistant", text: "⚠️ Network error. Please check your connection and try again.", time: new Date() }]);
+      setMessages(p => [...p, { role: "assistant", text: reply, time: new Date() }]);
+    } catch {
+      setMessages(p => [...p, { role: "assistant", text: "⚠️ Network error. Please check your connection and try again.", time: new Date() }]);
     } finally {
       setLoading(false);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
-
   const formatTime = (d) => d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+
+  const clearChat = () => {
+    setMessages([{ ...INIT_MSG, text: "👋 New conversation! How can I help you with farming today?", time: new Date() }]);
+    setInput("");
+  };
+
+  // Render markdown-lite: **bold**, `code`
+  const renderText = (text) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#7dd3fc">$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\n/g, "<br/>");
+  };
 
   return (
     <>
-      <style>{DS + `
-        .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 160px); min-height: 500px; }
-        .chat-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-        .chat-body::-webkit-scrollbar { width: 4px; }
-        .chat-body::-webkit-scrollbar-track { background: transparent; }
-        .chat-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-        .msg-row { display: flex; gap: 10px; align-items: flex-end; }
-        .msg-row.user { flex-direction: row-reverse; }
-        .msg-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        .msg-bubble { max-width: 72%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.7; }
-        .msg-bubble.assistant { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 4px; }
-        .msg-bubble.user { background: linear-gradient(135deg,#16a34a,#059669); color: #fff; border-bottom-right-radius: 4px; }
-        .msg-time { font-size: 10px; color: var(--text2); margin-top: 4px; }
-        .chat-footer { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg2); }
-        .chat-input-row { display: flex; gap: 10px; }
-        .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 13px 18px; color: #fff; font-size: 15px; font-family: 'Inter',sans-serif; outline: none; transition: border-color 0.2s; }
-        .chat-input::placeholder { color: rgba(255,255,255,0.25); }
-        .chat-input:focus { border-color: rgba(34,197,94,0.4); }
-        .typing-dots { display: flex; gap: 4px; padding: 14px 18px; }
-        .typing-dots span { width: 7px; height: 7px; background: rgba(255,255,255,0.3); border-radius: 50%; animation: bounce 1.2s infinite; }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
-        .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-        .quick-btn { background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.15); color: #4ade80; border-radius: 20px; padding: 6px 14px; font-size: 12px; cursor: pointer; transition: background 0.2s; }
-        .quick-btn:hover { background: rgba(34,197,94,0.12); }
-      `}</style>
+      <style>{STYLES}</style>
 
-      <div className="pg-head" style={{ marginBottom: 0 }}>
+      {/* Page header — outside the card */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
         <div>
-          <div className="eyebrow">Powered by Gemini AI</div>
-          <h1 className="pg-title">🤖 AI Farming Assistant</h1>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
+            <span className="gemini-badge">✦ Powered by Gemini AI</span>
+          </div>
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#fff", margin: 0 }}>
+            🤖 AI Farming Assistant
+          </h1>
         </div>
-        <button className="btn-ghost" style={{ fontSize: 13 }} onClick={() => setMessages([{ role: "assistant", text: "👋 New conversation started! How can I help you today?", time: new Date() }])}>🗑️ Clear Chat</button>
+        <button className="clear-btn" onClick={clearChat}>🗑 Clear Chat</button>
       </div>
 
-      <div className="card" style={{ padding: 0, marginTop: 20, overflow: "hidden", display: "flex", flexDirection: "column", height: "calc(100vh - 200px)", minHeight: 500 }}>
-        {/* Chat body */}
-        <div className="chat-body">
-          {messages.map((m, i) => (
-            <div key={i} className={`msg-row ${m.role}`}>
-              <div className="msg-avatar" style={{ background: m.role === "assistant" ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.08)" }}>
-                {m.role === "assistant" ? "🤖" : "👨‍🌾"}
+      {/* Main chat card */}
+      <div className="ai-wrap">
+
+        {/* Header bar inside card */}
+        <div className="ai-header">
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div className="ai-avatar-ring">
+              <div className="ai-avatar-inner">🤖</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#fff" }}>AgroConnect AI</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+                <div className="ai-status-dot" />
+                <span style={{ fontSize: 11, color: "#38bdf8", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Gemini Pro</span>
               </div>
-              <div>
-                <div className={`msg-bubble ${m.role}`}>{m.text}</div>
-                <div className={`msg-time`} style={{ textAlign: m.role === "user" ? "right" : "left" }}>{formatTime(m.time)}</div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat body */}
+        <div className="ai-body">
+          {messages.map((m, i) => (
+            <div key={i} className={`msg-row ${m.role === "user" ? "user" : ""}`}>
+              <div className={`msg-avatar ${m.role === "user" ? "user" : "ai"}`}>
+                {m.role === "assistant" ? "🤖" : "👤"}
+              </div>
+              <div className="bubble-wrap">
+                <div
+                  className={`bubble ${m.role === "assistant" ? "ai" : "user"}`}
+                  dangerouslySetInnerHTML={{ __html: renderText(m.text) }}
+                />
+                <div className="msg-meta">{formatTime(m.time)}</div>
               </div>
             </div>
           ))}
+
+          {/* Typing indicator */}
           {loading && (
             <div className="msg-row">
-              <div className="msg-avatar" style={{ background: "rgba(34,197,94,0.1)" }}>🤖</div>
-              <div className="msg-bubble assistant">
-                <div className="typing-dots"><span /><span /><span /></div>
+              <div className="msg-avatar ai">🤖</div>
+              <div className="bubble-wrap">
+                <div className="typing-pill">
+                  <div className="td" /><div className="td" /><div className="td" />
+                </div>
+                <div className="msg-meta">Thinking…</div>
               </div>
             </div>
           )}
+
           <div ref={bottomRef} />
         </div>
 
         {/* Footer */}
-        <div className="chat-footer">
-          <div className="quick-btns">
+        <div className="ai-footer">
+          {/* Quick prompts */}
+          <div className="quick-row">
             {QUICK_PROMPTS.map((p) => (
-              <button key={p} className="quick-btn" onClick={() => sendMessage(p)}>{p}</button>
+              <button
+                key={p.text}
+                className="quick-chip"
+                onClick={() => sendMessage(p.text)}
+                disabled={loading}
+              >
+                <span>{p.icon}</span> {p.text}
+              </button>
             ))}
           </div>
-          <form className="chat-input-row" onSubmit={(e) => { e.preventDefault(); sendMessage(); }}>
-            <input className="chat-input" placeholder="Ask anything about farming…" value={input} onChange={(e) => setInput(e.target.value)} disabled={loading} />
-            <button type="submit" className="btn-green" disabled={loading || !input.trim()} style={{ padding: "13px 20px" }}>
-              {loading ? "⏳" : "Send ➤"}
+
+          {/* Input box */}
+          <form
+            className="input-row"
+            onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
+          >
+            <textarea
+              ref={inputRef}
+              className="ai-input"
+              rows={1}
+              placeholder="Ask anything about farming, crops, prices, weather…"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+              }}
+              disabled={loading}
+            />
+            <button type="submit" className="send-btn" disabled={loading || !input.trim()} title="Send (Enter)">
+              {loading ? "⏳" : "➤"}
             </button>
           </form>
+
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", marginTop: 8, textAlign: "center", fontFamily: "'Inter',sans-serif" }}>
+            Press Enter to send · Shift+Enter for new line · AI can make mistakes — verify important info
+          </div>
         </div>
       </div>
     </>

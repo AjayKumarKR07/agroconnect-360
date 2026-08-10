@@ -69,7 +69,11 @@ export default function BuyInputs() {
   const totalAmount = cart.reduce((s, c) => s + c.price * c.qty, 0);
   const totalItems = cart.reduce((s, c) => s + c.qty, 0);
 
-  const handleFormChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    const sanitized = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((p) => ({ ...p, [name]: sanitized }));
+  };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -357,7 +361,7 @@ export default function BuyInputs() {
                 </div>
                 <div>
                   <label className="field-label">Phone Number *</label>
-                  <input name="phone" className="field-input" type="tel" required value={form.phone} onChange={handleFormChange} placeholder="+91 XXXXX XXXXX" />
+                  <input name="phone" className="field-input" type="tel" required value={form.phone} onChange={handleFormChange} placeholder="9876543210" maxLength={10} />
                 </div>
                 <div>
                   <label className="field-label">Delivery Address *</label>

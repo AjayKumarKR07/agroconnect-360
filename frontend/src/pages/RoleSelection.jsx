@@ -79,7 +79,11 @@ export default function RoleSelection() {
     location: savedUser.location || "",
   });
 
-  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const sanitized = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((p) => ({ ...p, [name]: sanitized }));
+  };
 
   // Navigate to the right dashboard for a given role
   const goToDashboard = (role) => {
@@ -354,7 +358,7 @@ export default function RoleSelection() {
                   </div>
                   <div>
                     <label className="rs-label">Mobile Number *</label>
-                    <input className="rs-input" name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" />
+                    <input className="rs-input" name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="9876543210" maxLength={10} />
                   </div>
                   <div>
                     <label className="rs-label">City / District *</label>

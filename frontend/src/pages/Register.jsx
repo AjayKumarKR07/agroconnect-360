@@ -47,10 +47,9 @@ export default function Register() {
   ];
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    const sanitized = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm({ ...form, [name]: sanitized });
   };
 
   const handleSubmit = (e) => {
@@ -149,7 +148,8 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 type="tel"
-                placeholder="+91 XXXXX XXXXX"
+                placeholder="9876543210"
+                maxLength={10}
                 className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-500"
               />
             </div>

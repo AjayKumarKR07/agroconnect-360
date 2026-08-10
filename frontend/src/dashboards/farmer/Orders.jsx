@@ -3,11 +3,13 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
 const STATUS_META = {
-  pending:   { label: "Pending",   badge: "badge-amber", emoji: "⏳" },
-  confirmed: { label: "Confirmed", badge: "badge-blue",  emoji: "✅" },
-  shipped:   { label: "Shipped",   badge: "badge-purple",emoji: "🚚" },
-  delivered: { label: "Delivered", badge: "badge-green", emoji: "📦" },
-  cancelled: { label: "Cancelled", badge: "badge-red",   emoji: "❌" },
+  pending:   { label: "Pending",   badge: "badge-amber",  emoji: "⏳" },
+  accepted:  { label: "Accepted",  badge: "badge-blue",   emoji: "✅" },
+  processing:{ label: "Processing",badge: "badge-blue",   emoji: "⚙️" },
+  shipped:   { label: "Shipped",   badge: "badge-purple", emoji: "🚚" },
+  delivered: { label: "Delivered", badge: "badge-green",  emoji: "📦" },
+  rejected:  { label: "Rejected",  badge: "badge-red",    emoji: "❌" },
+  cancelled: { label: "Cancelled", badge: "badge-red",    emoji: "🚫" },
 };
 
 export default function Orders() {
@@ -16,6 +18,7 @@ export default function Orders() {
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   const fetchOrders = async () => {
     try {
@@ -29,7 +32,12 @@ export default function Orders() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchOrders(); }, []);
+  useEffect(() => {
+    fetchOrders();
+    // Auto-refresh every 30s so new buyer orders appear without manual reload
+    const interval = setInterval(fetchOrders, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const updateStatus = async (orderId, newStatus) => {
     setUpdatingId(orderId);
@@ -47,7 +55,7 @@ export default function Orders() {
     finally { setUpdatingId(null); }
   };
 
-  const TABS = ["all", "pending", "confirmed", "shipped", "delivered", "cancelled"];
+  const TABS = ["all", "pending", "accepted", "shipped", "delivered", "rejected", "cancelled"];
   const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
 
   const counts = TABS.reduce((acc, t) => {
@@ -68,9 +76,10 @@ export default function Orders() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm Sales</div>
-          <h1 className="pg-title">📦 Orders</h1>
-          <p className="pg-sub">Manage incoming orders for your crops.</p>
+          <h1 className="pg-title">📦 Incoming Orders</h1>
+          <p className="pg-sub">Manage orders for your crops — auto-refreshes every 30s.</p>
         </div>
+        <button className="btn-ghost" onClick={fetchOrders} style={{ marginTop: 8 }}>🔄 Refresh</button>
       </div>
 
       {error && <div className="alert-error">⚠️ {error}</div>}
@@ -79,10 +88,11 @@ export default function Orders() {
       {!loading && (
         <div className="stat-grid" style={{ marginBottom: 24 }}>
           {[
-            { emoji: "📋", label: "Total Orders",    value: orders.length,                                      color: "#38bdf8" },
-            { emoji: "⏳", label: "Pending",         value: counts.pending,                                     color: "#fbbf24" },
-            { emoji: "✅", label: "Fulfilled",       value: (counts.confirmed||0)+(counts.shipped||0)+(counts.delivered||0), color: "#4ade80" },
-            { emoji: "❌", label: "Cancelled",       value: counts.cancelled,                                   color: "#f87171" },
+                      { emoji: "📋", label: "Total Orders",    value: orders.length,                                               color: "#38bdf8" },
+            { emoji: "⏳", label: "Pending",         value: counts.pending,                                              color: "#fbbf24" },
+            { emoji: "✅", label: "Accepted",        value: (counts.accepted||0)+(counts.processing||0),                 color: "#4ade80" },
+            { emoji: "🚚", label: "Shipped",         value: (counts.shipped||0)+(counts.delivered||0),                  color: "#a78bfa" },
+            { emoji: "❌", label: "Rejected",        value: (counts.rejected||0)+(counts.cancelled||0),                  color: "#f87171" },
           ].map(({ emoji, label, value, color }) => (
             <div key={label} className="stat-card">
               <div className="stat-glow" style={{ background: color }} />
@@ -149,15 +159,15 @@ export default function Orders() {
 
                 {order.status === "pending" && (
                   <div style={{ display: "flex", gap: 10, marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
-                    <button onClick={() => updateStatus(order._id, "confirmed")} disabled={updatingId === order._id} className="btn-green" style={{ flex: 1, justifyContent: "center" }}>
-                      ✅ Confirm Order
+                    <button onClick={() => updateStatus(order._id, "accepted")} disabled={updatingId === order._id} className="btn-green" style={{ flex: 1, justifyContent: "center" }}>
+                      ✅ Accept Order
                     </button>
-                    <button onClick={() => updateStatus(order._id, "cancelled")} disabled={updatingId === order._id} className="btn-danger" style={{ flex: 1, justifyContent: "center" }}>
-                      ❌ Cancel
+                    <button onClick={() => updateStatus(order._id, "rejected")} disabled={updatingId === order._id} className="btn-danger" style={{ flex: 1, justifyContent: "center" }}>
+                      ❌ Reject
                     </button>
                   </div>
                 )}
-                {order.status === "confirmed" && (
+                {(order.status === "accepted" || order.status === "processing") && (
                   <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
                     <button onClick={() => updateStatus(order._id, "shipped")} disabled={updatingId === order._id} className="btn-ghost" style={{ color: "#c4b5fd", borderColor: "rgba(167,139,250,0.2)" }}>
                       🚚 Mark as Shipped

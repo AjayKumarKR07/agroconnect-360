@@ -64,6 +64,7 @@ import UserCart from "./dashboards/user/UserCart";
 import UserSubscriptions from "./dashboards/user/UserSubscriptions";
 import UserInquiries from "./dashboards/user/UserInquiries";
 import UserAlerts from "./dashboards/user/UserAlerts";
+import BuyerProfile from "./dashboards/user/BuyerProfile";
 
 // Exporter
 import ExporterLayout from "./layouts/ExporterLayout";
@@ -273,7 +274,8 @@ export default function App() {
           <Route path="inquiries"     element={<UserInquiries />} />
           <Route path="alerts"        element={<UserAlerts />} />
           <Route path="assistant"     element={<AIAssistant />} />
-          <Route path="profile"       element={<FarmerProfile />} />
+          <Route path="market-trends" element={<MarketTrends />} />
+          <Route path="profile"       element={<BuyerProfile />} />
         </Route>
 
         {/* =========================

@@ -5,7 +5,7 @@ const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,28px);font-weight:800;color:#fff;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:var(--text2);}
   .spinner{width:24px;height:24px;border:3px solid rgba(14,165,233,0.15);border-top-color:#0ea5e9;border-radius:50%;animation:spin 0.8s linear infinite;}
@@ -16,42 +16,67 @@ const DS_USER = `
   .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
   .field-input:focus{border-color:rgba(14,165,233,0.4);}
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:12px;}
-  .empty-emoji{font-size:48px;}
-  .empty-title{font-size:18px;font-weight:700;color:#fff;}
-  .empty-sub{font-size:14px;color:var(--text2);}
-  .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
-  .prod-card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;overflow:hidden;transition:all 0.2s;cursor:pointer;}
-  .prod-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
-  .prod-img{width:100%;height:160px;object-fit:cover;}
-  .prod-ph{width:100%;height:160px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;font-size:48px;}
-  .cat-pill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:var(--text2);transition:all 0.2s;font-family:'Inter',sans-serif;}
-  .cat-pill.active{background:rgba(14,165,233,0.12);color:#38bdf8;border-color:rgba(14,165,233,0.25);}
+  .empty-emoji{font-size:48px;} .empty-title{font-size:18px;font-weight:700;color:#fff;} .empty-sub{font-size:14px;color:var(--text2);}
+  .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
+  .prod-card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;overflow:hidden;transition:all 0.25s;display:flex;flex-direction:column;}
+  .prod-card:hover{border-color:rgba(14,165,233,0.3);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+  .prod-img{width:100%;height:165px;object-fit:cover;}
+  .prod-ph{width:100%;height:165px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;font-size:52px;}
+  .cat-pill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:var(--text2);transition:all 0.2s;font-family:'Inter',sans-serif;white-space:nowrap;}
+  .cat-pill.active{background:rgba(14,165,233,0.14);color:#38bdf8;border-color:rgba(14,165,233,0.3);}
+  .qty-ctrl{display:flex;align-items:center;gap:6px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:10px;padding:4px 8px;}
+  .qty-btn{width:26px;height:26px;border-radius:7px;border:none;background:rgba(14,165,233,0.12);color:#38bdf8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;transition:background 0.15s;}
+  .qty-btn:hover{background:rgba(14,165,233,0.22);}
+  .stock-ok{background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
+  .stock-low{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2);}
+  .stock-out{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
+  .cart-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(14,165,233,0.18);border:1px solid rgba(14,165,233,0.35);color:#38bdf8;font-weight:700;font-size:14px;padding:12px 24px;border-radius:14px;backdrop-filter:blur(12px);z-index:200;animation:fadeup 0.3s ease;pointer-events:none;}
+  @keyframes fadeup{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 `;
 
 const CATS = ["all", "vegetables", "fruits", "grains", "spices", "dairy", "poultry", "other"];
 const SORT_OPTIONS = ["Newest", "Price: Low to High", "Price: High to Low", "Most Available"];
 
+// No demo/fake crops — always use real MongoDB data
+
 export default function BrowseProducts() {
   const [crops, setCrops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("Newest");
-  const [cartMsg, setCartMsg] = useState("");
+  const [toast, setToast] = useState("");
   const [wishlist, setWishlist] = useState(() => JSON.parse(localStorage.getItem("ac_wishlist") || "[]"));
+  const [qtys, setQtys] = useState({}); // per-product quantity selector
   const token = localStorage.getItem("agroconnect_token");
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const r = await fetch(`${API_URL}/api/crops?status=listed`, { headers: { Authorization: `Bearer ${token}` } });
-        const d = await r.json();
-        setCrops(d.crops || d.data || DEMO_CROPS);
-      } catch { setCrops(DEMO_CROPS); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, []);
+  const loadCrops = async () => {
+    setLoading(true); setApiError(false);
+    try {
+      const r = await fetch(`${API_URL}/api/crops?status=listed`, { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      if (d.success) {
+        setCrops(d.crops || []);
+      } else {
+        setCrops([]); setApiError(true);
+      }
+    } catch {
+      setCrops([]); setApiError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadCrops(); }, []);
+
+  const getQty = (id) => qtys[id] || 1;
+
+  // Cap at available stock — buyer cannot select more than what exists
+  const setQty = (id, delta, maxQty) => setQtys(prev => ({
+    ...prev,
+    [id]: Math.min(maxQty, Math.max(1, (prev[id] || 1) + delta)),
+  }));
 
   const toggleWishlist = (id) => {
     const updated = wishlist.includes(id) ? wishlist.filter(x => x !== id) : [...wishlist, id];
@@ -60,20 +85,34 @@ export default function BrowseProducts() {
   };
 
   const addToCart = (crop) => {
+    const qty = getQty(crop._id);
+    if (qty > crop.quantity) return; // safety guard
     const cart = JSON.parse(localStorage.getItem("ac_cart") || "[]");
     const existing = cart.find(c => c._id === crop._id);
+    const cartItem = {
+      _id:      crop._id,   // MongoDB ObjectId — used by checkout
+      cropId:   crop._id,   // explicit alias for clarity
+      name:     crop.name,
+      category: crop.category,
+      price:    crop.price, // snapshot for display only; backend re-fetches from DB
+      unit:     crop.unit,
+      quantity: crop.quantity,
+      image:    crop.image,
+      farmerName: crop.farmerName || crop.farmer?.name || "Local Farmer",
+      location: crop.location,
+    };
     let updated;
     if (existing) {
-      updated = cart.map(c => c._id === crop._id ? { ...c, qty: (c.qty || 1) + 1 } : c);
+      const newQty = Math.min(crop.quantity, (existing.qty || 1) + qty);
+      updated = cart.map(c => c._id === crop._id ? { ...c, qty: newQty } : c);
     } else {
-      updated = [...cart, { ...crop, qty: 1 }];
+      updated = [...cart, { ...cartItem, qty }];
     }
     localStorage.setItem("ac_cart", JSON.stringify(updated));
     window.dispatchEvent(new Event("ac_cart_update"));
-    setCartMsg(`✅ ${crop.name} added to cart!`);
-    setTimeout(() => setCartMsg(""), 2000);
+    setToast(`✅ ${qty} × ${crop.name} added to cart!`);
+    setTimeout(() => setToast(""), 2200);
   };
-
 
   let filtered = crops.filter(c => {
     if (category !== "all" && c.category !== category) return false;
@@ -87,6 +126,16 @@ export default function BrowseProducts() {
 
   const catEmoji = (cat) => ({ vegetables: "🥬", fruits: "🍎", grains: "🌾", spices: "🌶️", dairy: "🥛", poultry: "🐔", other: "📦" })[cat] || "🛒";
 
+  // Stock indicator
+  const stockBadge = (qty) => {
+    if (!qty || qty === 0) return <span className="cat-pill stock-out" style={{ fontSize: 10, padding: "2px 7px" }}>Out of Stock</span>;
+    if (qty <= 50) return <span className="cat-pill stock-low" style={{ fontSize: 10, padding: "2px 7px" }}>⚠️ Low Stock</span>;
+    return <span className="cat-pill stock-ok" style={{ fontSize: 10, padding: "2px 7px" }}>✓ In Stock</span>;
+  };
+
+  // Farmer name — handles both flat field and nested object
+  const farmerName = (c) => c.farmerName || c.farmer?.name || "Local Farmer";
+
   return (
     <>
       <style>{DS_USER}</style>
@@ -97,19 +146,24 @@ export default function BrowseProducts() {
           <h1 className="pg-title">🛒 Browse Fresh Produce</h1>
           <p className="pg-sub">Directly from local farmers — fresh, fair-priced, traceable.</p>
         </div>
-        <div style={{ fontSize: 13, color: "var(--text2)" }}>{filtered.length} listings found</div>
+        <div style={{ fontSize: 13, color: "var(--text2)", fontWeight: 600, background: "rgba(14,165,233,0.07)", border: "1px solid rgba(14,165,233,0.15)", padding: "6px 14px", borderRadius: 10 }}>
+          {filtered.length} listing{filtered.length !== 1 ? "s" : ""} found
+        </div>
       </div>
 
-      {cartMsg && (
-        <div style={{ marginBottom: 16, padding: "10px 16px", background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: 12, color: "#38bdf8", fontWeight: 600, fontSize: 14 }}>
-          {cartMsg}
-        </div>
-      )}
+      {/* Toast notification */}
+      {toast && <div className="cart-toast">{toast}</div>}
 
       {/* Search + Sort */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
-        <input className="field-input" placeholder="🔍 Search products, location…" value={search} onChange={e => setSearch(e.target.value)} style={{ maxWidth: 300 }} />
-        <select className="field-input" style={{ maxWidth: 200, cursor: "pointer" }} value={sort} onChange={e => setSort(e.target.value)}>
+      <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+        <input
+          className="field-input"
+          placeholder="🔍 Search products or location…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ maxWidth: 320 }}
+        />
+        <select className="field-input" style={{ maxWidth: 210, cursor: "pointer" }} value={sort} onChange={e => setSort(e.target.value)}>
           {SORT_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
         {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ fontSize: 12 }}>✕ Clear</button>}
@@ -124,13 +178,32 @@ export default function BrowseProducts() {
         ))}
       </div>
 
-      {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading products…</span></div>}
+      {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading fresh produce…</span></div>}
 
-      {!loading && filtered.length === 0 && (
+      {/* API error state */}
+      {!loading && apiError && (
+        <div className="empty-state">
+          <div className="empty-emoji">⚠️</div>
+          <div className="empty-title">Could not load marketplace</div>
+          <div className="empty-sub">Check your connection or try again.</div>
+          <button className="btn-cyan" onClick={loadCrops}>🔄 Retry</button>
+        </div>
+      )}
+
+      {!loading && !apiError && filtered.length === 0 && crops.length === 0 && (
+        <div className="empty-state">
+          <div className="empty-emoji">🌱</div>
+          <div className="empty-title">No products listed yet</div>
+          <div className="empty-sub">Farmers haven't listed any crops yet. Check back soon!</div>
+        </div>
+      )}
+
+      {!loading && !apiError && filtered.length === 0 && crops.length > 0 && (
         <div className="empty-state">
           <div className="empty-emoji">🔍</div>
           <div className="empty-title">No products found</div>
           <div className="empty-sub">Try a different category or search term.</div>
+          <button className="btn-ghost" onClick={() => { setSearch(""); setCategory("all"); }}>Reset Filters</button>
         </div>
       )}
 
@@ -138,35 +211,59 @@ export default function BrowseProducts() {
         <div className="prod-grid">
           {filtered.map(c => (
             <div key={c._id} className="prod-card">
+              {/* Image area */}
               <div style={{ position: "relative" }}>
                 {c.image?.url || c.imageUrl
                   ? <img src={c.image?.url || c.imageUrl} alt={c.name} className="prod-img" />
                   : <div className="prod-ph">{catEmoji(c.category)}</div>
                 }
-                {/* Wishlist heart */}
-                <button onClick={() => toggleWishlist(c._id)} style={{ position: "absolute", top: 10, right: 10, width: 32, height: 32, borderRadius: "50%", background: "rgba(0,0,0,0.5)", border: "none", cursor: "pointer", fontSize: 16, backdropFilter: "blur(6px)" }}>
+                {/* Wishlist */}
+                <button
+                  onClick={() => toggleWishlist(c._id)}
+                  style={{ position: "absolute", top: 10, right: 10, width: 34, height: 34, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", fontSize: 16, backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  title={wishlist.includes(c._id) ? "Remove from wishlist" : "Save to wishlist"}
+                >
                   {wishlist.includes(c._id) ? "❤️" : "🤍"}
                 </button>
-                {/* Fresh tag */}
-                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 10, fontWeight: 700, background: "rgba(34,197,94,0.85)", color: "#fff", padding: "3px 8px", borderRadius: 6 }}>🌿 FRESH</span>
+                {/* Fresh badge */}
+                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 10, fontWeight: 700, background: "rgba(34,197,94,0.88)", color: "#fff", padding: "3px 8px", borderRadius: 6 }}>🌿 FRESH</span>
               </div>
-              <div style={{ padding: "14px 16px" }}>
-                <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 3 }}>{c.name}</div>
-                <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>
-                  📍 {c.location} · {c.quantity} {c.unit} avail.
+
+              {/* Card body */}
+              <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+                  <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{c.name}</div>
+                  {stockBadge(c.quantity)}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12 }}>
+
+                <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>
+                  📍 {c.location} &nbsp;·&nbsp; 🌾 {farmerName(c)}
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12, marginTop: "auto" }}>
                   <div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0ea5e9" }}>₹{c.price}</div>
-                    <div style={{ fontSize: 11, color: "var(--text2)" }}>per {c.unit}</div>
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--text2)", textAlign: "right" }}>
-                    <div>🌾 {c.farmerName || "Farmer"}</div>
+                    <div style={{ fontSize: 11, color: "var(--text2)" }}>per {c.unit} · {c.quantity} {c.unit} avail.</div>
                   </div>
                 </div>
-                <button onClick={() => addToCart(c)} className="btn-cyan" style={{ width: "100%", justifyContent: "center", fontSize: 13 }}>
-                  🛒 Add to Cart
-                </button>
+
+                {/* Quantity selector + Add to Cart */}
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <div className="qty-ctrl">
+                    <button className="qty-btn" onClick={() => setQty(c._id, -1, c.quantity)}>−</button>
+                    <span style={{ color: "#fff", fontWeight: 800, fontSize: 14, minWidth: 24, textAlign: "center" }}>{getQty(c._id)}</span>
+                    <button className="qty-btn" onClick={() => setQty(c._id, 1, c.quantity)} disabled={getQty(c._id) >= c.quantity}>+</button>
+                    <span style={{ fontSize: 11, color: "var(--text2)", marginLeft: 2 }}>{c.unit}</span>
+                  </div>
+                  <button
+                    onClick={() => addToCart(c)}
+                    className="btn-cyan"
+                    style={{ flex: 1, justifyContent: "center", fontSize: 13, padding: "9px 12px" }}
+                    disabled={!c.quantity || c.quantity === 0}
+                  >
+                    🛒 Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -175,14 +272,3 @@ export default function BrowseProducts() {
     </>
   );
 }
-
-const DEMO_CROPS = [
-  { _id: "d1", name: "Fresh Tomatoes",  category: "vegetables", price: 28,  unit: "kg", quantity: 200, location: "Nashik",   farmerName: "Ramesh Patil",  image: { url: "" } },
-  { _id: "d2", name: "Basmati Rice",    category: "grains",     price: 85,  unit: "kg", quantity: 150, location: "Haryana",  farmerName: "Suresh Singh",  image: { url: "" } },
-  { _id: "d3", name: "Organic Spinach", category: "vegetables", price: 40,  unit: "kg", quantity: 80,  location: "Pune",     farmerName: "Meena Joshi",   image: { url: "" } },
-  { _id: "d4", name: "Alphonso Mango",  category: "fruits",     price: 200, unit: "kg", quantity: 50,  location: "Ratnagiri",farmerName: "Sanjay Deore",  image: { url: "" } },
-  { _id: "d5", name: "Red Onions",      category: "vegetables", price: 22,  unit: "kg", quantity: 400, location: "Nashik",   farmerName: "Vijay More",    image: { url: "" } },
-  { _id: "d6", name: "Wheat (Gehun)",   category: "grains",     price: 30,  unit: "kg", quantity: 500, location: "Punjab",   farmerName: "Gurpreet Kaur", image: { url: "" } },
-  { _id: "d7", name: "Turmeric",        category: "spices",     price: 180, unit: "kg", quantity: 60,  location: "Erode",    farmerName: "Murugan S.",    image: { url: "" } },
-  { _id: "d8", name: "Green Bananas",   category: "fruits",     price: 35,  unit: "kg", quantity: 120, location: "Jalgaon",  farmerName: "Pradeep Borse", image: { url: "" } },
-];

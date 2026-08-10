@@ -19,7 +19,11 @@ export default function CompleteProfile() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const sanitized = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((p) => ({ ...p, [name]: sanitized }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -166,7 +170,7 @@ export default function CompleteProfile() {
               </div>
               <div>
                 <label className="cp-field-label">Mobile Number *</label>
-                <input name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="+91 98765 43210" className="cp-input" />
+                <input name="phone" type="tel" required value={form.phone} onChange={handleChange} placeholder="9876543210" maxLength={10} className="cp-input" />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>

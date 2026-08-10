@@ -254,7 +254,7 @@ export default function UserCart() {
 
   /* ─────────────── STEP 2: DELIVERY ADDRESS ─────────────── */
   if (step === 2) {
-    const valid = addr.name && addr.phone && addr.address && addr.city && addr.state && addr.pincode;
+    const valid = addr.name && addr.phone.length === 10 && addr.address && addr.city && addr.state && addr.pincode;
     return (
       <>
         <style>{S}</style>
@@ -266,15 +266,32 @@ export default function UserCart() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               {[
                 { label: "Full Name *",    key: "name",    placeholder: "Ajay Kumar",     type: "text",   cols: 1 },
-                { label: "Phone Number *", key: "phone",   placeholder: "9876543210",      type: "tel",    cols: 1 },
+                { label: "Phone Number * (10 digits)", key: "phone", placeholder: "9876543210", type: "tel", cols: 1, maxLength: 10 },
                 { label: "Address *",      key: "address", placeholder: "House No., Street, Area", type: "text", cols: 2 },
                 { label: "City *",         key: "city",    placeholder: "Mumbai",          type: "text",   cols: 1 },
                 { label: "Pincode *",      key: "pincode", placeholder: "400001",          type: "text",   cols: 1 },
               ].map(f => (
                 <div key={f.key} style={{ gridColumn: f.cols === 2 ? "span 2" : "span 1" }}>
                   <label className="field-label">{f.label}</label>
-                  <input className="field-input" type={f.type} placeholder={f.placeholder} value={addr[f.key]}
-                    onChange={e => setAddr(p => ({ ...p, [f.key]: e.target.value }))} />
+                  <input
+                    className="field-input"
+                    type={f.type}
+                    placeholder={f.placeholder}
+                    value={addr[f.key]}
+                    maxLength={f.maxLength}
+                    onChange={e => {
+                      const val = f.key === "phone"
+                        ? e.target.value.replace(/\D/g, "").slice(0, 10)
+                        : e.target.value;
+                      setAddr(p => ({ ...p, [f.key]: val }));
+                    }}
+                    style={f.key === "phone" && addr.phone.length > 0 && addr.phone.length !== 10
+                      ? { borderColor: "rgba(239,68,68,0.5)", boxShadow: "0 0 0 3px rgba(239,68,68,0.08)" }
+                      : {}}
+                  />
+                  {f.key === "phone" && addr.phone.length > 0 && addr.phone.length !== 10 && (
+                    <div style={{ fontSize: 11, color: "#f87171", marginTop: 4 }}>⚠️ Enter exactly 10 digits ({addr.phone.length}/10)</div>
+                  )}
                 </div>
               ))}
               <div style={{ gridColumn: "span 2" }}>
