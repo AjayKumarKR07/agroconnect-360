@@ -81,6 +81,21 @@ const cropSchema = new mongoose.Schema(
       ],
       default: "growing",
     },
+
+    // Visual lifecycle stage (7-stage tracker in ViewCrop)
+    lifecycleStage: {
+      type: String,
+      enum: [
+        "sowing",
+        "growing",
+        "flowering",
+        "harvest_ready",
+        "harvested",
+        "listed",
+        "sold",
+      ],
+      default: "sowing",
+    },
   },
   {
     timestamps: true,

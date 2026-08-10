@@ -71,6 +71,33 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    // ── Farm-specific fields (Farmer Portal) ──────────────
+    farmName: { type: String, trim: true, default: "" },
+    farmArea: { type: Number, default: null },
+    areaUnit: { type: String, enum: ["Acre", "Hectare"], default: "Acre" },
+    soilType: {
+      type: String,
+      enum: ["Loamy", "Clay", "Sandy", "Black Soil", "Red Soil", "Other", ""],
+      default: "",
+    },
+    irrigation: {
+      type: String,
+      enum: ["Available", "Limited", "Rainfed", ""],
+      default: "",
+    },
+    waterSource: {
+      type: String,
+      enum: ["Borewell", "Canal", "Rainwater", "Other", ""],
+      default: "",
+    },
+    season: {
+      type: String,
+      enum: ["Current Season", "Kharif", "Rabi", "Zaid", ""],
+      default: "",
+    },
+    previousCrop: { type: String, trim: true, default: "" },
+    farmingExperience: { type: Number, default: null }, // years
   },
   {
     timestamps: true,

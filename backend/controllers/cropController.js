@@ -164,10 +164,10 @@ const getMyCrops = async (req, res) => {
 // ==========================================
 const getCropById = async (req, res) => {
   try {
-    const crop = await Crop.findOne({
-      _id: req.params.id,
-      farmer: req.user._id,
-    });
+    // Any authenticated user can view a crop by ID
+    // (farmers view their own, buyers/sellers view marketplace crops)
+    const crop = await Crop.findById(req.params.id)
+      .populate("farmer", "name location");
 
     if (!crop) {
       return res.status(404).json({
@@ -182,6 +182,14 @@ const getCropById = async (req, res) => {
     });
   } catch (error) {
     console.error("Get crop error:", error);
+
+    // Handle malformed MongoDB ObjectId
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid crop ID",
+      });
+    }
 
     return res.status(500).json({
       success: false,

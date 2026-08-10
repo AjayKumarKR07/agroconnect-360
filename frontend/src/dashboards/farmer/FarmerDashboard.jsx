@@ -36,13 +36,18 @@ export default function FarmerDashboard() {
   ];
 
   const quickLinks = [
-    { emoji: "➕", label: "Add New Crop",          to: "/farmer/crops/add",          color: "#22c55e" },
-    { emoji: "🔬", label: "Check Crop Disease",    to: "/farmer/disease-detection",   color: "#a78bfa" },
-    { emoji: "📈", label: "Price Prediction",      to: "/farmer/price-prediction",    color: "#38bdf8" },
-    { emoji: "🌦️", label: "Weather Advisory",      to: "/farmer/weather",             color: "#fbbf24" },
-    { emoji: "📊", label: "Market Trends",         to: "/farmer/market-trends",       color: "#fb923c" },
-    { emoji: "🤖", label: "AI Assistant",          to: "/farmer/assistant",           color: "#f472b6" },
+    { emoji: "➕", label: "Add New Crop",          to: "/farmer/crops/add",            color: "#22c55e" },
+    { emoji: "🌾", label: "Smart Farm Planner",    to: "/farmer/smart-farm-planner",   color: "#16a34a" },
+    { emoji: "🔬", label: "Check Crop Disease",    to: "/farmer/disease-detection",    color: "#a78bfa" },
+    { emoji: "📈", label: "Price Prediction",      to: "/farmer/price-prediction",     color: "#38bdf8" },
+    { emoji: "🌦️", label: "Weather Advisory",      to: "/farmer/weather",              color: "#fbbf24" },
+    { emoji: "📊", label: "Market Trends",         to: "/farmer/market-trends",        color: "#fb923c" },
+    { emoji: "🤖", label: "AI Assistant",          to: "/farmer/assistant",            color: "#f472b6" },
+    { emoji: "🏡", label: "My Farm Profile",       to: "/farmer/my-farm",              color: "#4ade80" },
+    { emoji: "📊", label: "Farm Analytics",        to: "/farmer/farm-analytics",       color: "#60a5fa" },
+    { emoji: "🔔", label: "Notifications",         to: "/farmer/notifications",        color: "#fb923c" },
   ];
+
 
   return (
     <>

@@ -96,36 +96,46 @@ const getLivePrices = async (
 
     const prices = records.map(
       (record) => ({
-        state: record.state,
-        district: record.district,
-        market: record.market,
-        commodity: record.commodity,
-        variety: record.variety,
-        grade: record.grade,
-
-        arrivalDate:
-          record.arrival_date,
-
-        minPrice:
-          Number(record.min_price),
-
-        maxPrice:
-          Number(record.max_price),
-
-        modalPrice:
-          Number(record.modal_price),
-
+        state: record.state || state,
+        district: record.district || district,
+        market: record.market || market,
+        commodity: record.commodity || commodity,
+        variety: record.variety || "",
+        grade: record.grade || "",
+        arrivalDate: record.arrival_date,
+        minPrice: Number(record.min_price || 0),
+        maxPrice: Number(record.max_price || 0),
+        modalPrice: Number(record.modal_price || 0),
         unit: "quintal",
       })
     );
 
-   return res.status(200).json({
-  success: true,
-  state,
-  district,
-  highest: uniqueHighest,
-  lowest: uniqueLowest,
-});
+    // Deduplicate by commodity+variety+market, keep highest/lowest price
+    const grouped = {};
+    prices.forEach((item) => {
+      const key = `${item.commodity}-${item.variety}-${item.market}`;
+      if (!grouped[key]) {
+        grouped[key] = { ...item };
+      } else {
+        grouped[key].maxPrice = Math.max(grouped[key].maxPrice, item.maxPrice);
+        grouped[key].minPrice = Math.min(grouped[key].minPrice, item.minPrice);
+      }
+    });
+
+    const deduped = Object.values(grouped);
+    const highest = [...deduped].sort((a, b) => b.maxPrice - a.maxPrice).slice(0, 10);
+    const lowest  = [...deduped].sort((a, b) => a.minPrice - b.minPrice).slice(0, 10);
+
+    return res.status(200).json({
+      success: true,
+      count: prices.length,
+      state,
+      district,
+      commodity,
+      prices,
+      highest,
+      lowest,
+    });
 
   } catch (error) {
     console.error(

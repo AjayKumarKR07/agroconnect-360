@@ -3,6 +3,8 @@ const express = require("express");
 const {
   completeProfile,
   getProfile,
+  getFarmDetails,
+  updateFarmDetails,
 } = require("../controllers/profileController");
 
 const {
@@ -19,4 +21,8 @@ router.put(
   completeProfile
 );
 
-module.exports = router;
+// Farm-specific fields
+router.get("/farm", protect, getFarmDetails);
+router.put("/farm", protect, updateFarmDetails);
+
+module.exports = router;

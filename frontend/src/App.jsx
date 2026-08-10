@@ -34,6 +34,13 @@ import BuyInputs from "./dashboards/farmer/BuyInputs";
 import ExportPage from "./dashboards/farmer/ExportPage";
 import AIAssistant from "./dashboards/farmer/AIAssistant";
 import FarmerProfile from "./dashboards/farmer/FarmerProfile";
+import SmartFarmPlanner from "./dashboards/farmer/SmartFarmPlanner";
+import MyFarm from "./dashboards/farmer/MyFarm";
+import SavedFarmPlans from "./dashboards/farmer/SavedFarmPlans";
+import FarmAnalytics from "./dashboards/farmer/FarmAnalytics";
+import FarmerNotifications from "./dashboards/farmer/FarmerNotifications";
+import CropHealthHistory from "./dashboards/farmer/CropHealthHistory";
+import MarketComparison from "./dashboards/farmer/MarketComparison";
 
 // Seller
 import SellerLayout from "./layouts/SellerLayout";
@@ -79,6 +86,8 @@ import AdminDisputes from "./dashboards/admin/AdminDisputes";
 import AdminSystem from "./dashboards/admin/AdminSystem";
 import AdminAuditLogs from "./dashboards/admin/AdminAuditLogs";
 import AdminBroadcast from "./dashboards/admin/AdminBroadcast";
+import AdminOrders from "./dashboards/admin/AdminOrders";
+import AdminExports from "./dashboards/admin/AdminExports";
 
 
 export default function App() {
@@ -199,9 +208,19 @@ export default function App() {
 />
 
 <Route
-  path="profile"
-  element={<FarmerProfile />}
+  path="smart-farm-planner"
+  element={<SmartFarmPlanner />}
 />
+
+<Route path="profile" element={<FarmerProfile />} />
+
+  {/* New Farmer Pages */}
+  <Route path="my-farm"             element={<MyFarm />} />
+  <Route path="saved-plans"         element={<SavedFarmPlans />} />
+  <Route path="farm-analytics"      element={<FarmAnalytics />} />
+  <Route path="notifications"       element={<FarmerNotifications />} />
+  <Route path="crop-health-history" element={<CropHealthHistory />} />
+  <Route path="market-comparison"   element={<MarketComparison />} />
 
 </Route>
 
@@ -302,6 +321,8 @@ export default function App() {
 
           <Route path="disputes"  element={<AdminDisputes />} />
           <Route path="system"    element={<AdminSystem />} />
+          <Route path="orders"    element={<AdminOrders />} />
+          <Route path="exports"   element={<AdminExports />} />
           <Route path="profile"   element={<FarmerProfile />} />
         </Route>
 

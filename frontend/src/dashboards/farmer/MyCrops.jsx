@@ -39,9 +39,10 @@ export default function MyCrops() {
   );
 
   const statusBadge = (s) => {
-    if (s === "available") return <span className="badge badge-green">● Available</span>;
-    if (s === "sold") return <span className="badge badge-red">● Sold</span>;
-    return <span className="badge badge-amber">● {s}</span>;
+    if (s === "listed")  return <span className="badge badge-green">● Listed</span>;
+    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}>● Ready</span>;
+    if (s === "sold")    return <span className="badge badge-red">● Sold</span>;
+    return <span className="badge badge-amber">● Growing</span>;
   };
 
   return (

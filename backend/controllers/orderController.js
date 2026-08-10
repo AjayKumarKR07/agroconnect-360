@@ -131,21 +131,7 @@ const updateFarmerOrderStatus = async (
   res
 ) => {
   try {
-    if (req.user.role !== "farmer") {
-      return res.status(403).json({
-        success: false,
-        message: "Farmer access required",
-      });
-    }
-
     const { status } = req.body;
-
-    // Accept both old status names and new frontend status names
-    const statusMap = {
-      confirmed: "accepted",
-      cancelled: "rejected",
-    };
-    const normalizedStatus = statusMap[status] || status;
 
     const allowedStatuses = [
       "accepted",
@@ -157,31 +143,53 @@ const updateFarmerOrderStatus = async (
       "cancelled",
     ];
 
-    if (!allowedStatuses.includes(status)) {
+    if (!status || !allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
         message: "Invalid order status",
       });
     }
 
-    // Support both /farmer/:id/status and /:id/status path params
     const orderId = req.params.id;
+    const isFarmer = req.user.role === "farmer";
+    const isBuyer  = ["user", "seller", "exporter"].includes(req.user.role);
 
-    const order = await Order.findOne({
-      _id: orderId,
-      "items.farmer": req.user._id,
-    });
+    let order;
+
+    if (isFarmer) {
+      // Farmers can update any status on orders that contain their items
+      order = await Order.findOne({
+        _id: orderId,
+        "items.farmer": req.user._id,
+      });
+    } else if (isBuyer) {
+      // Buyers may only cancel their own pending orders
+      if (status !== "cancelled") {
+        return res.status(403).json({
+          success: false,
+          message: "Buyers can only cancel their own pending orders",
+        });
+      }
+      order = await Order.findOne({
+        _id: orderId,
+        buyer: req.user._id,
+        status: "pending",
+      });
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Insufficient permissions to update this order",
+      });
+    }
 
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: "Order not found",
+        message: "Order not found or you do not have permission to update it",
       });
     }
 
-    // Store the human-readable status the frontend sent
     order.status = status;
-
     await order.save();
 
     return res.status(200).json({
@@ -493,7 +501,7 @@ const getFarmerDashboardStats = async (req, res) => {
     const activeCrops = await Crop.countDocuments({
       farmer: req.user._id,
       status: {
-        $in: ["growing", "available"],
+        $in: ["growing", "ready"],
       },
     });
 

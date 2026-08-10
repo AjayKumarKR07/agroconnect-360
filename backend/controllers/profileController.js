@@ -120,7 +120,81 @@ const getProfile = async (req, res) => {
   }
 };
 
+// ============================================================
+// GET FARM DETAILS — GET /api/profile/farm
+// ============================================================
+const getFarmDetails = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).json({
+      success: true,
+      farm: {
+        farmName:          user.farmName          || "",
+        farmArea:          user.farmArea          ?? null,
+        areaUnit:          user.areaUnit          || "Acre",
+        soilType:          user.soilType          || "",
+        irrigation:        user.irrigation        || "",
+        waterSource:       user.waterSource       || "",
+        season:            user.season            || "",
+        previousCrop:      user.previousCrop      || "",
+        farmingExperience: user.farmingExperience ?? null,
+        // Identity fields from profile
+        name:     user.name     || "",
+        location: user.location || "",
+        district: user.district || "",
+        state:    user.state    || "",
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Unable to load farm details" });
+  }
+};
+
+// ============================================================
+// UPDATE FARM DETAILS — PUT /api/profile/farm
+// ============================================================
+const updateFarmDetails = async (req, res) => {
+  try {
+    const {
+      farmName, farmArea, areaUnit, soilType,
+      irrigation, waterSource, season, previousCrop, farmingExperience,
+    } = req.body;
+
+    const user = await require("../models/User").findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    if (farmName          !== undefined) user.farmName          = farmName.trim();
+    if (farmArea          !== undefined) user.farmArea          = farmArea ? Number(farmArea) : null;
+    if (areaUnit          !== undefined) user.areaUnit          = areaUnit;
+    if (soilType          !== undefined) user.soilType          = soilType;
+    if (irrigation        !== undefined) user.irrigation        = irrigation;
+    if (waterSource       !== undefined) user.waterSource       = waterSource;
+    if (season            !== undefined) user.season            = season;
+    if (previousCrop      !== undefined) user.previousCrop      = previousCrop.trim();
+    if (farmingExperience !== undefined) user.farmingExperience = farmingExperience ? Number(farmingExperience) : null;
+
+    await user.save();
+
+    // Update localStorage-cached user on next profile fetch
+    return res.status(200).json({
+      success: true,
+      message: "Farm details updated successfully",
+      farm: {
+        farmName: user.farmName, farmArea: user.farmArea, areaUnit: user.areaUnit,
+        soilType: user.soilType, irrigation: user.irrigation, waterSource: user.waterSource,
+        season: user.season, previousCrop: user.previousCrop, farmingExperience: user.farmingExperience,
+        name: user.name, location: user.location, district: user.district, state: user.state,
+      },
+    });
+  } catch (error) {
+    console.error("Update farm details error:", error);
+    return res.status(500).json({ success: false, message: "Unable to update farm details" });
+  }
+}
+
 module.exports = {
   completeProfile,
   getProfile,
-};
+  getFarmDetails,
+  updateFarmDetails,
+};

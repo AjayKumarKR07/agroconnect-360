@@ -27,7 +27,7 @@ export default function ExportSourcing() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCrop, setSelectedCrop] = useState(null);
-  const [reqForm, setReqForm] = useState({ destCountry: "United Arab Emirates", containerSize: "20ft Reefer", qtyTons: "10", notes: "" });
+  const [reqForm, setReqForm] = useState({ destCountry: "United Arab Emirates", containerSize: "20ft Reefer (Cold)", qtyTons: "10", notes: "" });
   const [msg, setMsg] = useState("");
   const token = localStorage.getItem("agroconnect_token");
 

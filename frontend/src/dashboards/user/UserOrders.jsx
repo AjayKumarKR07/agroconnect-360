@@ -7,7 +7,7 @@ const DS_USER = `
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:60px 0;color:var(--text2);padding:60px 0;}
+  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:var(--text2);}
   .spinner{width:24px;height:24px;border:3px solid rgba(14,165,233,0.15);border-top-color:#0ea5e9;border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:12px;background:rgba(14,165,233,0.03);border:1px solid rgba(14,165,233,0.08);border-radius:18px;}

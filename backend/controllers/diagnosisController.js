@@ -178,12 +178,6 @@ try {
   });
 }
 
-    return res.status(201).json({
-      success: true,
-      message:
-        "Crop image uploaded successfully",
-      diagnosis,
-    });
   } catch (error) {
     console.error(
       "Create diagnosis error:",

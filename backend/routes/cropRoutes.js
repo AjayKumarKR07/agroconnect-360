@@ -39,7 +39,6 @@ router.get("/:id", getCropById);
 // Update crop
 router.put(
   "/:id",
-  protect,
   upload.single("image"),
   updateCrop
 );

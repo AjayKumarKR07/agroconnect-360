@@ -113,30 +113,17 @@ const verifyOtp = async (req, res) => {
     const otpRecord = await Otp.findOne({
       email,
     });
+
     console.log("========== VERIFY OTP ==========");
-console.log("Email:", email);
-console.log("Entered OTP:", otp);
-
-if (!otpRecord) {
-  console.log("OTP RECORD NOT FOUND");
-} else {
-  console.log("Stored Hash:", otpRecord.otpHash);
-  console.log("Entered Hash:", hashOtp(otp));
-  console.log("Match:", hashOtp(otp) === otpRecord.otpHash);
-  console.log("Expires At:", otpRecord.expiresAt);
-  console.log("Current Time:", new Date());
-}
-
-    console.log("Email:", email);
-console.log("Entered OTP:", otp);
-
-if (otpRecord) {
-  console.log("Stored Hash:", otpRecord.otpHash);
-  console.log("Entered Hash:", hashOtp(otp));
-  console.log("Expires:", otpRecord.expiresAt);
-} else {
-  console.log("OTP Record Not Found");
-}
+    console.log("Email:", email, "| Entered OTP:", otp);
+    if (!otpRecord) {
+      console.log("OTP RECORD NOT FOUND for", email);
+    } else {
+      console.log("Stored Hash:", otpRecord.otpHash);
+      console.log("Entered Hash:", hashOtp(otp));
+      console.log("Match:", hashOtp(otp) === otpRecord.otpHash);
+      console.log("Expires At:", otpRecord.expiresAt, "| Now:", new Date());
+    }
 
     if (!otpRecord) {
       return res.status(400).json({

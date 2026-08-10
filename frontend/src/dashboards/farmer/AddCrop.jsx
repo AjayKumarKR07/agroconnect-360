@@ -4,7 +4,7 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
 const CATEGORIES = ["Vegetables","Fruits","Grains","Pulses","Oilseeds","Spices","Flowers","Other"];
-const UNITS = ["kg","quintal","ton","piece","dozen","bundle"];
+const UNITS = ["kg","quintal","ton"];
 
 export default function AddCrop() {
   const navigate = useNavigate();

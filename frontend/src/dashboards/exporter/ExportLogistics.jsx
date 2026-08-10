@@ -94,7 +94,7 @@ export default function ExportLogistics() {
           <p className="pg-sub">Real-time status tracking for sea & air freight shipping containers from Indian ports.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>
-          {CONTAINERS.length} Active Shipments
+          {containers.length} Active Shipments
         </div>
       </div>
 

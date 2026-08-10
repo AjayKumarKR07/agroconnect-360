@@ -242,6 +242,123 @@ const getSellerRevenue = async (req, res) => {
   }
 };
 
+// ==========================================
+// GET /api/seller/analytics?days=30
+// ==========================================
+const getSellerAnalytics = async (req, res) => {
+  try {
+    const sellerId = req.user._id;
+    const days = Math.min(Math.max(Number(req.query.days) || 30, 1), 365);
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+    const orders = await Order.find({
+      "items.farmer": sellerId,
+      createdAt: { $gte: since },
+    }).populate("buyer", "name").lean();
+
+    // Daily revenue
+    const dayMap = {};
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+      const key = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      dayMap[key] = { date: key, revenue: 0, orders: 0 };
+    }
+
+    // Category breakdown & top products
+    const catMap = {};
+    const prodMap = {};
+
+    orders.forEach(o => {
+      const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
+      if (!myItems.length) return;
+
+      const dateKey = new Date(o.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+      const amount = myItems.reduce((s, it) => s + (it.subtotal || 0), 0);
+
+      if (dayMap[dateKey]) {
+        dayMap[dateKey].revenue += amount;
+        dayMap[dateKey].orders += 1;
+      }
+
+      myItems.forEach(it => {
+        const name = it.cropName || "Unknown";
+        prodMap[name] = (prodMap[name] || 0) + (it.subtotal || 0);
+        // Category not stored on item, use product name as proxy
+        const cat = name.toLowerCase().includes("rice") ? "Grains"
+          : name.toLowerCase().includes("wheat") ? "Grains"
+          : name.toLowerCase().includes("tomato") || name.toLowerCase().includes("onion") || name.toLowerCase().includes("potato") ? "Vegetables"
+          : name.toLowerCase().includes("mango") || name.toLowerCase().includes("banana") ? "Fruits"
+          : "Other";
+        catMap[cat] = (catMap[cat] || 0) + (it.subtotal || 0);
+      });
+    });
+
+    const daily = Object.values(dayMap);
+    const totalRevenue = daily.reduce((s, d) => s + d.revenue, 0);
+    const totalOrders = daily.reduce((s, d) => s + d.orders, 0);
+    const byCategory = Object.entries(catMap).map(([name, revenue]) => ({ name, revenue }));
+    const topProducts = Object.entries(prodMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, revenue]) => ({ name, revenue }));
+
+    const avgOrderValue = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
+
+    return res.status(200).json({
+      success: true,
+      totalRevenue,
+      totalOrders,
+      avgOrderValue,
+      daily,
+      byCategory,
+      topProducts,
+    });
+  } catch (error) {
+    console.error("Seller analytics error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load analytics" });
+  }
+};
+
+// ==========================================
+// GET /api/seller/shipments
+// Derives shipment-like records from orders
+// ==========================================
+const getSellerShipments = async (req, res) => {
+  try {
+    const sellerId = req.user._id;
+    const orders = await Order.find({
+      "items.farmer": sellerId,
+      status: { $in: ["accepted", "processing", "shipped", "delivered"] },
+    }).populate("buyer", "name email phone").sort({ updatedAt: -1 }).lean();
+
+    const shipments = [];
+    orders.forEach(o => {
+      const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
+      if (!myItems.length) return;
+      const statusMap = { accepted: "pending", processing: "dispatched", shipped: "in_transit", delivered: "delivered" };
+      shipments.push({
+        id: `SHP-${String(o._id).slice(-6).toUpperCase()}`,
+        orderId: `ORD-${String(o._id).slice(-6).toUpperCase()}`,
+        product: myItems.map(it => it.cropName).join(", "),
+        buyer: o.buyer?.name || o.deliveryAddress?.name || "Buyer",
+        qty: myItems.map(it => `${it.quantity} ${it.unit}`).join(", "),
+        status: statusMap[o.status] || "pending",
+        carrier: "Delhivery",
+        trackingNo: `DL${String(o._id).slice(-9).toUpperCase()}`,
+        eta: o.updatedAt,
+        from: myItems[0]?.location || "—",
+        to: o.deliveryAddress ? `${o.deliveryAddress.city}, ${o.deliveryAddress.state}` : "—",
+        createdAt: o.createdAt,
+      });
+    });
+
+    return res.status(200).json({ success: true, shipments });
+  } catch (error) {
+    console.error("Seller shipments error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load shipments" });
+  }
+};
+
 module.exports = {
   getSellerDashboardStats,
   getSellerProducts,
@@ -249,5 +366,6 @@ module.exports = {
   updateSellerProduct,
   deleteSellerProduct,
   getSellerRevenue,
+  getSellerAnalytics,
+  getSellerShipments,
 };
-

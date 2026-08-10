@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../config/api";
 
 const DS_ADMIN = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -11,36 +12,59 @@ const DS_ADMIN = `
   .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(99,102,241,0.18);background:rgba(99,102,241,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
   .tab-btn{padding:7px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(99,102,241,0.15);background:rgba(99,102,241,0.04);color:#a5b4fc;transition:all 0.2s;}
   .tab-btn.active{background:rgba(99,102,241,0.2);color:#fff;border-color:#6366f1;}
+  .spinner{width:22px;height:22px;border:3px solid rgba(99,102,241,0.15);border-top-color:#818cf8;border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:#a5b4fc;}
 `;
 
-const INITIAL_USERS = [
-  { id: "u-1", name: "Ajaykumar2005", email: "vivekshetty659@gmail.com", role: "farmer", phone: "9876543210", location: "Nashik, MH", status: "VERIFIED", joined: "1 Aug 2026" },
-  { id: "u-2", name: "Ajay G S", email: "gsajay18@gmail.com", role: "farmer", phone: "9876543211", location: "Karnal, HR", status: "VERIFIED", joined: "1 Aug 2026" },
-  { id: "u-3", name: "Demo Exporter", email: "exporter@agroconnect.com", role: "exporter", phone: "9888877777", location: "Mumbai, MH", status: "VERIFIED", joined: "2 Aug 2026" },
-  { id: "u-4", name: "Sunil Agro Seller", email: "seller@agroconnect.com", role: "seller", phone: "9777766666", location: "Pune, MH", status: "PENDING KYC", joined: "3 Aug 2026" },
-  { id: "u-5", name: "Meena Consumer", email: "consumer@gmail.com", role: "user", phone: "9666655555", location: "Delhi", status: "VERIFIED", joined: "3 Aug 2026" },
-];
+const ROLE_COLOR = {
+  farmer: "#4ade80", seller: "#a78bfa", user: "#38bdf8", exporter: "#fbbf24", admin: "#f87171",
+};
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState(INITIAL_USERS);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [toggling, setToggling] = useState(null);
+  const token = localStorage.getItem("agroconnect_token");
 
-  const toggleStatus = (id) => {
-    setUsers(prev => prev.map(u => {
-      if (u.id === id) {
-        const next = u.status === "VERIFIED" ? "SUSPENDED" : "VERIFIED";
-        return { ...u, status: next };
-      }
-      return u;
-    }));
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (roleFilter !== "all") params.append("role", roleFilter);
+      if (search) params.append("search", search);
+      const r = await fetch(`${API_URL}/api/admin/users?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (d.success) setUsers(d.users || []);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
   };
 
-  const filtered = users.filter(u => {
-    if (roleFilter !== "all" && u.role !== roleFilter) return false;
-    if (search && !u.name.toLowerCase().includes(search.toLowerCase()) && !u.email.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
+  useEffect(() => { loadUsers(); }, [roleFilter]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    loadUsers();
+  };
+
+  const toggleStatus = async (id, currentActive) => {
+    setToggling(id);
+    try {
+      const r = await fetch(`${API_URL}/api/admin/users/${id}/status`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (d.success) {
+        setUsers(prev => prev.map(u => u._id === id ? { ...u, isActive: d.isActive } : u));
+      }
+    } catch { alert("Failed to update user status."); }
+    finally { setToggling(null); }
+  };
 
   return (
     <>
@@ -50,10 +74,10 @@ export default function AdminUsers() {
         <div>
           <div className="eyebrow">User Directory & Role Moderation</div>
           <h1 className="pg-title">👥 User Management & Verification</h1>
-          <p className="pg-sub">Manage platform accounts across all 5 roles, verify KYC credentials, or suspend non-compliant users.</p>
+          <p className="pg-sub">Manage platform accounts across all roles, verify KYC credentials, or suspend non-compliant users.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
-          {users.length} Total Users
+          {users.length} Users
         </div>
       </div>
 
@@ -66,51 +90,82 @@ export default function AdminUsers() {
             </button>
           ))}
         </div>
-
-        <input className="field-input" placeholder="🔍 Search name, email, phone…" value={search} onChange={e => setSearch(e.target.value)} style={{ maxWidth: 280 }} />
+        <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
+          <input
+            className="field-input"
+            placeholder="🔍 Search name, email, phone…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ maxWidth: 240 }}
+          />
+          <button type="submit" className="btn-indigo" style={{ padding: "10px 16px", fontSize: 13 }}>Search</button>
+        </form>
       </div>
+
+      {loading && (
+        <div className="loading-wrap"><div className="spinner" /><span>Loading users…</span></div>
+      )}
+
+      {!loading && users.length === 0 && (
+        <div className="card" style={{ textAlign: "center", padding: "40px" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>👥</div>
+          <div style={{ color: "#fff", fontWeight: 700 }}>No users found</div>
+          <div style={{ color: "#a5b4fc", fontSize: 13, marginTop: 6 }}>Try adjusting the filters.</div>
+        </div>
+      )}
 
       {/* User List Table */}
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
-          <thead>
-            <tr style={{ background: "rgba(99,102,241,0.08)", borderBottom: "1px solid rgba(99,102,241,0.14)", color: "#a5b4fc", textTransform: "uppercase", fontSize: 11 }}>
-              <th style={{ padding: "14px 18px" }}>User</th>
-              <th style={{ padding: "14px 18px" }}>Role</th>
-              <th style={{ padding: "14px 18px" }}>Location</th>
-              <th style={{ padding: "14px 18px" }}>Status</th>
-              <th style={{ padding: "14px 18px", textAlign: "right" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((u, idx) => (
-              <tr key={u.id} style={{ borderBottom: idx < filtered.length - 1 ? "1px solid rgba(99,102,241,0.08)" : "none" }}>
-                <td style={{ padding: "14px 18px" }}>
-                  <div style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{u.name}</div>
-                  <div style={{ fontSize: 11, color: "#a5b4fc" }}>{u.email} · 📞 {u.phone}</div>
-                </td>
-                <td style={{ padding: "14px 18px" }}>
-                  <span style={{ padding: "3px 9px", borderRadius: 8, background: "rgba(99,102,241,0.15)", color: "#c7d2fe", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>
-                    {u.role}
-                  </span>
-                </td>
-                <td style={{ padding: "14px 18px", color: "#a5b4fc" }}>📍 {u.location}</td>
-                <td style={{ padding: "14px 18px" }}>
-                  <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: u.status === "VERIFIED" ? "rgba(34,197,94,0.15)" : u.status === "PENDING KYC" ? "rgba(251,191,36,0.15)" : "rgba(239,68,68,0.15)", color: u.status === "VERIFIED" ? "#4ade80" : u.status === "PENDING KYC" ? "#fbbf24" : "#f87171", fontWeight: 800 }}>
-                    ● {u.status}
-                  </span>
-                </td>
-                <td style={{ padding: "14px 18px", textAlign: "right" }}>
-                  <button onClick={() => toggleStatus(u.id)}
-                    style={{ padding: "6px 14px", borderRadius: 8, border: `1px solid ${u.status === "VERIFIED" ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: u.status === "VERIFIED" ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)", color: u.status === "VERIFIED" ? "#f87171" : "#4ade80", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
-                    {u.status === "VERIFIED" ? "🚫 Suspend" : "✅ Verify Account"}
-                  </button>
-                </td>
+      {!loading && users.length > 0 && (
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: "rgba(99,102,241,0.08)", borderBottom: "1px solid rgba(99,102,241,0.14)", color: "#a5b4fc", textTransform: "uppercase", fontSize: 11 }}>
+                <th style={{ padding: "14px 18px" }}>User</th>
+                <th style={{ padding: "14px 18px" }}>Role</th>
+                <th style={{ padding: "14px 18px" }}>Location</th>
+                <th style={{ padding: "14px 18px" }}>Joined</th>
+                <th style={{ padding: "14px 18px" }}>Status</th>
+                <th style={{ padding: "14px 18px", textAlign: "right" }}>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {users.map((u, idx) => (
+                <tr key={u._id} style={{ borderBottom: idx < users.length - 1 ? "1px solid rgba(99,102,241,0.08)" : "none" }}>
+                  <td style={{ padding: "14px 18px" }}>
+                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{u.name || "Unnamed"}</div>
+                    <div style={{ fontSize: 11, color: "#a5b4fc" }}>{u.email} {u.phone ? `· 📞 ${u.phone}` : ""}</div>
+                  </td>
+                  <td style={{ padding: "14px 18px" }}>
+                    <span style={{ padding: "3px 9px", borderRadius: 8, background: `${ROLE_COLOR[u.role] || "#818cf8"}20`, color: ROLE_COLOR[u.role] || "#818cf8", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td style={{ padding: "14px 18px", color: "#a5b4fc" }}>
+                    📍 {[u.location, u.district, u.state].filter(Boolean).join(", ") || "—"}
+                  </td>
+                  <td style={{ padding: "14px 18px", color: "#a5b4fc", fontSize: 12 }}>
+                    {new Date(u.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={{ padding: "14px 18px" }}>
+                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: u.isActive ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: u.isActive ? "#4ade80" : "#f87171", fontWeight: 800 }}>
+                      ● {u.isActive ? "ACTIVE" : "SUSPENDED"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "14px 18px", textAlign: "right" }}>
+                    <button
+                      disabled={toggling === u._id}
+                      onClick={() => toggleStatus(u._id, u.isActive)}
+                      style={{ padding: "6px 14px", borderRadius: 8, border: `1px solid ${u.isActive ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: u.isActive ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)", color: u.isActive ? "#f87171" : "#4ade80", fontWeight: 700, fontSize: 12, cursor: "pointer", opacity: toggling === u._id ? 0.5 : 1 }}
+                    >
+                      {toggling === u._id ? "⏳" : u.isActive ? "🚫 Suspend" : "✅ Activate"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   );
 }

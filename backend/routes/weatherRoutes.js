@@ -1,19 +1,10 @@
 const express = require("express");
-
-const {
-  getWeather,
-} = require("../controllers/weatherController");
-
-const {
-  protect,
-} = require("../middleware/authMiddleware");
+const { getWeather, getForecast } = require("../controllers/weatherController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get(
-  "/",
-  protect,
-  getWeather
-);
+router.get("/", protect, getWeather);
+router.get("/forecast", protect, getForecast);
 
 module.exports = router;

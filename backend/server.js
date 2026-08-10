@@ -39,6 +39,15 @@ const sellerRoutes = require(
 const exporterRoutes = require(
   "./routes/exporterRoutes"
 );
+const adminRoutes = require(
+  "./routes/adminRoutes"
+);
+const smartFarmRoutes = require(
+  "./routes/smartFarmRoutes"
+);
+const farmerRoutes = require(
+  "./routes/farmerRoutes"
+);
 
 
 // Connect to MongoDB
@@ -101,7 +110,18 @@ app.use(
   "/api/exporter",
   exporterRoutes
 );
-
+app.use(
+  "/api/admin",
+  adminRoutes
+);
+app.use(
+  "/api/farmer",
+  smartFarmRoutes
+);
+app.use(
+  "/api/farmer",
+  farmerRoutes
+);
 
 
 console.log(

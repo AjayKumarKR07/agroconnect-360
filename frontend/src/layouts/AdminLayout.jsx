@@ -17,6 +17,8 @@ export default function AdminLayout() {
     { emoji: "🏠", name: "Overview",        path: "/admin/dashboard" },
     { emoji: "👥", name: "User Management", path: "/admin/users" },
     { emoji: "🌾", name: "Crop Moderation", path: "/admin/crops" },
+    { emoji: "📦", name: "Orders",          path: "/admin/orders" },
+    { emoji: "🚢", name: "Exports",         path: "/admin/exports" },
     { emoji: "📢", name: "Broadcasts",      path: "/admin/broadcast" },
     { emoji: "📜", name: "Audit Logs",      path: "/admin/audit-logs" },
     { emoji: "💰", name: "Platform Fees",   path: "/admin/finance" },

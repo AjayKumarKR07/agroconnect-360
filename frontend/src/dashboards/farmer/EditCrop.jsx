@@ -4,8 +4,8 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
 const CATEGORIES = ["Vegetables","Fruits","Grains","Pulses","Oilseeds","Spices","Flowers","Other"];
-const UNITS = ["kg","quintal","ton","piece","dozen","bundle"];
-const STATUSES = ["growing","available","sold","inactive"];
+const UNITS = ["kg","quintal","ton"];
+const STATUSES = ["growing","ready","listed","sold"];
 
 export default function EditCrop() {
   const navigate = useNavigate();

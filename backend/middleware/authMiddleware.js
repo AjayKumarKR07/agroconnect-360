@@ -44,6 +44,21 @@ const protect = async (req, res, next) => {
   }
 };
 
+// ==========================================
+// ADMIN ONLY MIDDLEWARE
+// Requires protect to run first (req.user set)
+// ==========================================
+const adminOnly = (req, res, next) => {
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Admin access required",
+    });
+  }
+  next();
+};
+
 module.exports = {
   protect,
+  adminOnly,
 };
