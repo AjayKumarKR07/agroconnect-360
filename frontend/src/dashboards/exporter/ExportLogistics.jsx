@@ -189,6 +189,11 @@ export default function ExportLogistics() {
   const [search,         setSearch]         = useState("");
   const [loading,        setLoading]        = useState(true);
   const [showAdd,        setShowAdd]        = useState(false);
+  const [toast,          setToast]          = useState("");
+  const [deleteConfId,   setDeleteConfId]   = useState(null);
+  const [statusUpdating, setStatusUpdating] = useState(false);
+
+  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3500); };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -211,7 +216,41 @@ export default function ExportLogistics() {
     setContainers(p => [shipment, ...p]);
     setActiveShipment(shipment);
     setShowAdd(false);
+    showToast("✅ Shipment added");
   };
+
+  /* Advance / set status */
+  const updateStatus = async (shipmentId, newStatus) => {
+    setStatusUpdating(true);
+    try {
+      const r = await fetch(`${API_URL}/api/exporter/shipments/${shipmentId}/status`, {
+        method: "PATCH",
+        headers: authH(),
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const d = await r.json();
+      if (!d.success) throw new Error(d.message);
+      setContainers(p => p.map(c => c._id === shipmentId ? d.shipment : c));
+      setActiveShipment(d.shipment);
+      showToast(`✅ Status updated: ${STATUS_MAP[newStatus]?.label || newStatus}`);
+    } catch (e) { showToast("⚠️ " + e.message); }
+    finally { setStatusUpdating(false); }
+  };
+
+  /* Delete */
+  const deleteShipment = async (id) => {
+    try {
+      const r = await fetch(`${API_URL}/api/exporter/shipments/${id}`, { method: "DELETE", headers: authH() });
+      const d = await r.json();
+      if (!d.success) throw new Error(d.message);
+      const remaining = containers.filter(c => c._id !== id);
+      setContainers(remaining);
+      setActiveShipment(remaining.length > 0 ? remaining[0] : null);
+      setDeleteConfId(null);
+      showToast("✅ Shipment deleted");
+    } catch (e) { showToast("⚠️ " + e.message); }
+  };
+
 
   const filtered = containers.filter(c =>
     !search ||
@@ -232,6 +271,13 @@ export default function ExportLogistics() {
     <>
       <style>{DS_EXPORTER}</style>
       {showAdd && <AddShipmentModal onClose={() => setShowAdd(false)} onSaved={onSaved} />}
+
+      {/* Toast */}
+      {toast && (
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#4ade80", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+          {toast}
+        </div>
+      )}
 
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="pg-head">
@@ -327,7 +373,7 @@ export default function ExportLogistics() {
                 </div>
               </div>
 
-              {/* Stepper */}
+              {/* Pipeline stepper */}
               <div>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#a38a5d", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14 }}>
                   Port & Customs Clearance Pipeline
@@ -382,6 +428,70 @@ export default function ExportLogistics() {
                   </div>
                 )}
               </div>
+
+              {/* ── Action buttons ─────────────────────────────────── */}
+              {(() => {
+                const STATUS_NEXT = {
+                  cfs_cold_storage:  "port_gate_in",
+                  port_gate_in:      "customs_cleared",
+                  customs_cleared:   "onboard_vessel",
+                  onboard_vessel:    "delivered",
+                };
+                const nextStatus = STATUS_NEXT[activeShipment.status];
+                const isDelivered = activeShipment.status === "delivered";
+                const isCancelled = activeShipment.status === "cancelled";
+
+                return (
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    {/* Advance to next step */}
+                    {nextStatus && !isDelivered && !isCancelled && (
+                      <button
+                        className="btn-gold"
+                        style={{ flex: 2, justifyContent: "center", opacity: statusUpdating ? 0.6 : 1 }}
+                        disabled={statusUpdating}
+                        onClick={() => updateStatus(activeShipment._id, nextStatus)}
+                      >
+                        {statusUpdating ? "⏳ Updating…" : `▶ Advance to: ${STATUS_MAP[nextStatus]?.label}`}
+                      </button>
+                    )}
+
+                    {/* Mark Delivered directly */}
+                    {!isDelivered && !isCancelled && nextStatus !== "delivered" && (
+                      <button
+                        className="btn-ghost"
+                        style={{ flex: 1, justifyContent: "center", color: "#4ade80", borderColor: "rgba(34,197,94,0.25)" }}
+                        disabled={statusUpdating}
+                        onClick={() => updateStatus(activeShipment._id, "delivered")}
+                      >
+                        ✅ Mark Delivered
+                      </button>
+                    )}
+
+                    {/* Delivered badge */}
+                    {isDelivered && (
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#4ade80", fontWeight: 800, fontSize: 14, textAlign: "center" }}>
+                        ✅ Destination Delivered
+                      </div>
+                    )}
+
+                    {/* Delete */}
+                    {deleteConfId === activeShipment._id ? (
+                      <>
+                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)", color: "#f87171", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteShipment(activeShipment._id)}>
+                          Yes, Delete
+                        </button>
+                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button className="btn-ghost" style={{ justifyContent: "center", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(activeShipment._id)}>
+                        🗑 Delete
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>

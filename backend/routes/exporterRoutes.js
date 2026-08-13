@@ -3,6 +3,8 @@ const {
   getExporterStats,
   getExporterShipments,
   createExportShipment,
+  updateShipmentStatus,
+  deleteShipment,
   getExporterRFQs,
   createExportRFQ,
 } = require("../controllers/exporterController");
@@ -16,10 +18,13 @@ router.use(protect);
 
 router.get("/stats", getExporterStats);
 
-router.get("/shipments", getExporterShipments);
-router.post("/shipments", createExportShipment);
+router.get("/shipments",              getExporterShipments);
+router.post("/shipments",             createExportShipment);
+router.patch("/shipments/:id/status", updateShipmentStatus);
+router.delete("/shipments/:id",       deleteShipment);
 
-router.get("/rfqs", getExporterRFQs);
+router.get("/rfqs",  getExporterRFQs);
 router.post("/rfqs", createExportRFQ);
 
 module.exports = router;
+

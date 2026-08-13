@@ -129,10 +129,61 @@ const createExportRFQ = async (req, res) => {
   }
 };
 
+// ==========================================
+// UPDATE SHIPMENT STATUS
+// PATCH /api/exporter/shipments/:id/status
+// ==========================================
+const STATUS_PROGRESSION = [
+  "cfs_cold_storage",
+  "port_gate_in",
+  "customs_cleared",
+  "onboard_vessel",
+  "delivered",
+];
+
+const updateShipmentStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowed = ["cfs_cold_storage", "port_gate_in", "customs_cleared", "onboard_vessel", "delivered", "cancelled"];
+    if (!allowed.includes(status))
+      return res.status(400).json({ success: false, message: "Invalid status value" });
+
+    const shipment = await ExportShipment.findOne({ _id: req.params.id, exporter: req.user._id });
+    if (!shipment) return res.status(404).json({ success: false, message: "Shipment not found" });
+
+    shipment.status    = status;
+    shipment.statusStep = STATUS_PROGRESSION.indexOf(status) + 1;
+    await shipment.save();
+
+    return res.json({ success: true, message: "Shipment status updated", shipment });
+  } catch (error) {
+    console.error("updateShipmentStatus error:", error);
+    return res.status(500).json({ success: false, message: "Failed to update status" });
+  }
+};
+
+// ==========================================
+// DELETE SHIPMENT
+// DELETE /api/exporter/shipments/:id
+// ==========================================
+const deleteShipment = async (req, res) => {
+  try {
+    const shipment = await ExportShipment.findOneAndDelete({ _id: req.params.id, exporter: req.user._id });
+    if (!shipment) return res.status(404).json({ success: false, message: "Shipment not found" });
+    return res.json({ success: true, message: "Shipment deleted" });
+  } catch (error) {
+    console.error("deleteShipment error:", error);
+    return res.status(500).json({ success: false, message: "Failed to delete shipment" });
+  }
+};
+
 module.exports = {
   getExporterStats,
   getExporterShipments,
   createExportShipment,
+  updateShipmentStatus,
+  deleteShipment,
   getExporterRFQs,
   createExportRFQ,
 };
+
