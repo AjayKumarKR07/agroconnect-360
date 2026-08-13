@@ -39,6 +39,9 @@ const sellerRoutes = require(
 const exporterRoutes = require(
   "./routes/exporterRoutes"
 );
+const exportRoutes = require(
+  "./routes/exportRoutes"
+);
 const adminRoutes = require(
   "./routes/adminRoutes"
 );
@@ -47,6 +50,12 @@ const smartFarmRoutes = require(
 );
 const farmerRoutes = require(
   "./routes/farmerRoutes"
+);
+const contractRoutes = require(
+  "./routes/contractRoutes"
+);
+const complianceRoutes = require(
+  "./routes/complianceRoutes"
 );
 
 
@@ -111,6 +120,10 @@ app.use(
   exporterRoutes
 );
 app.use(
+  "/api/export",
+  exportRoutes
+);
+app.use(
   "/api/admin",
   adminRoutes
 );
@@ -121,6 +134,14 @@ app.use(
 app.use(
   "/api/farmer",
   farmerRoutes
+);
+app.use(
+  "/api/contracts",
+  contractRoutes
+);
+app.use(
+  "/api/compliance",
+  complianceRoutes
 );
 
 

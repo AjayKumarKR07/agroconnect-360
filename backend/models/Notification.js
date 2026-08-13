@@ -17,6 +17,7 @@ const notificationSchema = new mongoose.Schema(
         "harvest",
         "diagnosis",
         "plan",
+        "export",
         "system",
       ],
       default: "system",

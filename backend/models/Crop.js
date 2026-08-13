@@ -96,10 +96,36 @@ const cropSchema = new mongoose.Schema(
       ],
       default: "sowing",
     },
+
+    // ── Export Listing Fields (optional, domestic crops unaffected) ──────
+    isExportListing: { type: Boolean, default: false },
+    exportGrade: {
+      type: String,
+      trim: true,
+      default: "",
+      // e.g. "Export Grade", "Grade A", "AGMARK", "HPS 40/50"
+    },
+    exportQuantity: { type: Number, default: null }, // in exportUnit
+    exportUnit: {
+      type: String,
+      enum: ["MT", "quintal", "kg", ""],
+      default: "MT",
+    },
+    expectedExportPrice: { type: Number, default: null }, // per exportUnit
+    availableFrom: { type: Date, default: null },
+    preferredDestination: { type: String, trim: true, default: "" },
+    exportStatus: {
+      type: String,
+      enum: ["available", "negotiating", "committed", "closed"],
+      default: "available",
+    },
   },
   {
     timestamps: true,
   }
 );
+
+cropSchema.index({ isExportListing: 1, exportStatus: 1, createdAt: -1 });
+cropSchema.index({ farmer: 1, isExportListing: 1 });
 
 module.exports = mongoose.model("Crop", cropSchema);

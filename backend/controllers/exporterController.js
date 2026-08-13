@@ -15,6 +15,10 @@ const getExporterStats = async (req, res) => {
     const customsCleared = shipments.filter(s => ["customs_cleared", "onboard_vessel", "delivered"].includes(s.status)).length;
     const totalVolumeTons = shipments.reduce((sum, s) => sum + (s.quantityTons || 0), 0);
 
+    const totalRevenueUsd = shipments
+      .filter(s => s.status === "delivered")
+      .reduce((sum, s) => sum + (s.totalValueUsd || s.quantityTons * 3000 || 0), 0);
+
     return res.status(200).json({
       success: true,
       stats: {
@@ -23,7 +27,7 @@ const getExporterStats = async (req, res) => {
         customsCleared,
         totalVolumeTons,
         rfqCount: rfqs.length,
-        totalRevenueUsd: 248500, // Demo aggregated total
+        totalRevenueUsd,
       },
     });
   } catch (error) {

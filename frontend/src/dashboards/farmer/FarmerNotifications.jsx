@@ -15,6 +15,7 @@ const TYPE_STYLE = {
   harvest:   { icon: "🌱", color: "#4ade80",  bg: "rgba(34,197,94,0.08)"   },
   diagnosis: { icon: "🩺", color: "#a78bfa",  bg: "rgba(167,139,250,0.08)" },
   plan:      { icon: "🌾", color: "#22c55e",  bg: "rgba(34,197,94,0.08)"   },
+  export:    { icon: "🌍", color: "#38bdf8",  bg: "rgba(56,189,248,0.08)"  },
   system:    { icon: "🔔", color: "#94a3b8",  bg: "rgba(148,163,184,0.06)" },
 };
 

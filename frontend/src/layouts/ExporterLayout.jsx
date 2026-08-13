@@ -14,16 +14,16 @@ export default function ExporterLayout() {
   };
 
   const nav = [
-    { emoji: "🏠", name: "Overview",       path: "/exporter/dashboard" },
-    { emoji: "🌐", name: "Global Sourcing", path: "/exporter/sourcing" },
-    { emoji: "🚢", name: "Shipments & Port",path: "/exporter/logistics" },
-    { emoji: "❄️", name: "Cold Chain IoT",  path: "/exporter/cold-chain" },
-    { emoji: "📜", name: "Contracts & LC",  path: "/exporter/contracts" },
-    { emoji: "📑", name: "Customs & Docs",  path: "/exporter/compliance" },
-    { emoji: "🧮", name: "Margin Calc",    path: "/exporter/calculator" },
-    { emoji: "💱", name: "FX & Markets",   path: "/exporter/markets" },
-    { emoji: "🤖", name: "AI Assistant",   path: "/exporter/assistant" },
-    { emoji: "👤", name: "Profile",        path: "/exporter/profile" },
+    { emoji: "🏠", name: "Overview",        path: "/exporter/dashboard" },
+    { emoji: "🌐", name: "Global Sourcing",  path: "/exporter/sourcing" },
+    { emoji: "📩", name: "My Interests",     path: "/exporter/my-interests" },
+    { emoji: "🚢", name: "Shipments & Port", path: "/exporter/logistics" },
+    { emoji: "📜", name: "Contracts & LC",   path: "/exporter/contracts" },
+    { emoji: "📑", name: "Customs & Docs",   path: "/exporter/compliance" },
+    { emoji: "🧮", name: "Margin Calc",      path: "/exporter/calculator" },
+    { emoji: "💱", name: "FX & Markets",     path: "/exporter/markets" },
+    { emoji: "🤖", name: "AI Assistant",     path: "/exporter/assistant" },
+    { emoji: "👤", name: "Profile",          path: "/exporter/profile" },
   ];
 
   const initials = (user.name || "E").split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);

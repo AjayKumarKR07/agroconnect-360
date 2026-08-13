@@ -70,6 +70,7 @@ import BuyerProfile from "./dashboards/user/BuyerProfile";
 import ExporterLayout from "./layouts/ExporterLayout";
 import ExporterDashboard from "./dashboards/exporter/ExporterDashboard";
 import ExportSourcing from "./dashboards/exporter/ExportSourcing";
+import ExportInterests from "./dashboards/exporter/ExportInterests";
 import ExportLogistics from "./dashboards/exporter/ExportLogistics";
 import ExportCompliance from "./dashboards/exporter/ExportCompliance";
 import ExportMarkets from "./dashboards/exporter/ExportMarkets";
@@ -290,9 +291,11 @@ export default function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard"     element={<ExporterDashboard />} />
-          <Route path="sourcing"      element={<ExportSourcing />} />
-          <Route path="logistics"     element={<ExportLogistics />} />
+          <Route path="dashboard"         element={<ExporterDashboard />} />
+          <Route path="sourcing"          element={<ExportSourcing />} />
+          <Route path="farmer-produce"    element={<ExportSourcing />} />
+          <Route path="my-interests"      element={<ExportInterests />} />
+          <Route path="logistics"         element={<ExportLogistics />} />
           <Route path="cold-chain"    element={<ExportColdChain />} />
           <Route path="contracts"     element={<ExportContracts />} />
           <Route path="compliance"    element={<ExportCompliance />} />

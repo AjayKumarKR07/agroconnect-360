@@ -7,18 +7,23 @@ export default function FarmerDashboard() {
   const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
 
   const [stats, setStats] = useState({ totalCrops: 0, activeCrops: 0, totalOrders: 0, pendingOrders: 0, totalIncome: 0 });
+  const [exportStats, setExportStats] = useState({ listingCount: 0, pendingInterests: 0, unreadInterests: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("agroconnect_token");
-    fetch(`${API_URL}/api/orders/farmer/dashboard-stats`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const h = { Authorization: `Bearer ${token}` };
+    fetch(`${API_URL}/api/orders/farmer/dashboard-stats`, { headers: h })
       .then((r) => r.json())
       .then((d) => { if (d.stats) setStats(d.stats); else setError(d.message || "Failed to load"); })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
+    // Load export stats silently (non-blocking)
+    fetch(`${API_URL}/api/export/stats`, { headers: h })
+      .then(r => r.json())
+      .then(d => { if (d.success) setExportStats(d); })
+      .catch(() => {});
   }, []);
 
   const greeting = () => {
@@ -37,6 +42,7 @@ export default function FarmerDashboard() {
 
   const quickLinks = [
     { emoji: "➕", label: "Add New Crop",          to: "/farmer/crops/add",            color: "#22c55e" },
+    { emoji: "🌍", label: "Export Produce",         to: "/farmer/export",               color: "#38bdf8" },
     { emoji: "🌾", label: "Smart Farm Planner",    to: "/farmer/smart-farm-planner",   color: "#16a34a" },
     { emoji: "🔬", label: "Check Crop Disease",    to: "/farmer/disease-detection",    color: "#a78bfa" },
     { emoji: "📈", label: "Price Prediction",      to: "/farmer/price-prediction",     color: "#38bdf8" },
@@ -185,6 +191,37 @@ export default function FarmerDashboard() {
                 <span style={{ marginLeft: "auto", color: "var(--text2)", fontSize: 16 }}>→</span>
               </Link>
             ))}
+          </div>
+        </div>
+
+        {/* Export Opportunities Card */}
+        <div className="card" style={{ borderColor: "rgba(56,189,248,0.18)", background: "rgba(56,189,248,0.03)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div>
+              <div className="card-title">🌍 Export Opportunities</div>
+              <div className="card-sub">Connect with international buyers</div>
+            </div>
+            <Link to="/farmer/export" style={{ fontSize: 13, color: "#38bdf8", fontWeight: 600, textDecoration: "none" }}>Open →</Link>
+          </div>
+          <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+            {[
+              [exportStats.listingCount    || 0, "My Listings",    "#4ade80"],
+              [exportStats.pendingInterests|| 0, "Pending Requests","#fbbf24"],
+              [exportStats.unreadInterests || 0, "Unread Updates",  "#f87171"],
+            ].map(([v, l, c]) => (
+              <div key={l} style={{ flex: 1, minWidth: 80, padding: "10px 12px", borderRadius: 10, background: "rgba(255,255,255,0.03)", textAlign: "center", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: c }}>{v}</div>
+                <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Link to="/farmer/export" style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", color: "#38bdf8", fontWeight: 700, fontSize: 12, textAlign: "center", textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+              📋 My Listings
+            </Link>
+            <Link to="/farmer/export" style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#4ade80", fontWeight: 700, fontSize: 12, textAlign: "center", textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+              + List Produce
+            </Link>
           </div>
         </div>
       </div>

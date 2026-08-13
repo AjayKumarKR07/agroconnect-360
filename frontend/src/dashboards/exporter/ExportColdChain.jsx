@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { API_URL } from "../../config/api";
 
-const DS_EXPORTER = `
+const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
@@ -8,111 +10,241 @@ const DS_EXPORTER = `
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
   .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pulse{animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 `;
 
-const REEFERS = [
-  { container: "MSKU-948201", cargo: "Alphonso Mangoes (20 Tons)", temp: "+4.2°C", targetTemp: "+4.0°C", humidity: "88%", co2: "0.5%", battery: "94%", status: "OPTIMAL", color: "#4ade80", location: "Arabian Sea (En-Route Dubai)" },
-  { container: "CMAU-102938", cargo: "Green Bananas (18 Tons)", temp: "+13.5°C", targetTemp: "+13.0°C", humidity: "90%", co2: "0.8%", battery: "89%", status: "OPTIMAL", color: "#4ade80", location: "Indian Ocean (En-Route Rotterdam)" },
-  { container: "HLCU-883012", cargo: "Fresh Okra & Vegetables (12 Tons)", temp: "+7.8°C", targetTemp: "+6.0°C", humidity: "95%", co2: "1.2%", battery: "76%", status: "TEMP SPIKE", color: "#fbbf24", location: "Nhava Sheva CFS Cold Store" },
-];
+const authH = () => ({
+  Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
+});
+
+/**
+ * Cold-chain sensor data is simulated per container.
+ * In a real setup these readings would come from Carrier/Daikin IoT APIs.
+ * Here we derive stable (but realistic) values from the container's DB data.
+ */
+function simulateSensors(shipment) {
+  // Seed a deterministic "random" from the container number to keep
+  // values consistent across page refreshes for the same container.
+  const seed = (shipment.containerNo || "X")
+    .split("")
+    .reduce((a, c) => a + c.charCodeAt(0), 0);
+  const pseudo = (offset) => ((seed * 9301 + offset * 49297 + 233) % 100) / 100;
+
+  const baseTemp  = 4 + pseudo(1) * 10;           // 4°C – 14°C
+  const humidity  = 80 + pseudo(2) * 15;           // 80–95%
+  const co2       = 0.3 + pseudo(3) * 1.2;         // 0.3–1.5%
+  const battery   = 70 + pseudo(4) * 25;           // 70–95%
+
+  const isActive  = !["delivered", "cancelled"].includes(shipment.status);
+  const hasSpike  = pseudo(5) > 0.8 && isActive;   // ~20% chance of temp spike
+
+  const temp = hasSpike ? baseTemp + 2 : baseTemp;
+  const status = !isActive ? "OFFLINE" : hasSpike ? "TEMP SPIKE" : "OPTIMAL";
+  const color  = status === "OFFLINE" ? "#7a8fa6" : status === "TEMP SPIKE" ? "#fbbf24" : "#4ade80";
+
+  // Simulated 24h hourly log (6 sample points)
+  const log = [0, 4, 8, 12, 16, 20].map((h, i) => ({
+    time: `${String(h).padStart(2, "0")}:00`,
+    temp: (baseTemp + pseudo(i + 6) * 0.8 - 0.4).toFixed(1),
+  }));
+
+  return {
+    temp:       `+${temp.toFixed(1)}°C`,
+    targetTemp: `+${baseTemp.toFixed(1)}°C`,
+    humidity:   `${humidity.toFixed(0)}%`,
+    co2:        `${co2.toFixed(1)}%`,
+    battery:    `${battery.toFixed(0)}%`,
+    status,
+    color,
+    log,
+  };
+}
 
 export default function ExportColdChain() {
-  const [reefers, setReefers] = useState(REEFERS);
-  const [selected, setSelected] = useState(REEFERS[0]);
+  const [shipments, setShipments] = useState([]);
+  const [selected,  setSelected]  = useState(null);
+  const [loading,   setLoading]   = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const r = await fetch(`${API_URL}/api/exporter/shipments`, { headers: authH() });
+      const d = await r.json();
+      if (d.success && Array.isArray(d.shipments)) {
+        setShipments(d.shipments);
+        if (d.shipments.length > 0) setSelected(d.shipments[0]);
+      }
+    } catch {}
+    finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Active reefers = shipments that are not yet delivered/cancelled
+  const reefers = shipments.filter(s => !["delivered", "cancelled"].includes(s.status));
+  const selectedSensors = selected ? simulateSensors(selected) : null;
 
   return (
     <>
-      <style>{DS_EXPORTER}</style>
+      <style>{DS}</style>
 
+      {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="pg-head">
         <div>
           <div className="eyebrow">IoT Reefer Container Telematics</div>
           <h1 className="pg-title">❄️ Cold Chain & Climate Monitoring</h1>
-          <p className="pg-sub">Live IoT sensor telemetry monitoring temperature, humidity, and atmospheric gas levels inside refrigerated containers.</p>
+          <p className="pg-sub">
+            Simulated IoT telemetry monitoring temperature, humidity, and gas levels
+            for your registered shipment containers.
+          </p>
         </div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>
-          3 Active Reefers Monitored
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20 }}>
-        {/* Left Side: Reefer List */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {reefers.map(r => (
-            <div key={r.container} onClick={() => setSelected(r)} className="card"
-              style={{ padding: 16, cursor: "pointer", background: selected.container === r.container ? "rgba(245,158,11,0.12)" : "rgba(245,158,11,0.03)", borderColor: selected.container === r.container ? "rgba(245,158,11,0.3)" : "rgba(245,158,11,0.1)", transition: "all 0.2s" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#fbbf24", fontSize: 14 }}>{r.container}</span>
-                <span style={{ fontSize: 11, padding: "2px 7px", borderRadius: 6, background: `${r.color}20`, color: r.color, fontWeight: 800 }}>
-                  ● {r.status}
-                </span>
-              </div>
-              <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, marginBottom: 6 }}>{r.cargo}</div>
-              <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--text2)" }}>
-                <span>🌡️ <strong style={{ color: "#fff" }}>{r.temp}</strong></span>
-                <span>💧 <strong style={{ color: "#fff" }}>{r.humidity}</strong></span>
-                <span>🔋 <strong style={{ color: "#fff" }}>{r.battery}</strong></span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Right Side: IoT Telemetry Dashboard */}
-        {selected && (
-          <div className="card" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16, flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>
-                  ❄️ Reefer Unit: {selected.container}
-                </div>
-                <div style={{ fontSize: 14, color: "#fff", fontWeight: 700, marginTop: 2 }}>{selected.cargo}</div>
-                <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>📍 Location: {selected.location}</div>
-              </div>
-              <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 8, background: `${selected.color}20`, color: selected.color, fontWeight: 800, border: `1px solid ${selected.color}40` }}>
-                ● SENSOR STATUS: {selected.status}
-              </span>
-            </div>
-
-            {/* 4 Sensor Telemetry Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 14 }}>
-              {[
-                ["🌡️ Temperature", selected.temp, `Target: ${selected.targetTemp}`, "#f59e0b"],
-                ["💧 Relative Humidity", selected.humidity, "Optimal Range 85-95%", "#38bdf8"],
-                ["☁️ CO2 Gas Level", selected.co2, "Controlled Atmosphere", "#a78bfa"],
-                ["🔋 IoT Battery", selected.battery, "Solar + Battery Backup", "#4ade80"],
-              ].map(([label, val, sub, color]) => (
-                <div key={label} style={{ background: "rgba(0,0,0,0.25)", padding: "14px 16px", borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
-                  <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase" }}>{label}</div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color, marginTop: 4 }}>{val}</div>
-                  <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>{sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Temperature Log Timeline */}
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 12 }}>
-                📈 Last 24 Hours Climate Log (Hourly Intervals)
-              </div>
-              <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
-                {[
-                  { time: "00:00", t: "+4.1°C" },
-                  { time: "04:00", t: "+4.0°C" },
-                  { time: "08:00", t: "+4.3°C" },
-                  { time: "12:00", t: "+4.2°C" },
-                  { time: "16:00", t: "+4.1°C" },
-                  { time: "20:00", t: "+4.2°C" },
-                ].map((log, idx) => (
-                  <div key={idx} style={{ flex: 1, minWidth: 80, padding: "10px", borderRadius: 10, background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)", textAlign: "center" }}>
-                    <div style={{ fontSize: 10, color: "var(--text2)" }}>{log.time}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#f59e0b", marginTop: 2 }}>{log.t}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {!loading && reefers.length > 0 && (
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fbbf24" }}>
+            {reefers.length} Active Reefe{reefers.length !== 1 ? "rs" : "r"} Monitored
           </div>
         )}
       </div>
+
+      {/* ── Loading ─────────────────────────────────────────────────── */}
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "64px 0" }}>
+          <div className="spinner" />
+          <div style={{ marginTop: 14, fontSize: 14, color: "#a38a5d" }}>Loading container data…</div>
+        </div>
+      ) : shipments.length === 0 ? (
+        /* ── No shipments at all ──────────────────────────────────── */
+        <div style={{ textAlign: "center", padding: "72px 24px" }}>
+          <div style={{ fontSize: 52, marginBottom: 14 }}>❄️</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+            No Containers to Monitor
+          </div>
+          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
+            Cold Chain IoT monitoring activates automatically once you add shipment containers.
+            Add containers from the Shipments & Port page.
+          </div>
+          <Link to="/exporter/logistics" className="btn-gold">🚢 Go to Shipments & Port</Link>
+        </div>
+      ) : reefers.length === 0 ? (
+        /* ── All shipments delivered / cancelled ─────────────────── */
+        <div style={{ textAlign: "center", padding: "72px 24px" }}>
+          <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+            All Containers Delivered
+          </div>
+          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 24 }}>
+            All your containers have been delivered or cancelled. Cold chain monitoring will appear for active shipments.
+          </div>
+          <Link to="/exporter/logistics" className="btn-gold">🚢 View Logistics</Link>
+        </div>
+      ) : (
+        /* ── Main view ──────────────────────────────────────────── */
+        <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: 20 }}>
+
+          {/* Left: Reefer list */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {reefers.map(s => {
+              const sensors = simulateSensors(s);
+              const isSelected = selected?._id === s._id;
+              return (
+                <div
+                  key={s._id}
+                  onClick={() => setSelected(s)}
+                  className="card"
+                  style={{
+                    padding: 14, cursor: "pointer", transition: "all 0.18s",
+                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(245,158,11,0.03)",
+                    borderColor: isSelected ? "rgba(245,158,11,0.3)" : "rgba(245,158,11,0.1)",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                    <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#fbbf24", fontSize: 13 }}>{s.containerNo}</span>
+                    <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: `${sensors.color}20`, color: sensors.color, fontWeight: 800 }}>
+                      ● {sensors.status}
+                    </span>
+                  </div>
+                  <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, marginBottom: 6 }}>
+                    {s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}
+                  </div>
+                  <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#a38a5d" }}>
+                    <span>🌡️ <strong style={{ color: "#fff" }}>{sensors.temp}</strong></span>
+                    <span>💧 <strong style={{ color: "#fff" }}>{sensors.humidity}</strong></span>
+                    <span>🔋 <strong style={{ color: "#fff" }}>{sensors.battery}</strong></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right: Telemetry detail */}
+          {selected && selectedSensors && (
+            <div className="card" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16, flexWrap: "wrap", gap: 12 }}>
+                <div>
+                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#fbbf24" }}>
+                    ❄️ Reefer Unit: {selected.containerNo}
+                  </div>
+                  <div style={{ fontSize: 14, color: "#fff", fontWeight: 700, marginTop: 4 }}>
+                    {selected.cargo} {selected.quantityTons ? `(${selected.quantityTons} MT)` : ""}
+                  </div>
+                  <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
+                    📍 Destination: {selected.destPort || selected.destinationCountry || "—"}
+                  </div>
+                </div>
+                <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 8, background: `${selectedSensors.color}20`, color: selectedSensors.color, fontWeight: 800, border: `1px solid ${selectedSensors.color}40` }}>
+                  ● SENSOR STATUS: {selectedSensors.status}
+                </span>
+              </div>
+
+              {/* 4 Sensor Metric Cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 14 }}>
+                {[
+                  ["🌡️ Temperature",      selectedSensors.temp,     `Target: ${selectedSensors.targetTemp}`, "#f59e0b"],
+                  ["💧 Relative Humidity", selectedSensors.humidity, "Optimal Range 80–95%",                  "#38bdf8"],
+                  ["☁️ CO₂ Gas Level",    selectedSensors.co2,      "Controlled Atmosphere",                 "#a78bfa"],
+                  ["🔋 IoT Battery",       selectedSensors.battery,  "Solar + Battery Backup",                "#4ade80"],
+                ].map(([label, val, sub, color]) => (
+                  <div key={label} style={{ background: "rgba(0,0,0,0.25)", padding: "14px 16px", borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
+                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>{label}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color, marginTop: 4 }}>{val}</div>
+                    <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 2 }}>{sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Temp spike alert */}
+              {selectedSensors.status === "TEMP SPIKE" && (
+                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24", fontSize: 13, fontWeight: 600 }}>
+                  ⚠️ Temperature deviation detected. Monitor closely — cargo quality may be affected if deviation persists.
+                </div>
+              )}
+
+              {/* 24h Climate Log */}
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 12 }}>
+                  📈 Simulated 24-Hour Climate Log
+                </div>
+                <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
+                  {selectedSensors.log.map((entry, idx) => (
+                    <div key={idx} style={{ flex: 1, minWidth: 72, padding: "10px 8px", borderRadius: 10, background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)", textAlign: "center" }}>
+                      <div style={{ fontSize: 10, color: "#a38a5d" }}>{entry.time}</div>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: "#f59e0b", marginTop: 2 }}>+{entry.temp}°C</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Info note */}
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(56,189,248,0.06)", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#7dd3fc" }}>
+                ℹ️ Sensor readings are simulated from your container data. Connect real IoT devices (Carrier, Daikin, Emerson) to get live telemetry.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }
