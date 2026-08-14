@@ -77,6 +77,8 @@ import ExportMarkets from "./dashboards/exporter/ExportMarkets";
 import ExportColdChain from "./dashboards/exporter/ExportColdChain";
 import ExportContracts from "./dashboards/exporter/ExportContracts";
 import ExportCalculator from "./dashboards/exporter/ExportCalculator";
+import ExporterAIAssistant from "./dashboards/exporter/ExporterAIAssistant";
+import ExporterProfile from "./dashboards/exporter/ExporterProfile";
 
 // Admin
 import AdminLayout from "./layouts/AdminLayout";
@@ -301,8 +303,8 @@ export default function App() {
           <Route path="compliance"    element={<ExportCompliance />} />
           <Route path="calculator"   element={<ExportCalculator />} />
           <Route path="markets"       element={<ExportMarkets />} />
-          <Route path="assistant"     element={<AIAssistant />} />
-          <Route path="profile"       element={<FarmerProfile />} />
+          <Route path="assistant"     element={<ExporterAIAssistant />} />
+          <Route path="profile"       element={<ExporterProfile />} />
         </Route>
 
         {/* =========================
