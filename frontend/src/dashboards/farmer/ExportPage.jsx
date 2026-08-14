@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
+import { useLocation } from "react-router-dom";
 
 /* ─── static reference data (preserved exactly) ─────────────────────── */
 const EXPORT_CROPS = [
@@ -323,6 +324,15 @@ export default function ExportPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null); // inline delete confirm
 
   const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
+  const location = useLocation();
+
+  // Read navigation state from FarmerDashboard (tab=listings, openCreate)
+  useEffect(() => {
+    const state = location.state;
+    if (!state) return;
+    if (state.tab) setTab(state.tab);
+    if (state.openCreate) setShowCreate(true);
+  }, []); // eslint-disable-line
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 

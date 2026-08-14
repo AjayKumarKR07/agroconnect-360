@@ -513,25 +513,30 @@ const getFarmerDashboardStats = async (req, res) => {
       "items.farmer": req.user._id,
     });
 
-    const pendingOrders =
-      await Order.countDocuments({
-        "items.farmer": req.user._id,
-        status: "pending",
-      });
+    const pendingOrders = await Order.countDocuments({
+      "items.farmer": req.user._id,
+      status: "pending",
+    });
 
-    const deliveredOrders =
-      await Order.find({
-        "items.farmer": req.user._id,
-        status: "delivered",
-      });
+    const acceptedOrders = await Order.countDocuments({
+      "items.farmer": req.user._id,
+      status: "accepted",
+    });
+
+    const deliveredOrderDocs = await Order.find({
+      "items.farmer": req.user._id,
+      status: "delivered",
+    });
+
+    const deliveredOrders = deliveredOrderDocs.length;
 
     // --------------------------------------
-    // INCOME
+    // INCOME (from delivered orders only)
     // --------------------------------------
 
     let totalIncome = 0;
 
-    deliveredOrders.forEach((order) => {
+    deliveredOrderDocs.forEach((order) => {
       order.items.forEach((item) => {
         if (
           item.farmer.toString() ===
@@ -545,20 +550,36 @@ const getFarmerDashboardStats = async (req, res) => {
     });
 
     // --------------------------------------
-    // RECENT ORDERS
+    // RECENT ORDERS (flattened for dashboard)
     // --------------------------------------
 
-    const recentOrders = await Order.find({
+    const rawRecentOrders = await Order.find({
       "items.farmer": req.user._id,
     })
-      .populate(
-        "buyer",
-        "name email phone"
-      )
-      .sort({
-        createdAt: -1,
-      })
-      .limit(5);
+      .populate("buyer", "name email phone")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    // Flatten: one entry per farmer-item so dashboard can read cropName/buyerName directly
+    const recentOrders = [];
+    rawRecentOrders.forEach((order) => {
+      const orderObj = order.toObject();
+      const farmerItems = orderObj.items.filter(
+        (item) => item.farmer.toString() === req.user._id.toString()
+      );
+      farmerItems.forEach((item) => {
+        recentOrders.push({
+          _id:        order._id,
+          status:     order.status,
+          createdAt:  order.createdAt,
+          updatedAt:  order.updatedAt,
+          cropName:   item.cropName || "Crop",
+          quantity:   item.quantity,
+          unit:       item.unit,
+          buyerName:  orderObj.buyer?.name || orderObj.deliveryAddress?.name || "Buyer",
+        });
+      });
+    });
 
     return res.status(200).json({
       success: true,
@@ -568,6 +589,8 @@ const getFarmerDashboardStats = async (req, res) => {
         activeCrops,
         totalOrders,
         pendingOrders,
+        acceptedOrders,
+        deliveredOrders,
         totalIncome,
       },
 

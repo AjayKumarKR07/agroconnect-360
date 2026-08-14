@@ -91,10 +91,36 @@ const EX_STYLES = `
 
   /* action item */
   .action-item {
-    display:flex; align-items:flex-start; justify-content:space-between;
-    padding:12px 14px; border-radius:12px; gap:12px;
-    border:1px solid rgba(251,191,36,0.15);
-    background:rgba(251,191,36,0.04);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 16px; border-radius:12px; gap:12px;
+    border:1px solid rgba(251,191,36,0.18);
+    background:rgba(251,191,36,0.05);
+    text-decoration:none; transition:background 0.18s,border-color 0.18s;
+  }
+  .action-item:hover {
+    background:rgba(251,191,36,0.09);
+    border-color:rgba(251,191,36,0.28);
+  }
+
+  /* ship alert row */
+  .ship-alert-item {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 14px; border-radius:12px; gap:10px; flex-wrap:wrap;
+    border:1px solid rgba(245,158,11,0.12);
+    background:rgba(245,158,11,0.04);
+    transition:background 0.18s;
+  }
+  .ship-alert-item:hover { background:rgba(245,158,11,0.08); }
+
+  /* activity timeline item */
+  .activity-item {
+    display:flex; align-items:flex-start; gap:12px;
+    padding:10px 0; border-bottom:1px solid rgba(245,158,11,0.07);
+  }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-dot {
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    margin-top:5px;
   }
 
   /* interest status row */
@@ -651,50 +677,275 @@ export default function ExporterDashboard() {
         const actions = [];
         if (!loadingInt && !errInt) {
           if (pendingInt.length > 0)
-            actions.push({ icon:"📩", msg:`${pendingInt.length} farmer interest${pendingInt.length > 1 ? "s" : ""} awaiting your review`, to:"/exporter/my-interests", cta:"Review Interests" });
+            actions.push({
+              icon:"📩",
+              color:"#fbbf24",
+              msg:`${pendingInt.length} farmer interest${pendingInt.length > 1 ? "s" : ""} awaiting your review`,
+              sub: pendingInt[0]?.listing?.name ? `Latest: ${pendingInt[0].listing.name}` : undefined,
+              to:"/exporter/my-interests",
+              cta:"Review →"
+            });
           if (negotiatingInt.length > 0)
-            actions.push({ icon:"💬", msg:`${negotiatingInt.length} interest${negotiatingInt.length > 1 ? "s" : ""} in active negotiation`, to:"/exporter/my-interests", cta:"View Negotiations" });
+            actions.push({
+              icon:"💬",
+              color:"#a78bfa",
+              msg:`${negotiatingInt.length} interest${negotiatingInt.length > 1 ? "s" : ""} in active negotiation`,
+              sub: negotiatingInt[0]?.listing?.name ? `Latest: ${negotiatingInt[0].listing.name}` : undefined,
+              to:"/exporter/my-interests",
+              cta:"Negotiate →"
+            });
         }
         if (!loadingShip && !errShip && approachingShipments.length > 0)
-          actions.push({ icon:"🚢", msg:`${approachingShipments.length} shipment${approachingShipments.length > 1 ? "s" : ""} arriving within 3 days`, to:"/exporter/logistics", cta:"View Shipments" });
+          actions.push({
+            icon:"🚢",
+            color:"#38bdf8",
+            msg:`${approachingShipments.length} shipment${approachingShipments.length > 1 ? "s" : ""} arriving within 3 days`,
+            sub: approachingShipments[0]?.containerNo ? `Container: ${approachingShipments[0].containerNo}` : undefined,
+            to:"/exporter/logistics",
+            cta:"Track →"
+          });
+        const overdueShipments = activeShipments.filter(s => { const d = daysUntil(s.eta); return d !== null && d < 0; });
+        if (!loadingShip && !errShip && overdueShipments.length > 0)
+          actions.push({
+            icon:"⚠️",
+            color:"#f87171",
+            msg:`${overdueShipments.length} shipment${overdueShipments.length > 1 ? "s" : ""} past ETA — follow up required`,
+            sub: overdueShipments[0]?.containerNo ? `Container: ${overdueShipments[0].containerNo}` : undefined,
+            to:"/exporter/logistics",
+            cta:"View →"
+          });
         if (!loadingRfqs && !errRfqs && pendingRfqs.length > 0)
-          actions.push({ icon:"📋", msg:`${pendingRfqs.length} RFQ${pendingRfqs.length > 1 ? "s" : ""} pending response`, to:"/exporter/sourcing", cta:"View RFQs" });
+          actions.push({
+            icon:"📋",
+            color:"#fb923c",
+            msg:`${pendingRfqs.length} RFQ${pendingRfqs.length > 1 ? "s" : ""} awaiting response`,
+            sub: pendingRfqs[0]?.cropName ? `Latest: ${pendingRfqs[0].cropName} → ${pendingRfqs[0].destinationCountry}` : undefined,
+            to:"/exporter/sourcing",
+            cta:"Review →"
+          });
         if (!loadingComp && !errComp && complianceAlerts.length > 0)
-          actions.push({ icon:"📑", msg:`${complianceAlerts.length} compliance document${complianceAlerts.length > 1 ? "s" : ""} need attention`, to:"/exporter/compliance", cta:"Open Vault" });
+          actions.push({
+            icon:"📑",
+            color:"#f87171",
+            msg:`${complianceAlerts.length} compliance document${complianceAlerts.length > 1 ? "s" : ""} need attention`,
+            sub: complianceAlerts[0]?.title || undefined,
+            to:"/exporter/compliance",
+            cta:"Open Vault →"
+          });
+
+        const isLoading = loadingInt || loadingShip || loadingRfqs || loadingComp;
 
         return (
           <div className="card" style={{ marginBottom:18 }}>
             <div className="sec-head">
-              <div className="card-title">⚠️ Action Required</div>
+              <div>
+                <div className="card-title">⚠️ Action Required</div>
+                <div className="card-sub">Items that need your attention right now</div>
+              </div>
               {actions.length > 0 && (
                 <span className="badge badge-red">{actions.length} item{actions.length > 1 ? "s" : ""}</span>
               )}
             </div>
-            {actions.length === 0 ? (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", borderRadius:10, background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.15)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
+            {isLoading ? (
+              <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                {[1,2].map(i => <Skeleton key={i} h={52} />)}
+              </div>
+            ) : actions.length === 0 ? (
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.15)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
                 ✓ No urgent actions right now. Everything looks good.
               </div>
             ) : (
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                 {actions.map((a, i) => (
-                  <div key={i} className="action-item">
-                    <div>
-                      <span style={{ fontSize:16, marginRight:8 }}>{a.icon}</span>
-                      <span style={{ fontSize:13, color:"#fde68a" }}>{a.msg}</span>
+                  <Link key={i} to={a.to} className="action-item">
+                    <div style={{ display:"flex", alignItems:"center", gap:12, flex:1 }}>
+                      <div style={{ width:36, height:36, borderRadius:10, background:`${a.color}18`, border:`1px solid ${a.color}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+                        {a.icon}
+                      </div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, fontWeight:600, color:"#fff" }}>{a.msg}</div>
+                        {a.sub && <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>{a.sub}</div>}
+                      </div>
                     </div>
-                    <Link
-                      to={a.to}
-                      style={{ fontSize:12, fontWeight:700, color:"#fbbf24", textDecoration:"none", padding:"6px 12px", borderRadius:8, border:"1px solid rgba(245,158,11,0.25)", background:"rgba(245,158,11,0.08)", flexShrink:0 }}
-                    >
+                    <span style={{ fontSize:12, fontWeight:700, color:a.color, whiteSpace:"nowrap", flexShrink:0, padding:"6px 12px", borderRadius:8, border:`1px solid ${a.color}30`, background:`${a.color}10` }}>
                       {a.cta}
-                    </Link>
-                  </div>
+                    </span>
+                  </Link>
                 ))}
               </div>
             )}
           </div>
         );
       })()}
+
+      {/* ══════ SHIPMENT ALERTS + RECENT ACTIVITY ═══════════════════════ */}
+      <div className="two-col" style={{ marginBottom:18 }}>
+
+        {/* ── Shipment Alerts ── */}
+        <div className="card">
+          <div className="sec-head">
+            <div>
+              <div className="card-title">🚢 Shipment Alerts</div>
+              <div className="card-sub">Shipments needing attention</div>
+            </div>
+            <Link to="/exporter/logistics" className="btn-ghost" style={{ fontSize:12, padding:"7px 12px" }}>All Shipments →</Link>
+          </div>
+          {loadingShip ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>{[1,2,3].map(i => <Skeleton key={i} h={56} />)}</div>
+          ) : errShip ? (
+            <SectionError msg={errShip} onRetry={fetchShipments} />
+          ) : (() => {
+            // Build alert list from real shipments only
+            const alerts = [];
+            // Overdue first
+            shipments.filter(s => !['delivered','cancelled'].includes(s.status) && s.eta && daysUntil(s.eta) < 0)
+              .forEach(s => alerts.push({ s, kind:'overdue' }));
+            // Arriving soon (≤3 days)
+            shipments.filter(s => !['delivered','cancelled'].includes(s.status) && s.eta && daysUntil(s.eta) >= 0 && daysUntil(s.eta) <= 3)
+              .forEach(s => alerts.push({ s, kind:'soon' }));
+            // Cancelled recently (within last 7 days)
+            shipments.filter(s => s.status === 'cancelled' && s.updatedAt && daysUntil(s.updatedAt) >= -7)
+              .forEach(s => alerts.push({ s, kind:'cancelled' }));
+
+            if (alerts.length === 0) return (
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.15)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
+                ✓ No shipment alerts.
+              </div>
+            );
+
+            return (
+              <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                {alerts.slice(0,6).map(({ s, kind }, i) => {
+                  const d = daysUntil(s.eta);
+                  const kindCfg = kind === 'overdue'
+                    ? { color:'#f87171', bg:'rgba(239,68,68,0.06)', icon:'⚠️', label:'Past ETA' }
+                    : kind === 'soon'
+                    ? { color:'#fbbf24', bg:'rgba(251,191,36,0.06)', icon:'🕐', label: d === 0 ? 'Due Today' : `${d}d to ETA` }
+                    : { color:'#94a3b8', bg:'rgba(148,163,184,0.06)', icon:'❌', label:'Cancelled' };
+                  return (
+                    <div key={s._id || i} className="ship-alert-item" style={{ borderColor:`${kindCfg.color}22`, background:kindCfg.bg }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
+                          <span style={{ fontSize:13 }}>{kindCfg.icon}</span>
+                          <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color:"#fbbf24" }}>{s.containerNo}</span>
+                          <span style={{ fontSize:11, fontWeight:700, color:kindCfg.color }}>{kindCfg.label}</span>
+                        </div>
+                        <div style={{ fontSize:12, color:"#fff", fontWeight:600 }}>{s.cargo}{s.quantityTons ? ` · ${s.quantityTons} MT` : ""}</div>
+                        <div style={{ fontSize:11, color:"var(--text2)" }}>{s.portOfOrigin} → {s.destPort || s.destinationCountry}</div>
+                      </div>
+                      <Link
+                        to="/exporter/logistics"
+                        style={{ fontSize:11, fontWeight:700, color:kindCfg.color, textDecoration:"none", padding:"5px 10px", borderRadius:8, border:`1px solid ${kindCfg.color}30`, background:`${kindCfg.color}0d`, flexShrink:0 }}
+                      >
+                        Track →
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+        </div>
+
+        {/* ── Recent Activity ── */}
+        <div className="card">
+          <div className="sec-head">
+            <div>
+              <div className="card-title">🕐 Recent Activity</div>
+              <div className="card-sub">Latest events across your account</div>
+            </div>
+          </div>
+          {(loadingInt || loadingShip || loadingRfqs) ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>{[1,2,3,4].map(i => <Skeleton key={i} h={44} />)}</div>
+          ) : (() => {
+            // Build timeline from real data only — use updatedAt/createdAt timestamps
+            const events = [];
+
+            // Interests — recent status changes
+            interests.forEach(int => {
+              const ts = int.updatedAt || int.createdAt;
+              if (!ts) return;
+              const statusMap = {
+                pending:     { icon:'📩', color:'#fbbf24', text:`Interest submitted for ${int.listing?.name || 'a listing'}` },
+                accepted:    { icon:'✅', color:'#4ade80', text:`Interest accepted: ${int.listing?.name || 'listing'}` },
+                negotiating: { icon:'💬', color:'#a78bfa', text:`Negotiating: ${int.listing?.name || 'listing'} with ${int.farmer?.name || 'farmer'}` },
+                confirmed:   { icon:'🤝', color:'#4ade80', text:`Deal confirmed: ${int.listing?.name || 'listing'}` },
+                rejected:    { icon:'❌', color:'#f87171', text:`Interest rejected: ${int.listing?.name || 'listing'}` },
+                cancelled:   { icon:'🚫', color:'#94a3b8', text:`Interest cancelled: ${int.listing?.name || 'listing'}` },
+                completed:   { icon:'🏆', color:'#4ade80', text:`Deal completed: ${int.listing?.name || 'listing'}` },
+              };
+              const cfg = statusMap[int.status];
+              if (cfg) events.push({ ts: new Date(ts).getTime(), icon:cfg.icon, color:cfg.color, text:cfg.text });
+            });
+
+            // Shipments — use updatedAt for status change events
+            shipments.forEach(s => {
+              const ts = s.updatedAt || s.createdAt;
+              if (!ts) return;
+              const cfg = SHIPMENT_STATUSES[s.status];
+              events.push({
+                ts: new Date(ts).getTime(),
+                icon: '🚢',
+                color: '#38bdf8',
+                text: `Shipment ${s.containerNo} — ${cfg?.label || s.status}${ s.cargo ? ` (${s.cargo})` : '' }`,
+              });
+            });
+
+            // RFQs — creation events
+            rfqs.forEach(r => {
+              const ts = r.createdAt;
+              if (!ts) return;
+              events.push({
+                ts: new Date(ts).getTime(),
+                icon: '📋',
+                color: '#fb923c',
+                text: `RFQ created: ${r.cropName} → ${r.destinationCountry} (${r.quantityTons} MT)`,
+              });
+            });
+
+            // Sort newest first, cap at 8
+            events.sort((a, b) => b.ts - a.ts);
+            const top = events.slice(0, 8);
+
+            // Relative time helper
+            const relTime = (ts) => {
+              const diff = Date.now() - ts;
+              const m = Math.floor(diff / 60000);
+              const h = Math.floor(diff / 3600000);
+              const d = Math.floor(diff / 86400000);
+              if (m < 1)   return 'Just now';
+              if (m < 60)  return `${m}m ago`;
+              if (h < 24)  return `${h}h ago`;
+              if (d === 1) return 'Yesterday';
+              return `${d} days ago`;
+            };
+
+            if (top.length === 0) return (
+              <div style={{ textAlign:"center", padding:"20px 0", color:"var(--text2)", fontSize:13 }}>
+                No recent activity yet.
+              </div>
+            );
+
+            return (
+              <div>
+                {top.map((ev, i) => (
+                  <div key={i} className="activity-item">
+                    <div className="activity-dot" style={{ background:ev.color, boxShadow:`0 0 6px ${ev.color}60` }} />
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:8 }}>
+                        <div style={{ fontSize:13, color:"#fff", fontWeight:500, lineHeight:1.4 }}>
+                          <span style={{ marginRight:6 }}>{ev.icon}</span>{ev.text}
+                        </div>
+                        <span style={{ fontSize:10, color:"var(--text2)", whiteSpace:"nowrap", flexShrink:0, paddingTop:2 }}>{relTime(ev.ts)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
 
       {/* ══════ ROW 2: Shipment Pipeline + RFQ Overview ══════════════ */}
       <div className="two-col" style={{ marginBottom:18 }}>
