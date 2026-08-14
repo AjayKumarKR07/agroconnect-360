@@ -3,21 +3,23 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
 export default function SellerRevenue() {
-  const [data, setData] = useState({ totalRevenue: 0, totalOrders: 0, avgOrderValue: 0, monthly: [] });
+  const [data,    setData]    = useState({ totalRevenue: 0, totalOrders: 0, avgOrderValue: 0, monthly: [] });
   const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(null);
   const token = localStorage.getItem("agroconnect_token");
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const r = await fetch(`${API_URL}/api/seller/revenue`, { headers: { Authorization: `Bearer ${token}` } });
-        const d = await r.json();
-        if (d.success) setData(d);
-      } catch (e) { console.error(e); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, []);
+  const load = async () => {
+    setLoading(true); setError(null);
+    try {
+      const r = await fetch(`${API_URL}/api/seller/revenue`, { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      if (d.success) setData(d);
+      else setError(d.message || "Unable to load revenue data");
+    } catch { setError("Network error — could not reach the server"); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
 
   const maxMonthly = Math.max(...(data.monthly || []).map(m => m.revenue || 0), 1);
 
@@ -34,6 +36,18 @@ export default function SellerRevenue() {
       </div>
 
       {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading revenue data…</span></div>}
+
+      {error && !loading && (
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load revenue data — {error}</span>
+            </div>
+            <button onClick={load} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+          </div>
+        </div>
+      )}
 
       {!loading && (
         <>

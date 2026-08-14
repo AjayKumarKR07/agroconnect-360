@@ -18,19 +18,22 @@ const STATUS_BADGE = {
 const PIPELINE = ["pending", "accepted", "processing", "shipped", "delivered"];
 
 export default function SellerOrders() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
+  const [orders,   setOrders]   = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState(null);
+  const [filter,   setFilter]   = useState("all");
   const [updating, setUpdating] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
 
   const fetchOrders = async () => {
+    setLoading(true); setError(null);
     try {
       const r = await fetch(`${API_URL}/api/orders/seller`, { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       if (d.success) setOrders(d.orders || []);
-    } catch (e) { console.error(e); }
+      else setError(d.message || "Unable to load orders");
+    } catch { setError("Network error — could not reach the server"); }
     finally { setLoading(false); }
   };
 
@@ -105,6 +108,18 @@ export default function SellerOrders() {
 
       {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading orders…</span></div>}
 
+      {error && !loading && (
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load orders — {error}</span>
+            </div>
+            <button onClick={fetchOrders} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+          </div>
+        </div>
+      )}
+
       {!loading && filtered.length === 0 && (
         <div className="card empty-state">
           <div className="empty-emoji">📦</div>
@@ -160,10 +175,12 @@ export default function SellerOrders() {
                       </div>
                     )}
 
-                    {/* Delivery address */}
+                    {/* Delivery address — API returns as formatted string */}
                     {o.deliveryAddress && (
-                      <div style={{ fontSize: 12, color: "var(--text2)", margin: "12px 0" }}>
-                        📍 {o.deliveryAddress}
+                      <div style={{ fontSize: 12, color: "var(--text2)", margin: "12px 0", lineHeight: 1.5 }}>
+                        📍 {typeof o.deliveryAddress === "string"
+                          ? o.deliveryAddress
+                          : [o.deliveryAddress.address, o.deliveryAddress.city, o.deliveryAddress.state, o.deliveryAddress.pincode].filter(Boolean).join(", ")}
                       </div>
                     )}
                     {o.buyerPhone && (

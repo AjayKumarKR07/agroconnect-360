@@ -3,20 +3,32 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
+const Skel = () => (
+  <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden" }}>
+    <div style={{ height: 180, background: "linear-gradient(90deg,rgba(167,139,250,0.06) 25%,rgba(167,139,250,0.12) 50%,rgba(167,139,250,0.06) 75%)", backgroundSize: "200% 100%", animation: "sklShimmer 1.6s ease infinite" }} />
+    <div style={{ padding: "16px 18px" }}>
+      {["70%","50%","40%"].map((w,i) => <div key={i} style={{ height: 14, width: w, borderRadius: 6, background: "rgba(167,139,250,0.08)", marginBottom: 10 }} />)}
+    </div>
+  </div>
+);
+
 export default function SellerProducts() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState(null);
+  const [search,   setSearch]   = useState("");
   const [deleting, setDeleting] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
+    setLoading(true); setError(null);
     try {
       const r = await fetch(`${API_URL}/api/seller/products`, { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       if (d.success) setProducts(d.products || []);
-    } catch (e) { console.error(e); }
+      else setError(d.message || "Unable to load products");
+    } catch { setError("Network error — could not reach the server"); }
     finally { setLoading(false); }
   };
 
@@ -37,6 +49,7 @@ export default function SellerProducts() {
   return (
     <>
       <style>{DS + `
+        @keyframes sklShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
         .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
         .prod-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
         .prod-card:hover { transform: translateY(-3px); border-color: rgba(167,139,250,0.25); }
@@ -66,7 +79,23 @@ export default function SellerProducts() {
         <div style={{ marginLeft: "auto", fontSize: 13, color: "var(--text2)" }}>{filtered.length} products</div>
       </div>
 
-      {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading products…</span></div>}
+      {loading && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 16 }}>
+          {[1,2,3,4,5,6].map(i => <Skel key={i} />)}
+        </div>
+      )}
+
+      {error && !loading && (
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load products — {error}</span>
+            </div>
+            <button onClick={fetchProducts} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+          </div>
+        </div>
+      )}
 
       {!loading && filtered.length === 0 && (
         <div className="card empty-state">
@@ -93,8 +122,19 @@ export default function SellerProducts() {
                     <div className="prod-price">₹{Number(p.price).toLocaleString("en-IN")}</div>
                     <div className="prod-unit">per {p.unit}</div>
                   </div>
-                  <span style={{ fontSize: 11, padding: "4px 10px", borderRadius: 8, background: p.status === "active" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", color: p.status === "active" ? "#4ade80" : "#f87171", fontWeight: 700 }}>
-                    {p.status || "active"}
+                  <span style={{
+                    fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 700,
+                    ...(p.status === "listed"  ? { background: "rgba(34,197,94,0.1)",   color: "#4ade80" } :
+                        p.status === "ready"   ? { background: "rgba(56,189,248,0.1)",  color: "#38bdf8" } :
+                        p.status === "growing" ? { background: "rgba(251,191,36,0.1)",  color: "#fbbf24" } :
+                        p.status === "sold"    ? { background: "rgba(148,163,184,0.1)", color: "#94a3b8" } :
+                                                 { background: "rgba(167,139,250,0.1)", color: "#a78bfa" }),
+                  }}>
+                    {p.status === "listed"  ? "✅ Listed"  :
+                     p.status === "ready"   ? "🔵 Ready"   :
+                     p.status === "growing" ? "🌱 Growing" :
+                     p.status === "sold"    ? "📦 Sold"    :
+                     p.status || "Unknown"}
                   </span>
                 </div>
                 <div className="prod-actions">
