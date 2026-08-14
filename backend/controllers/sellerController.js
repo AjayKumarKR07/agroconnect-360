@@ -9,35 +9,31 @@ const getSellerDashboardStats = async (req, res) => {
   try {
     const sellerId = req.user._id;
 
-    // Products (crops) listed by this seller
+    // Products (crops) listed by this seller via the Seller Products feature
     const products = await Crop.find({ farmer: sellerId });
     const activeProducts = products.filter(p => p.status === "listed" || p.status === "ready").length;
 
-    // Orders that contain this seller's crops
-    const orders = await Order.find({ "items.farmer": sellerId })
+    // Procurement orders placed BY this seller (seller = buyer in Order model)
+    const orders = await Order.find({ buyer: sellerId })
       .sort({ createdAt: -1 })
-      .populate("buyer", "name email")
+      .populate("items.farmer", "name")
       .lean();
 
-    const totalOrders = orders.length;
+    const totalOrders   = orders.length;
     const pendingOrders = orders.filter(o => o.status === "pending").length;
-    const totalRevenue = orders
+    const totalRevenue  = orders
       .filter(o => ["accepted", "delivered", "shipped"].includes(o.status))
-      .reduce((sum, o) => {
-        const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
-        return sum + myItems.reduce((s, it) => s + (it.subtotal || 0), 0);
-      }, 0);
+      .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
     const recentOrders = orders.slice(0, 5).map(o => ({
-      _id: o._id,
-      cropName: o.items.find(it => String(it.farmer) === String(sellerId))?.cropName || "Product",
-      quantity: o.items.find(it => String(it.farmer) === String(sellerId))?.quantity || 0,
-      unit: o.items.find(it => String(it.farmer) === String(sellerId))?.unit || "kg",
-      totalPrice: o.items
-        .filter(it => String(it.farmer) === String(sellerId))
-        .reduce((s, it) => s + (it.subtotal || 0), 0),
-      buyerName: o.buyer?.name || "Buyer",
-      status: o.status,
+      _id:       o._id,
+      cropName:  o.items[0]?.cropName || "Product",
+      quantity:  o.items[0]?.quantity || 0,
+      unit:      o.items[0]?.unit || "kg",
+      totalPrice: o.totalAmount || 0,
+      buyerName: "You",           // seller placed this order
+      farmerName: o.items[0]?.farmer?.name || "Farmer",
+      status:    o.status,
       createdAt: o.createdAt,
     }));
 
@@ -193,34 +189,33 @@ const deleteSellerProduct = async (req, res) => {
 const getSellerRevenue = async (req, res) => {
   try {
     const sellerId = req.user._id;
+    // Seller's procurement orders (seller = buyer)
     const orders = await Order.find({
-      "items.farmer": sellerId,
+      buyer: sellerId,
       status: { $in: ["accepted", "delivered", "shipped"] },
-    }).populate("buyer", "name").lean();
+    }).populate("items.farmer", "name").lean();
 
     let totalRevenue = 0;
     const transactions = [];
 
     orders.forEach(o => {
-      const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
-      myItems.forEach(it => {
-        totalRevenue += it.subtotal || 0;
+      totalRevenue += o.totalAmount || 0;
+      o.items.forEach(it => {
         transactions.push({
           product: it.cropName,
-          buyer: o.buyer?.name || "Buyer",
-          qty: it.quantity,
-          unit: it.unit,
-          amount: it.subtotal,
-          date: o.createdAt,
-          status: o.status,
+          farmer:  it.farmer?.name || "Farmer",
+          qty:     it.quantity,
+          unit:    it.unit,
+          amount:  it.subtotal,
+          date:    o.createdAt,
+          status:  o.status,
         });
       });
     });
 
-    const totalOrders = orders.length;
+    const totalOrders   = orders.length;
     const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-    // Monthly grouping
     const monthMap = {};
     transactions.forEach(t => {
       const key = new Date(t.date).toLocaleString("en-IN", { month: "short", year: "numeric" });
@@ -251,10 +246,11 @@ const getSellerAnalytics = async (req, res) => {
     const days = Math.min(Math.max(Number(req.query.days) || 30, 1), 365);
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
+    // Seller is the buyer in procurement orders
     const orders = await Order.find({
-      "items.farmer": sellerId,
+      buyer: sellerId,
       createdAt: { $gte: since },
-    }).populate("buyer", "name").lean();
+    }).populate("items.farmer", "name").lean();
 
     // Daily revenue
     const dayMap = {};
@@ -269,27 +265,25 @@ const getSellerAnalytics = async (req, res) => {
     const prodMap = {};
 
     orders.forEach(o => {
-      const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
-      if (!myItems.length) return;
-
       const dateKey = new Date(o.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
-      const amount = myItems.reduce((s, it) => s + (it.subtotal || 0), 0);
+      const amount = o.totalAmount || 0;
 
       if (dayMap[dateKey]) {
         dayMap[dateKey].revenue += amount;
         dayMap[dateKey].orders += 1;
       }
 
-      myItems.forEach(it => {
+      o.items.forEach(it => {
         const name = it.cropName || "Unknown";
-        prodMap[name] = (prodMap[name] || 0) + (it.subtotal || 0);
-        // Category not stored on item, use product name as proxy
+        const itAmount = it.subtotal || 0;
+        prodMap[name] = (prodMap[name] || 0) + itAmount;
+        // Category not stored on item, infer from crop name
         const cat = name.toLowerCase().includes("rice") ? "Grains"
           : name.toLowerCase().includes("wheat") ? "Grains"
           : name.toLowerCase().includes("tomato") || name.toLowerCase().includes("onion") || name.toLowerCase().includes("potato") ? "Vegetables"
           : name.toLowerCase().includes("mango") || name.toLowerCase().includes("banana") ? "Fruits"
           : "Other";
-        catMap[cat] = (catMap[cat] || 0) + (it.subtotal || 0);
+        catMap[cat] = (catMap[cat] || 0) + itAmount;
       });
     });
 
@@ -321,35 +315,35 @@ const getSellerAnalytics = async (req, res) => {
 
 // ==========================================
 // GET /api/seller/shipments
-// Derives shipment-like records from orders
+// Derives shipment-like records from seller's procurement orders
 // ==========================================
 const getSellerShipments = async (req, res) => {
   try {
     const sellerId = req.user._id;
+    // Seller is the buyer — find their procurement orders that are in active delivery statuses
     const orders = await Order.find({
-      "items.farmer": sellerId,
+      buyer: sellerId,
       status: { $in: ["accepted", "processing", "shipped", "delivered"] },
-    }).populate("buyer", "name email phone").sort({ updatedAt: -1 }).lean();
+    }).populate("items.farmer", "name").sort({ updatedAt: -1 }).lean();
 
-    const shipments = [];
-    orders.forEach(o => {
-      const myItems = o.items.filter(it => String(it.farmer) === String(sellerId));
-      if (!myItems.length) return;
+    const shipments = orders.map(o => {
       const statusMap = { accepted: "pending", processing: "dispatched", shipped: "in_transit", delivered: "delivered" };
-      shipments.push({
-        id: `SHP-${String(o._id).slice(-6).toUpperCase()}`,
-        orderId: `ORD-${String(o._id).slice(-6).toUpperCase()}`,
-        product: myItems.map(it => it.cropName).join(", "),
-        buyer: o.buyer?.name || o.deliveryAddress?.name || "Buyer",
-        qty: myItems.map(it => `${it.quantity} ${it.unit}`).join(", "),
-        status: statusMap[o.status] || "pending",
-        carrier: "Delhivery",
-        trackingNo: `DL${String(o._id).slice(-9).toUpperCase()}`,
-        eta: o.updatedAt,
-        from: myItems[0]?.location || "—",
-        to: o.deliveryAddress ? `${o.deliveryAddress.city}, ${o.deliveryAddress.state}` : "—",
-        createdAt: o.createdAt,
-      });
+      return {
+        id:          `SHP-${String(o._id).slice(-6).toUpperCase()}`,
+        orderId:     `ORD-${String(o._id).slice(-6).toUpperCase()}`,
+        product:     o.items.map(it => it.cropName).join(", "),
+        farmer:      o.items[0]?.farmer?.name || "Farmer",
+        qty:         o.items.map(it => `${it.quantity} ${it.unit}`).join(", "),
+        status:      statusMap[o.status] || "pending",
+        carrier:     "Delhivery",
+        trackingNo:  `DL${String(o._id).slice(-9).toUpperCase()}`,
+        eta:         o.updatedAt,
+        from:        o.deliveryAddress?.city || "India",
+        to:          o.deliveryAddress
+          ? [o.deliveryAddress.city, o.deliveryAddress.state].filter(Boolean).join(", ")
+          : "—",
+        createdAt:   o.createdAt,
+      };
     });
 
     return res.status(200).json({ success: true, shipments });

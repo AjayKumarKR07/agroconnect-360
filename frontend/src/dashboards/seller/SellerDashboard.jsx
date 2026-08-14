@@ -7,8 +7,9 @@ import { DS } from "../../styles/ds";
    CONSTANTS & HELPERS
 ═══════════════════════════════════════════════════════════ */
 
-// Low-stock threshold in KG (normalized). One constant to change later.
-const LOW_STOCK_KG = 50;
+// Low-stock thresholds in KG (normalized)
+const STOCK_CRITICAL_KG = 20;
+const STOCK_LOW_KG      = 50;
 
 const toKg = (qty, unit) => {
   if (unit === "quintal") return qty * 100;
@@ -16,7 +17,13 @@ const toKg = (qty, unit) => {
   return qty; // kg
 };
 
-const isLowStock = (qty, unit) => toKg(qty, unit) <= LOW_STOCK_KG;
+const stockTier = (qty, unit) => {
+  const kg = toKg(qty || 0, unit);
+  if (kg === 0)               return "out";
+  if (kg < STOCK_CRITICAL_KG) return "critical";
+  if (kg <= STOCK_LOW_KG)     return "low";
+  return "ok";
+};
 
 const authH = () => ({ Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}` });
 
@@ -56,8 +63,16 @@ const relTime = (iso) => {
 
 const fmtINR = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
 
+const na = (v) => (v == null || v === "" ? "Not available" : String(v));
+
+const fmtAddr = (addr) => {
+  if (!addr) return "Not available";
+  if (typeof addr === "string") return addr || "Not available";
+  return [addr.address, addr.city, addr.state, addr.pincode].filter(Boolean).join(", ") || "Not available";
+};
+
 /* ═══════════════════════════════════════════════════════════
-   SKELETON COMPONENT
+   SKELETON
 ═══════════════════════════════════════════════════════════ */
 const Skel = ({ w = "100%", h = 18, r = 8 }) => (
   <div style={{
@@ -89,10 +104,8 @@ function MiniBarChart({ monthly }) {
           const isLast = i === monthly.length - 1;
           return (
             <g key={m.month || i}>
-              <rect
-                x={x} y={y} width={barW} height={barH} rx={3}
-                fill={isLast ? "url(#barGrad)" : "rgba(167,139,250,0.25)"}
-              />
+              <rect x={x} y={y} width={barW} height={barH} rx={3}
+                fill={isLast ? "url(#barGrad)" : "rgba(167,139,250,0.25)"} />
               <text x={x + barW / 2} y={H + 16} textAnchor="middle" fill="rgba(167,139,250,0.6)" fontSize={8}>
                 {(m.month || "").split(" ")[0]}
               </text>
@@ -111,12 +124,157 @@ function MiniBarChart({ monthly }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   ORDER DETAILS MODAL
+═══════════════════════════════════════════════════════════ */
+const PIPELINE_STEPS = ["pending", "accepted", "shipped", "delivered"];
+
+function OrderDetailsModal({ order, onClose }) {
+  if (!order) return null;
+  const status = order.status || "pending";
+  const stColor = STATUS_COLOR[status] || "#94a3b8";
+  const isTerminal = ["rejected", "cancelled"].includes(status);
+  const curStep = PIPELINE_STEPS.indexOf(status);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)",
+        zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: 20, backdropFilter: "blur(10px)",
+      }}
+    >
+      <div style={{
+        background: "#0b0a1f", border: "1px solid rgba(167,139,250,0.2)",
+        borderRadius: 24, padding: 28, width: "100%", maxWidth: 520,
+        maxHeight: "90vh", overflowY: "auto",
+        animation: "fadeIn 0.25s ease",
+      }}>
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+          <div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+              📋 Order Details
+            </div>
+            <div style={{ fontSize: 11, color: "var(--text2)", fontFamily: "monospace", marginTop: 4 }}>
+              {String(order._id)}
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8,
+            padding: "6px 10px", color: "var(--text2)", cursor: "pointer", fontSize: 16,
+          }}>✕</button>
+        </div>
+
+        {/* Status badge */}
+        <div style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{
+            padding: "6px 14px", borderRadius: 10,
+            background: `${stColor}18`, color: stColor,
+            fontWeight: 800, fontSize: 13, border: `1px solid ${stColor}30`,
+          }}>
+            {STATUS_LABEL[status] || status}
+          </span>
+          <span style={{ fontSize: 11, color: "var(--text2)" }}>{relTime(order.createdAt)}</span>
+        </div>
+
+        {/* Pipeline (positive) or terminal state */}
+        {!isTerminal && (
+          <div style={{ display: "flex", alignItems: "center", marginBottom: 22 }}>
+            {["Order Placed", "Accepted", "Shipped", "Delivered"].map((label, idx) => (
+              <div key={label} style={{ display: "flex", alignItems: "center", flex: idx < 3 ? 1 : 0 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div style={{
+                    width: 24, height: 24, borderRadius: "50%",
+                    background: idx <= curStep
+                      ? "linear-gradient(135deg,#7c3aed,#a78bfa)"
+                      : "var(--surface)",
+                    border: idx <= curStep ? "none" : "2px solid rgba(167,139,250,0.15)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, color: "#fff", fontWeight: 700,
+                    boxShadow: idx === curStep ? "0 0 10px rgba(167,139,250,0.5)" : "none",
+                  }}>
+                    {idx < curStep ? "✓" : ""}
+                  </div>
+                  <div style={{
+                    fontSize: 9, color: idx <= curStep ? "#a78bfa" : "var(--text2)",
+                    marginTop: 4, whiteSpace: "nowrap", fontWeight: idx === curStep ? 700 : 400,
+                  }}>{label}</div>
+                </div>
+                {idx < 3 && (
+                  <div style={{
+                    flex: 1, height: 2, marginBottom: 14,
+                    background: idx < curStep
+                      ? "linear-gradient(90deg,#7c3aed,#a78bfa)"
+                      : "rgba(167,139,250,0.1)",
+                  }} />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {isTerminal && (
+          <div style={{
+            padding: "12px 16px", borderRadius: 12,
+            background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)",
+            color: "#f87171", fontSize: 13, fontWeight: 600, marginBottom: 20,
+          }}>
+            ❌ Order {status} — no further action needed.
+          </div>
+        )}
+
+        {/* Details grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+          {[
+            { section: "CROP", label: "Crop Name", value: na(order.cropName) },
+            { section: "CROP", label: "Quantity", value: `${na(order.quantity)} ${order.unit || "kg"}` },
+            { section: "CROP", label: "Price/Unit", value: order.price ? `${fmtINR(order.price)}/${order.unit || "kg"}` : "Not available" },
+            { section: "CROP", label: "Subtotal", value: fmtINR(order.totalPrice || order.subtotal) },
+            { section: "FARMER", label: "Farmer", value: na(order.farmerName) },
+            { section: "FARMER", label: "Farmer Email", value: na(order.farmerEmail) },
+            { section: "PAYMENT", label: "Payment", value: (order.paymentMethod || "cod").toUpperCase() },
+            { section: "PAYMENT", label: "Order Date", value: order.createdAt ? new Date(order.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Not available" },
+          ].map(r => (
+            <div key={r.label} style={{
+              background: "var(--surface)", borderRadius: 10, padding: "10px 12px",
+              border: "1px solid var(--border)",
+            }}>
+              <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{r.label}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginTop: 3, wordBreak: "break-word" }}>{r.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Delivery address */}
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 10 }}>
+          <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>📍 Delivery Address</div>
+          <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.6 }}>{fmtAddr(order.deliveryAddress)}</div>
+        </div>
+
+        <button onClick={onClose} style={{
+          width: "100%", marginTop: 14, padding: "12px",
+          background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)",
+          borderRadius: 12, color: "#a78bfa", fontWeight: 700, fontSize: 14,
+          cursor: "pointer", fontFamily: "'Inter',sans-serif",
+        }}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
    EXTRA CSS
 ═══════════════════════════════════════════════════════════ */
 const EXTRA = `
   @keyframes sklShimmer { 0% { background-position:200% 0 } 100% { background-position:-200% 0 } }
   @keyframes spin        { to { transform:rotate(360deg); } }
-  @keyframes fadeIn      { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+  @keyframes fadeIn      { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
 
   .sd-grid4  { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
   .sd-grid2  { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
@@ -138,18 +296,30 @@ const EXTRA = `
   .sd-act-link { font-size:12px; color:#a78bfa; font-weight:700; text-decoration:none; white-space:nowrap; flex-shrink:0; }
   .sd-act-link:hover { text-decoration:underline; }
 
-  .sd-order-row { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; background:var(--surface); border-radius:12px; border:1px solid var(--border); cursor:pointer; transition:border-color 0.2s; flex-wrap:wrap; gap:8px; }
-  .sd-order-row:hover { border-color:rgba(167,139,250,0.2); }
+  .sd-order-row { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; background:var(--surface); border-radius:12px; border:1px solid var(--border); cursor:pointer; transition:border-color 0.2s, background 0.2s; flex-wrap:wrap; gap:8px; }
+  .sd-order-row:hover { border-color:rgba(167,139,250,0.2); background:rgba(167,139,250,0.04); }
 
   .sd-quick-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; }
   .sd-quick-link { padding:13px 14px; background:var(--surface); border-radius:13px; border:1px solid var(--border); display:flex; align-items:center; gap:10px; text-decoration:none; transition:border-color 0.2s,background 0.2s; }
   .sd-quick-link:hover { border-color:rgba(167,139,250,0.25); background:rgba(167,139,250,0.04); }
 
-  .sd-stock-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.12); border-radius:11px; gap:8px; flex-wrap:wrap; }
+  .sd-stock-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:11px; gap:8px; flex-wrap:wrap; }
+  .sd-stock-out      { background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.15); }
+  .sd-stock-critical { background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.15); }
+  .sd-stock-low      { background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.12); }
+
+  .sd-supplier-table { width:100%; border-collapse:collapse; }
+  .sd-supplier-table th { text-align:left; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; padding:0 12px 10px; border-bottom:1px solid var(--border); }
+  .sd-supplier-table td { padding:11px 12px; font-size:13px; color:var(--text); border-bottom:1px solid var(--border); }
+  .sd-supplier-table tr:last-child td { border-bottom:none; }
+  .sd-supplier-table tbody tr:hover { background:rgba(167,139,250,0.03); }
+
+  .mkt-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--surface); border-radius:11px; border:1px solid var(--border); flex-wrap:wrap; gap:8px; }
 
   @media(max-width:900px){
     .sd-grid4  { grid-template-columns:1fr 1fr; }
     .sd-grid2  { grid-template-columns:1fr; }
+    .sd-grid3  { grid-template-columns:1fr 1fr; }
     .sd-pipe-stages { grid-template-columns:repeat(3,1fr); }
   }
   @media(max-width:560px){
@@ -157,8 +327,14 @@ const EXTRA = `
     .sd-grid3  { grid-template-columns:1fr 1fr; }
     .sd-pipe-stages { grid-template-columns:repeat(2,1fr); }
     .sd-quick-grid  { grid-template-columns:1fr 1fr; }
+    .sd-supplier-table td, .sd-supplier-table th { padding:8px 8px; font-size:12px; }
   }
 `;
+
+/* ═══════════════════════════════════════════════════════════
+   AUTO-REFRESH INTERVAL
+═══════════════════════════════════════════════════════════ */
+const AUTO_REFRESH_MS = 30_000;
 
 /* ═══════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -169,14 +345,17 @@ export default function SellerDashboard() {
   // ─── State ───────────────────────────────────────────────
   const [stats,        setStats]        = useState(null);
   const [recentOrders, setRecentOrders] = useState([]);
-  const [allOrders,    setAllOrders]    = useState([]); // for pipeline counts
+  const [allOrders,    setAllOrders]    = useState([]);
   const [products,     setProducts]     = useState([]);
   const [revenue,      setRevenue]      = useState(null);
+  const [marketData,   setMarketData]   = useState(null); // commodityAverage from /api/prices/market-trends
   const [loading,      setLoading]      = useState(true);
-  const [errors,       setErrors]       = useState({});  // per-section errors
+  const [errors,       setErrors]       = useState({});
   const [refreshing,   setRefreshing]   = useState(false);
   const [lastUpdated,  setLastUpdated]  = useState(null);
+  const [modalOrder,   setModalOrder]   = useState(null);
   const loadRef = useRef(0);
+  const timerRef = useRef(null);
 
   // ─── Fetch all data ───────────────────────────────────────
   const load = useCallback(async (isRefresh = false) => {
@@ -187,15 +366,16 @@ export default function SellerDashboard() {
 
     const errs = {};
 
-    // Parallel fetch — fail independently
-    const [dashRes, ordersRes, productsRes, revenueRes] = await Promise.allSettled([
-      fetch(`${API_URL}/api/seller/dashboard-stats`, { headers: authH() }),
-      fetch(`${API_URL}/api/orders/seller`,           { headers: authH() }),
-      fetch(`${API_URL}/api/seller/products`,         { headers: authH() }),
-      fetch(`${API_URL}/api/seller/revenue`,          { headers: authH() }),
+    // Parallel fetch — all sections fail independently
+    const [dashRes, ordersRes, productsRes, revenueRes, mktRes] = await Promise.allSettled([
+      fetch(`${API_URL}/api/seller/dashboard-stats`,  { headers: authH() }),
+      fetch(`${API_URL}/api/orders/seller`,            { headers: authH() }),
+      fetch(`${API_URL}/api/seller/products`,          { headers: authH() }),
+      fetch(`${API_URL}/api/seller/revenue`,           { headers: authH() }),
+      fetch(`${API_URL}/api/prices/market-trends`,     { headers: authH() }),
     ]);
 
-    if (tick !== loadRef.current) return; // stale fetch
+    if (tick !== loadRef.current) return; // stale
 
     // Dashboard stats
     if (dashRes.status === "fulfilled") {
@@ -204,20 +384,16 @@ export default function SellerDashboard() {
         if (d.success) { setStats(d.stats || {}); setRecentOrders(d.recentOrders || []); }
         else errs.dash = d.message || "Dashboard data unavailable";
       } catch { errs.dash = "Failed to parse dashboard data"; }
-    } else {
-      errs.dash = "Network error loading dashboard";
-    }
+    } else { errs.dash = "Network error loading dashboard"; }
 
-    // All orders (for pipeline counts)
+    // All orders (for pipeline + supplier overview)
     if (ordersRes.status === "fulfilled") {
       try {
         const d = await ordersRes.value.json();
         if (d.success) setAllOrders(d.orders || []);
         else errs.orders = d.message || "Orders unavailable";
       } catch { errs.orders = "Failed to parse orders"; }
-    } else {
-      errs.orders = "Network error loading orders";
-    }
+    } else { errs.orders = "Network error loading orders"; }
 
     // Products (for low-stock)
     if (productsRes.status === "fulfilled") {
@@ -226,9 +402,7 @@ export default function SellerDashboard() {
         if (d.success) setProducts(d.products || []);
         else errs.products = d.message || "Products unavailable";
       } catch { errs.products = "Failed to parse products"; }
-    } else {
-      errs.products = "Network error loading products";
-    }
+    } else { errs.products = "Network error loading products"; }
 
     // Revenue (for sales chart)
     if (revenueRes.status === "fulfilled") {
@@ -237,8 +411,21 @@ export default function SellerDashboard() {
         if (d.success) setRevenue(d);
         else errs.revenue = d.message || "Revenue data unavailable";
       } catch { errs.revenue = "Failed to parse revenue"; }
-    } else {
-      errs.revenue = "Network error loading revenue";
+    } else { errs.revenue = "Network error loading revenue"; }
+
+    // Market trends (optional — ok if unavailable)
+    if (mktRes.status === "fulfilled") {
+      try {
+        const d = await mktRes.value.json();
+        if (d.success && d.commodityAverage) {
+          // Build a map: lowercase(commodity) -> averagePrice
+          const map = {};
+          (d.commodityAverage || []).forEach(c => {
+            if (c._id) map[c._id.toLowerCase()] = c.averagePrice;
+          });
+          setMarketData(map);
+        }
+      } catch { /* market data is optional */ }
     }
 
     setErrors(errs);
@@ -247,9 +434,15 @@ export default function SellerDashboard() {
     setRefreshing(false);
   }, []);
 
-  useEffect(() => { load(false); }, [load]);
+  // Mount + 30s auto-refresh
+  useEffect(() => {
+    load(false);
+    timerRef.current = setInterval(() => load(false), AUTO_REFRESH_MS);
+    return () => clearInterval(timerRef.current);
+  }, [load]);
 
-  // ─── Computed values ──────────────────────────────────────
+  /* ─── Computed values ────────────────────────────────── */
+
   const greeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";
@@ -264,30 +457,86 @@ export default function SellerDashboard() {
     processing: allOrders.filter(o => o.status === "processing").length,
     shipped:    allOrders.filter(o => o.status === "shipped").length,
     delivered:  allOrders.filter(o => o.status === "delivered").length,
+    rejected:   allOrders.filter(o => o.status === "rejected").length,
+    cancelled:  allOrders.filter(o => o.status === "cancelled").length,
   };
   const pipelineTotal = Object.values(pipeline).reduce((s, n) => s + n, 0);
 
-  // Low-stock products (normalized kg)
-  const lowStockProducts = products.filter(p =>
-    p.stock != null && p.unit && isLowStock(p.stock, p.unit) && p.status !== "sold"
+  // Stock classification
+  const outOfStock     = products.filter(p => p.stock != null && p.unit && stockTier(p.stock, p.unit) === "out" && p.status !== "sold");
+  const criticalStock  = products.filter(p => p.stock != null && p.unit && stockTier(p.stock, p.unit) === "critical" && p.status !== "sold");
+  const lowStock       = products.filter(p => p.stock != null && p.unit && stockTier(p.stock, p.unit) === "low" && p.status !== "sold");
+
+  // ── Supplier Overview — computed from allOrders ──────────
+  const supplierMap = {};
+  allOrders.forEach(o => {
+    const name = o.farmerName || "Farmer";
+    if (!supplierMap[name]) {
+      supplierMap[name] = { orders: 0, delivered: 0, pending: 0, value: 0 };
+    }
+    supplierMap[name].orders++;
+    supplierMap[name].value += o.totalPrice || o.subtotal || 0;
+    if (o.status === "delivered") supplierMap[name].delivered++;
+    if (o.status === "pending")   supplierMap[name].pending++;
+  });
+  const topSuppliers = Object.entries(supplierMap)
+    .map(([name, d]) => ({ name, ...d }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+
+  const farmersSourcedFrom = Object.keys(supplierMap).length;
+  const activeSuppliers = Object.values(supplierMap).filter(s => s.orders > 0 && s.delivered < s.orders).length;
+  const totalProcurement = allOrders.reduce((s, o) => s + (o.totalPrice || o.subtotal || 0), 0);
+
+  // ── Procurement Analytics ────────────────────────────────
+  const cropProcurementMap = {};
+  allOrders.forEach(o => {
+    const name = (o.cropName || "Product").toLowerCase();
+    if (!cropProcurementMap[name]) cropProcurementMap[name] = { display: o.cropName, value: 0, qty: 0, price: o.price || 0 };
+    cropProcurementMap[name].value += o.totalPrice || o.subtotal || 0;
+    cropProcurementMap[name].qty   += o.quantity || 0;
+  });
+  const topCropByValue = Object.values(cropProcurementMap).sort((a, b) => b.value - a.value)[0];
+  const avgOrderVal = revenue?.avgOrderValue ?? (
+    allOrders.length > 0 ? Math.round(totalProcurement / allOrders.length) : 0
   );
 
-  // Action Required — real urgency levels
+  // ── Market Price Comparison ──────────────────────────────
+  // For each crop the seller has procured, compare avg purchase price vs market price
+  const marketComparisons = Object.entries(cropProcurementMap).map(([key, data]) => {
+    const avgPurchase = data.qty > 0 ? data.value / data.qty : data.price;
+    const marketPrice = marketData?.[key] ?? marketData?.[data.display?.toLowerCase()];
+    return {
+      crop: data.display || key,
+      avgPurchase,
+      marketPrice: marketPrice || null,
+      diff: marketPrice ? marketPrice - avgPurchase : null,
+    };
+  }).filter(c => c.avgPurchase > 0).slice(0, 5);
+
+  // ── Action Required ──────────────────────────────────────
   const actionItems = [];
   if (stats) {
+    if (outOfStock.length > 0) actionItems.push({
+      urgency: "red",
+      icon: "🚫",
+      text: `${outOfStock.length} product${outOfStock.length !== 1 ? "s" : ""} out of stock`,
+      link: "/seller/products",
+      linkLabel: "Restock →",
+    });
     if (pipeline.pending > 0) actionItems.push({
       urgency: "red",
       icon: "📦",
-      text: `${pipeline.pending} order${pipeline.pending !== 1 ? "s" : ""} pending — awaiting your response`,
+      text: `${pipeline.pending} order${pipeline.pending !== 1 ? "s" : ""} pending — awaiting farmer response`,
       link: "/seller/orders",
       linkLabel: "Review Orders →",
     });
     if (pipeline.accepted > 0) actionItems.push({
       urgency: "amber",
-      icon: "📋",
-      text: `${pipeline.accepted} accepted order${pipeline.accepted !== 1 ? "s" : ""} need to be packed`,
+      icon: "✅",
+      text: `${pipeline.accepted} accepted order${pipeline.accepted !== 1 ? "s" : ""} in progress`,
       link: "/seller/orders",
-      linkLabel: "Pack Orders →",
+      linkLabel: "Track Orders →",
     });
     if (pipeline.shipped > 0) actionItems.push({
       urgency: "blue",
@@ -296,12 +545,19 @@ export default function SellerDashboard() {
       link: "/seller/logistics",
       linkLabel: "Track Shipments →",
     });
-    if (lowStockProducts.length > 0) actionItems.push({
+    if (criticalStock.length > 0) actionItems.push({
       urgency: "amber",
       icon: "⚠️",
-      text: `${lowStockProducts.length} product${lowStockProducts.length !== 1 ? "s" : ""} running low on stock`,
+      text: `${criticalStock.length} product${criticalStock.length !== 1 ? "s" : ""} critically low (< ${STOCK_CRITICAL_KG} kg)`,
       link: "/seller/products",
       linkLabel: "Update Products →",
+    });
+    if (lowStock.length > 0) actionItems.push({
+      urgency: "amber",
+      icon: "📉",
+      text: `${lowStock.length} product${lowStock.length !== 1 ? "s" : ""} running low on stock`,
+      link: "/seller/products",
+      linkLabel: "Manage Inventory →",
     });
     if (stats.activeProducts === 0 && products.length === 0) actionItems.push({
       urgency: "green",
@@ -312,45 +568,32 @@ export default function SellerDashboard() {
     });
   }
 
-  const urgencyBorder = {
-    red:   "rgba(239,68,68,0.2)",
-    amber: "rgba(251,191,36,0.15)",
-    blue:  "rgba(56,189,248,0.15)",
-    green: "rgba(167,139,250,0.15)",
-  };
-  const urgencyDot = {
-    red:   "#f87171",
-    amber: "#fbbf24",
-    blue:  "#38bdf8",
-    green: "#a78bfa",
-  };
+  const urgencyBorder = { red: "rgba(239,68,68,0.2)", amber: "rgba(251,191,36,0.15)", blue: "rgba(56,189,248,0.15)", green: "rgba(167,139,250,0.15)" };
+  const urgencyDot    = { red: "#f87171", amber: "#fbbf24", blue: "#38bdf8", green: "#a78bfa" };
 
-  // Recent activity from recentOrders
-  const activities = [...recentOrders]
+  // ── Recent activity from allOrders (newest first, max 8) ──
+  const activities = [...allOrders]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 8)
     .map(o => ({
       icon: STATUS_LABEL[o.status]?.split(" ")[0] || "📋",
-      label: o.status === "pending"    ? "Order received"
-           : o.status === "accepted"   ? "Order accepted"
-           : o.status === "processing" ? "Order packed"
+      label: o.status === "pending"    ? "Order sent to farmer"
+           : o.status === "accepted"   ? "Farmer accepted order"
+           : o.status === "processing" ? "Order being packed"
            : o.status === "shipped"    ? "Order shipped"
            : o.status === "delivered"  ? "Order delivered"
-           : o.status === "rejected"   ? "Order rejected"
+           : o.status === "rejected"   ? "Farmer rejected order"
            : o.status === "cancelled"  ? "Order cancelled"
            : "Order updated",
-      detail: `${o.cropName || "Product"} · ${o.quantity} ${o.unit || "kg"} · ${o.buyerName || "Buyer"}`,
+      detail: `${o.cropName || "Product"} · ${o.quantity} ${o.unit || "kg"} · ${o.farmerName || "Farmer"}`,
       time: relTime(o.createdAt),
       color: STATUS_COLOR[o.status] || "#94a3b8",
+      order: o,
     }));
 
-  // KPI cards from real stats + revenue
-  const deliveredCount = allOrders.filter(o => o.status === "delivered").length;
-  const avgOrderValue  = revenue?.avgOrderValue ?? (
-    deliveredCount > 0 && stats?.totalRevenue
-      ? Math.round(stats.totalRevenue / deliveredCount)
-      : null
-  );
+  // KPI
+  const deliveredCount = pipeline.delivered;
+  const totalRevDisplay = totalProcurement > 0 ? totalProcurement : (stats?.totalRevenue ?? 0);
 
   /* ═══════════════════════════════════════════════════════
      RENDER
@@ -359,18 +602,25 @@ export default function SellerDashboard() {
     <>
       <style>{DS + EXTRA}</style>
 
+      {/* Order Details Modal */}
+      {modalOrder && <OrderDetailsModal order={modalOrder} onClose={() => setModalOrder(null)} />}
+
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="pg-head">
         <div>
           <div className="eyebrow">Seller Dashboard</div>
           <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Seller"} 👋</h1>
           <p className="pg-sub" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            Your business control center.
+            Your procurement & business control center.
             {lastUpdated && (
               <span style={{ fontSize: 11, color: "var(--text2)", background: "var(--surface)", padding: "2px 10px", borderRadius: 20, border: "1px solid var(--border)" }}>
                 Updated {relTime(lastUpdated)}
               </span>
             )}
+            <span style={{ fontSize: 11, color: "var(--text2)", background: "var(--surface)", padding: "2px 10px", borderRadius: 20, border: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 4 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block", boxShadow: "0 0 6px #4ade80" }} />
+              Auto-refreshes every 30s
+            </span>
           </p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
@@ -398,7 +648,7 @@ export default function SellerDashboard() {
         </div>
       </div>
 
-      {/* ── Global error (dash stats failed) ───────────────── */}
+      {/* ── Global error ─────────────────────────────────── */}
       {errors.dash && !loading && (
         <div className="card" style={{ marginBottom: 24, borderColor: "rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
@@ -411,7 +661,7 @@ export default function SellerDashboard() {
         </div>
       )}
 
-      {/* ── Skeleton ───────────────────────────────────────── */}
+      {/* ── Skeleton ─────────────────────────────────────── */}
       {loading && (
         <>
           <div className="sd-grid4" style={{ marginBottom: 24 }}>
@@ -434,29 +684,29 @@ export default function SellerDashboard() {
         </>
       )}
 
-      {/* ── Content ────────────────────────────────────────── */}
+      {/* ── Content ──────────────────────────────────────── */}
       {!loading && (
         <>
           {/* ── KPI Cards ─────────────────────────────────── */}
           <div className="sd-grid4">
             {[
               {
-                emoji: "💰", label: "Total Revenue", sub: "accepted + shipped + delivered",
-                value: fmtINR(stats?.totalRevenue), color: "#4ade80",
+                emoji: "💰", label: "Total Procurement", sub: "accepted + shipped + delivered",
+                value: fmtINR(totalRevDisplay), color: "#4ade80",
                 link: "/seller/revenue", small: true,
               },
               {
-                emoji: "📦", label: "Total Orders", sub: "→ View orders",
+                emoji: "📦", label: "Total Orders", sub: "→ View all orders",
                 value: stats?.totalOrders ?? allOrders.length,
                 color: "#38bdf8", link: "/seller/orders",
               },
               {
-                emoji: "✅", label: "Delivered", sub: "completed orders",
+                emoji: "🎉", label: "Delivered", sub: "completed orders",
                 value: deliveredCount,
                 color: "#4ade80", link: "/seller/orders",
               },
               {
-                emoji: "⏳", label: "Pending", sub: "awaiting action",
+                emoji: "⏳", label: "Pending", sub: "awaiting farmer",
                 value: pipeline.pending,
                 color: "#fbbf24", link: "/seller/orders",
               },
@@ -468,14 +718,14 @@ export default function SellerDashboard() {
                 >
                   <div style={{ fontSize: 24 }}>{s.emoji}</div>
                   <div className="sd-kpi-lbl" style={{ marginTop: 10 }}>{s.label}</div>
-                  <div className="sd-kpi-val" style={{ color: s.color, fontSize: s.small ? 20 : 26 }}>{s.value}</div>
+                  <div className="sd-kpi-val" style={{ color: s.color, fontSize: s.small ? 20 : 26, wordBreak: "break-word" }}>{s.value}</div>
                   <div className="sd-kpi-sub">{s.sub}</div>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* ── Action Required ───────────────────────────── */}
+          {/* ── Action Required ─────────────────────────── */}
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
               <div className="card-title">⚠️ Action Required</div>
@@ -513,7 +763,6 @@ export default function SellerDashboard() {
               <Link to="/seller/orders" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>View All Orders →</Link>
             </div>
 
-            {/* Stacked bar */}
             {pipelineTotal > 0 ? (
               <>
                 <div className="sd-pipe-bar">
@@ -548,17 +797,140 @@ export default function SellerDashboard() {
                     </Link>
                   ))}
                 </div>
+                {/* Rejected / Cancelled indicators */}
+                {(pipeline.rejected > 0 || pipeline.cancelled > 0) && (
+                  <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
+                    {pipeline.rejected > 0 && (
+                      <span style={{ fontSize: 12, color: "#f87171", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
+                        ❌ {pipeline.rejected} Rejected
+                      </span>
+                    )}
+                    {pipeline.cancelled > 0 && (
+                      <span style={{ fontSize: 12, color: "#f87171", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
+                        🚫 {pipeline.cancelled} Cancelled
+                      </span>
+                    )}
+                  </div>
+                )}
               </>
             ) : (
               <div className="empty-state" style={{ padding: "20px" }}>
                 <div className="empty-emoji">📦</div>
                 <div className="empty-title">No orders yet</div>
-                <div className="empty-sub">Your order pipeline will appear here as buyers place orders.</div>
+                <div className="empty-sub">Your order pipeline will appear here as you place procurement orders.</div>
+                <Link to="/seller/procurement" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", marginTop: 12, display: "inline-flex" }}>
+                  🛒 Browse Farmer Produce
+                </Link>
               </div>
             )}
           </div>
 
-          {/* ── Sales Performance + Recent Orders ─────────── */}
+          {/* ── Supplier Overview + Procurement Analytics ─── */}
+          <div className="sd-grid2">
+            {/* 🌾 Supplier Overview */}
+            <div className="card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+                <div className="card-title">🌾 Supplier Overview</div>
+                <Link to="/seller/procurement" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Browse Produce →</Link>
+              </div>
+
+              {errors.orders && (
+                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load order data.</div>
+              )}
+
+              {!errors.orders && allOrders.length === 0 && (
+                <div className="empty-state" style={{ padding: "24px" }}>
+                  <div className="empty-emoji">🌾</div>
+                  <div className="empty-title">No suppliers yet</div>
+                  <div className="empty-sub">Farmer suppliers will appear once you place procurement orders.</div>
+                </div>
+              )}
+
+              {!errors.orders && allOrders.length > 0 && (
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
+                    {[
+                      { label: "Farmers Sourced", value: farmersSourcedFrom, color: "#a78bfa" },
+                      { label: "Active Suppliers", value: activeSuppliers,   color: "#38bdf8" },
+                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#4ade80", small: true },
+                    ].map(m => (
+                      <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
+                        <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
+                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: m.small ? 14 : 20, fontWeight: 800, color: m.color, marginTop: 4, wordBreak: "break-word" }}>{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Top Suppliers mini-list */}
+                  {topSuppliers.slice(0, 4).map((s, i) => (
+                    <div key={s.name + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < 3 ? "1px solid var(--border)" : "none", gap: 8, flexWrap: "wrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,rgba(124,58,237,0.2),rgba(167,139,250,0.1))", border: "1px solid rgba(167,139,250,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#a78bfa", fontWeight: 800, flexShrink: 0 }}>
+                          {i + 1}
+                        </div>
+                        <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#4ade80" }}>{fmtINR(s.value)}</div>
+                        <div style={{ fontSize: 10, color: "var(--text2)" }}>{s.orders} order{s.orders !== 1 ? "s" : ""}</div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+
+            {/* 📊 Procurement Analytics */}
+            <div className="card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+                <div className="card-title">📊 Procurement Analytics</div>
+                <Link to="/seller/analytics" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Full Analytics →</Link>
+              </div>
+
+              {allOrders.length === 0 && (
+                <div style={{ color: "var(--text2)", fontSize: 13, padding: "16px 0", textAlign: "center" }}>
+                  No procurement data yet. Start by placing orders from the Procurement page.
+                </div>
+              )}
+
+              {allOrders.length > 0 && (
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+                    {[
+                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#4ade80" },
+                      { label: "Total Orders",     value: allOrders.length,         color: "#38bdf8" },
+                      { label: "Avg Order Value",  value: avgOrderVal ? fmtINR(avgOrderVal) : "—", color: "#a78bfa" },
+                      { label: "Top Crop",         value: topCropByValue?.display || "—",     color: "#fb923c" },
+                    ].map(m => (
+                      <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
+                        <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
+                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: m.color, marginTop: 4, wordBreak: "break-word" }}>{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Top crops by spend */}
+                  {Object.values(cropProcurementMap).sort((a, b) => b.value - a.value).slice(0, 4).map((c, i) => {
+                    const pct = totalProcurement > 0 ? (c.value / totalProcurement * 100) : 0;
+                    return (
+                      <div key={c.display + i} style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                          <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{c.display}</span>
+                          <span style={{ fontSize: 11, color: "#4ade80", fontWeight: 700 }}>{fmtINR(c.value)}</span>
+                        </div>
+                        <div style={{ height: 5, borderRadius: 4, background: "rgba(167,139,250,0.1)", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.min(pct, 100)}%`, background: "linear-gradient(90deg,#7c3aed,#a78bfa)", borderRadius: 4, transition: "width 0.6s ease" }} />
+                        </div>
+                        <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 2 }}>{pct.toFixed(1)}% of total spend</div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* ── Sales Performance + Recent Orders ──────────── */}
           <div className="sd-grid2">
             {/* 📈 Sales Performance */}
             <div className="card">
@@ -576,12 +948,11 @@ export default function SellerDashboard() {
 
               {!errors.revenue && revenue && (
                 <>
-                  {/* 3 metrics */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
                     {[
-                      { label: "Revenue", value: fmtINR(revenue.totalRevenue), color: "#4ade80" },
-                      { label: "Orders",  value: revenue.totalOrders,           color: "#38bdf8" },
-                      { label: "Avg Order", value: avgOrderValue != null ? fmtINR(avgOrderValue) : "—", color: "#a78bfa" },
+                      { label: "Revenue",   value: fmtINR(revenue.totalRevenue), color: "#4ade80" },
+                      { label: "Orders",    value: revenue.totalOrders,           color: "#38bdf8" },
+                      { label: "Avg Order", value: revenue.avgOrderValue ? fmtINR(revenue.avgOrderValue) : "—", color: "#a78bfa" },
                     ].map(m => (
                       <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
@@ -589,8 +960,6 @@ export default function SellerDashboard() {
                       </div>
                     ))}
                   </div>
-
-                  {/* Monthly bar chart */}
                   <div style={{ marginBottom: 4 }}>
                     <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>Monthly Revenue</div>
                     <MiniBarChart monthly={revenue.monthly} />
@@ -600,7 +969,7 @@ export default function SellerDashboard() {
 
               {!errors.revenue && !revenue && (
                 <div style={{ color: "var(--text2)", fontSize: 13, padding: "24px 0", textAlign: "center" }}>
-                  Revenue data not available.
+                  Revenue data not available. Data appears once orders are accepted or delivered.
                 </div>
               )}
             </div>
@@ -612,26 +981,28 @@ export default function SellerDashboard() {
                 <Link to="/seller/orders" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>View All →</Link>
               </div>
 
-              {recentOrders.length === 0 ? (
+              {allOrders.length === 0 ? (
                 <div className="empty-state" style={{ padding: "24px" }}>
                   <div className="empty-emoji">📦</div>
                   <div className="empty-title">No orders yet</div>
-                  <div className="empty-sub">Orders from buyers will appear here.</div>
+                  <div className="empty-sub">Place a bulk order from the Procurement page.</div>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {recentOrders.slice(0, 5).map((o, i) => {
+                  {allOrders.slice(0, 5).map((o, i) => {
                     const stColor = STATUS_COLOR[o.status] || "#94a3b8";
                     return (
-                      <Link key={o._id || i} to="/seller/orders" className="sd-order-row" style={{ textDecoration: "none" }}>
+                      <div
+                        key={(o._id || "") + i}
+                        className="sd-order-row"
+                        onClick={() => setModalOrder(o)}
+                      >
                         <div style={{ minWidth: 0 }}>
                           <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {o.cropName || "Product"}
                           </div>
                           <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
-                            {o.quantity} {o.unit || "kg"}
-                            {o.buyerName ? ` · ${o.buyerName}` : ""}
-                            {" · "}{relTime(o.createdAt)}
+                            {o.quantity} {o.unit || "kg"} · {o.farmerName || "Farmer"} · {relTime(o.createdAt)}
                           </div>
                         </div>
                         <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -640,86 +1011,196 @@ export default function SellerDashboard() {
                             {o.status || "pending"}
                           </span>
                         </div>
-                      </Link>
+                      </div>
                     );
                   })}
+                  <div style={{ textAlign: "center", marginTop: 4, fontSize: 11, color: "var(--text2)" }}>
+                    Click any row to see full details
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* ── Low Stock + Recent Activity ───────────────── */}
+          {/* ── Top Suppliers Table ─────────────────────────── */}
+          {topSuppliers.length > 0 && (
+            <div className="card" style={{ marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+                <div className="card-title">🏆 Top Farmer Suppliers</div>
+                <span style={{ fontSize: 11, color: "var(--text2)" }}>Sorted by procurement value</span>
+              </div>
+              <div style={{ overflowX: "auto" }}>
+                <table className="sd-supplier-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Farmer</th>
+                      <th>Orders</th>
+                      <th>Delivered</th>
+                      <th>Pending</th>
+                      <th>Procurement Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {topSuppliers.map((s, i) => (
+                      <tr key={s.name + i}>
+                        <td style={{ color: "var(--text2)", width: 28 }}>{i + 1}</td>
+                        <td>
+                          <div style={{ fontWeight: 700, color: "#fff" }}>{s.name}</div>
+                        </td>
+                        <td>
+                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#38bdf8" }}>{s.orders}</span>
+                        </td>
+                        <td>
+                          <span style={{ color: "#4ade80", fontWeight: 700 }}>{s.delivered}</span>
+                        </td>
+                        <td>
+                          <span style={{ color: s.pending > 0 ? "#fbbf24" : "var(--text2)", fontWeight: s.pending > 0 ? 700 : 400 }}>
+                            {s.pending > 0 ? s.pending : "—"}
+                          </span>
+                        </td>
+                        <td>
+                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#4ade80" }}>{fmtINR(s.value)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ── Market Price Comparison ─────────────────────── */}
+          <div className="card" style={{ marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+              <div className="card-title">📊 Procurement vs Market Price</div>
+              <Link to="/seller/market-trends" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Market Trends →</Link>
+            </div>
+
+            {marketComparisons.length === 0 && (
+              <div style={{ color: "var(--text2)", fontSize: 13, padding: "12px 0" }}>
+                No procured crops to compare yet. Place procurement orders first.
+              </div>
+            )}
+
+            {marketComparisons.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {marketComparisons.map((c, i) => (
+                  <div key={c.crop + i} className="mkt-row">
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{c.crop}</div>
+                      <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
+                        Avg purchase: <span style={{ color: "#fff", fontWeight: 600 }}>{fmtINR(Math.round(c.avgPurchase))}/unit</span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      {c.marketPrice != null ? (
+                        <>
+                          <div style={{ fontSize: 13, color: "var(--text2)" }}>
+                            Market: <span style={{ color: "#fff", fontWeight: 700 }}>{fmtINR(Math.round(c.marketPrice))}</span>
+                          </div>
+                          <div style={{
+                            fontSize: 12, fontWeight: 800, marginTop: 2,
+                            color: c.diff > 0 ? "#4ade80" : c.diff < 0 ? "#f87171" : "var(--text2)",
+                          }}>
+                            {c.diff > 0 ? `+${fmtINR(Math.round(c.diff))} cheaper` : c.diff < 0 ? `${fmtINR(Math.round(Math.abs(c.diff)))} above market` : "At market price"}
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ fontSize: 11, color: "var(--text2)" }}>Market price unavailable</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ── Low Stock Alerts (3-tier) + Recent Activity ── */}
           <div className="sd-grid2">
-            {/* ⚠️ Low Stock */}
+            {/* ⚠️ Stock Alerts */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">⚠️ Low Stock Alerts</div>
+                <div className="card-title">⚠️ Stock Alerts</div>
                 <Link to="/seller/products" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>All Products →</Link>
               </div>
 
               {errors.products && (
-                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
-                  <span>⚠️</span> Unable to load product data.
-                </div>
+                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load product data.</div>
               )}
 
-              {!errors.products && lowStockProducts.length === 0 && (
+              {!errors.products && outOfStock.length === 0 && criticalStock.length === 0 && lowStock.length === 0 && (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#4ade80", fontSize: 13, padding: "8px 0" }}>
                   <span style={{ fontSize: 18 }}>✓</span>
                   {products.length === 0
                     ? "No products listed yet."
-                    : `All ${products.length} products have sufficient stock.`}
+                    : `All ${products.length} products have healthy stock.`}
                 </div>
               )}
 
-              {!errors.products && lowStockProducts.length > 0 && (
+              {!errors.products && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 4 }}>
-                    Threshold: ≤ {LOW_STOCK_KG} kg equivalent
-                  </div>
-                  {lowStockProducts.slice(0, 5).map(p => (
-                    <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row" style={{ textDecoration: "none" }}>
+                  {/* Out of Stock */}
+                  {outOfStock.slice(0, 3).map(p => (
+                    <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-out" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {p.name}
-                        </div>
-                        <div style={{ fontSize: 11, color: "#fbbf24", marginTop: 2 }}>
-                          {p.stock} {p.unit} remaining
-                        </div>
+                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <span style={{ fontSize: 10, color: "#f87171", fontWeight: 800 }}>🔴 OUT OF STOCK</span>
                       </div>
-                      <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6,
-                          background: p.status === "listed" ? "rgba(34,197,94,0.1)" : p.status === "ready" ? "rgba(56,189,248,0.1)" : "rgba(251,191,36,0.1)",
-                          color:      p.status === "listed" ? "#4ade80"             : p.status === "ready" ? "#38bdf8"             : "#fbbf24",
-                          fontWeight: 700 }}>
-                          {p.status}
-                        </span>
-                        <div style={{ fontSize: 10, color: "#a78bfa", marginTop: 3, fontWeight: 600 }}>Update →</div>
-                      </div>
+                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Restock →</div>
                     </Link>
                   ))}
-                  {lowStockProducts.length > 5 && (
+                  {/* Critical Stock */}
+                  {criticalStock.slice(0, 3).map(p => (
+                    <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-critical" style={{ textDecoration: "none" }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <div style={{ fontSize: 11, color: "#fb923c" }}>
+                          🟠 Critical: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Update →</div>
+                    </Link>
+                  ))}
+                  {/* Low Stock */}
+                  {lowStock.slice(0, 3).map(p => (
+                    <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-low" style={{ textDecoration: "none" }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <div style={{ fontSize: 11, color: "#fbbf24" }}>
+                          🟡 Low: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Update →</div>
+                    </Link>
+                  ))}
+
+                  {(outOfStock.length + criticalStock.length + lowStock.length) > 9 && (
                     <Link to="/seller/products" style={{ fontSize: 12, color: "#a78bfa", textAlign: "center", textDecoration: "none", paddingTop: 4, fontWeight: 700 }}>
-                      +{lowStockProducts.length - 5} more →
+                      View all alerts →
                     </Link>
                   )}
                 </div>
               )}
             </div>
 
-            {/* 🕐 Recent Activity */}
+            {/* 🕐 Recent Procurement Activity */}
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 16 }}>🕐 Recent Activity</div>
+              <div className="card-title" style={{ marginBottom: 16 }}>🕐 Recent Procurement Activity</div>
               {activities.length === 0 ? (
                 <div className="empty-state" style={{ padding: "24px" }}>
                   <div className="empty-emoji">🕐</div>
                   <div className="empty-title">No recent activity</div>
-                  <div className="empty-sub">Activity will appear as orders are placed.</div>
+                  <div className="empty-sub">Activity will appear as you place and track procurement orders.</div>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {activities.map((a, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                    <div
+                      key={i}
+                      style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}
+                      onClick={() => setModalOrder(a.order)}
+                    >
                       <div style={{
                         width: 28, height: 28, borderRadius: 8, flexShrink: 0,
                         background: `${a.color}15`, border: `1px solid ${a.color}30`,
@@ -732,6 +1213,7 @@ export default function SellerDashboard() {
                         <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.detail}</div>
                         <div style={{ fontSize: 11, color: a.color, marginTop: 2, fontWeight: 600 }}>{a.time}</div>
                       </div>
+                      <div style={{ fontSize: 10, color: "var(--text2)", flexShrink: 0 }}>details →</div>
                     </div>
                   ))}
                 </div>
@@ -744,14 +1226,14 @@ export default function SellerDashboard() {
             <div className="card-title" style={{ marginBottom: 16 }}>⚡ Quick Actions</div>
             <div className="sd-quick-grid">
               {[
-                { emoji: "➕", label: "Add Product",     to: "/seller/products/add",  color: "#a78bfa" },
-                { emoji: "📦", label: "Manage Orders",   to: "/seller/orders",        color: "#38bdf8" },
-                { emoji: "📥", label: "Procurement",     to: "/seller/procurement",   color: "#4ade80" },
-                { emoji: "💰", label: "Revenue Report",  to: "/seller/revenue",       color: "#fb923c" },
-                { emoji: "📈", label: "Analytics",       to: "/seller/analytics",     color: "#f472b6" },
-                { emoji: "🚚", label: "Logistics",       to: "/seller/logistics",     color: "#fbbf24" },
-                { emoji: "📊", label: "Market Trends",   to: "/seller/market-trends", color: "#94a3b8" },
-                { emoji: "🤖", label: "AI Assistant",    to: "/seller/assistant",     color: "#c4b5fd" },
+                { emoji: "🛒", label: "Procure Produce",  to: "/seller/procurement",   color: "#4ade80" },
+                { emoji: "📦", label: "Manage Orders",    to: "/seller/orders",        color: "#38bdf8" },
+                { emoji: "🛍️", label: "My Products",     to: "/seller/products",      color: "#a78bfa" },
+                { emoji: "➕", label: "Add Product",      to: "/seller/products/add",  color: "#c4b5fd" },
+                { emoji: "💰", label: "Revenue Report",   to: "/seller/revenue",       color: "#fb923c" },
+                { emoji: "📈", label: "Analytics",        to: "/seller/analytics",     color: "#f472b6" },
+                { emoji: "🚚", label: "Logistics",        to: "/seller/logistics",     color: "#fbbf24" },
+                { emoji: "📊", label: "Market Trends",    to: "/seller/market-trends", color: "#94a3b8" },
               ].map(q => (
                 <Link key={q.label} to={q.to} className="sd-quick-link"
                   onMouseEnter={e => { e.currentTarget.style.borderColor = `${q.color}35`; }}

@@ -314,30 +314,87 @@ export default function SellerProcurement() {
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label className="field-label">Quantity ({orderModal.unit}) *</label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <label className="field-label" style={{ marginBottom: 0 }}>Quantity ({orderModal.unit}) *</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOrderForm(p => ({ ...p, quantity: String(orderModal.quantity) }));
+                      setOrderError("");
+                    }}
+                    style={{
+                      background: "rgba(167,139,250,0.12)",
+                      border: "1px solid rgba(167,139,250,0.3)",
+                      color: "#a78bfa",
+                      borderRadius: 6,
+                      padding: "2px 8px",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      cursor: "pointer"
+                    }}
+                  >
+                    Max ({orderModal.quantity} {orderModal.unit})
+                  </button>
+                </div>
                 <input
                   className="field-input"
                   type="number"
                   min="1"
                   max={orderModal.quantity}
-                  placeholder={`Max ${orderModal.quantity} ${orderModal.unit}`}
+                  placeholder={`Enter 1 – ${orderModal.quantity} ${orderModal.unit}`}
                   value={orderForm.quantity}
-                  onChange={e => { setOrderForm(p => ({ ...p, quantity: e.target.value })); setOrderError(""); }}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === "") {
+                      setOrderForm(p => ({ ...p, quantity: "" }));
+                      setOrderError("");
+                      return;
+                    }
+                    // Limit max length to avoid absurd numbers
+                    if (val.length > 8) return;
+
+                    const num = Number(val);
+                    if (num < 0) return;
+
+                    setOrderForm(p => ({ ...p, quantity: val }));
+                    if (num > Number(orderModal.quantity)) {
+                      setOrderError(`Quantity cannot exceed available stock (${orderModal.quantity} ${orderModal.unit}).`);
+                    } else {
+                      setOrderError("");
+                    }
+                  }}
                   disabled={ordering}
                 />
               </div>
 
-              {/* Live total preview */}
+              {/* Live total preview or warning */}
               {orderForm.quantity && Number(orderForm.quantity) > 0 && (
-                <div style={{ padding: "12px 16px", background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 12 }}>
-                  <div style={{ fontSize: 12, color: "var(--text2)" }}>Order Total (at current price)</div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#4ade80" }}>
-                    ₹{(Number(orderForm.quantity) * Number(orderModal.price)).toLocaleString("en-IN")}
+                Number(orderForm.quantity) > Number(orderModal.quantity) ? (
+                  <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12 }}>
+                    <div style={{ fontSize: 13, color: "#f87171", fontWeight: 600 }}>
+                      ⚠️ Quantity exceeds available stock of {orderModal.quantity} {orderModal.unit}.
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 4 }}>
-                    Final price confirmed by backend using live crop price.
+                ) : (
+                  <div style={{ padding: "12px 16px", background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 12, overflow: "hidden" }}>
+                    <div style={{ fontSize: 12, color: "var(--text2)" }}>Order Total (at current price)</div>
+                    <div style={{
+                      fontFamily: "'Space Grotesk',sans-serif",
+                      fontSize: 22,
+                      fontWeight: 800,
+                      color: "#4ade80",
+                      wordBreak: "break-word",
+                      overflowWrap: "anywhere",
+                      marginTop: 4,
+                      lineHeight: 1.2
+                    }}>
+                      ₹{(Number(orderForm.quantity) * Number(orderModal.price)).toLocaleString("en-IN")}
+                    </div>
+                    <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 4 }}>
+                      Final price confirmed by backend using live crop price.
+                    </div>
                   </div>
-                </div>
+                )
               )}
 
               <div>
@@ -364,8 +421,19 @@ export default function SellerProcurement() {
                 </button>
                 <button
                   className="btn-green"
-                  disabled={!orderForm.quantity || Number(orderForm.quantity) <= 0 || ordering}
-                  style={{ flex: 2, justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#a78bfa)", opacity: ordering ? 0.7 : 1 }}
+                  disabled={
+                    !orderForm.quantity ||
+                    Number(orderForm.quantity) <= 0 ||
+                    Number(orderForm.quantity) > Number(orderModal.quantity) ||
+                    ordering
+                  }
+                  style={{
+                    flex: 2,
+                    justifyContent: "center",
+                    background: "linear-gradient(135deg,#7c3aed,#a78bfa)",
+                    opacity: (!orderForm.quantity || Number(orderForm.quantity) <= 0 || Number(orderForm.quantity) > Number(orderModal.quantity) || ordering) ? 0.5 : 1,
+                    cursor: (!orderForm.quantity || Number(orderForm.quantity) <= 0 || Number(orderForm.quantity) > Number(orderModal.quantity) || ordering) ? "not-allowed" : "pointer"
+                  }}
                   onClick={placeOrder}
                 >
                   {ordering ? "⏳ Placing Order…" : "✅ Confirm Order"}

@@ -613,45 +613,61 @@ const getFarmerDashboardStats = async (req, res) => {
 // ==========================================
 // GET SELLER ORDERS
 // GET /api/orders/seller
-// Returns all orders that contain items from this seller/farmer
+// A seller places procurement orders as the BUYER.
+// Order.buyer = seller._id   (the seller who purchased)
+// Order.items[].farmer = farmer._id (the crop owner)
+// So we query by buyer, not items.farmer.
 // ==========================================
 const getSellerOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ "items.farmer": req.user._id })
-      .populate("buyer", "name email phone")
+    const orders = await Order.find({ buyer: req.user._id })
+      .populate("items.farmer", "name email")
       .sort({ createdAt: -1 })
       .lean();
 
-    const sellerId = req.user._id.toString();
-
-    // Flatten to per-item rows the seller cares about
+    // Flatten each order into a row the Seller UI can render directly.
+    // If an order has multiple items (rare for procurement) we emit one row per item.
     const sellerOrders = [];
     orders.forEach((o) => {
-      const myItems = o.items.filter((it) => it.farmer.toString() === sellerId);
-      if (!myItems.length) return;
-
-      myItems.forEach((item) => {
+      if (!o.items || o.items.length === 0) {
+        // Edge case: order with no items — still surface it so seller can see it
         sellerOrders.push({
-          _id: o._id,
-          itemId: item._id,
-          cropName: item.cropName,
-          quantity: item.quantity,
-          unit: item.unit,
-          price: item.price,
-          subtotal: item.subtotal,
-          totalPrice: item.subtotal,
-          status: o.status,
-          buyerName: o.buyer?.name || "Buyer",
-          buyerEmail: o.buyer?.email || "",
-          buyerPhone: o.buyer?.phone || "",
-          deliveryAddress: [
-            o.deliveryAddress?.address,
-            o.deliveryAddress?.city,
-            o.deliveryAddress?.state,
-            o.deliveryAddress?.pincode,
-          ].filter(Boolean).join(", "),
-          paymentMethod: o.paymentMethod,
-          createdAt: o.createdAt,
+          _id:            o._id,
+          cropName:       "—",
+          quantity:       0,
+          unit:           "kg",
+          price:          0,
+          subtotal:       0,
+          totalPrice:     o.totalAmount || 0,
+          totalAmount:    o.totalAmount || 0,
+          status:         o.status,
+          farmerName:     "Farmer",
+          farmerEmail:    "",
+          deliveryAddress: o.deliveryAddress,
+          paymentMethod:  o.paymentMethod,
+          createdAt:      o.createdAt,
+        });
+        return;
+      }
+
+      o.items.forEach((item) => {
+        sellerOrders.push({
+          _id:            o._id,
+          cropName:       item.cropName || "Product",
+          quantity:       item.quantity,
+          unit:           item.unit || "kg",
+          price:          item.price,
+          subtotal:       item.subtotal,
+          totalPrice:     item.subtotal,
+          totalAmount:    o.totalAmount,
+          status:         o.status,        // <-- live from Order document
+          // Farmer who owns the crop
+          farmerName:     item.farmer?.name  || "Farmer",
+          farmerEmail:    item.farmer?.email || "",
+          // Full delivery address object (let frontend format it)
+          deliveryAddress: o.deliveryAddress,
+          paymentMethod:  o.paymentMethod,
+          createdAt:      o.createdAt,
         });
       });
     });

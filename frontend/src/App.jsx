@@ -53,6 +53,8 @@ import EditSellerProduct from "./dashboards/seller/EditSellerProduct";
 import SellerProcurement from "./dashboards/seller/SellerProcurement";
 import SellerAnalytics from "./dashboards/seller/SellerAnalytics";
 import SellerLogistics from "./dashboards/seller/SellerLogistics";
+import SellerAIAssistant from "./dashboards/seller/SellerAIAssistant";
+import SellerProfile from "./dashboards/seller/SellerProfile";
 
 // User / Buyer
 import UserLayout from "./layouts/UserLayout";
@@ -252,8 +254,8 @@ export default function App() {
           <Route path="analytics"          element={<SellerAnalytics />} />
           <Route path="logistics"          element={<SellerLogistics />} />
           <Route path="market-trends" element={<MarketTrends />} />
-          <Route path="assistant"     element={<AIAssistant />} />
-          <Route path="profile"       element={<FarmerProfile />} />
+          <Route path="assistant"     element={<SellerAIAssistant />} />
+          <Route path="profile"       element={<SellerProfile />} />
         </Route>
 
         {/* =========================
