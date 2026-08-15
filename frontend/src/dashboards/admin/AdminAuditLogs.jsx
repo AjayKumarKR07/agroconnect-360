@@ -1,23 +1,73 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { API_URL } from "../../config/api";
+import { DS_ADMIN, relativeTime } from "./adminStyles";
 
-const DS_ADMIN = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-  .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#818cf8;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
-  .pg-sub{font-size:14px;color:#a5b4fc;margin-top:6px;}
-  .card{background:rgba(99,102,241,0.04);border:1px solid rgba(99,102,241,0.12);border-radius:18px;padding:20px 22px;}
-`;
+const ENTITY_TYPES = ["all", "user", "order", "crop", "rfq", "shipment", "dispute", "broadcast", "system"];
 
-const LOGS = [
-  { id: "log-901", action: "User Role Escalation", user: "Admin User", ip: "192.168.1.45", level: "INFO", time: "2 mins ago", details: "Changed user 'Ajaykumar2005' status to VERIFIED" },
-  { id: "log-902", action: "Export RFQ Created", user: "Demo Exporter", ip: "103.44.12.89", level: "INFO", time: "14 mins ago", details: "Created 20 Ton RFQ for Alphonso Mangoes to UAE" },
-  { id: "log-903", action: "Failed Login Attempt", user: "Unknown", ip: "45.12.89.201", level: "WARNING", time: "1 hour ago", details: "3 invalid password attempts for user 'seller@agroconnect.com'" },
-  { id: "log-904", action: "Order Refund Processed", user: "Admin User", ip: "192.168.1.45", level: "INFO", time: "3 hours ago", details: "Approved ₹840 refund for dispute #dsp-101" },
-];
+const ACTION_ICONS = {
+  user_suspended:       { emoji: "🚫", color: "#f87171" },
+  user_activated:       { emoji: "✅", color: "#4ade80" },
+  crop_deleted:         { emoji: "🗑️", color: "#f87171" },
+  order_status_changed: { emoji: "📦", color: "#818cf8" },
+  rfq_status_changed:   { emoji: "🚢", color: "#fbbf24" },
+  shipment_status_changed: { emoji: "⛴️", color: "#38bdf8" },
+  dispute_resolved:     { emoji: "✅", color: "#4ade80" },
+  dispute_rejected:     { emoji: "❌", color: "#f87171" },
+  dispute_under_review: { emoji: "🔍", color: "#fbbf24" },
+  dispute_open:         { emoji: "📂", color: "#38bdf8" },
+  broadcast_sent:       { emoji: "📢", color: "#a78bfa" },
+};
+
+const LEVEL_STYLE = (action) => {
+  if (action.includes("delete") || action.includes("suspend") || action.includes("reject")) {
+    return { bg: "rgba(239,68,68,0.12)", color: "#f87171", label: "DESTRUCTIVE" };
+  }
+  if (action.includes("broadcast")) {
+    return { bg: "rgba(167,139,250,0.12)", color: "#a78bfa", label: "BROADCAST" };
+  }
+  return { bg: "rgba(99,102,241,0.12)", color: "#c7d2fe", label: "INFO" };
+};
 
 export default function AdminAuditLogs() {
-  const [logs] = useState(LOGS);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [entityFilter, setEntityFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const token = localStorage.getItem("agroconnect_token");
+
+  const load = useCallback(async (p = 1) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ limit: 25, page: p });
+      if (entityFilter !== "all") params.set("entityType", entityFilter);
+      if (search) params.set("action", search);
+      const r = await fetch(`${API_URL}/api/admin/audit-logs?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (d.success) {
+        setLogs(d.logs || []);
+        setPagination({ total: d.total, totalPages: d.totalPages, page: d.page });
+        setLastUpdated(new Date());
+      } else {
+        throw new Error(d.message);
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, entityFilter, search]);
+
+  useEffect(() => { setPage(1); load(1); }, [entityFilter]);
+  useEffect(() => { load(page); }, [page]);
+
+  const handleSearch = (e) => { e.preventDefault(); setPage(1); load(1); };
 
   return (
     <>
@@ -25,51 +75,118 @@ export default function AdminAuditLogs() {
 
       <div className="pg-head">
         <div>
-          <div className="eyebrow">Security & System Activity Stream</div>
-          <h1 className="pg-title">📜 Audit Logs & Security Telemetry</h1>
-          <p className="pg-sub">Real-time immutable audit trails for administrative overrides, user role updates, and authentication events.</p>
+          <div className="eyebrow">Security &amp; System Activity Stream</div>
+          <h1 className="pg-title">📜 Audit Logs &amp; Admin Activity</h1>
+          <p className="pg-sub">Persistent, real-time record of all administrative actions across the platform.</p>
+        </div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          {lastUpdated && <span style={{ fontSize: 12, color: "#a5b4fc" }}>Updated {relativeTime(lastUpdated)}</span>}
+          <button className="btn-indigo" onClick={() => load(page)} disabled={loading}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+          </button>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16, marginBottom: 26 }}>
-        {[
-          ["🛡️", "Security Threat Level", "NORMAL", "0 Malicious Attacks", "#4ade80"],
-          ["📜", "Audit Events Logged", "1,842 Events", "Last 30 Days", "#818cf8"],
-          ["🌐", "Whitelisted Admin IPs", "4 Addresses", "Active Session Secured", "#38bdf8"],
-        ].map(([emoji, label, val, sub, color]) => (
-          <div key={label} className="card">
-            <div style={{ fontSize: 24, marginBottom: 8 }}>{emoji}</div>
-            <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color }}>{val}</div>
-            <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 4 }}>{sub}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="card">
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
-          📜 Real-Time Security Audit Stream
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {logs.map(l => (
-            <div key={l.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: "rgba(99,102,241,0.03)", borderRadius: 12, border: "1px solid rgba(99,102,241,0.08)", flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{l.action}</span>
-                  <span style={{ fontSize: 11, padding: "2px 7px", borderRadius: 6, background: l.level === "WARNING" ? "rgba(251,191,36,0.15)" : "rgba(99,102,241,0.15)", color: l.level === "WARNING" ? "#fbbf24" : "#c7d2fe", fontWeight: 800 }}>
-                    {l.level}
-                  </span>
-                </div>
-                <div style={{ fontSize: 13, color: "#a5b4fc", marginTop: 4 }}>{l.details}</div>
-                <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>By: {l.user} · IP: <span style={{ fontFamily: "monospace" }}>{l.ip}</span></div>
-              </div>
-
-              <div style={{ fontSize: 11, color: "#a5b4fc" }}>{l.time}</div>
-            </div>
+      {/* Filters */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {ENTITY_TYPES.map((et) => (
+            <button key={et} className={`tab-btn ${entityFilter === et ? "active" : ""}`} onClick={() => setEntityFilter(et)}>
+              {et === "all" ? "🌐 All Types" : et}
+            </button>
           ))}
         </div>
+        <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          <input
+            className="field-input"
+            style={{ maxWidth: 200 }}
+            placeholder="🔍 Search action…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button type="submit" className="btn-indigo" style={{ padding: "10px 14px", fontSize: 13 }}>Search</button>
+        </form>
       </div>
+
+      {/* Stats bar */}
+      {pagination.total !== undefined && (
+        <div style={{ marginBottom: 16, fontSize: 13, color: "#a5b4fc" }}>
+          Showing {logs.length} of <strong style={{ color: "#fff" }}>{pagination.total}</strong> audit events
+        </div>
+      )}
+
+      {loading && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[...Array(6)].map((_, i) => <div key={i} className="skeleton" style={{ height: 72, borderRadius: 12 }} />)}
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="card error-state">
+          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-msg">Unable to load audit logs</div>
+          <div className="error-state-sub">{error}</div>
+          <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
+        </div>
+      )}
+
+      {!loading && !error && logs.length === 0 && (
+        <div className="card empty-state">
+          <div className="empty-state-icon">📜</div>
+          <div className="empty-state-msg">No audit logs found</div>
+          <div className="empty-state-sub">Admin actions will appear here as they happen.</div>
+        </div>
+      )}
+
+      {!loading && !error && logs.length > 0 && (
+        <>
+          <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {logs.map((log, idx) => {
+                const icon = ACTION_ICONS[log.action] || { emoji: "⚙️", color: "#a5b4fc" };
+                const level = LEVEL_STYLE(log.action);
+                return (
+                  <div key={log._id} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+                    padding: "14px 18px", gap: 14, flexWrap: "wrap",
+                    borderBottom: idx < logs.length - 1 ? "1px solid rgba(99,102,241,0.07)" : "none"
+                  }}>
+                    <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flex: 1 }}>
+                      <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{icon.emoji}</span>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
+                          <span style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{log.description}</span>
+                          <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: level.bg, color: level.color, fontWeight: 800 }}>
+                            {level.label}
+                          </span>
+                          <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: "rgba(99,102,241,0.1)", color: "#a5b4fc", fontWeight: 700 }}>
+                            {log.entityType}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: 12, color: "#a5b4fc" }}>
+                          By: <strong style={{ color: "#fff" }}>{log.admin?.name || "Admin"}</strong>
+                          {log.entityId && <> · ID: <span style={{ fontFamily: "monospace", color: "#818cf8" }}>{log.entityId.slice(-8)}</span></>}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 12, color: "#a5b4fc", flexShrink: 0, textAlign: "right" }}>
+                      {new Date(log.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {pagination.totalPages > 1 && (
+            <div className="pagination">
+              <button className="page-btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>‹ Prev</button>
+              <span style={{ fontSize: 13, color: "#a5b4fc", padding: "6px 12px" }}>Page {page} of {pagination.totalPages}</span>
+              <button className="page-btn" disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)}>Next ›</button>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }

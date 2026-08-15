@@ -21,9 +21,10 @@ export default function AdminLayout() {
     { emoji: "🚢", name: "Exports",         path: "/admin/exports" },
     { emoji: "📢", name: "Broadcasts",      path: "/admin/broadcast" },
     { emoji: "📜", name: "Audit Logs",      path: "/admin/audit-logs" },
-    { emoji: "💰", name: "Platform Fees",   path: "/admin/finance" },
+    { emoji: "💰", name: "Finance",         path: "/admin/finance" },
     { emoji: "⚖️", name: "Disputes",        path: "/admin/disputes" },
     { emoji: "⚡", name: "System Health",   path: "/admin/system" },
+    { emoji: "🤖", name: "AI Models",       path: "/admin/ai-models" },
     { emoji: "👤", name: "Profile",         path: "/admin/profile" },
   ];
 

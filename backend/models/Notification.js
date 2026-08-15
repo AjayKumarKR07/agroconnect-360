@@ -2,10 +2,21 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
+    // ── Farmer-specific notifications (existing behaviour, preserved) ──────
+    // Used by: order updates, weather alerts, harvest reminders, AI diagnoses
     farmer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null,
+      // Not required — allows generic recipient-based notifications
+    },
+
+    // ── Generic recipient (used for admin broadcasts to any role) ──────────
+    // One of {farmer, recipient} will be set. Never break existing queries.
+    recipient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
 
     type: {
@@ -19,6 +30,7 @@ const notificationSchema = new mongoose.Schema(
         "plan",
         "export",
         "system",
+        "broadcast",
       ],
       default: "system",
     },
@@ -36,7 +48,12 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Preserve original farmer-scoped indexes (backward compatible)
 notificationSchema.index({ farmer: 1, createdAt: -1 });
 notificationSchema.index({ farmer: 1, isRead: 1 });
+
+// New recipient-scoped indexes for broadcast notifications
+notificationSchema.index({ recipient: 1, createdAt: -1 });
+notificationSchema.index({ recipient: 1, isRead: 1 });
 
 module.exports = mongoose.model("Notification", notificationSchema);

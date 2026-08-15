@@ -1,6 +1,6 @@
 // Comprehensive All-India States and Complete Districts Mapping (All 28 States & 8 Union Territories)
 
-const ALL_INDIA_STATES = [
+export const ALL_INDIA_STATES = [
   "Andhra Pradesh",
   "Arunachal Pradesh",
   "Assam",
@@ -39,7 +39,7 @@ const ALL_INDIA_STATES = [
   "Puducherry"
 ];
 
-const POPULAR_DISTRICTS = {
+export const ALL_INDIA_DISTRICTS = {
   "Andhra Pradesh": [
     "Alluri Sitharama Raju", "Anakapalli", "Ananthapuramu", "Annamayya", "Bapatla", 
     "Chittoor", "Dr. B.R. Ambedkar Konaseema", "East Godavari", "Eluru", "Guntur", 
@@ -247,7 +247,10 @@ const POPULAR_DISTRICTS = {
   ]
 };
 
-module.exports = {
-  ALL_INDIA_STATES,
-  POPULAR_DISTRICTS,
-};
+export function getDistrictsForState(stateName) {
+  if (!stateName) return [];
+  const normalized = Object.keys(ALL_INDIA_DISTRICTS).find(
+    (s) => s.toLowerCase() === stateName.trim().toLowerCase()
+  );
+  return normalized ? ALL_INDIA_DISTRICTS[normalized] : [];
+}

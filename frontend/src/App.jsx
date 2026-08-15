@@ -94,6 +94,8 @@ import AdminAuditLogs from "./dashboards/admin/AdminAuditLogs";
 import AdminBroadcast from "./dashboards/admin/AdminBroadcast";
 import AdminOrders from "./dashboards/admin/AdminOrders";
 import AdminExports from "./dashboards/admin/AdminExports";
+import AdminAIModels from "./dashboards/admin/AdminAIModels";
+import AdminProfile from "./dashboards/admin/AdminProfile";
 
 
 export default function App() {
@@ -332,7 +334,8 @@ export default function App() {
           <Route path="system"    element={<AdminSystem />} />
           <Route path="orders"    element={<AdminOrders />} />
           <Route path="exports"   element={<AdminExports />} />
-          <Route path="profile"   element={<FarmerProfile />} />
+          <Route path="ai-models" element={<AdminAIModels />} />
+          <Route path="profile"   element={<AdminProfile />} />
         </Route>
 
 

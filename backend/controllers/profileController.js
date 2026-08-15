@@ -193,8 +193,48 @@ const updateFarmDetails = async (req, res) => {
   }
 }
 
+// UPDATE GENERAL PROFILE (Admin, User, Seller, Exporter, Farmer)
+const updateProfile = async (req, res) => {
+  try {
+    const { name, phone, location, district, state } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    if (name !== undefined) user.name = name.trim();
+    if (phone !== undefined) user.phone = phone.trim();
+    if (district !== undefined) user.district = district.trim();
+    if (state !== undefined) user.state = state.trim();
+    if (location !== undefined) user.location = location.trim();
+    user.profileCompleted = true;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: {
+        _id: user._id,
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone,
+        district: user.district,
+        state: user.state,
+        location: user.location,
+        role: user.role,
+        profileCompleted: user.profileCompleted,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return res.status(500).json({ success: false, message: "Unable to update profile" });
+  }
+};
+
 module.exports = {
   completeProfile,
+  updateProfile,
   getProfile,
   getFarmDetails,
   updateFarmDetails,

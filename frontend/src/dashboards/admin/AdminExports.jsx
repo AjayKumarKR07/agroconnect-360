@@ -1,60 +1,125 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { DS_ADMIN, relativeTime } from "./adminStyles";
 
-const DS_ADMIN = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-  .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
-  .pg-sub{font-size:14px;color:#a5b4fc;margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
-  .tab-btn{padding:8px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid rgba(245,158,11,0.15);background:rgba(245,158,11,0.04);color:#a5b4fc;transition:all 0.2s;font-family:'Inter',sans-serif;}
-  .tab-btn.active{background:rgba(245,158,11,0.15);color:#fbbf24;border-color:rgba(245,158,11,0.35);}
-  .spinner{width:22px;height:22px;border:3px solid rgba(245,158,11,0.15);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:#a5b4fc;}
-`;
+const RFQ_STATUSES = ["all", "pending", "accepted", "quoted", "rejected"];
+const SHIPMENT_STATUSES = ["farm_packed", "cfs_cold_storage", "port_gate_in", "customs_cleared", "onboard_vessel", "delivered", "cancelled"];
 
-const RFQ_STATUS = {
-  pending:  { bg: "rgba(251,191,36,0.1)",  color: "#fbbf24", label: "⏳ Pending" },
-  accepted: { bg: "rgba(34,197,94,0.1)",   color: "#4ade80", label: "✅ Accepted" },
-  rejected: { bg: "rgba(239,68,68,0.1)",   color: "#f87171", label: "❌ Rejected" },
-  quoted:   { bg: "rgba(56,189,248,0.1)",  color: "#38bdf8", label: "💬 Quoted" },
+const RFQ_STYLE = {
+  pending:  { bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
+  accepted: { bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
+  quoted:   { bg: "rgba(56,189,248,0.12)", color: "#38bdf8" },
+  rejected: { bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
 };
 
-const SHIP_STATUS = {
-  farm_packed:      { color: "#a78bfa", label: "📦 Farm Packed" },
-  cfs_cold_storage: { color: "#38bdf8", label: "❄️ Cold Storage" },
-  port_gate_in:     { color: "#fbbf24", label: "⚓ Port Gate In" },
-  customs_cleared:  { color: "#4ade80", label: "🛂 Customs Cleared" },
-  onboard_vessel:   { color: "#34d399", label: "🚢 Onboard Vessel" },
-  delivered:        { color: "#4ade80", label: "🎉 Delivered" },
-  cancelled:        { color: "#f87171", label: "🚫 Cancelled" },
+const SHIPMENT_STEP_LABEL = {
+  farm_packed:      { label: "Farm Packed",      emoji: "📦", step: 0 },
+  cfs_cold_storage: { label: "CFS/Cold Storage", emoji: "🏭", step: 1 },
+  port_gate_in:     { label: "Port Gate-In",     emoji: "🏗️", step: 2 },
+  customs_cleared:  { label: "Customs Cleared",  emoji: "📋", step: 3 },
+  onboard_vessel:   { label: "Onboard Vessel",   emoji: "🚢", step: 4 },
+  delivered:        { label: "Delivered",         emoji: "✅", step: 5 },
+  cancelled:        { label: "Cancelled",         emoji: "❌", step: -1 },
 };
+
+function ConfirmModal({ message, onConfirm, onCancel, loading }) {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-box">
+        <div className="modal-title">Confirm Action</div>
+        <div className="modal-body">{message}</div>
+        <div className="modal-actions">
+          <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
+          <button className="btn-indigo" onClick={onConfirm} disabled={loading}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminExports() {
-  const [view, setView] = useState("rfqs"); // 'rfqs' | 'shipments'
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState(searchParams.get("tab") === "shipments" ? "shipments" : "rfqs");
   const [rfqs, setRfqs] = useState([]);
   const [shipments, setShipments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [rfqLoading, setRfqLoading] = useState(true);
+  const [shipmentLoading, setShipmentLoading] = useState(true);
+  const [rfqError, setRfqError] = useState(null);
+  const [shipmentError, setShipmentError] = useState(null);
+  const [rfqFilter, setRfqFilter] = useState(searchParams.get("status") || "all");
+  const [confirm, setConfirm] = useState(null);
   const [updating, setUpdating] = useState(null);
+  const [toast, setToast] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [rfqRes, shipRes] = await Promise.all([
-        fetch(`${API_URL}/api/admin/rfqs`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${API_URL}/api/admin/shipments`, { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
-      const [rfqData, shipData] = await Promise.all([rfqRes.json(), shipRes.json()]);
-      if (rfqData.success) setRfqs(rfqData.rfqs || []);
-      if (shipData.success) setShipments(shipData.shipments || []);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
+  const showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
   };
 
-  useEffect(() => { loadData(); }, []);
+  const loadRFQs = useCallback(async () => {
+    setRfqLoading(true);
+    setRfqError(null);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/rfqs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRfqs(data.rfqs || []);
+      } else {
+        throw new Error(data.message || "Failed to load RFQs");
+      }
+    } catch (e) {
+      setRfqError(e.message || "Unable to load RFQs");
+    } finally {
+      setRfqLoading(false);
+    }
+  }, [token]);
+
+  const loadShipments = useCallback(async () => {
+    setShipmentLoading(true);
+    setShipmentError(null);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/shipments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShipments(data.shipments || []);
+      } else {
+        throw new Error(data.message || "Failed to load shipments");
+      }
+    } catch (e) {
+      setShipmentError(e.message || "Unable to load shipments");
+    } finally {
+      setShipmentLoading(false);
+    }
+  }, [token]);
+
+  const loadAll = useCallback(() => {
+    loadRFQs();
+    loadShipments();
+  }, [loadRFQs, loadShipments]);
+
+  // Synchronize when URL search parameters change
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "shipments" || tabParam === "rfqs") {
+      setTab(tabParam);
+    }
+    const statusParam = searchParams.get("status");
+    if (statusParam) {
+      setRfqFilter(statusParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    loadAll();
+  }, [loadAll]);
 
   const updateRFQStatus = async (id, status) => {
     setUpdating(id);
@@ -65,142 +130,262 @@ export default function AdminExports() {
         body: JSON.stringify({ status }),
       });
       const d = await r.json();
-      if (d.success) setRfqs(prev => prev.map(r => r._id === id ? { ...r, status } : r));
-    } catch { alert("Failed to update RFQ."); }
-    finally { setUpdating(null); }
+      if (d.success) {
+        setRfqs((prev) => prev.map((r) => r._id === id ? { ...r, status } : r));
+        showToast(`RFQ marked ${status}`);
+      } else showToast(d.message || "Failed", "error");
+    } catch { showToast("Network error", "error"); }
+    finally { setUpdating(null); setConfirm(null); }
   };
 
-  const rfqBadge = (s) => {
-    const m = RFQ_STATUS[s] || { bg: "rgba(255,255,255,0.05)", color: "#a5b4fc", label: s };
-    return <span style={{ padding: "3px 9px", borderRadius: 7, background: m.bg, color: m.color, fontSize: 11, fontWeight: 700 }}>{m.label}</span>;
+  const updateShipmentStatus = async (id, status) => {
+    const stepInfo = SHIPMENT_STEP_LABEL[status];
+    setUpdating(id);
+    try {
+      const r = await fetch(`${API_URL}/api/admin/shipments/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ status, statusStep: stepInfo?.step ?? 0 }),
+      });
+      const d = await r.json();
+      if (d.success) {
+        setShipments((prev) => prev.map((s) => s._id === id ? { ...s, status, statusStep: stepInfo?.step ?? s.statusStep } : s));
+        showToast(`Shipment updated to ${status}`);
+      } else showToast(d.message || "Failed", "error");
+    } catch { showToast("Network error", "error"); }
+    finally { setUpdating(null); setConfirm(null); }
   };
 
-  const shipBadge = (s) => {
-    const m = SHIP_STATUS[s] || { color: "#a5b4fc", label: s };
-    return <span style={{ fontSize: 12, fontWeight: 700, color: m.color }}>{m.label}</span>;
-  };
+  const filteredRFQs = rfqFilter === "all" ? rfqs : rfqs.filter((r) => r.status === rfqFilter);
+  const isRefreshing = rfqLoading || shipmentLoading;
 
   return (
     <>
       <style>{DS_ADMIN}</style>
 
+      {confirm && (
+        <ConfirmModal
+          message={confirm.message}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+          loading={!!updating}
+        />
+      )}
+
       <div className="pg-head">
         <div>
-          <div className="eyebrow">Export Monitoring — Admin View</div>
-          <h1 className="pg-title">🚢 Export RFQs & Shipments</h1>
-          <p className="pg-sub">Monitor all export procurement requests and active container shipments from exporters.</p>
+          <div className="eyebrow">International Trade Management</div>
+          <h1 className="pg-title">🚢 Export Hub</h1>
+          <p className="pg-sub">Manage export RFQs and shipment tracking. Status changes are recorded in the audit log.</p>
         </div>
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>{rfqs.length} RFQs</div>
-            <div style={{ fontSize: 12, color: "#a5b4fc" }}>{shipments.length} Shipments</div>
-          </div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button className="btn-indigo" onClick={loadAll} disabled={isRefreshing}>
+            {isRefreshing ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+          </button>
         </div>
       </div>
 
-      {/* View toggle */}
+      {toast && <div className={toast.type === "error" ? "toast-error" : "toast-success"}>{toast.msg}</div>}
+
+      {/* Top tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        <button className={`tab-btn ${view === "rfqs" ? "active" : ""}`} onClick={() => setView("rfqs")}>
-          📩 RFQ Requests ({rfqs.length})
+        <button className={`tab-btn ${tab === "rfqs" ? "active" : ""}`} onClick={() => setTab("rfqs")}>
+          📋 Export RFQs {rfqLoading ? "…" : `(${rfqs.length})`}
         </button>
-        <button className={`tab-btn ${view === "shipments" ? "active" : ""}`} onClick={() => setView("shipments")}>
-          🚢 Active Shipments ({shipments.length})
+        <button className={`tab-btn ${tab === "shipments" ? "active" : ""}`} onClick={() => setTab("shipments")}>
+          🚢 Shipments {shipmentLoading ? "…" : `(${shipments.length})`}
         </button>
       </div>
 
-      {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading export data…</span></div>}
-
-      {/* ── RFQs ── */}
-      {!loading && view === "rfqs" && (
+      {/* ── RFQ Tab ── */}
+      {tab === "rfqs" && (
         <>
-          {rfqs.length === 0 && (
-            <div className="card" style={{ textAlign: "center", padding: "40px" }}>
-              <div style={{ fontSize: 40 }}>📩</div>
-              <div style={{ color: "#fff", fontWeight: 700, marginTop: 12 }}>No RFQs submitted yet</div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
+            {RFQ_STATUSES.map((s) => (
+              <button key={s} className={`tab-btn ${rfqFilter === s ? "active" : ""}`} onClick={() => setRfqFilter(s)}>
+                {s === "all" ? "🌐 All" : s}
+              </button>
+            ))}
+          </div>
+
+          {rfqLoading && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 80, borderRadius: 14 }} />)}
             </div>
           )}
-          {rfqs.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {rfqs.map(r => (
-                <div key={r._id} className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff" }}>{r.cropName}</div>
-                      {rfqBadge(r.status)}
-                    </div>
-                    <div style={{ display: "flex", gap: 18, flexWrap: "wrap", fontSize: 12, color: "#a5b4fc" }}>
-                      <span>👤 Exporter: <strong style={{ color: "#fff" }}>{r.exporter?.name || "—"}</strong></span>
-                      <span>📧 {r.exporter?.email || "—"}</span>
-                      <span>🌍 Destination: <strong style={{ color: "#fff" }}>{r.destinationCountry}</strong></span>
-                      <span>📦 {r.quantityTons} Tons</span>
-                      <span>🚚 {r.containerSize}</span>
-                      <span>🗓️ {new Date(r.createdAt).toLocaleDateString("en-IN")}</span>
-                    </div>
-                    {r.packagingNotes && (
-                      <div style={{ marginTop: 8, fontSize: 12, color: "#a5b4fc", fontStyle: "italic" }}>
-                        📝 {r.packagingNotes}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", gap: 8, flexShrink: 0, flexWrap: "wrap", alignItems: "center" }}>
-                    {["pending","accepted","rejected","quoted"].map(st => (
-                      r.status !== st && (
-                        <button key={st}
-                          disabled={updating === r._id}
-                          onClick={() => updateRFQStatus(r._id, st)}
-                          style={{ padding: "6px 13px", borderRadius: 8, border: "1px solid rgba(245,158,11,0.25)", background: "rgba(245,158,11,0.06)", color: "#fbbf24", fontWeight: 700, fontSize: 11, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
-                        >
-                          {updating === r._id ? "⏳" : `→ ${st.charAt(0).toUpperCase() + st.slice(1)}`}
-                        </button>
-                      )
-                    ))}
-                  </div>
-                </div>
-              ))}
+
+          {!rfqLoading && rfqError && (
+            <div className="card error-state">
+              <div className="error-state-icon">⚠️</div>
+              <div className="error-state-msg">Unable to load RFQ data</div>
+              <div className="error-state-sub">{rfqError}</div>
+              <button className="btn-indigo" onClick={loadRFQs}>Retry RFQs</button>
+            </div>
+          )}
+
+          {!rfqLoading && !rfqError && filteredRFQs.length === 0 && (
+            <div className="card empty-state">
+              <div className="empty-state-icon">📋</div>
+              <div className="empty-state-msg">No RFQs found</div>
+              <div className="empty-state-sub">{rfqFilter !== "all" ? `No ${rfqFilter} RFQs.` : "No export RFQs yet."}</div>
+            </div>
+          )}
+
+          {!rfqLoading && !rfqError && filteredRFQs.length > 0 && (
+            <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+              <div className="table-scroll">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Crop</th>
+                      <th>Exporter</th>
+                      <th>Destination</th>
+                      <th>Container</th>
+                      <th>Qty (Tons)</th>
+                      <th>Target USD</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Update</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRFQs.map((rfq) => {
+                      const sc = RFQ_STYLE[rfq.status] || RFQ_STYLE.pending;
+                      return (
+                        <tr key={rfq._id}>
+                          <td style={{ fontWeight: 700, color: "#fff" }}>{rfq.cropName}</td>
+                          <td>
+                            <div style={{ fontSize: 13, color: "#fff" }}>{rfq.exporter?.name || "—"}</div>
+                            <div style={{ fontSize: 11, color: "#a5b4fc" }}>{rfq.exporter?.email}</div>
+                          </td>
+                          <td style={{ fontSize: 13, color: "#a5b4fc" }}>{rfq.destinationCountry}</td>
+                          <td style={{ fontSize: 12, color: "#a5b4fc" }}>{rfq.containerSize}</td>
+                          <td style={{ fontWeight: 700, color: "#fff" }}>{rfq.quantityTons}</td>
+                          <td style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#4ade80" }}>
+                            {rfq.targetPriceUsd ? `$${rfq.targetPriceUsd}` : "—"}
+                          </td>
+                          <td style={{ fontSize: 12, color: "#a5b4fc", whiteSpace: "nowrap" }}>{relativeTime(rfq.createdAt)}</td>
+                          <td>
+                            <span style={{ padding: "3px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 12, fontWeight: 800 }}>
+                              {rfq.status}
+                            </span>
+                          </td>
+                          <td>
+                            <select
+                              className="field-input"
+                              style={{ padding: "5px 8px", fontSize: 12, width: "auto" }}
+                              value={rfq.status}
+                              disabled={updating === rfq._id}
+                              onChange={(e) => {
+                                const ns = e.target.value;
+                                setConfirm({
+                                  message: `Mark RFQ for "${rfq.cropName}" as ${ns.toUpperCase()}?`,
+                                  onConfirm: () => updateRFQStatus(rfq._id, ns),
+                                });
+                              }}
+                            >
+                              {["pending", "accepted", "quoted", "rejected"].map((s) => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </>
       )}
 
-      {/* ── Shipments ── */}
-      {!loading && view === "shipments" && (
+      {/* ── Shipments Tab ── */}
+      {tab === "shipments" && (
         <>
-          {shipments.length === 0 && (
-            <div className="card" style={{ textAlign: "center", padding: "40px" }}>
-              <div style={{ fontSize: 40 }}>🚢</div>
-              <div style={{ color: "#fff", fontWeight: 700, marginTop: 12 }}>No shipments yet</div>
+          {shipmentLoading && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 80, borderRadius: 14 }} />)}
             </div>
           )}
-          {shipments.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {shipments.map(s => (
-                <div key={s._id} className="card">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff" }}>
-                          {s.containerNo}
+
+          {!shipmentLoading && shipmentError && (
+            <div className="card error-state">
+              <div className="error-state-icon">⚠️</div>
+              <div className="error-state-msg">Unable to load shipment data</div>
+              <div className="error-state-sub">{shipmentError}</div>
+              <button className="btn-indigo" onClick={loadShipments}>Retry Shipments</button>
+            </div>
+          )}
+
+          {!shipmentLoading && !shipmentError && shipments.length === 0 && (
+            <div className="card empty-state">
+              <div className="empty-state-icon">🚢</div>
+              <div className="empty-state-msg">No shipments found</div>
+              <div className="empty-state-sub">Export shipments will appear here once exporters create them.</div>
+            </div>
+          )}
+
+          {!shipmentLoading && !shipmentError && shipments.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {shipments.map((s) => {
+                const stepInfo = SHIPMENT_STEP_LABEL[s.status] || { label: s.status, emoji: "📦", step: 0 };
+                const steps = Object.values(SHIPMENT_STEP_LABEL).filter((x) => x.step >= 0).sort((a, b) => a.step - b.step);
+                return (
+                  <div key={s._id} className="card">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
+                      <div>
+                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
+                          {stepInfo.emoji} {s.cargo} · {s.containerNo}
                         </div>
-                        {shipBadge(s.status)}
+                        <div style={{ fontSize: 13, color: "#a5b4fc" }}>
+                          ⚓ {s.portOfOrigin} → 🌍 {s.destPort}, {s.destinationCountry} · {s.quantityTons}T · 🚢 {s.vessel}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#818cf8", marginTop: 4 }}>
+                          👤 {s.exporter?.name || "—"} · Added {relativeTime(s.createdAt)}
+                        </div>
                       </div>
-                      <div style={{ display: "flex", gap: 18, flexWrap: "wrap", fontSize: 12, color: "#a5b4fc" }}>
-                        <span>🚢 Vessel: <strong style={{ color: "#fff" }}>{s.vessel}</strong></span>
-                        <span>📦 Cargo: <strong style={{ color: "#fff" }}>{s.cargo}</strong></span>
-                        <span>⚖️ {s.quantityTons} Tons</span>
-                        <span>🛫 From: <strong style={{ color: "#fff" }}>{s.portOfOrigin}</strong></span>
-                        <span>🛬 To: <strong style={{ color: "#fff" }}>{s.destPort}, {s.destinationCountry}</strong></span>
-                        <span>👤 {s.exporter?.name || "Exporter"}</span>
-                        <span>📅 ETD: {s.etd ? new Date(s.etd).toLocaleDateString("en-IN") : "—"}</span>
-                        <span>📅 ETA: {s.eta ? new Date(s.eta).toLocaleDateString("en-IN") : "—"}</span>
+                      <select
+                        className="field-input"
+                        style={{ padding: "7px 10px", fontSize: 12, width: "auto" }}
+                        value={s.status}
+                        disabled={updating === s._id}
+                        onChange={(e) => {
+                          const ns = e.target.value;
+                          setConfirm({
+                            message: `Update shipment ${s.containerNo} to "${SHIPMENT_STEP_LABEL[ns]?.label || ns}"?`,
+                            onConfirm: () => updateShipmentStatus(s._id, ns),
+                          });
+                        }}
+                      >
+                        {SHIPMENT_STATUSES.map((st) => (
+                          <option key={st} value={st}>{SHIPMENT_STEP_LABEL[st]?.label || st}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Progress stepper */}
+                    {s.status !== "cancelled" && (
+                      <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 0 }}>
+                        {steps.map((step, idx) => {
+                          const done = (s.statusStep ?? 0) >= step.step;
+                          return (
+                            <div key={step.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
+                              {idx > 0 && (
+                                <div style={{ position: "absolute", left: "-50%", top: 10, width: "100%", height: 2, background: done ? "#6366f1" : "rgba(99,102,241,0.15)", zIndex: 0 }} />
+                              )}
+                              <div style={{ width: 22, height: 22, borderRadius: "50%", background: done ? "#6366f1" : "rgba(99,102,241,0.1)", border: `2px solid ${done ? "#6366f1" : "rgba(99,102,241,0.2)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, position: "relative", zIndex: 1, transition: "all 0.3s" }}>
+                                {done ? "✓" : <span style={{ opacity: 0.4 }}>{step.step + 1}</span>}
+                              </div>
+                              <div style={{ fontSize: 9, color: done ? "#c7d2fe" : "#818cf8", marginTop: 5, textAlign: "center", lineHeight: 1.3, maxWidth: 55 }}>{step.label}</div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
-                    <div style={{ fontSize: 12, color: "#a5b4fc", textAlign: "right", flexShrink: 0 }}>
-                      <div>Step {s.statusStep || 0}/5</div>
-                      <div style={{ marginTop: 4 }}>{new Date(s.createdAt).toLocaleDateString("en-IN")}</div>
-                    </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>

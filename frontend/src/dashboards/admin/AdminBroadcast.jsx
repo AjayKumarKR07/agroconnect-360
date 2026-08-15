@@ -1,116 +1,217 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { API_URL } from "../../config/api";
+import { DS_ADMIN, relativeTime } from "./adminStyles";
 
-const DS_ADMIN = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-  .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#818cf8;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
-  .pg-sub{font-size:14px;color:#a5b4fc;margin-top:6px;}
-  .card{background:rgba(99,102,241,0.04);border:1px solid rgba(99,102,241,0.12);border-radius:18px;padding:22px;}
-  .btn-indigo{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{display:block;font-size:12px;font-weight:700;color:#a5b4fc;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(99,102,241,0.18);background:rgba(99,102,241,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
-`;
+const ROLE_OPTIONS = ["all", "farmer", "seller", "user", "exporter"];
 
-const HIST = [
-  { id: "bc-1", target: "All Farmers (680)", title: "PM-Kisan Fertilizer Subsidy Alert", text: "New subsidy guidelines released by Ministry of Agriculture.", date: "Today", delivered: "99.4%" },
-  { id: "bc-2", target: "All Exporters (50)", title: "APEDA Phytosanitary Fee Update", text: "Revised phytosanitary inspection fees effective from next week.", date: "2 Aug 2026", delivered: "100%" },
-];
+function ConfirmBroadcast({ title, targetRole, count, onConfirm, onCancel, sending }) {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-box">
+        <div className="modal-title">📢 Confirm Broadcast</div>
+        <div className="modal-body">
+          You are about to send a notification to{" "}
+          <strong style={{ color: "#fff" }}>
+            {targetRole === "all" ? "all active users" : `all active ${targetRole}s`}
+          </strong>.<br /><br />
+          <strong style={{ color: "#fbbf24" }}>Message: "{title}"</strong><br /><br />
+          This action will be recorded in the audit log and cannot be undone.
+        </div>
+        <div className="modal-actions">
+          <button className="btn-danger" onClick={onCancel} disabled={sending}>Cancel</button>
+          <button className="btn-indigo" onClick={onConfirm} disabled={sending}>
+            {sending ? <><span className="spinner" style={{ width: 14, height: 14 }} /> Sending…</> : "📤 Send Broadcast"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminBroadcast() {
-  const [form, setForm] = useState({ targetRole: "all", title: "", message: "" });
-  const [history, setHistory] = useState(HIST);
-  const [msg, setMsg] = useState("");
+  const [form, setForm] = useState({ title: "", message: "", targetRole: "all" });
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [histLoading, setHistLoading] = useState(true);
+  const [histError, setHistError] = useState(null);
+  const token = localStorage.getItem("agroconnect_token");
 
-  const sendBroadcast = () => {
-    if (!form.title || !form.message) return;
-    const item = {
-      id: "bc-" + Date.now(),
-      target: form.targetRole === "all" ? "All Platform Users (1,420)" : `All ${form.targetRole}s`,
-      title: form.title,
-      text: form.message,
-      date: "Just now",
-      delivered: "100%",
-    };
-    setHistory([item, ...history]);
-    setForm({ targetRole: "all", title: "", message: "" });
-    setMsg("🚀 Announcement broadcasted successfully across platform push notifications & in-app alerts!");
-    setTimeout(() => setMsg(""), 3500);
+  const showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 4000);
   };
+
+  const loadHistory = useCallback(async () => {
+    setHistLoading(true);
+    setHistError(null);
+    try {
+      const r = await fetch(`${API_URL}/api/admin/broadcast/history?limit=15`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (d.success) setHistory(d.history || []);
+      else throw new Error(d.message);
+    } catch (e) {
+      setHistError(e.message);
+    } finally {
+      setHistLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]);
+
+  const handleSend = async () => {
+    setSending(true);
+    try {
+      const r = await fetch(`${API_URL}/api/admin/broadcast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(form),
+      });
+      const d = await r.json();
+      setShowConfirm(false);
+      if (d.success) {
+        showToast(`✅ Broadcast sent to ${d.count} user${d.count !== 1 ? "s" : ""}`);
+        setForm({ title: "", message: "", targetRole: "all" });
+        loadHistory();
+      } else {
+        showToast(d.message || "Broadcast failed", "error");
+      }
+    } catch {
+      setShowConfirm(false);
+      showToast("Network error — broadcast failed", "error");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const isValid = form.title.trim().length >= 3 && form.message.trim().length >= 10;
 
   return (
     <>
       <style>{DS_ADMIN}</style>
 
+      {showConfirm && (
+        <ConfirmBroadcast
+          title={form.title}
+          targetRole={form.targetRole}
+          onConfirm={handleSend}
+          onCancel={() => setShowConfirm(false)}
+          sending={sending}
+        />
+      )}
+
       <div className="pg-head">
         <div>
-          <div className="eyebrow">Platform Broadcast & Push Alerts</div>
-          <h1 className="pg-title">📢 Platform Broadcast & Notification Center</h1>
-          <p className="pg-sub">Broadcast global announcements or targeted push notifications to specific user roles.</p>
+          <div className="eyebrow">Platform-Wide Communication</div>
+          <h1 className="pg-title">📢 Broadcast Notifications</h1>
+          <p className="pg-sub">Send persistent notifications to users by role. All broadcasts stored in the database and recorded in the audit log.</p>
         </div>
       </div>
 
-      {msg && (
-        <div style={{ marginBottom: 20, padding: "12px 18px", background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 14, color: "#4ade80", fontWeight: 700, fontSize: 14 }}>
-          {msg}
+      {toast && <div className={toast.type === "error" ? "toast-error" : "toast-success"}>{toast.msg}</div>}
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        {/* Compose Form */}
+        <div className="card" style={{ alignSelf: "start" }}>
+          <div className="card-title" style={{ marginBottom: 20 }}>✏️ Compose Broadcast</div>
+
+          <div style={{ marginBottom: 16 }}>
+            <label className="field-label">Target Audience</label>
+            <select
+              className="field-input"
+              value={form.targetRole}
+              onChange={(e) => setForm((f) => ({ ...f, targetRole: e.target.value }))}
+            >
+              {ROLE_OPTIONS.map((r) => (
+                <option key={r} value={r}>{r === "all" ? "🌐 All Active Users" : `${r.charAt(0).toUpperCase() + r.slice(1)}s only`}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <label className="field-label">Notification Title <span style={{ color: "#f87171" }}>*</span></label>
+            <input
+              className="field-input"
+              placeholder="e.g. Scheduled Maintenance on Aug 20"
+              value={form.title}
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              maxLength={100}
+            />
+            <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{form.title.length}/100</div>
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <label className="field-label">Message Body <span style={{ color: "#f87171" }}>*</span></label>
+            <textarea
+              className="field-input"
+              rows={5}
+              style={{ resize: "vertical" }}
+              placeholder="Full notification message shown to recipients…"
+              value={form.message}
+              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+              maxLength={1000}
+            />
+            <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{form.message.length}/1000</div>
+          </div>
+
+          <div style={{ padding: "12px 16px", background: "rgba(99,102,241,0.06)", borderRadius: 12, border: "1px solid rgba(99,102,241,0.15)", marginBottom: 20, fontSize: 13, color: "#a5b4fc" }}>
+            💡 Notifications are saved to the database. Recipients will see them on next login/refresh. No push delivery — in-app only.
+          </div>
+
+          <button
+            className="btn-indigo"
+            disabled={!isValid || sending}
+            style={{ width: "100%", justifyContent: "center", opacity: !isValid ? 0.5 : 1 }}
+            onClick={() => { if (isValid) setShowConfirm(true); }}
+          >
+            📤 Preview &amp; Send Broadcast
+          </button>
         </div>
-      )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-        {/* Left Form */}
+        {/* Broadcast History */}
         <div className="card">
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
-            📢 Dispatch New Announcement
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <div className="card-title">📋 Broadcast History</div>
+            <button className="tab-btn" onClick={loadHistory} disabled={histLoading}>🔄</button>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div>
-              <label className="field-label">Target Audience Role</label>
-              <select className="field-input" value={form.targetRole} onChange={e => setForm({ ...form, targetRole: e.target.value })}>
-                <option value="all">🌍 All Ecosystem Users (Farmers, Sellers, Buyers, Exporters)</option>
-                <option value="farmer">🌾 Farmers Only</option>
-                <option value="seller">🏬 Sellers & Inputs Dealers Only</option>
-                <option value="user">🛒 Buyers & Consumers Only</option>
-                <option value="exporter">🚢 Exporters Only</option>
-              </select>
+          {histLoading && <div className="loading-wrap"><span className="spinner" /><span>Loading…</span></div>}
+
+          {!histLoading && histError && (
+            <div className="error-state">
+              <div className="error-state-msg">Unable to load history</div>
+              <div className="error-state-sub">{histError}</div>
             </div>
+          )}
 
-            <div>
-              <label className="field-label">Announcement Title</label>
-              <input className="field-input" placeholder="e.g. PM-Kisan Scheme Portal Update" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+          {!histLoading && !histError && history.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-state-icon">📢</div>
+              <div className="empty-state-msg">No broadcasts sent yet</div>
+              <div className="empty-state-sub">Your first broadcast will appear here.</div>
             </div>
+          )}
 
-            <div>
-              <label className="field-label">Broadcast Message Content</label>
-              <textarea className="field-input" rows={4} style={{ resize: "none" }} placeholder="Enter detailed notification text to send to user dashboards..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
-            </div>
-
-            <button className="btn-indigo" style={{ width: "100%", justifyContent: "center" }} onClick={sendBroadcast}>
-              📢 Broadcast Now
-            </button>
-          </div>
-        </div>
-
-        {/* Right Broadcast History */}
-        <div className="card">
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 16 }}>
-            📜 Recent Broadcast History
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {history.map(h => (
-              <div key={h.id} style={{ padding: "14px 16px", borderRadius: 14, background: "rgba(99,102,241,0.03)", border: "1px solid rgba(99,102,241,0.08)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{h.title}</span>
-                  <span style={{ fontSize: 11, color: "#4ade80", fontWeight: 700 }}>● Delivered ({h.delivered})</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {history.map((entry) => {
+              const meta = entry.metadata || {};
+              return (
+                <div key={entry._id} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid rgba(99,102,241,0.1)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
+                    <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>📢 {meta.title || entry.description}</div>
+                    <div style={{ fontSize: 11, color: "#a5b4fc", flexShrink: 0 }}>{relativeTime(entry.createdAt)}</div>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 10, fontSize: 12, color: "#a5b4fc" }}>
+                    <span>👤 {entry.admin?.name || "Admin"}</span>
+                    <span>🎯 {meta.targetRole === "all" ? "All Users" : `${meta.targetRole}s`}</span>
+                    <span>✉️ {meta.recipientCount?.toLocaleString() || 0} recipients</span>
+                  </div>
                 </div>
-                <div style={{ fontSize: 12, color: "#a5b4fc", marginBottom: 6 }}>{h.text}</div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text2)" }}>
-                  <span>🎯 Target: {h.target}</span>
-                  <span>🗓️ {h.date}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

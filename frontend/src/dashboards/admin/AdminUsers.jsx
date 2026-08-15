@@ -1,169 +1,256 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
+import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { DS_ADMIN, ROLE_COLOR, relativeTime } from "./adminStyles";
 
-const DS_ADMIN = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
-  .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
-  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#818cf8;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
-  .pg-sub{font-size:14px;color:#a5b4fc;margin-top:6px;}
-  .card{background:rgba(99,102,241,0.04);border:1px solid rgba(99,102,241,0.12);border-radius:18px;padding:20px 22px;}
-  .btn-indigo{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(99,102,241,0.18);background:rgba(99,102,241,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
-  .tab-btn{padding:7px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(99,102,241,0.15);background:rgba(99,102,241,0.04);color:#a5b4fc;transition:all 0.2s;}
-  .tab-btn.active{background:rgba(99,102,241,0.2);color:#fff;border-color:#6366f1;}
-  .spinner{width:22px;height:22px;border:3px solid rgba(99,102,241,0.15);border-top-color:#818cf8;border-radius:50%;animation:spin 0.8s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:#a5b4fc;}
-`;
+const ROLE_FILTERS = ["all", "farmer", "seller", "user", "exporter", "admin"];
 
-const ROLE_COLOR = {
-  farmer: "#4ade80", seller: "#a78bfa", user: "#38bdf8", exporter: "#fbbf24", admin: "#f87171",
-};
+function ConfirmModal({ user, onConfirm, onCancel, loading }) {
+  const action = user.isActive ? "suspend" : "activate";
+  return (
+    <div className="modal-overlay">
+      <div className="modal-box">
+        <div className="modal-title">{user.isActive ? "🚫 Suspend User?" : "✅ Activate User?"}</div>
+        <div className="modal-body">
+          {user.isActive
+            ? `Suspending "${user.name || user.email}" will prevent them from logging in. Existing data is preserved.`
+            : `Activating "${user.name || user.email}" will restore full access to the platform.`}
+        </div>
+        <div className="modal-actions">
+          <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
+          <button className={user.isActive ? "btn-danger" : "btn-success"} onClick={onConfirm} disabled={loading}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : `${user.isActive ? "🚫 Suspend" : "✅ Activate"}`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminUsers() {
+  const [searchParams] = useSearchParams();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [search, setSearch] = useState("");
-  const [toggling, setToggling] = useState(null);
+  const [error, setError] = useState(null);
+  const [roleFilter, setRoleFilter] = useState(searchParams.get("role") || "all");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({});
+  const [updatingId, setUpdatingId] = useState(null);
+  const [confirmUser, setConfirmUser] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
 
-  const loadUsers = async () => {
+  const showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const load = useCallback(async (p = 1, currentRole = roleFilter, currentStatus = statusFilter, currentSearch = search) => {
     setLoading(true);
+    setError(null);
     try {
-      const params = new URLSearchParams();
-      if (roleFilter !== "all") params.append("role", roleFilter);
-      if (search) params.append("search", search);
+      const params = new URLSearchParams({ page: p, limit: 20 });
+      if (currentRole !== "all") params.set("role", currentRole);
+      if (currentStatus !== "all") params.set("status", currentStatus);
+      if (currentSearch) params.set("search", currentSearch);
       const r = await fetch(`${API_URL}/api/admin/users?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const d = await r.json();
-      if (d.success) setUsers(d.users || []);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
+      if (d.success) {
+        setUsers(d.users);
+        setPagination({ total: d.total, totalPages: d.totalPages, page: d.page });
+      } else throw new Error(d.message);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, roleFilter, statusFilter, search]);
 
-  useEffect(() => { loadUsers(); }, [roleFilter]);
+  // Synchronize when URL search parameters change
+  useEffect(() => {
+    const roleParam = searchParams.get("role") || "all";
+    const statusParam = searchParams.get("status") || "all";
+    const searchParam = searchParams.get("search") || "";
+    setRoleFilter(roleParam);
+    setStatusFilter(statusParam);
+    setSearch(searchParam);
+    setPage(1);
+    load(1, roleParam, statusParam, searchParam);
+  }, [searchParams]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    loadUsers();
-  };
+  useEffect(() => {
+    load(page);
+  }, [page]);
 
-  const toggleStatus = async (id, currentActive) => {
-    setToggling(id);
+  const handleSearch = (e) => { e.preventDefault(); setPage(1); load(1); };
+
+  const toggleStatus = async () => {
+    if (!confirmUser) return;
+    setUpdatingId(confirmUser._id);
     try {
-      const r = await fetch(`${API_URL}/api/admin/users/${id}/status`, {
+      const r = await fetch(`${API_URL}/api/admin/users/${confirmUser._id}/status`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
       const d = await r.json();
       if (d.success) {
-        setUsers(prev => prev.map(u => u._id === id ? { ...u, isActive: d.isActive } : u));
+        setUsers((prev) => prev.map((u) => u._id === confirmUser._id ? { ...u, isActive: d.isActive } : u));
+        showToast(d.message);
+      } else {
+        showToast(d.message || "Failed", "error");
       }
-    } catch { alert("Failed to update user status."); }
-    finally { setToggling(null); }
+    } catch {
+      showToast("Network error", "error");
+    } finally {
+      setUpdatingId(null);
+      setConfirmUser(null);
+    }
   };
 
   return (
     <>
       <style>{DS_ADMIN}</style>
 
+      {confirmUser && (
+        <ConfirmModal
+          user={confirmUser}
+          onConfirm={toggleStatus}
+          onCancel={() => setConfirmUser(null)}
+          loading={!!updatingId}
+        />
+      )}
+
       <div className="pg-head">
         <div>
-          <div className="eyebrow">User Directory & Role Moderation</div>
-          <h1 className="pg-title">👥 User Management & Verification</h1>
-          <p className="pg-sub">Manage platform accounts across all roles, verify KYC credentials, or suspend non-compliant users.</p>
+          <div className="eyebrow">Platform User Management</div>
+          <h1 className="pg-title">👥 User Directory</h1>
+          <p className="pg-sub">Manage all registered users. Suspend or activate accounts. All changes are persisted.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
-          {users.length} Users
+          {pagination.total !== undefined ? `${pagination.total} Users` : ""}
         </div>
       </div>
 
-      {/* Role Filter Tabs & Search */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+      {toast && <div className={toast.type === "error" ? "toast-error" : "toast-success"}>{toast.msg}</div>}
+
+      {/* Filters */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {["all", "farmer", "seller", "user", "exporter", "admin"].map(r => (
+          {ROLE_FILTERS.map((r) => (
             <button key={r} className={`tab-btn ${roleFilter === r ? "active" : ""}`} onClick={() => setRoleFilter(r)}>
-              {r === "all" ? "🌐 All Roles" : r.charAt(0).toUpperCase() + r.slice(1)}
+              {r === "all" ? "🌐 All" : r.charAt(0).toUpperCase() + r.slice(1) + "s"}
             </button>
           ))}
         </div>
-        <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
-          <input
-            className="field-input"
-            placeholder="🔍 Search name, email, phone…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ maxWidth: 240 }}
-          />
-          <button type="submit" className="btn-indigo" style={{ padding: "10px 16px", fontSize: 13 }}>Search</button>
+        <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+          <input className="field-input" style={{ maxWidth: 220 }} placeholder="🔍 Search name, email, phone…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <button type="submit" className="btn-indigo" style={{ padding: "10px 14px" }}>Go</button>
         </form>
       </div>
 
       {loading && (
-        <div className="loading-wrap"><div className="spinner" /><span>Loading users…</span></div>
-      )}
-
-      {!loading && users.length === 0 && (
-        <div className="card" style={{ textAlign: "center", padding: "40px" }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>👥</div>
-          <div style={{ color: "#fff", fontWeight: 700 }}>No users found</div>
-          <div style={{ color: "#a5b4fc", fontSize: 13, marginTop: 6 }}>Try adjusting the filters.</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {[...Array(5)].map((_, i) => <div key={i} className="skeleton" style={{ height: 68, borderRadius: 12 }} />)}
         </div>
       )}
 
-      {/* User List Table */}
-      {!loading && users.length > 0 && (
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: "rgba(99,102,241,0.08)", borderBottom: "1px solid rgba(99,102,241,0.14)", color: "#a5b4fc", textTransform: "uppercase", fontSize: 11 }}>
-                <th style={{ padding: "14px 18px" }}>User</th>
-                <th style={{ padding: "14px 18px" }}>Role</th>
-                <th style={{ padding: "14px 18px" }}>Location</th>
-                <th style={{ padding: "14px 18px" }}>Joined</th>
-                <th style={{ padding: "14px 18px" }}>Status</th>
-                <th style={{ padding: "14px 18px", textAlign: "right" }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u, idx) => (
-                <tr key={u._id} style={{ borderBottom: idx < users.length - 1 ? "1px solid rgba(99,102,241,0.08)" : "none" }}>
-                  <td style={{ padding: "14px 18px" }}>
-                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{u.name || "Unnamed"}</div>
-                    <div style={{ fontSize: 11, color: "#a5b4fc" }}>{u.email} {u.phone ? `· 📞 ${u.phone}` : ""}</div>
-                  </td>
-                  <td style={{ padding: "14px 18px" }}>
-                    <span style={{ padding: "3px 9px", borderRadius: 8, background: `${ROLE_COLOR[u.role] || "#818cf8"}20`, color: ROLE_COLOR[u.role] || "#818cf8", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>
-                      {u.role}
-                    </span>
-                  </td>
-                  <td style={{ padding: "14px 18px", color: "#a5b4fc" }}>
-                    📍 {[u.location, u.district, u.state].filter(Boolean).join(", ") || "—"}
-                  </td>
-                  <td style={{ padding: "14px 18px", color: "#a5b4fc", fontSize: 12 }}>
-                    {new Date(u.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                  </td>
-                  <td style={{ padding: "14px 18px" }}>
-                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: u.isActive ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: u.isActive ? "#4ade80" : "#f87171", fontWeight: 800 }}>
-                      ● {u.isActive ? "ACTIVE" : "SUSPENDED"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "14px 18px", textAlign: "right" }}>
-                    <button
-                      disabled={toggling === u._id}
-                      onClick={() => toggleStatus(u._id, u.isActive)}
-                      style={{ padding: "6px 14px", borderRadius: 8, border: `1px solid ${u.isActive ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`, background: u.isActive ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)", color: u.isActive ? "#f87171" : "#4ade80", fontWeight: 700, fontSize: 12, cursor: "pointer", opacity: toggling === u._id ? 0.5 : 1 }}
-                    >
-                      {toggling === u._id ? "⏳" : u.isActive ? "🚫 Suspend" : "✅ Activate"}
-                    </button>
-                  </td>
+      {!loading && error && (
+        <div className="card error-state">
+          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-msg">Unable to load users</div>
+          <div className="error-state-sub">{error}</div>
+          <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
+        </div>
+      )}
+
+      {!loading && !error && users.length === 0 && (
+        <div className="card empty-state">
+          <div className="empty-state-icon">👥</div>
+          <div className="empty-state-msg">No users found</div>
+          <div className="empty-state-sub">Try adjusting filters or search terms.</div>
+        </div>
+      )}
+
+      {!loading && !error && users.length > 0 && (
+        <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 20 }}>
+          <div className="table-scroll">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Role</th>
+                  <th>Location</th>
+                  <th>Joined</th>
+                  <th>Last Login</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <Fragment key={u._id}>
+                    <tr style={{ cursor: "pointer" }} onClick={() => setExpandedId(expandedId === u._id ? null : u._id)}>
+                      <td>
+                        <div style={{ fontWeight: 700, color: "#fff" }}>{u.name || "—"}</div>
+                        <div style={{ fontSize: 12, color: "#a5b4fc" }}>{u.email}</div>
+                        {u.phone && <div style={{ fontSize: 11, color: "#818cf8" }}>{u.phone}</div>}
+                      </td>
+                      <td>
+                        <span style={{ padding: "3px 9px", borderRadius: 7, background: `${ROLE_COLOR[u.role] || "#818cf8"}20`, color: ROLE_COLOR[u.role] || "#818cf8", fontSize: 12, fontWeight: 800, textTransform: "uppercase" }}>
+                          {u.role || "—"}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13, color: "#a5b4fc" }}>
+                        {[u.district, u.state].filter(Boolean).join(", ") || u.location || "—"}
+                      </td>
+                      <td style={{ fontSize: 12, color: "#a5b4fc", whiteSpace: "nowrap" }}>{relativeTime(u.createdAt)}</td>
+                      <td style={{ fontSize: 12, color: "#a5b4fc", whiteSpace: "nowrap" }}>{u.lastLogin ? relativeTime(u.lastLogin) : "Never"}</td>
+                      <td>
+                        <span className={`badge ${u.isActive ? "badge-active" : "badge-suspended"}`}>
+                          {u.isActive ? "● Active" : "● Suspended"}
+                        </span>
+                      </td>
+                      <td onClick={(e) => e.stopPropagation()}>
+                        <button
+                          className={u.isActive ? "btn-danger" : "btn-success"}
+                          style={{ fontSize: 12 }}
+                          disabled={updatingId === u._id}
+                          onClick={() => setConfirmUser(u)}
+                        >
+                          {updatingId === u._id ? <span className="spinner" style={{ width: 12, height: 12 }} /> : u.isActive ? "🚫 Suspend" : "✅ Activate"}
+                        </button>
+                      </td>
+                    </tr>
+                    {expandedId === u._id && (
+                      <tr>
+                        <td colSpan={7} style={{ background: "rgba(99,102,241,0.04)", padding: "12px 20px" }}>
+                          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 13, color: "#a5b4fc" }}>
+                            <div><strong style={{ color: "#c7d2fe" }}>Email Verified:</strong> {u.isEmailVerified ? "✅ Yes" : "❌ No"}</div>
+                            <div><strong style={{ color: "#c7d2fe" }}>Profile Complete:</strong> {u.profileCompleted ? "✅ Yes" : "⚠️ No"}</div>
+                            {u.district && <div><strong style={{ color: "#c7d2fe" }}>District:</strong> {u.district}</div>}
+                            {u.state && <div><strong style={{ color: "#c7d2fe" }}>State:</strong> {u.state}</div>}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {pagination.totalPages > 1 && (
+        <div className="pagination">
+          <button className="page-btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>‹ Prev</button>
+          <span style={{ fontSize: 13, color: "#a5b4fc", padding: "6px 12px" }}>Page {page} of {pagination.totalPages}</span>
+          <button className="page-btn" disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)}>Next ›</button>
         </div>
       )}
     </>

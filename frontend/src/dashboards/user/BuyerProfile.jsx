@@ -20,7 +20,7 @@ const S = `
   .btn-out:hover{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);}
 `;
 
-const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Delhi","Chandigarh","Jammu & Kashmir"];
+import { ALL_INDIA_STATES, getDistrictsForState } from "../../utils/indiaData";
 
 export default function BuyerProfile() {
   const navigate = useNavigate();
@@ -31,18 +31,16 @@ export default function BuyerProfile() {
   const [saving,  setSaving]  = useState(false);
   const [msg,     setMsg]     = useState({ type: "", text: "" });
 
-  /* ── Load fresh profile on mount ── */
+  const availableDistricts = getDistrictsForState(form.state);
+
   useEffect(() => {
-    if (!token) return;
     fetch(`${API_URL}/api/profile/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => {
         if (d.success && d.user) {
-          const u = d.user;
-          const merged = { ...JSON.parse(localStorage.getItem("agroconnect_user") || "{}"), ...u };
-          localStorage.setItem("agroconnect_user", JSON.stringify(merged));
-          window.dispatchEvent(new Event("ac_user_update")); // → sidebar updates instantly
-          setUser(merged);
+          const u = { ...user, ...d.user };
+          localStorage.setItem("agroconnect_user", JSON.stringify(u));
+          setUser(u);
           setForm({ name: u.name || "", phone: u.phone || "", state: u.state || "", district: u.district || "" });
         }
       })
@@ -54,7 +52,17 @@ export default function BuyerProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(p => ({ ...p, [name]: name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value }));
+    const sanitized = name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
+    setForm((p) => {
+      const updated = { ...p, [name]: sanitized };
+      if (name === "state") {
+        const validDistricts = getDistrictsForState(sanitized);
+        if (!validDistricts.includes(p.district)) {
+          updated.district = "";
+        }
+      }
+      return updated;
+    });
   };
 
   const save = async (e) => {
@@ -157,17 +165,38 @@ export default function BuyerProfile() {
 
             {/* State */}
             <div>
-              <label className="bp-label">State</label>
+              <label className="bp-label">State / UT (36)</label>
               <select className="bp-select" name="state" value={form.state} onChange={handleChange}>
-                <option value="">— Select State —</option>
-                {STATES.map(s => <option key={s}>{s}</option>)}
+                <option value="">— Select State / UT —</option>
+                {ALL_INDIA_STATES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
               </select>
             </div>
 
             {/* District */}
             <div>
-              <label className="bp-label">District / City</label>
-              <input className="bp-input" name="district" value={form.district} onChange={handleChange} placeholder="e.g. Bengaluru" />
+              <label className="bp-label">
+                District {availableDistricts.length > 0 && `(${availableDistricts.length})`}
+              </label>
+              <select
+                className="bp-select"
+                name="district"
+                value={form.district}
+                onChange={handleChange}
+                disabled={!form.state}
+              >
+                <option value="">
+                  {form.state ? "— Select District —" : "— Select State First —"}
+                </option>
+                {availableDistricts.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
