@@ -17,25 +17,50 @@ const PRIORITY_COLORS = {
 };
 
 function ConfirmModal({ dispute, targetStatus, adminNotes, resolution, onConfirm, onCancel, updating }) {
+  const current = STATUS_COLORS[dispute.status] || STATUS_COLORS.open;
+  const target  = STATUS_COLORS[targetStatus]   || STATUS_COLORS.open;
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="dispute-modal-title">
       <div className="modal-box">
-        <div className="modal-title">Confirm Dispute Decision</div>
+        <div className="modal-title" id="dispute-modal-title">Confirm Dispute Decision</div>
         <div className="modal-body">
-          Mark <strong style={{ color: "#fff" }}>"{dispute.subject}"</strong> as{" "}
-          <strong style={{ color: STATUS_COLORS[targetStatus]?.color }}>{targetStatus.replace("_", " ").toUpperCase()}</strong>?<br /><br />
-          This decision will be saved permanently in the database.
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Dispute</div>
+            <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>"{dispute.subject}"</div>
+            <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 3 }}>
+              Raised by: {dispute.raisedBy?.name || "Unknown"} · {dispute.raisedBy?.role || "user"}
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Current Status</div>
+              <div style={{ fontSize: 13, color: current.color, fontWeight: 800 }}>{dispute.status.replace("_", " ").toUpperCase()}</div>
+            </div>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: target.bg, border: `1px solid ${target.color}55` }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>New Status</div>
+              <div style={{ fontSize: 13, color: target.color, fontWeight: 800 }}>{targetStatus.replace("_", " ").toUpperCase()}</div>
+            </div>
+          </div>
+          {resolution && (
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.15)", fontSize: 12, color: "#a5b4fc", marginBottom: 14 }}>
+              <strong style={{ color: "#4ade80" }}>Resolution:</strong> {resolution}
+            </div>
+          )}
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+            ⚠️ The original submitter will see this updated dispute status in their account.
+          </div>
         </div>
         <div className="modal-actions">
           <button className="btn-danger" onClick={onCancel} disabled={updating}>Cancel</button>
-          <button className="btn-success" onClick={onConfirm} disabled={updating}>
-            {updating ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm"}
+          <button className="btn-success" onClick={onConfirm} disabled={updating} aria-disabled={updating}>
+            {updating ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm Decision"}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 function DisputeCard({ dispute, onAction, updating }) {
   const [expanded, setExpanded] = useState(false);

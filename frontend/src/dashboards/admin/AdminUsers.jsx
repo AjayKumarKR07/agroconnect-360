@@ -6,26 +6,46 @@ import { DS_ADMIN, ROLE_COLOR, relativeTime } from "./adminStyles";
 const ROLE_FILTERS = ["all", "farmer", "seller", "user", "exporter", "admin"];
 
 function ConfirmModal({ user, onConfirm, onCancel, loading }) {
-  const action = user.isActive ? "suspend" : "activate";
+  const isSuspending = user.isActive;
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="users-modal-title">
       <div className="modal-box">
-        <div className="modal-title">{user.isActive ? "🚫 Suspend User?" : "✅ Activate User?"}</div>
+        <div className="modal-title" id="users-modal-title">
+          {isSuspending ? "🚫 Suspend User?" : "✅ Activate User?"}
+        </div>
         <div className="modal-body">
-          {user.isActive
-            ? `Suspending "${user.name || user.email}" will prevent them from logging in. Existing data is preserved.`
-            : `Activating "${user.name || user.email}" will restore full access to the platform.`}
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>User</div>
+            <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{user.name || user.email}</div>
+            <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 3 }}>{user.email} · <span style={{ textTransform: "capitalize" }}>{user.role}</span></div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Current</div>
+              <div style={{ fontSize: 13, color: user.isActive ? "#4ade80" : "#f87171", fontWeight: 800 }}>{user.isActive ? "ACTIVE" : "SUSPENDED"}</div>
+            </div>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: isSuspending ? "rgba(239,68,68,0.07)" : "rgba(34,197,94,0.07)", border: `1px solid ${isSuspending ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)"}` }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>New State</div>
+              <div style={{ fontSize: 13, color: isSuspending ? "#f87171" : "#4ade80", fontWeight: 800 }}>{isSuspending ? "SUSPENDED" : "ACTIVE"}</div>
+            </div>
+          </div>
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+            ⚠️ {isSuspending
+              ? "Suspending will immediately block all active sessions for this user."
+              : "Restoring access will allow this user to log in and use the platform again."}
+          </div>
         </div>
         <div className="modal-actions">
           <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
-          <button className={user.isActive ? "btn-danger" : "btn-success"} onClick={onConfirm} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : `${user.isActive ? "🚫 Suspend" : "✅ Activate"}`}
+          <button className={isSuspending ? "btn-danger" : "btn-success"} onClick={onConfirm} disabled={loading} aria-disabled={loading}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : (isSuspending ? "🚫 Suspend" : "✅ Activate")}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 export default function AdminUsers() {
   const [searchParams] = useSearchParams();

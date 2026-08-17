@@ -1,6 +1,8 @@
 const ExportShipment = require("../models/ExportShipment");
 const ExportRFQ = require("../models/ExportRFQ");
 const Crop = require("../models/Crop");
+const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 // ==========================================
 // GET EXPORTER DASHBOARD STATS
@@ -123,6 +125,25 @@ const createExportRFQ = async (req, res) => {
       targetPriceUsd: targetPriceUsd ? Number(targetPriceUsd) : undefined,
       status: "pending",
     });
+
+    // Notify all active admins of new pending RFQ — silently, non-blocking
+    try {
+      const admins = await User.find({ role: "admin", isActive: true }).select("_id").lean();
+      if (admins.length) {
+        const adminNotifications = admins.map((a) => ({
+          recipient: a._id,
+          type: "export",
+          title: "New Export RFQ Pending",
+          message: `Exporter ${req.user.name || req.user.email} submitted an RFQ for "${cropName}" → ${destinationCountry} (${quantityTons} tons).`,
+          isRead: false,
+          link: "/admin/exports?tab=rfqs&status=pending",
+          metadata: { rfqId: String(rfq._id), cropName, destinationCountry },
+        }));
+        await Notification.insertMany(adminNotifications, { ordered: false });
+      }
+    } catch (notifyErr) {
+      console.error("Admin RFQ notification failed (non-critical):", notifyErr.message);
+    }
 
     return res.status(201).json({ success: true, message: "Export RFQ submitted successfully", rfq });
   } catch (error) {

@@ -61,15 +61,26 @@ export default function AdminDashboard() {
   const [growthMetric, setGrowthMetric] = useState("users"); // 'users' | 'orders' | 'gmv'
   const [hoveredMonth, setHoveredMonth] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchTarget, setSearchTarget] = useState("users"); // 'users' | 'orders' | 'crops' | 'disputes' | 'exports'
+  const [searchTarget, setSearchTarget] = useState("users");
+  const [bgError, setBgError] = useState(null); // non-blocking background refresh error
   const token = localStorage.getItem("agroconnect_token");
   const autoRefreshTimerRef = useRef(null);
+  // Overlap-prevention guard: prevents a new silent refresh from starting
+  // while a previous one is still in-flight.
+  const isRefreshingRef = useRef(false);
 
   const load = useCallback(
     async (isSilent = false) => {
-      if (isSilent) setRefreshing(true);
-      else setLoading(true);
+      // Prevent overlapping silent refreshes
+      if (isSilent && isRefreshingRef.current) return;
+      if (isSilent) {
+        isRefreshingRef.current = true;
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
+      setBgError(null);
       try {
         const res = await fetch(`${API_URL}/api/admin/dashboard-overview`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -82,10 +93,16 @@ export default function AdminDashboard() {
           throw new Error(resData.message || "Failed to load platform control center data");
         }
       } catch (e) {
-        setError(e.message || "Unable to connect to AgroConnect 360 Admin API");
+        if (isSilent) {
+          // Don't hide existing data; show a small non-blocking banner instead
+          setBgError("Background refresh failed. Data may be stale.");
+        } else {
+          setError(e.message || "Unable to connect to AgroConnect 360 Admin API");
+        }
       } finally {
         setLoading(false);
         setRefreshing(false);
+        if (isSilent) isRefreshingRef.current = false;
       }
     },
     [token]
@@ -96,11 +113,11 @@ export default function AdminDashboard() {
     load();
   }, [load]);
 
-  // Auto-refresh every 60 seconds (silent without blocking screen)
+  // Auto-refresh every 30 seconds (silent — overlap-guarded, non-blocking)
   useEffect(() => {
     autoRefreshTimerRef.current = setInterval(() => {
       load(true);
-    }, 60000);
+    }, 30000);
 
     return () => {
       if (autoRefreshTimerRef.current) clearInterval(autoRefreshTimerRef.current);
@@ -426,7 +443,7 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* ── Error State ── */}
+      {/* ── Error State (initial load failure only) ── */}
       {!loading && error && (
         <div className="card error-state" style={{ marginBottom: 24 }}>
           <div className="error-state-icon">⚠️</div>
@@ -434,6 +451,24 @@ export default function AdminDashboard() {
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(false)}>
             🔄 Retry Connection
+          </button>
+        </div>
+      )}
+
+      {/* ── Background Refresh Error Banner (non-blocking, data still displayed) ── */}
+      {bgError && data && (
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+          padding: "10px 16px", marginBottom: 16, borderRadius: 12,
+          background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)",
+          color: "#fbbf24", fontSize: 13, fontWeight: 600,
+        }}>
+          <span>⚠️ {bgError}</span>
+          <button
+            onClick={() => { setBgError(null); load(true); }}
+            style={{ background: "none", border: "none", color: "#fbbf24", cursor: "pointer", fontWeight: 800, fontSize: 13 }}
+          >
+            Retry ↺
           </button>
         </div>
       )}

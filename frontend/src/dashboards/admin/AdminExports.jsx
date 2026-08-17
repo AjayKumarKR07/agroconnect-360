@@ -23,15 +23,32 @@ const SHIPMENT_STEP_LABEL = {
   cancelled:        { label: "Cancelled",         emoji: "❌", step: -1 },
 };
 
-function ConfirmModal({ message, onConfirm, onCancel, loading }) {
+function ConfirmModal({ message, detail, warning, onConfirm, onCancel, loading }) {
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="exports-modal-title">
       <div className="modal-box">
-        <div className="modal-title">Confirm Action</div>
-        <div className="modal-body">{message}</div>
+        <div className="modal-title" id="exports-modal-title">Confirm Action</div>
+        <div className="modal-body">
+          <div style={{ marginBottom: detail ? 12 : 0 }}>{message}</div>
+          {detail && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+              {detail.map((d, i) => (
+                <div key={i} style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+                  <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>{d.label}</div>
+                  <div style={{ fontSize: 13, color: d.color || "#c7d2fe", fontWeight: 800 }}>{d.value}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {warning && (
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+              ⚠️ {warning}
+            </div>
+          )}
+        </div>
         <div className="modal-actions">
           <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
-          <button className="btn-indigo" onClick={onConfirm} disabled={loading}>
+          <button className="btn-indigo" onClick={onConfirm} disabled={loading} aria-disabled={loading}>
             {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm"}
           </button>
         </div>
@@ -166,6 +183,8 @@ export default function AdminExports() {
       {confirm && (
         <ConfirmModal
           message={confirm.message}
+          detail={confirm.detail}
+          warning={confirm.warning}
           onConfirm={confirm.onConfirm}
           onCancel={() => setConfirm(null)}
           loading={!!updating}
@@ -278,8 +297,17 @@ export default function AdminExports() {
                               disabled={updating === rfq._id}
                               onChange={(e) => {
                                 const ns = e.target.value;
+                                const nsc = RFQ_STYLE[ns] || RFQ_STYLE.pending;
+                                const csc = RFQ_STYLE[rfq.status] || RFQ_STYLE.pending;
                                 setConfirm({
-                                  message: `Mark RFQ for "${rfq.cropName}" as ${ns.toUpperCase()}?`,
+                                  message: `Update status for RFQ: "${rfq.cropName}" → ${rfq.destinationCountry}`,
+                                  detail: [
+                                    { label: "Current Status", value: rfq.status.toUpperCase(), color: csc.color },
+                                    { label: "New Status",     value: ns.toUpperCase(),        color: nsc.color },
+                                    { label: "Exporter",       value: rfq.exporter?.name || "—" },
+                                    { label: "Quantity",        value: `${rfq.quantityTons} Tons` },
+                                  ],
+                                  warning: "The exporter will see this updated RFQ status in their dashboard.",
                                   onConfirm: () => updateRFQStatus(rfq._id, ns),
                                 });
                               }}
@@ -352,8 +380,17 @@ export default function AdminExports() {
                         disabled={updating === s._id}
                         onChange={(e) => {
                           const ns = e.target.value;
+                          const prev = SHIPMENT_STEP_LABEL[s.status] || { label: s.status };
+                          const next = SHIPMENT_STEP_LABEL[ns] || { label: ns };
                           setConfirm({
-                            message: `Update shipment ${s.containerNo} to "${SHIPMENT_STEP_LABEL[ns]?.label || ns}"?`,
+                            message: `Update shipment ${s.containerNo} (${s.cargo})`,
+                            detail: [
+                              { label: "Current Status", value: prev.label, color: "#a5b4fc" },
+                              { label: "New Status",     value: next.label, color: "#4ade80" },
+                              { label: "Container",      value: s.containerNo },
+                              { label: "Exporter",       value: s.exporter?.name || "—" },
+                            ],
+                            warning: "The exporter will see this updated shipment status in their dashboard.",
                             onConfirm: () => updateShipmentStatus(s._id, ns),
                           });
                         }}

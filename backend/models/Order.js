@@ -153,6 +153,12 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for admin and buyer query patterns
+// getAdminOrders: filters by status, sorts by createdAt
+orderSchema.index({ status: 1, createdAt: -1 });
+// buyer-scoped order queries (Buyer portal)
+orderSchema.index({ buyer: 1, createdAt: -1 });
+
 module.exports = mongoose.model(
   "Order",
   orderSchema

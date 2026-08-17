@@ -146,15 +146,15 @@ export default function AdminSystem() {
               {[
                 { name: "MongoDB Atlas", status: health.database === "connected" ? "Connected" : health.database, ok: health.database === "connected", icon: "🗄️" },
                 { name: "AgroConnect API", status: "Operational", ok: health.api === "operational", icon: "🌐" },
-                { name: "Gemini AI (Assistant)", status: "Active", ok: true, icon: "🤖", note: "Via /api/assistant" },
-                { name: "Crop Disease AI", status: "Active", ok: true, icon: "🔬", note: "Via /api/diagnosis" },
+                { name: "Gemini AI (Assistant)", status: "Not polled", ok: null, icon: "🤖", note: "Availability not verified by health check" },
+                { name: "Crop Disease AI", status: "Not polled", ok: null, icon: "🔬", note: "Availability not verified by health check" },
               ].map((svc) => (
-                <div key={svc.name} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: `1px solid ${svc.ok ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}` }}>
+                <div key={svc.name} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: `1px solid ${svc.ok === true ? "rgba(34,197,94,0.2)" : svc.ok === false ? "rgba(239,68,68,0.2)" : "rgba(251,191,36,0.15)"}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>{svc.icon}</span>
                     <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{svc.name}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: svc.ok ? "#4ade80" : "#f87171", fontWeight: 700 }}>● {svc.status}</div>
+                  <div style={{ fontSize: 12, color: svc.ok === true ? "#4ade80" : svc.ok === false ? "#f87171" : "#fbbf24", fontWeight: 700 }}>● {svc.status}</div>
                   {svc.note && <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{svc.note}</div>}
                 </div>
               ))}

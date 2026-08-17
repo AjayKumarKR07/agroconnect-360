@@ -4,22 +4,38 @@ import { DS_ADMIN, relativeTime } from "./adminStyles";
 
 const ROLE_OPTIONS = ["all", "farmer", "seller", "user", "exporter"];
 
-function ConfirmBroadcast({ title, targetRole, count, onConfirm, onCancel, sending }) {
+function ConfirmBroadcast({ title, message, targetRole, count, countLoading, onConfirm, onCancel, sending }) {
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="broadcast-modal-title">
       <div className="modal-box">
-        <div className="modal-title">📢 Confirm Broadcast</div>
+        <div className="modal-title" id="broadcast-modal-title">📢 Confirm Broadcast</div>
         <div className="modal-body">
-          You are about to send a notification to{" "}
-          <strong style={{ color: "#fff" }}>
-            {targetRole === "all" ? "all active users" : `all active ${targetRole}s`}
-          </strong>.<br /><br />
-          <strong style={{ color: "#fbbf24" }}>Message: "{title}"</strong><br /><br />
-          This action will be recorded in the audit log and cannot be undone.
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Audience</div>
+              <div style={{ fontSize: 13, color: "#c7d2fe", fontWeight: 700 }}>{targetRole === "all" ? "All Active Users" : `${targetRole.charAt(0).toUpperCase() + targetRole.slice(1)}s`}</div>
+            </div>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Recipients</div>
+              <div style={{ fontSize: 13, color: countLoading ? "#a5b4fc" : "#4ade80", fontWeight: 800 }}>
+                {countLoading ? "Counting…" : `${(count || 0).toLocaleString()} users`}
+              </div>
+            </div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Title</div>
+            <div style={{ fontSize: 13, color: "#fff", fontWeight: 700 }}>📢 {title}</div>
+          </div>
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.12)", fontSize: 12, color: "#a5b4fc", marginBottom: 14, maxHeight: 80, overflow: "hidden", textOverflow: "ellipsis" }}>
+            {message}
+          </div>
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+            ⚠️ This broadcast will be stored in the database and cannot be undone. It will be recorded in the audit log.
+          </div>
         </div>
         <div className="modal-actions">
           <button className="btn-danger" onClick={onCancel} disabled={sending}>Cancel</button>
-          <button className="btn-indigo" onClick={onConfirm} disabled={sending}>
+          <button className="btn-indigo" onClick={onConfirm} disabled={sending || countLoading} aria-disabled={sending || countLoading}>
             {sending ? <><span className="spinner" style={{ width: 14, height: 14 }} /> Sending…</> : "📤 Send Broadcast"}
           </button>
         </div>
@@ -32,6 +48,8 @@ export default function AdminBroadcast() {
   const [form, setForm] = useState({ title: "", message: "", targetRole: "all" });
   const [showConfirm, setShowConfirm] = useState(false);
   const [sending, setSending] = useState(false);
+  const [recipientCount, setRecipientCount] = useState(null);
+  const [countLoading, setCountLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [history, setHistory] = useState([]);
   const [histLoading, setHistLoading] = useState(true);
@@ -61,6 +79,25 @@ export default function AdminBroadcast() {
   }, [token]);
 
   useEffect(() => { loadHistory(); }, [loadHistory]);
+  const handlePreviewClick = async () => {
+    if (!isValid) return;
+    setCountLoading(true);
+    setRecipientCount(null);
+    setShowConfirm(true);
+    try {
+      const params = new URLSearchParams({ limit: 1, status: "active" });
+      if (form.targetRole !== "all") params.set("role", form.targetRole);
+      const r = await fetch(`${API_URL}/api/admin/users?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (d.success) setRecipientCount(d.total || 0);
+    } catch {
+      setRecipientCount(0);
+    } finally {
+      setCountLoading(false);
+    }
+  };
 
   const handleSend = async () => {
     setSending(true);
@@ -75,6 +112,7 @@ export default function AdminBroadcast() {
       if (d.success) {
         showToast(`✅ Broadcast sent to ${d.count} user${d.count !== 1 ? "s" : ""}`);
         setForm({ title: "", message: "", targetRole: "all" });
+        setRecipientCount(null);
         loadHistory();
       } else {
         showToast(d.message || "Broadcast failed", "error");
@@ -96,7 +134,10 @@ export default function AdminBroadcast() {
       {showConfirm && (
         <ConfirmBroadcast
           title={form.title}
+          message={form.message}
           targetRole={form.targetRole}
+          count={recipientCount}
+          countLoading={countLoading}
           onConfirm={handleSend}
           onCancel={() => setShowConfirm(false)}
           sending={sending}
@@ -165,7 +206,7 @@ export default function AdminBroadcast() {
             className="btn-indigo"
             disabled={!isValid || sending}
             style={{ width: "100%", justifyContent: "center", opacity: !isValid ? 0.5 : 1 }}
-            onClick={() => { if (isValid) setShowConfirm(true); }}
+            onClick={handlePreviewClick}
           >
             📤 Preview &amp; Send Broadcast
           </button>

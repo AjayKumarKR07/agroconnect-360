@@ -52,4 +52,10 @@ const exportRFQSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for admin and exporter query patterns
+// getAdminRFQs: sorts by createdAt, filters by status
+exportRFQSchema.index({ status: 1, createdAt: -1 });
+// getExporterRFQs: queries by exporter
+exportRFQSchema.index({ exporter: 1, createdAt: -1 });
+
 module.exports = mongoose.model("ExportRFQ", exportRFQSchema);

@@ -1,4 +1,6 @@
 const Dispute = require("../models/Dispute");
+const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 // ==========================================
 // CREATE DISPUTE (any logged-in user)
@@ -23,6 +25,26 @@ const createDispute = async (req, res) => {
       priority: priority || "medium",
       order: orderId || null,
     });
+
+    // Notify all active admins — silently, never blocking the primary response
+    // Uses recipient field to avoid affecting farmer-scoped notification queries
+    try {
+      const admins = await User.find({ role: "admin", isActive: true }).select("_id").lean();
+      if (admins.length) {
+        const adminNotifications = admins.map((a) => ({
+          recipient: a._id,
+          type: "system",
+          title: "New Dispute Filed",
+          message: `A ${priority || "medium"}-priority dispute has been submitted: "${subject.trim()}" by ${req.user.name || req.user.email || "a user"}.`,
+          isRead: false,
+          link: "/admin/disputes?status=open",
+          metadata: { disputeId: String(dispute._id), priority: priority || "medium" },
+        }));
+        await Notification.insertMany(adminNotifications, { ordered: false });
+      }
+    } catch (notifyErr) {
+      console.error("Admin dispute notification failed (non-critical):", notifyErr.message);
+    }
 
     return res.status(201).json({ success: true, dispute });
   } catch (error) {

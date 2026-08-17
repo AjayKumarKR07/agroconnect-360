@@ -104,4 +104,10 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for admin query patterns
+// getAdminUsers: filters by role, isActive; sorts by createdAt
+userSchema.index({ role: 1, isActive: 1, createdAt: -1 });
+// Text-search fallback for name/email fields (admin search bar)
+userSchema.index({ name: 1 });
+
 module.exports = mongoose.model("User", userSchema);

@@ -20,6 +20,10 @@ const {
   sendAdminBroadcast,
   getAdminBroadcastHistory,
   getAdminSystemHealth,
+  getAdminNotifications,
+  getAdminNotificationCount,
+  markAdminNotificationRead,
+  markAllAdminNotificationsRead,
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -58,7 +62,7 @@ router.get("/finance", getAdminFinance);
 router.get("/disputes", getAdminDisputes);
 router.patch("/disputes/:id/status", updateAdminDisputeStatus);
 
-// ── Audit Logs ─────────────────────────────────────────────────────────────
+// ── Audit Logs (read-only — no DELETE/UPDATE routes exposed) ───────────────
 router.get("/audit-logs", getAdminAuditLogs);
 
 // ── Broadcast ──────────────────────────────────────────────────────────────
@@ -67,5 +71,13 @@ router.get("/broadcast/history", getAdminBroadcastHistory);
 
 // ── System Health ──────────────────────────────────────────────────────────
 router.get("/system/health", getAdminSystemHealth);
+
+// ── Admin Notifications ────────────────────────────────────────────────────
+// NOTE: "mark-all-read" is registered BEFORE "/:id/read" so Express does not
+// treat the literal string "mark-all-read" as a Mongo ObjectId.
+router.get("/notifications", getAdminNotifications);
+router.get("/notifications/unread-count", getAdminNotificationCount);
+router.patch("/notifications/mark-all-read", markAllAdminNotificationsRead);
+router.patch("/notifications/:id/read", markAdminNotificationRead);
 
 module.exports = router;

@@ -31,6 +31,31 @@ const writeAuditLog = async (adminId, action, entityType, entityId, description,
 };
 
 // ==========================================
+// INTERNAL HELPER — Notify All Admins
+// Creates a Notification record for every active admin.
+// Never throws — notification failure must not break primary action.
+// SECURITY: Never stores passwords, tokens, keys, or secrets.
+// ==========================================
+const notifyAdmins = async (title, message, type = "system", link = "", metadata = {}) => {
+  try {
+    const admins = await User.find({ role: "admin", isActive: true }).select("_id").lean();
+    if (!admins.length) return;
+    const notifications = admins.map((a) => ({
+      recipient: a._id,
+      type,
+      title,
+      message,
+      isRead: false,
+      link,
+      metadata,
+    }));
+    await Notification.insertMany(notifications, { ordered: false });
+  } catch (err) {
+    console.error("notifyAdmins failed:", err.message);
+  }
+};
+
+// ==========================================
 // GET ADMIN DASHBOARD STATS
 // GET /api/admin/stats
 // ==========================================
@@ -451,10 +476,10 @@ const getAdminDashboardOverview = async (req, res) => {
     });
   } catch (error) {
     console.error("Dashboard overview error:", error);
+    // SECURITY: Do not expose raw error.message to client — internal details logged above
     return res.status(500).json({
       success: false,
       message: "Failed to load dashboard overview data",
-      error: error.message,
     });
   }
 };
@@ -511,6 +536,9 @@ const getAdminUsers = async (req, res) => {
 // ==========================================
 const patchAdminUserStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
@@ -519,17 +547,27 @@ const patchAdminUserStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: "Cannot change your own account status" });
     }
 
+    const previousStatus = user.isActive;
     user.isActive = !user.isActive;
     await user.save();
 
-    // Write audit log
+    const action = user.isActive ? "user_activated" : "user_suspended";
+
+    // Write audit log with before/after values
     await writeAuditLog(
       req.user._id,
-      user.isActive ? "user_activated" : "user_suspended",
+      action,
       "user",
       user._id,
       `User "${user.name || user.email}" ${user.isActive ? "activated" : "suspended"}`,
-      { userName: user.name, userEmail: user.email, userRole: user.role, newStatus: user.isActive }
+      {
+        userName: user.name,
+        userEmail: user.email,
+        userRole: user.role,
+        before: { isActive: previousStatus },
+        after: { isActive: user.isActive },
+        performedBy: req.user.name || req.user.email,
+      }
     );
 
     return res.status(200).json({
@@ -598,31 +636,38 @@ const getAdminOrders = async (req, res) => {
 // ==========================================
 const patchAdminOrderStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid order ID" });
+    }
     const { status } = req.body;
     const allowed = ["pending", "accepted", "rejected", "processing", "shipped", "delivered", "cancelled"];
     if (!status || !allowed.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res.status(400).json({ success: false, message: "Invalid status value" });
     }
 
     const order = await Order.findById(req.params.id).populate("buyer", "name email").lean();
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
 
     const previousStatus = order.status;
+    if (previousStatus === status) {
+      return res.status(400).json({ success: false, message: "Order is already in that status" });
+    }
     const updated = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
 
-    // Write audit log
+    // Write audit log with before/after
     await writeAuditLog(
       req.user._id,
       "order_status_changed",
       "order",
       order._id,
-      `Order status changed from "${previousStatus}" to "${status}"`,
+      `Order status changed from "${previousStatus}" → "${status}"`,
       {
-        orderId: order._id,
+        orderId: String(order._id),
         buyerName: order.buyer?.name,
-        previousStatus,
-        newStatus: status,
+        before: { status: previousStatus },
+        after: { status },
         totalAmount: order.totalAmount,
+        performedBy: req.user.name || req.user.email,
       }
     );
 
@@ -690,19 +735,29 @@ const getAdminCrops = async (req, res) => {
 // ==========================================
 const deleteAdminCrop = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid crop ID" });
+    }
     const crop = await Crop.findById(req.params.id).populate("farmer", "name email").lean();
     if (!crop) return res.status(404).json({ success: false, message: "Crop not found" });
 
     await Crop.findByIdAndDelete(req.params.id);
 
-    // Write audit log
+    // Write audit log with before/after
     await writeAuditLog(
       req.user._id,
       "crop_deleted",
       "crop",
       crop._id,
       `Crop "${crop.name}" deleted (Farmer: ${crop.farmer?.name || "Unknown"})`,
-      { cropName: crop.name, cropId: crop._id, farmerName: crop.farmer?.name, farmerEmail: crop.farmer?.email }
+      {
+        cropName: crop.name,
+        cropId: String(crop._id),
+        farmerName: crop.farmer?.name,
+        before: { status: crop.status, name: crop.name },
+        after: { status: "deleted" },
+        performedBy: req.user.name || req.user.email,
+      }
     );
 
     return res.status(200).json({ success: true, message: "Crop deleted" });
@@ -713,18 +768,29 @@ const deleteAdminCrop = async (req, res) => {
 };
 
 // ==========================================
-// GET ALL EXPORT RFQS (Admin)
-// GET /api/admin/rfqs
+// GET ALL EXPORT RFQS (Admin) with pagination
+// GET /api/admin/rfqs?status=&page=&limit=
 // ==========================================
 const getAdminRFQs = async (req, res) => {
   try {
-    const rfqs = await ExportRFQ.find()
+    const { status } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (status && status !== "all") filter.status = status;
+
+    const total = await ExportRFQ.countDocuments(filter);
+    const rfqs = await ExportRFQ.find(filter)
       .populate("exporter", "name email")
       .populate("crop", "name category location")
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
-    return res.status(200).json({ success: true, count: rfqs.length, rfqs });
+    return res.status(200).json({ success: true, count: rfqs.length, total, page, totalPages: Math.ceil(total / limit), rfqs });
   } catch (error) {
     console.error("Admin get RFQs error:", error);
     return res.status(500).json({ success: false, message: "Unable to load RFQs" });
@@ -737,26 +803,39 @@ const getAdminRFQs = async (req, res) => {
 // ==========================================
 const patchAdminRFQStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid RFQ ID" });
+    }
     const { status } = req.body;
     const allowed = ["pending", "accepted", "rejected", "quoted"];
     if (!status || !allowed.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res.status(400).json({ success: false, message: "Invalid status value" });
     }
 
     const rfq = await ExportRFQ.findById(req.params.id).populate("exporter", "name").lean();
     if (!rfq) return res.status(404).json({ success: false, message: "RFQ not found" });
 
     const previousStatus = rfq.status;
+    if (previousStatus === status) {
+      return res.status(400).json({ success: false, message: "RFQ is already in that status" });
+    }
     const updated = await ExportRFQ.findByIdAndUpdate(req.params.id, { status }, { new: true });
 
-    // Write audit log
+    // Write audit log with before/after
     await writeAuditLog(
       req.user._id,
       "rfq_status_changed",
       "rfq",
       rfq._id,
-      `RFQ for "${rfq.cropName}" changed from "${previousStatus}" to "${status}"`,
-      { rfqId: rfq._id, cropName: rfq.cropName, exporterName: rfq.exporter?.name, previousStatus, newStatus: status }
+      `RFQ for "${rfq.cropName}" changed from "${previousStatus}" → "${status}"`,
+      {
+        rfqId: String(rfq._id),
+        cropName: rfq.cropName,
+        exporterName: rfq.exporter?.name,
+        before: { status: previousStatus },
+        after: { status },
+        performedBy: req.user.name || req.user.email,
+      }
     );
 
     return res.status(200).json({ success: true, message: `RFQ marked ${status}`, rfq: updated });
@@ -767,17 +846,28 @@ const patchAdminRFQStatus = async (req, res) => {
 };
 
 // ==========================================
-// GET ALL EXPORT SHIPMENTS (Admin)
-// GET /api/admin/shipments
+// GET ALL EXPORT SHIPMENTS (Admin) with pagination
+// GET /api/admin/shipments?status=&page=&limit=
 // ==========================================
 const getAdminShipments = async (req, res) => {
   try {
-    const shipments = await ExportShipment.find()
+    const { status } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (status && status !== "all") filter.status = status;
+
+    const total = await ExportShipment.countDocuments(filter);
+    const shipments = await ExportShipment.find(filter)
       .populate("exporter", "name email")
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
-    return res.status(200).json({ success: true, count: shipments.length, shipments });
+    return res.status(200).json({ success: true, count: shipments.length, total, page, totalPages: Math.ceil(total / limit), shipments });
   } catch (error) {
     console.error("Admin get shipments error:", error);
     return res.status(500).json({ success: false, message: "Unable to load shipments" });
@@ -790,20 +880,23 @@ const getAdminShipments = async (req, res) => {
 // ==========================================
 const patchAdminShipmentStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid shipment ID" });
+    }
     const { status, statusStep } = req.body;
     const allowedStatuses = [
       "farm_packed", "cfs_cold_storage", "port_gate_in",
       "customs_cleared", "onboard_vessel", "delivered", "cancelled"
     ];
     if (!status || !allowedStatuses.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res.status(400).json({ success: false, message: "Invalid status value" });
     }
 
     const shipment = await ExportShipment.findById(req.params.id).populate("exporter", "name").lean();
     if (!shipment) return res.status(404).json({ success: false, message: "Shipment not found" });
 
     const update = { status };
-    if (statusStep !== undefined && statusStep >= 0 && statusStep <= 5) {
+    if (typeof statusStep === "number" && statusStep >= 0 && statusStep <= 5) {
       update.statusStep = statusStep;
     }
 
@@ -814,8 +907,14 @@ const patchAdminShipmentStatus = async (req, res) => {
       "shipment_status_changed",
       "shipment",
       shipment._id,
-      `Shipment ${shipment.containerNo} status → "${status}"`,
-      { containerNo: shipment.containerNo, previousStatus: shipment.status, newStatus: status }
+      `Shipment ${shipment.containerNo} status: "${shipment.status}" → "${status}"`,
+      {
+        containerNo: shipment.containerNo,
+        exporterName: shipment.exporter?.name,
+        before: { status: shipment.status, statusStep: shipment.statusStep },
+        after: { status, statusStep: update.statusStep ?? shipment.statusStep },
+        performedBy: req.user.name || req.user.email,
+      }
     );
 
     return res.json({ success: true, message: `Shipment updated to ${status}`, shipment: updated });
@@ -953,11 +1052,20 @@ const getAdminDisputes = async (req, res) => {
 // ==========================================
 const updateAdminDisputeStatus = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid dispute ID" });
+    }
     const { status, adminNotes, resolution } = req.body;
     const allowed = ["open", "under_review", "resolved", "rejected"];
     if (!status || !allowed.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res.status(400).json({ success: false, message: "Invalid status value" });
     }
+
+    // Fetch existing dispute to capture previous state
+    const existingDispute = await Dispute.findById(req.params.id).lean();
+    if (!existingDispute) return res.status(404).json({ success: false, message: "Dispute not found" });
+
+    const previousStatus = existingDispute.status;
 
     const update = { status, adminNotes: adminNotes ? String(adminNotes).trim() : "" };
     if (status === "resolved" || status === "rejected") {
@@ -979,14 +1087,41 @@ const updateAdminDisputeStatus = async (req, res) => {
 
     if (!dispute) return res.status(404).json({ success: false, message: "Dispute not found" });
 
+    // Write audit log with before/after
     await writeAuditLog(
       req.user._id,
       `dispute_${status}`,
       "dispute",
       dispute._id,
-      `Dispute "${dispute.subject}" marked as ${status}`,
-      { disputeId: dispute._id, raisedBy: dispute.raisedBy?.name, resolution: resolution || "" }
+      `Dispute "${dispute.subject}" status: "${previousStatus}" → "${status}"`,
+      {
+        disputeId: String(dispute._id),
+        raisedBy: dispute.raisedBy?.name,
+        before: { status: previousStatus },
+        after: { status, resolution: update.resolution || "" },
+        performedBy: req.user.name || req.user.email,
+      }
     );
+
+    // Notify the original submitter when their dispute is resolved or rejected
+    if ((status === "resolved" || status === "rejected") && dispute.raisedBy?._id) {
+      try {
+        await Notification.create({
+          recipient: dispute.raisedBy._id,
+          type: "system",
+          title: status === "resolved" ? "Dispute Resolved" : "Dispute Rejected",
+          message: status === "resolved"
+            ? `Your dispute "${dispute.subject}" has been resolved. ${update.resolution ? `Resolution: ${update.resolution}` : ""}`
+            : `Your dispute "${dispute.subject}" has been rejected. ${update.resolution ? `Reason: ${update.resolution}` : ""}`,
+          isRead: false,
+          link: "/disputes/my",
+          metadata: { disputeId: String(dispute._id), status },
+        });
+      } catch (notifyErr) {
+        // Non-critical — never block the primary response
+        console.error("Dispute submitter notification failed (non-critical):", notifyErr.message);
+      }
+    }
 
     return res.json({ success: true, message: `Dispute marked as ${status}`, dispute });
   } catch (error) {
@@ -1044,6 +1179,18 @@ const sendAdminBroadcast = async (req, res) => {
     }
     if (!message || !message.trim()) {
       return res.status(400).json({ success: false, message: "Message is required" });
+    }
+    // Validate title/message length to prevent abuse
+    if (title.trim().length > 200) {
+      return res.status(400).json({ success: false, message: "Title must be 200 characters or fewer" });
+    }
+    if (message.trim().length > 2000) {
+      return res.status(400).json({ success: false, message: "Message must be 2000 characters or fewer" });
+    }
+    // Validate targetRole against allowed broadcast audience roles
+    const ALLOWED_BROADCAST_ROLES = ["all", "farmer", "seller", "user", "exporter"];
+    if (targetRole && !ALLOWED_BROADCAST_ROLES.includes(targetRole)) {
+      return res.status(400).json({ success: false, message: "Invalid target role" });
     }
 
     // Find active recipient users
@@ -1164,6 +1311,101 @@ const getAdminSystemHealth = async (req, res) => {
   }
 };
 
+// ==========================================
+// GET ADMIN NOTIFICATIONS
+// GET /api/admin/notifications?page=&limit=
+// Scoped to the logged-in admin only via recipient field.
+// ==========================================
+const getAdminNotifications = async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const filter = { recipient: req.user._id };
+
+    const [total, notifications] = await Promise.all([
+      Notification.countDocuments(filter),
+      Notification.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
+
+    return res.json({
+      success: true,
+      notifications,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    console.error("Admin notifications error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load notifications" });
+  }
+};
+
+// ==========================================
+// GET ADMIN UNREAD NOTIFICATION COUNT
+// GET /api/admin/notifications/unread-count
+// ==========================================
+const getAdminNotificationCount = async (req, res) => {
+  try {
+    const count = await Notification.countDocuments({
+      recipient: req.user._id,
+      isRead: false,
+    });
+    return res.json({ success: true, count });
+  } catch (error) {
+    console.error("Admin notification count error:", error);
+    return res.status(500).json({ success: false, message: "Unable to fetch notification count" });
+  }
+};
+
+// ==========================================
+// MARK ONE ADMIN NOTIFICATION AS READ
+// PATCH /api/admin/notifications/:id/read
+// ==========================================
+const markAdminNotificationRead = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid notification ID" });
+    }
+    // Scope: only allow marking own notification
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, recipient: req.user._id },
+      { isRead: true },
+      { new: true }
+    ).lean();
+
+    if (!notification) {
+      return res.status(404).json({ success: false, message: "Notification not found" });
+    }
+    return res.json({ success: true, notification });
+  } catch (error) {
+    console.error("Mark notification read error:", error);
+    return res.status(500).json({ success: false, message: "Unable to mark notification as read" });
+  }
+};
+
+// ==========================================
+// MARK ALL ADMIN NOTIFICATIONS AS READ
+// PATCH /api/admin/notifications/mark-all-read
+// ==========================================
+const markAllAdminNotificationsRead = async (req, res) => {
+  try {
+    const result = await Notification.updateMany(
+      { recipient: req.user._id, isRead: false },
+      { isRead: true }
+    );
+    return res.json({ success: true, modifiedCount: result.modifiedCount });
+  } catch (error) {
+    console.error("Mark all notifications read error:", error);
+    return res.status(500).json({ success: false, message: "Unable to mark all notifications as read" });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getAdminDashboardOverview,
@@ -1184,4 +1426,8 @@ module.exports = {
   sendAdminBroadcast,
   getAdminBroadcastHistory,
   getAdminSystemHealth,
+  getAdminNotifications,
+  getAdminNotificationCount,
+  markAdminNotificationRead,
+  markAllAdminNotificationsRead,
 };

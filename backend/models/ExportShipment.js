@@ -78,4 +78,10 @@ const exportShipmentSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for admin and exporter query patterns
+// getAdminShipments: sorts by createdAt, filters by status
+exportShipmentSchema.index({ status: 1, createdAt: -1 });
+// getExporterShipments: queries by exporter
+exportShipmentSchema.index({ exporter: 1, createdAt: -1 });
+
 module.exports = mongoose.model("ExportShipment", exportShipmentSchema);

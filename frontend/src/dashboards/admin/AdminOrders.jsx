@@ -16,25 +16,47 @@ const STATUS_STYLE = {
 };
 
 function ConfirmModal({ order, newStatus, onConfirm, onCancel, loading }) {
+  const current = order.status;
+  const sc = STATUS_STYLE[newStatus] || STATUS_STYLE.pending;
+  const cc = STATUS_STYLE[current] || STATUS_STYLE.pending;
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
       <div className="modal-box">
-        <div className="modal-title">Update Order Status?</div>
+        <div className="modal-title" id="confirm-modal-title">Change Order Status</div>
         <div className="modal-body">
-          Change order <strong style={{ color: "#818cf8", fontFamily: "monospace" }}>…{String(order._id).slice(-8)}</strong> status to{" "}
-          <strong style={{ color: STATUS_STYLE[newStatus]?.color }}>{newStatus.toUpperCase()}</strong>?<br /><br />
-          This action will be recorded in the audit log.
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Order</div>
+              <div style={{ fontFamily: "monospace", fontSize: 13, color: "#818cf8", fontWeight: 700 }}>…{String(order._id).slice(-10)}</div>
+            </div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Buyer</div>
+              <div style={{ fontSize: 13, color: "#c7d2fe", fontWeight: 600 }}>{order.buyer?.name || "—"}</div>
+            </div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Current Status</div>
+              <div style={{ fontSize: 13, color: cc.color, fontWeight: 800, textTransform: "uppercase" }}>{current}</div>
+            </div>
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: `${sc.bg}`, border: `1px solid ${sc.color}44` }}>
+              <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>New Status</div>
+              <div style={{ fontSize: 13, color: sc.color, fontWeight: 800, textTransform: "uppercase" }}>{newStatus}</div>
+            </div>
+          </div>
+          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+            ⚠️ This change is shared — the Farmer and Buyer will both see the updated order status immediately.
+          </div>
         </div>
         <div className="modal-actions">
           <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
-          <button className="btn-indigo" onClick={onConfirm} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm"}
+          <button className="btn-indigo" onClick={onConfirm} disabled={loading} aria-disabled={loading}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "Confirm Change"}
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 export default function AdminOrders() {
   const [searchParams] = useSearchParams();
