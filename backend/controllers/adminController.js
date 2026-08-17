@@ -1406,6 +1406,291 @@ const markAllAdminNotificationsRead = async (req, res) => {
   }
 };
 
+
+// ==========================================
+// GET PLATFORM ANALYTICS (Admin)
+// GET /api/admin/analytics?from=YYYY-MM-DD&to=YYYY-MM-DD
+// No AuditLog — read-only analytics
+// ==========================================
+const getAdminAnalytics = async (req, res) => {
+  try {
+    const now = new Date();
+    let from, to, periodLabel;
+    const rawFrom = req.query.from;
+    const rawTo   = req.query.to;
+
+    if (rawFrom || rawTo) {
+      // Custom date range — both required
+      if (!rawFrom || !rawTo) {
+        return res.status(400).json({ success: false, message: "Both 'from' and 'to' are required for a custom range" });
+      }
+      from = new Date(rawFrom);
+      to   = new Date(rawTo);
+      if (isNaN(from.getTime())) return res.status(400).json({ success: false, message: "Invalid 'from' date" });
+      if (isNaN(to.getTime()))   return res.status(400).json({ success: false, message: "Invalid 'to' date" });
+      if (from > to)             return res.status(400).json({ success: false, message: "'from' must be before or equal to 'to'" });
+
+      // Normalise to UTC day boundaries
+      from = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate(), 0, 0, 0, 0));
+      to   = new Date(Date.UTC(to.getUTCFullYear(),   to.getUTCMonth(),   to.getUTCDate(),   23, 59, 59, 999));
+
+      // Cap future end to now
+      if (to > now) to = new Date(now);
+
+      // Max 1 year
+      if (to - from > 366 * 24 * 60 * 60 * 1000) {
+        return res.status(400).json({ success: false, message: "Date range cannot exceed 1 year" });
+      }
+      periodLabel = "Custom Range";
+    } else {
+      // Default: last 30 days
+      to   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+      from = new Date(to.getTime() - 29 * 24 * 60 * 60 * 1000);
+      from = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate(), 0, 0, 0, 0));
+      periodLabel = "Last 30 Days";
+    }
+
+    // Previous equivalent period (same duration, immediately before `from`)
+    const durationMs = to.getTime() - from.getTime();
+    const prevTo     = new Date(from.getTime() - 1);
+    const prevFrom   = new Date(prevTo.getTime() - durationMs);
+    const rangeDays  = Math.ceil(durationMs / (24 * 60 * 60 * 1000));
+    const useDaily   = rangeDays <= 14;
+
+    // Trend granularity: ≤14 days → daily, >14 days → monthly
+    const dateGroup = useDaily
+      ? { year: { $year: "$createdAt" }, month: { $month: "$createdAt" }, day: { $dayOfMonth: "$createdAt" } }
+      : { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } };
+
+    // ── All aggregations in parallel ───────────────────────────────────────
+    const [
+      currOrdersAgg, prevOrdersAgg,
+      currDisputesAgg, prevDisputesAgg,
+      currRFQsAgg, prevRFQsAgg,
+      currInterestsAgg,
+      activeContractsCount, activeShipmentsCount,
+      orderTrendsAgg, userTrendsAgg, disputeTrendsAgg,
+      newUsersCurr, newUsersPrev,
+    ] = await Promise.all([
+      Order.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: { _id: "$status", count: { $sum: 1 }, totalAmount: { $sum: "$totalAmount" } } },
+      ]),
+      Order.aggregate([
+        { $match: { createdAt: { $gte: prevFrom, $lte: prevTo } } },
+        { $group: { _id: "$status", count: { $sum: 1 }, totalAmount: { $sum: "$totalAmount" } } },
+      ]),
+      Dispute.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      Dispute.aggregate([
+        { $match: { createdAt: { $gte: prevFrom, $lte: prevTo } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      ExportRFQ.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      ExportRFQ.aggregate([
+        { $match: { createdAt: { $gte: prevFrom, $lte: prevTo } } },
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      ExportInterest.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $count: "total" },
+      ]),
+      ExportContract.countDocuments({ status: "active" }),
+      ExportShipment.countDocuments({ status: { $nin: ["delivered", "cancelled"] } }),
+      Order.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: {
+            _id: dateGroup,
+            count: { $sum: 1 },
+            gmv:   { $sum: { $cond: [{ $eq: ["$status", "delivered"] }, "$totalAmount", 0] } },
+        }},
+        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+      ]),
+      User.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: { _id: dateGroup, count: { $sum: 1 } } },
+        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+      ]),
+      Dispute.aggregate([
+        { $match: { createdAt: { $gte: from, $lte: to } } },
+        { $group: { _id: dateGroup, count: { $sum: 1 } } },
+        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
+      ]),
+      User.countDocuments({ createdAt: { $gte: from, $lte: to } }),
+      User.countDocuments({ createdAt: { $gte: prevFrom, $lte: prevTo } }),
+    ]);
+
+    // ── Metric builders ────────────────────────────────────────────────────
+    const buildOrderMetrics = (agg) => {
+      const m = {
+        totalOrders: 0, deliveredOrders: 0, pendingOrders: 0,
+        cancelledOrders: 0, rejectedOrders: 0,
+        fulfillmentRate: 0, cancellationRate: 0,
+        avgOrderValue: 0, deliveredGMV: 0, totalRevenue: 0,
+      };
+      (agg || []).forEach((s) => {
+        const c = s.count || 0;
+        m.totalOrders  += c;
+        m.totalRevenue += s.totalAmount || 0;
+        if (s._id === "delivered") { m.deliveredOrders = c; m.deliveredGMV = s.totalAmount || 0; }
+        if (s._id === "pending")   m.pendingOrders   = c;
+        if (s._id === "cancelled") m.cancelledOrders = c;
+        if (s._id === "rejected")  m.rejectedOrders  = c;
+      });
+      if (m.totalOrders > 0) {
+        m.avgOrderValue    = parseFloat((m.totalRevenue  / m.totalOrders * 1).toFixed(2));
+        m.fulfillmentRate  = parseFloat((m.deliveredOrders / m.totalOrders * 100).toFixed(1));
+        m.cancellationRate = parseFloat((m.cancelledOrders / m.totalOrders * 100).toFixed(1));
+      }
+      return m;
+    };
+
+    const buildDisputeMetrics = (agg, totalOrders) => {
+      const m = { total: 0, open: 0, underReview: 0, resolved: 0, rejected: 0, disputeRate: 0 };
+      (agg || []).forEach((s) => {
+        m.total += s.count || 0;
+        if (s._id === "open")         m.open        = s.count || 0;
+        if (s._id === "under_review") m.underReview = s.count || 0;
+        if (s._id === "resolved")     m.resolved    = s.count || 0;
+        if (s._id === "rejected")     m.rejected    = s.count || 0;
+      });
+      if (totalOrders > 0) m.disputeRate = parseFloat((m.total / totalOrders * 100).toFixed(2));
+      return m;
+    };
+
+    const buildRFQMetrics = (agg) => {
+      const m = { totalRFQs: 0, pendingRFQs: 0, acceptedRFQs: 0, rejectedRFQs: 0, quotedRFQs: 0, conversionRate: 0 };
+      (agg || []).forEach((s) => {
+        m.totalRFQs += s.count || 0;
+        if (s._id === "pending")  m.pendingRFQs  = s.count || 0;
+        if (s._id === "accepted") m.acceptedRFQs = s.count || 0;
+        if (s._id === "rejected") m.rejectedRFQs = s.count || 0;
+        if (s._id === "quoted")   m.quotedRFQs   = s.count || 0;
+      });
+      const converted = m.acceptedRFQs + m.quotedRFQs;
+      if (m.totalRFQs > 0) m.conversionRate = parseFloat((converted / m.totalRFQs * 100).toFixed(1));
+      return m;
+    };
+
+    const marketplace     = buildOrderMetrics(currOrdersAgg);
+    const marketplacePrev = buildOrderMetrics(prevOrdersAgg);
+    const disputes        = buildDisputeMetrics(currDisputesAgg,  marketplace.totalOrders);
+    const disputesPrev    = buildDisputeMetrics(prevDisputesAgg,  marketplacePrev.totalOrders);
+    const rfqsCurr        = buildRFQMetrics(currRFQsAgg);
+    const rfqsPrev        = buildRFQMetrics(prevRFQsAgg);
+
+    // ── Trend label formatter ──────────────────────────────────────────────
+    const MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const fmtTrend = (item) => {
+      if (!item?._id) return null;
+      const { year, month, day } = item._id;
+      const label = (useDaily && day != null)
+        ? `${day} ${MO[(month||1)-1]}`
+        : `${MO[(month||1)-1]}${year ? " "+year : ""}`;
+      return { label, count: item.count || 0, gmv: item.gmv || 0 };
+    };
+
+    return res.json({
+      success: true,
+      period: { from: from.toISOString(), to: to.toISOString(), label: periodLabel, rangeDays, useDaily },
+      previousPeriod: { from: prevFrom.toISOString(), to: prevTo.toISOString() },
+      marketplace,
+      marketplacePrev,
+      disputes,
+      disputesPrev,
+      exports: {
+        ...rfqsCurr,
+        totalInterests:  (currInterestsAgg[0]?.total) || 0,
+        activeContracts: activeContractsCount  || 0,
+        activeShipments: activeShipmentsCount  || 0,
+      },
+      exportsPrev: { ...rfqsPrev },
+      userGrowth: { current: newUsersCurr || 0, previous: newUsersPrev || 0 },
+      trends: {
+        orders:   (orderTrendsAgg   || []).map(fmtTrend).filter(Boolean),
+        users:    (userTrendsAgg    || []).map(fmtTrend).filter(Boolean),
+        disputes: (disputeTrendsAgg || []).map(fmtTrend).filter(Boolean),
+      },
+    });
+  } catch (error) {
+    console.error("Admin analytics error:", error);
+    return res.status(500).json({ success: false, message: "Unable to load analytics data" });
+  }
+};
+
+// ==========================================
+// GLOBAL SEARCH (Admin)
+// GET /api/admin/search?q=
+// No AuditLog — read-only, admin-gated
+// Never returns password/token/secrets
+// ==========================================
+const getAdminSearch = async (req, res) => {
+  try {
+    const q = (req.query.q || "").trim().slice(0, 100);
+    if (q.length < 2) {
+      return res.status(400).json({ success: false, message: "Search query must be at least 2 characters" });
+    }
+    const regex = { $regex: q, $options: "i" };
+    const LIMIT = 5;
+    const isValidOid = mongoose.Types.ObjectId.isValid(q);
+
+    const [users, orders, crops, rfqs, disputes] = await Promise.all([
+      User.find({ $or: [{ name: regex }, { email: regex }] })
+        .limit(LIMIT)
+        .select("name email role isActive createdAt")
+        .lean(),
+
+      Order.find({
+        $or: [
+          { "items.cropName": regex },
+          { "deliveryAddress.city": regex },
+          ...(isValidOid ? [{ _id: new mongoose.Types.ObjectId(q) }] : []),
+        ],
+      })
+        .limit(LIMIT)
+        .populate("buyer", "name email")
+        .select("_id totalAmount status createdAt buyer items")
+        .lean(),
+
+      Crop.find({ $or: [{ name: regex }, { category: regex }, { location: regex }] })
+        .limit(LIMIT)
+        .populate("farmer", "name")
+        .select("_id name category location status farmer")
+        .lean(),
+
+      ExportRFQ.find({ $or: [{ cropName: regex }, { destinationCountry: regex }] })
+        .limit(LIMIT)
+        .populate("exporter", "name email")
+        .select("_id cropName destinationCountry status createdAt exporter")
+        .lean(),
+
+      Dispute.find({ $or: [{ subject: regex }, { category: regex }] })
+        .limit(LIMIT)
+        .populate("raisedBy", "name email")
+        .select("_id subject category priority status createdAt raisedBy")
+        .lean(),
+    ]);
+
+    return res.json({
+      success: true,
+      query: q,
+      users:    users    || [],
+      orders:   orders   || [],
+      crops:    crops    || [],
+      rfqs:     rfqs     || [],
+      disputes: disputes || [],
+    });
+  } catch (error) {
+    console.error("Admin search error:", error);
+    return res.status(500).json({ success: false, message: "Unable to perform search" });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getAdminDashboardOverview,
@@ -1430,4 +1715,6 @@ module.exports = {
   getAdminNotificationCount,
   markAdminNotificationRead,
   markAllAdminNotificationsRead,
+  getAdminAnalytics,
+  getAdminSearch,
 };
