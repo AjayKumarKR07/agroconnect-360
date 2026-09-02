@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
+import RazorpayCheckout from "../../components/RazorpayCheckout";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -27,23 +28,65 @@ const STATUS_CONFIG = {
   cancelled:  { label: "🚫 Cancelled",  bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
 };
 
+// Payment status badge config
+const PAY_STATUS_CONFIG = {
+  paid:    { label: "💰 Paid",    bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
+  pending: { label: "⏳ Pending", bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
+  failed:  { label: "❌ Failed",  bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
+  refunded:{ label: "↩️ Refunded",bg: "rgba(167,139,250,0.12)",color: "#a78bfa" },
+};
+
+// Order/paymentStatuses where retry is BLOCKED
+const BLOCKED_ORDER_STATUSES  = ["cancelled", "rejected", "delivered"];
+// paymentMethods eligible for online retry (COD is never retried)
+const RETRYABLE_PAY_METHODS   = ["razorpay"];
+
 const FILTERS = ["all", "pending", "accepted", "shipped", "delivered", "rejected"];
 
 export default function UserOrders() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
+  const [orders,   setOrders]   = useState([]);
+  const [loading,  setLoading]  = useState(true);
+  const [filter,   setFilter]   = useState("all");
   const [expanded, setExpanded] = useState(null);
+  // { orderId, rzpData } — holds the Razorpay checkout data for the retry modal
+  const [retryState, setRetryState] = useState(null);
   const token = localStorage.getItem("agroconnect_token");
+  const user  = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const r = await fetch(`${API_URL}/api/orders/buyer`, { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       if (d.success) setOrders(d.orders || []);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
-  };
+  }, [token]);
+
+  // Initiate payment retry: call backend, get Razorpay checkout data
+  const handleRetry = useCallback(async (orderId) => {
+    if (retryState?.orderId === orderId) return; // already loading
+    try {
+      const r = await fetch(`${API_URL}/api/payment/retry/${orderId}`, {
+        method:  "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (!r.ok || !d.success) { alert(d.message || "Retry failed. Please try again."); return; }
+      setRetryState({ orderId, rzpData: d });
+    } catch { alert("Network error. Please check your connection and try again."); }
+  }, [token, retryState]);
+
+  const onRetrySuccess = useCallback((oid) => {
+    setRetryState(null);
+    // Optimistically update payment status, then refresh
+    setOrders(prev => prev.map(o => o._id === oid ? { ...o, paymentStatus: "paid" } : o));
+    load();
+  }, [load]);
+
+  const onRetryFailure = useCallback((msg) => {
+    setRetryState(null);
+    alert(msg || "Payment failed. You can try again.");
+  }, []);
 
   useEffect(() => {
     load();
@@ -131,10 +174,22 @@ export default function UserOrders() {
                   </div>
                   <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: st.bg, color: st.color }}>{st.label}</span>
                 </div>
-                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", marginTop: 4 }}>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>🗓️ {new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>📦 {o.items?.length || 1} item(s)</div>
-                  <div style={{ fontSize: 12, color: "var(--text2)" }}>💳 {o.paymentMethod?.toUpperCase() || "COD"}</div>
+                  {/* Payment method */}
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "rgba(14,165,233,0.08)", color: "#38bdf8", letterSpacing: "0.04em" }}>
+                    {(o.paymentMethod === "razorpay" ? "ONLINE" : (o.paymentMethod || "COD").toUpperCase())}
+                  </span>
+                  {/* Payment status badge */}
+                  {(() => {
+                    const ps = PAY_STATUS_CONFIG[o.paymentStatus] || PAY_STATUS_CONFIG.pending;
+                    return (
+                      <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: ps.bg, color: ps.color }}>
+                        {ps.label}
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
@@ -188,6 +243,46 @@ export default function UserOrders() {
                   <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#f87171", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
                     🚫 Cancel Order
                   </button>
+                )}
+
+                {/* ── Retry Payment button ───────────────────────────────────────────
+                     Eligibility (mirrors backend retryRazorpayPayment):
+                       • paymentMethod === "razorpay"  (COD never retried)
+                       • paymentStatus in ["pending", "failed"]
+                       • order.status NOT in ["cancelled", "rejected", "delivered"]
+                */}
+                {RETRYABLE_PAY_METHODS.includes(o.paymentMethod) &&
+                 ["pending", "failed"].includes(o.paymentStatus) &&
+                 !BLOCKED_ORDER_STATUSES.includes(o.status) && (
+                  <div style={{ marginTop: 10 }}>
+                    {/* Show Razorpay popup only after retry data is loaded */}
+                    {retryState?.orderId === o._id ? (
+                      <RazorpayCheckout
+                        orderId={o._id}
+                        amount={o.totalAmount}
+                        orderDesc={`AgroConnect 360 Order — ${o.items?.length || 1} item(s)`}
+                        userName={user.name || ""}
+                        userEmail={user.email || ""}
+                        userPhone={o.deliveryAddress?.phone || ""}
+                        onSuccess={onRetrySuccess}
+                        onFailure={onRetryFailure}
+                        // Pass the pre-fetched Razorpay checkout data so the
+                        // component can open immediately without a second fetch
+                        preloadedData={retryState.rzpData}
+                      >
+                        <span style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#a78bfa", fontWeight: 700, fontSize: 13, fontFamily: "'Inter',sans-serif", cursor: "pointer" }}>
+                          💳 Complete Payment
+                        </span>
+                      </RazorpayCheckout>
+                    ) : (
+                      <button
+                        onClick={() => handleRetry(o._id)}
+                        style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#a78bfa", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                      >
+                        🔄 Retry Payment
+                      </button>
+                    )}
+                  </div>
                 )}
                 {/* Reorder button for delivered orders */}
                 {o.status === "delivered" && (

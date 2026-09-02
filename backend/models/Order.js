@@ -137,9 +137,21 @@ const orderSchema = new mongoose.Schema(
         "upi",
         "card",
         "netbanking",
+        "razorpay",
       ],
 
       default: "cod",
+    },
+
+    // Razorpay identifiers — only stored for reconciliation, no card/UPI details ever stored
+    razorpayOrderId: {
+      type: String,
+      default: null,
+    },
+
+    razorpayPaymentId: {
+      type: String,
+      default: null,
     },
 
     notes: {
@@ -158,6 +170,8 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ status: 1, createdAt: -1 });
 // buyer-scoped order queries (Buyer portal)
 orderSchema.index({ buyer: 1, createdAt: -1 });
+// webhook lookup by Razorpay order ID (sparse: only indexes docs where field exists)
+orderSchema.index({ razorpayOrderId: 1 }, { sparse: true });
 
 module.exports = mongoose.model(
   "Order",

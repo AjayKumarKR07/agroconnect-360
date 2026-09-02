@@ -35,18 +35,18 @@ const callWithRetry = async (fn, maxAttempts = 2) => {
 
 // ==========================================
 // VISION MODELS (image + text)
+// Note: fall back to text models if vision unavailable
 // ==========================================
 const VISION_MODELS = [
-  "llama-4-scout-17b-16e-instruct",
-  "llama-4-maverick-17b-128e-instruct",
+  "openai/gpt-oss-120b",
 ];
 
 // ==========================================
 // TEXT MODELS (symptom-based fallback)
 // ==========================================
 const TEXT_MODELS = [
-  "llama-3.3-70b-versatile",
-  "llama-3.1-8b-instant",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b",
 ];
 
 // JSON schema description for prompt

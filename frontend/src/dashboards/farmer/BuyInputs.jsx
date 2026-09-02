@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
+import RazorpayCheckout from "../../components/RazorpayCheckout";
 
 /* ─────────────────────────────────────────────────────────────────
    PRODUCT CATALOG — 10 categories, 40+ realistic products
@@ -291,6 +292,9 @@ export default function BuyInputs() {
   const [showCheckout,   setShowCheckout]   = useState(false);
   const [placing,        setPlacing]        = useState(false);
   const [orderSuccess,   setOrderSuccess]   = useState(null);
+  // { orderId, rzpData } — set after DB order created, triggers Razorpay popup
+  const [pendingRzpOrder,setPendingRzpOrder]= useState(null);
+  const [paymentError,   setPaymentError]   = useState("");
   const [form,           setForm]           = useState({ name: "", phone: "", address: "", city: "", payment: "cod" });
   const [formError,      setFormError]      = useState("");
   const [quickView,      setQuickView]      = useState(null);
@@ -350,29 +354,92 @@ export default function BuyInputs() {
     if (!form.name || !form.phone || !form.address || !form.city) {
       setFormError("Please fill all required fields."); return;
     }
-    setFormError(""); setPlacing(true);
+    if (placing) return; // duplicate-click guard
+    setFormError(""); setPaymentError(""); setPlacing(true);
+
     try {
       const token = localStorage.getItem("agroconnect_token");
+
+      // Step 1: Create application order in DB.
+      //   - Backend calculates totalAmount from items — we never trust frontend total.
+      //   - paymentMethod: "cod" or "razorpay"
+      const isOnline = form.payment !== "cod";
       const r = await fetch(`${API_URL}/api/inputs/order`, {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           items: cart.map(c => ({ name: c.name, brand: c.brand, qty: c.qty, price: c.price, unit: c.unit })),
-          totalAmount: totalAmount + deliveryFee,
           delivery: { name: form.name, phone: form.phone, address: form.address, city: form.city },
-          payment: form.payment,
+          paymentMethod: isOnline ? "razorpay" : "cod",
         }),
       });
       const d = await r.json();
-      const orderId = d.orderId || ("ORD" + Date.now().toString().slice(-6));
-      setOrderSuccess({ orderId, totalAmount: totalAmount + deliveryFee, items: cart, delivery: form, payment: form.payment });
-      setCart([]); setShowCheckout(false);
+      if (!r.ok || !d.success) {
+        setFormError(d.message || "Failed to place order. Please try again.");
+        setPlacing(false);
+        return;
+      }
+
+      const dbOrderId  = d.orderId;
+      const dbTotal    = d.totalAmount; // authoritative total from backend
+
+      // ── COD: instant success ──────────────────────────────────────────────
+      if (!isOnline) {
+        setOrderSuccess({ orderId: dbOrderId, totalAmount: dbTotal, items: cart, delivery: form, payment: "cod" });
+        setCart([]); setShowCheckout(false);
+        setPlacing(false);
+        return;
+      }
+
+      // ── Online (Razorpay): Step 2 — get Razorpay checkout data ───────────
+      //   Amount is read from DB by the backend — frontend cannot inject amount.
+      const rzpRes = await fetch(`${API_URL}/api/inputs/payment/create-order`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId: String(dbOrderId) }),
+      });
+      const rzpData = await rzpRes.json();
+      if (!rzpRes.ok || !rzpData.success) {
+        setFormError(rzpData.message || "Payment initiation failed. Your order is saved — use retry later.");
+        setPlacing(false);
+        return;
+      }
+
+      // Step 3: Open Razorpay popup (handled by RazorpayCheckout via pendingRzpOrder).
+      //   Do NOT show success yet — success is only shown after backend verification.
+      setShowCheckout(false);
+      setPendingRzpOrder({
+        orderId:  String(dbOrderId),
+        rzpData,  // { razorpayOrderId, amount, currency, keyId }
+        snapshot: { totalAmount: dbTotal, items: cart, delivery: form, payment: "razorpay" },
+      });
     } catch {
-      // Show success even if backend returns an error (offline/demo tolerance)
-      setOrderSuccess({ orderId: "ORD" + Date.now().toString().slice(-6), totalAmount: totalAmount + deliveryFee, items: cart, delivery: form, payment: form.payment });
-      setCart([]); setShowCheckout(false);
-    } finally { setPlacing(false); }
+      setFormError("Network error. Please check your connection and try again.");
+    } finally {
+      setPlacing(false);
+    }
   };
+
+  // Called by RazorpayCheckout after backend payment verification succeeds.
+  const onRzpSuccess = useCallback((orderId) => {
+    if (!pendingRzpOrder) return;
+    setOrderSuccess({
+      orderId,
+      totalAmount: pendingRzpOrder.snapshot.totalAmount,
+      items:       pendingRzpOrder.snapshot.items,
+      delivery:    pendingRzpOrder.snapshot.delivery,
+      payment:     "razorpay",
+    });
+    setCart([]);
+    setPendingRzpOrder(null);
+    setPaymentError("");
+  }, [pendingRzpOrder]);
+
+  // Called by RazorpayCheckout on failure or popup dismiss.
+  const onRzpFailure = useCallback((msg) => {
+    setPendingRzpOrder(null);
+    setPaymentError(msg || "Payment was not completed. Your order is saved — you can retry payment from your orders.");
+  }, []);
 
   /* ── Filtered product list ────────────────────────────────────── */
   const q = search.toLowerCase();
@@ -500,6 +567,38 @@ export default function BuyInputs() {
       {toast && <div className="toast">{toast}</div>}
       {quickView && <QuickViewModal item={quickView} onClose={() => setQuickView(null)} onAdd={(item) => { addToCart(item); setToast(`✅ ${item.name} added to cart`); }} />}
 
+      {/* ── Payment error after Razorpay dismissal / failure ─────────────── */}
+      {paymentError && !orderSuccess && (
+        <div className="modal-overlay" onClick={() => setPaymentError("")}>
+          <div className="modal-box" style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
+            <div className="modal-title" style={{ color: "#f87171", marginBottom: 8 }}>Payment Not Completed</div>
+            <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 24, lineHeight: 1.6 }}>{paymentError}</div>
+            <button className="btn-green" onClick={() => setPaymentError("")}>OK</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Razorpay popup (opened after DB order created for online payments) */}
+      {pendingRzpOrder && (
+        <RazorpayCheckout
+          orderId={pendingRzpOrder.orderId}
+          amount={pendingRzpOrder.snapshot.totalAmount}
+          orderDesc={`AgroConnect 360 — ${pendingRzpOrder.snapshot.items.length} farm input(s)`}
+          userName={user.name || form.name || ""}
+          userEmail={user.email || ""}
+          userPhone={form.phone || ""}
+          onSuccess={onRzpSuccess}
+          onFailure={onRzpFailure}
+          preloadedData={pendingRzpOrder.rzpData}
+          verifyEndpoint={`${API_URL}/api/inputs/payment/verify`}
+          autoOpen={true}
+        >
+          <span style={{ display: "none" }} />
+        </RazorpayCheckout>
+      )}
+
+
       {/* ══ ORDER SUCCESS ══════════════════════════════════════════ */}
       {orderSuccess && (
         <div className="success-wrap">
@@ -526,7 +625,7 @@ export default function BuyInputs() {
             </div>
             <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13 }}>
               💳 Payment: <strong style={{ color: "#fff" }}>
-                {orderSuccess.payment === "cod" ? "Cash on Delivery" : orderSuccess.payment === "upi" ? "UPI" : "Bank Transfer"}
+                {orderSuccess.payment === "cod" ? "Cash on Delivery" : "Paid Online (Razorpay)"}
               </strong>
             </div>
           </div>

@@ -57,11 +57,10 @@ Rules:
 - If unsure, advise consulting local KVK (Krishi Vigyan Kendra)
 - Respond in English by default, but if the farmer writes in Hindi, respond in Hindi`;
 
-// Models to try in order (faster = less rate-limited)
+// Models to try in order — verified available on this Groq account
 const GROQ_MODELS = [
-  "llama-3.3-70b-versatile",
-  "llama-3.1-8b-instant",
-  "mixtral-8x7b-32768",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b",
 ];
 
 // ==========================================

@@ -12,6 +12,7 @@ dotenv.config();
 
 // Import local modules AFTER dotenv is loaded
 const connectDB = require("./config/db");
+const paymentRoutes = require("./routes/paymentRoutes");  // must be before express.json()
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const cropRoutes = require("./routes/cropRoutes");
@@ -91,6 +92,9 @@ app.use(
 );
 
 app.use(express.json());
+
+// Payment routes (webhook uses route-level express.raw() to receive raw buffer)
+app.use("/api/payment", paymentRoutes);
 
 // API Routes
 app.use("/api/auth", authRoutes);

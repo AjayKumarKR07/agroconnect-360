@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import RazorpayCheckout from "../../components/RazorpayCheckout";
 
 const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
 
@@ -26,6 +27,8 @@ export default function UserCart() {
   });
 
   const [payment, setPayment] = useState("cod");
+  const [pendingOrderId, setPendingOrderId] = useState(null); // DB order _id awaiting Razorpay
+  const placingRef = useRef(false); // duplicate click guard
 
   // Sync cart to localStorage whenever it changes
   useEffect(() => {
@@ -73,17 +76,20 @@ export default function UserCart() {
   // 24-char hex = valid MongoDB ObjectId
   const isValidId = (id) => /^[a-f\d]{24}$/i.test(id);
 
-  const placeOrder = async () => {
+  // Shared function to create the DB order record
+  const createDbOrder = async (paymentMethod) => {
+    if (placingRef.current) return null;
+    placingRef.current = true;
     setError(""); setPlacing(true);
 
-    // Check for stale/fake cart items before calling API
     const invalidItems = cart.filter(c => !isValidId(c._id));
     if (invalidItems.length > 0) {
       const validCart = cart.filter(c => isValidId(c._id));
       setCart(validCart);
-      setError(`⚠️ Removed ${invalidItems.length} outdated item(s) from your cart. Please review your order and try again.`);
+      setError(`⚠️ Removed ${invalidItems.length} outdated item(s). Review and try again.`);
       setPlacing(false);
-      return;
+      placingRef.current = false;
+      return null;
     }
 
     try {
@@ -93,34 +99,66 @@ export default function UserCart() {
         body: JSON.stringify({
           items: cart.map(c => ({ _id: c._id, qty: c.qty || 1 })),
           deliveryAddress: addr,
-          paymentMethod: payment,
+          paymentMethod,
         }),
       });
       const d = await res.json();
       if (!res.ok || !d.success) {
-        // If product no longer available, purge cart & re-fetch
         if (res.status === 404 || d.message?.includes("no longer available")) {
-          // Re-fetch live crops and clean cart
           const rC = await fetch(`${API_URL}/api/crops?status=listed`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           const dC = await rC.json();
           if (dC.success && Array.isArray(dC.crops)) {
             const liveIds = new Set(dC.crops.map(c => c._id));
-            const cleanedCart = cart.filter(item => liveIds.has(item._id));
-            setCart(cleanedCart);
+            setCart(cart.filter(item => liveIds.has(item._id)));
           }
         }
         throw new Error(d.message || "Failed to place order");
       }
-      setOrderId(d.order?._id || "ORD" + Date.now());
-      clearCart();
-      setStep(4);
+      return d.order?._id || null;
     } catch (e) {
       setError(e.message);
-    } finally {
       setPlacing(false);
+      placingRef.current = false;
+      return null;
     }
+  };
+
+  // COD: create order + go straight to success
+  const placeOrder = async () => {
+    const oid = await createDbOrder("cod");
+    if (!oid) return;
+    setOrderId(oid);
+    clearCart();
+    setStep(4);
+    setPlacing(false);
+    placingRef.current = false;
+  };
+
+  // Razorpay: create DB order first, then open Razorpay modal
+  const initRazorpayOrder = async () => {
+    if (pendingOrderId) return; // already created, just re-open
+    const oid = await createDbOrder("razorpay");
+    if (!oid) return;
+    setPendingOrderId(oid);
+    // placing stays true until RazorpayCheckout finishes
+  };
+
+  const onRazorpaySuccess = (oid) => {
+    setOrderId(oid);
+    clearCart();
+    setPendingOrderId(null);
+    setPlacing(false);
+    placingRef.current = false;
+    setStep(4);
+  };
+
+  const onRazorpayFailure = (msg) => {
+    setError(msg || "Payment failed. You can retry.");
+    setPlacing(false);
+    placingRef.current = false;
+    // pendingOrderId stays — user can retry without recreating the order
   };
 
 
@@ -314,11 +352,10 @@ export default function UserCart() {
 
   /* ─────────────── STEP 3: PAYMENT ─────────────── */
   if (step === 3) {
+    const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
     const METHODS = [
-      { key: "cod",        label: "💵 Cash on Delivery", sub: "Pay when your order arrives" },
-      { key: "upi",        label: "📱 UPI",              sub: "PhonePe, GPay, Paytm, etc." },
-      { key: "card",       label: "💳 Card",             sub: "Credit or Debit card" },
-      { key: "netbanking", label: "🏦 Net Banking",      sub: "All major Indian banks" },
+      { key: "cod",      label: "💵 Cash on Delivery", sub: "Pay when your order arrives" },
+      { key: "razorpay", label: "💳 Pay Online",        sub: "UPI · Card · Net Banking · Wallets via Razorpay" },
     ];
     return (
       <>
@@ -333,7 +370,7 @@ export default function UserCart() {
               <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 14 }}>Select Payment Method</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {METHODS.map(m => (
-                  <div key={m.key} className={`pay-opt ${payment === m.key ? "sel" : ""}`} onClick={() => setPayment(m.key)}>
+                  <div key={m.key} className={`pay-opt ${payment === m.key ? "sel" : ""}`} onClick={() => { setPayment(m.key); setPendingOrderId(null); setError(""); }}>
                     <div style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${payment === m.key ? "#0ea5e9" : "rgba(14,165,233,0.2)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       {payment === m.key && <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#0ea5e9" }} />}
                     </div>
@@ -357,10 +394,35 @@ export default function UserCart() {
             </div>
 
             <div style={{ display: "flex", gap: 10 }}>
-              <button className="btn-ghost" onClick={() => setStep(2)}>← Back</button>
-              <button className="btn-cyan" style={{ flex: 1 }} disabled={placing} onClick={placeOrder}>
-                {placing ? "⏳ Placing Order…" : `✅ Place Order · ₹${grandTotal.toLocaleString("en-IN")}`}
-              </button>
+              <button className="btn-ghost" onClick={() => setStep(2)} disabled={placing}>← Back</button>
+
+              {payment === "cod" ? (
+                <button className="btn-cyan" style={{ flex: 1 }} disabled={placing} onClick={placeOrder}>
+                  {placing ? "⏳ Placing Order…" : `✅ Place Order · ₹${grandTotal.toLocaleString("en-IN")}`}
+                </button>
+              ) : (
+                // Razorpay: two-step — create DB order then open payment modal
+                !pendingOrderId ? (
+                  <button className="btn-cyan" style={{ flex: 1 }} disabled={placing} onClick={initRazorpayOrder}>
+                    {placing ? "⏳ Preparing Payment…" : `💳 Pay ₹${grandTotal.toLocaleString("en-IN")} Online`}
+                  </button>
+                ) : (
+                  <RazorpayCheckout
+                    orderId={pendingOrderId}
+                    amount={grandTotal}
+                    orderDesc={`AgroConnect 360 Order — ${cart.length} item(s)`}
+                    userName={user.name || addr.name}
+                    userEmail={user.email || ""}
+                    userPhone={addr.phone}
+                    onSuccess={onRazorpaySuccess}
+                    onFailure={onRazorpayFailure}
+                  >
+                    <span className="btn-cyan" style={{ display: "inline-flex", width: "100%", justifyContent: "center" }}>
+                      💳 Complete Payment · ₹{grandTotal.toLocaleString("en-IN")}
+                    </span>
+                  </RazorpayCheckout>
+                )
+              )}
             </div>
           </div>
           <Summary />

@@ -587,37 +587,60 @@ const patchAdminUserStatus = async (req, res) => {
 // ==========================================
 const getAdminOrders = async (req, res) => {
   try {
-    const { status, search } = req.query;
-    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const { status, search, paymentStatus, paymentMethod } = req.query;
+    const page  = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
-    const skip = (page - 1) * limit;
+    const skip  = (page - 1) * limit;
 
     const filter = {};
-    if (status && status !== "all") filter.status = status;
+
+    // ── Order status filter ──────────────────────────────────────────────────
+    const VALID_ORDER_STATUSES = ["pending","accepted","rejected","processing","shipped","delivered","cancelled"];
+    if (status && status !== "all" && VALID_ORDER_STATUSES.includes(status)) {
+      filter.status = status;
+    }
+
+    // ── Payment status filter (pending / paid / failed / refunded) ───────────
+    const VALID_PAYMENT_STATUSES = ["pending","paid","failed","refunded"];
+    if (paymentStatus && paymentStatus !== "all" && VALID_PAYMENT_STATUSES.includes(paymentStatus)) {
+      filter.paymentStatus = paymentStatus;
+    }
+
+    // ── Payment method filter (cod / razorpay / upi / card / netbanking) ────
+    const VALID_PAYMENT_METHODS = ["cod","razorpay","upi","card","netbanking"];
+    if (paymentMethod && paymentMethod !== "all" && VALID_PAYMENT_METHODS.includes(paymentMethod)) {
+      filter.paymentMethod = paymentMethod;
+    }
+
+    // ── Search ───────────────────────────────────────────────────────────────
     if (search) {
       if (mongoose.Types.ObjectId.isValid(search)) {
         filter._id = search;
       } else {
         filter.$or = [
-          { "items.cropName": { $regex: search, $options: "i" } },
+          { "items.cropName":       { $regex: search, $options: "i" } },
           { "deliveryAddress.name": { $regex: search, $options: "i" } },
           { "deliveryAddress.city": { $regex: search, $options: "i" } },
         ];
       }
     }
 
-    const total = await Order.countDocuments(filter);
+    const total  = await Order.countDocuments(filter);
     const orders = await Order.find(filter)
       .populate("buyer", "name email phone")
       .populate("items.farmer", "name email")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
+      // razorpayOrderId excluded — internal reconciliation only, not needed by admin UI.
+      // razorpayPaymentId included as a safe reference ID for admin visibility.
+      // No card details, CVV, UPI credentials, or secrets are ever stored.
+      .select("buyer items totalAmount deliveryAddress status paymentStatus paymentMethod razorpayPaymentId notes createdAt updatedAt")
       .lean();
 
     return res.status(200).json({
       success: true,
-      count: orders.length,
+      count:   orders.length,
       total,
       page,
       limit,
@@ -629,6 +652,8 @@ const getAdminOrders = async (req, res) => {
     return res.status(500).json({ success: false, message: "Unable to load orders" });
   }
 };
+
+
 
 // ==========================================
 // UPDATE ANY ORDER STATUS (Admin)

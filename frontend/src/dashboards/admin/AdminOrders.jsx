@@ -15,6 +15,22 @@ const STATUS_STYLE = {
   rejected:   { bg: "rgba(239,68,68,0.12)",   color: "#f87171" },
 };
 
+// Payment status badges
+const PAY_STATUS_STYLE = {
+  paid:    { label: "✅ Paid",     bg: "rgba(34,197,94,0.12)",   color: "#4ade80" },
+  pending: { label: "⏳ Pending",  bg: "rgba(251,191,36,0.12)",  color: "#fbbf24" },
+  failed:  { label: "❌ Failed",   bg: "rgba(239,68,68,0.12)",   color: "#f87171" },
+  refunded:{ label: "↩️ Refunded", bg: "rgba(167,139,250,0.12)", color: "#a78bfa" },
+};
+
+const PAY_METHOD_LABEL = {
+  cod:        { label: "COD",    bg: "rgba(148,163,184,0.1)",   color: "#94a3b8" },
+  razorpay:   { label: "ONLINE", bg: "rgba(14,165,233,0.1)",   color: "#38bdf8" },
+  upi:        { label: "UPI",    bg: "rgba(14,165,233,0.08)",  color: "#38bdf8" },
+  card:       { label: "CARD",   bg: "rgba(167,139,250,0.1)",  color: "#a78bfa" },
+  netbanking: { label: "NBNK",   bg: "rgba(167,139,250,0.08)", color: "#a78bfa" },
+};
+
 function ConfirmModal({ order, newStatus, onConfirm, onCancel, loading }) {
   const current = order.status;
   const sc = STATUS_STYLE[newStatus] || STATUS_STYLE.pending;
@@ -63,7 +79,9 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [statusFilter,        setStatusFilter]        = useState(searchParams.get("status")        || "all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState(searchParams.get("paymentStatus") || "all");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState(searchParams.get("paymentMethod") || "all");
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({});
@@ -78,13 +96,15 @@ export default function AdminOrders() {
     setTimeout(() => setToast(null), 3500);
   };
 
-  const load = useCallback(async (p = 1, currentStatus = statusFilter, currentSearch = search) => {
+  const load = useCallback(async (p = 1, currentStatus = statusFilter, currentSearch = search, curPayStatus = paymentStatusFilter, curPayMethod = paymentMethodFilter) => {
     setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams({ page: p, limit: 20 });
-      if (currentStatus !== "all") params.set("status", currentStatus);
-      if (currentSearch) params.set("search", currentSearch);
+      if (currentStatus !== "all")  params.set("status",        currentStatus);
+      if (currentSearch)            params.set("search",        currentSearch);
+      if (curPayStatus !== "all")   params.set("paymentStatus", curPayStatus);
+      if (curPayMethod !== "all")   params.set("paymentMethod", curPayMethod);
       const r = await fetch(`${API_URL}/api/admin/orders?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -98,7 +118,7 @@ export default function AdminOrders() {
     } finally {
       setLoading(false);
     }
-  }, [token, statusFilter, search]);
+  }, [token, statusFilter, search, paymentStatusFilter, paymentMethodFilter]);
 
   // Synchronize when URL search parameters change
   useEffect(() => {
@@ -167,14 +187,33 @@ export default function AdminOrders() {
 
       {toast && <div className={toast.type === "error" ? "toast-error" : "toast-success"}>{toast.msg}</div>}
 
-      <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
+      {/* Order status filter tabs */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {ORDER_STATUSES.map((s) => (
-            <button key={s} className={`tab-btn ${statusFilter === s ? "active" : ""}`} onClick={() => setStatusFilter(s)}>
+            <button key={s} className={`tab-btn ${statusFilter === s ? "active" : ""}`} onClick={() => { setStatusFilter(s); setPage(1); load(1, s); }}>
               {s === "all" ? "🌐 All" : s}
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Payment filters */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Payment:</span>
+        {/* Payment STATUS filter */}
+        {[["all", "💳 All"], ["paid", "✅ Paid"], ["pending", "⏳ Pending"], ["failed", "❌ Failed"]].map(([val, lbl]) => (
+          <button key={val} className={`tab-btn ${paymentStatusFilter === val ? "active" : ""}`}
+            onClick={() => { setPaymentStatusFilter(val); setPage(1); load(1, statusFilter, search, val, paymentMethodFilter); }}>
+            {lbl}
+          </button>
+        ))}
+        <span style={{ width: 1, height: 20, background: "rgba(14,165,233,0.15)" }} />
+        {/* COD filter — paymentMethod since COD is not a paymentStatus */}
+        <button className={`tab-btn ${paymentMethodFilter === "cod" ? "active" : ""}`}
+          onClick={() => { const v = paymentMethodFilter === "cod" ? "all" : "cod"; setPaymentMethodFilter(v); setPage(1); load(1, statusFilter, search, paymentStatusFilter, v); }}>
+          💵 COD
+        </button>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
           <input className="field-input" style={{ maxWidth: 220 }} placeholder="🔍 Search crop, buyer, city…" value={search} onChange={(e) => setSearch(e.target.value)} />
           <button type="submit" className="btn-indigo" style={{ padding: "10px 14px" }}>Go</button>
@@ -238,7 +277,23 @@ export default function AdminOrders() {
                         <td style={{ fontWeight: 800, color: "#4ade80", fontFamily: "'Space Grotesk',sans-serif" }}>
                           {fmtINR(o.totalAmount)}
                         </td>
-                        <td style={{ fontSize: 12, color: "#a5b4fc" }}>{(o.paymentMethod || "cod").toUpperCase()}</td>
+                        <td style={{ fontSize: 12 }}>
+                          {/* Payment method badge */}
+                          {(() => {
+                            const pm = PAY_METHOD_LABEL[o.paymentMethod] || PAY_METHOD_LABEL.cod;
+                            const ps = PAY_STATUS_STYLE[o.paymentStatus] || PAY_STATUS_STYLE.pending;
+                            return (
+                              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: pm.bg, color: pm.color }}>
+                                  {pm.label}
+                                </span>
+                                <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: ps.bg, color: ps.color }}>
+                                  {ps.label}
+                                </span>
+                              </div>
+                            );
+                          })()}
+                        </td>
                         <td>
                           <span style={{ padding: "3px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 12, fontWeight: 800 }}>
                             {o.status}
@@ -263,7 +318,12 @@ export default function AdminOrders() {
                         <tr>
                           <td colSpan={8} style={{ background: "rgba(99,102,241,0.04)", padding: "12px 20px" }}>
                             <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 13, color: "#a5b4fc" }}>
-                              <div><strong style={{ color: "#c7d2fe" }}>Payment Status:</strong> {o.paymentStatus}</div>
+                              <div><strong style={{ color: "#c7d2fe" }}>Payment Status:</strong> {o.paymentStatus || "pending"}</div>
+                              {o.razorpayPaymentId && (
+                                <div><strong style={{ color: "#c7d2fe" }}>Payment Reference:</strong>{" "}
+                                  <span style={{ fontFamily: "monospace", fontSize: 12, color: "#818cf8" }}>{o.razorpayPaymentId}</span>
+                                </div>
+                              )}
                               <div><strong style={{ color: "#c7d2fe" }}>Notes:</strong> {o.notes || "None"}</div>
                               <div><strong style={{ color: "#c7d2fe" }}>Delivery:</strong> {o.deliveryAddress?.city}, {o.deliveryAddress?.state} - {o.deliveryAddress?.pincode}</div>
                             </div>
