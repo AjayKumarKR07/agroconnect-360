@@ -4,7 +4,9 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 import {
   IndianRupee, Package, CheckCircle2, Clock,
-  AlertTriangle, RefreshCw, Plus, TrendingUp, Zap, Wheat
+  AlertTriangle, RefreshCw, Plus, TrendingUp, Zap, Wheat,
+  ShoppingCart, ShoppingBag, PlusCircle, BarChart3, Truck, BarChart2,
+  Users, MapPin, XCircle, Ban, TrendingDown, ClipboardList
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════
@@ -42,13 +44,23 @@ const STATUS_COLOR = {
 };
 
 const STATUS_LABEL = {
-  pending:    "⏳ Pending",
-  accepted:   "✅ Accepted",
-  processing: "📦 Processing",
-  shipped:    "🚚 Shipped",
-  delivered:  "🎉 Delivered",
-  rejected:   "❌ Rejected",
-  cancelled:  "🚫 Cancelled",
+  pending:    "Pending",
+  accepted:   "Accepted",
+  processing: "Processing",
+  shipped:    "Shipped",
+  delivered:  "Delivered",
+  rejected:   "Rejected",
+  cancelled:  "Cancelled",
+};
+
+const STATUS_ICON = {
+  pending:    Clock,
+  accepted:   CheckCircle2,
+  processing: Package,
+  shipped:    Truck,
+  delivered:  CheckCircle2,
+  rejected:   XCircle,
+  cancelled:  Ban,
 };
 
 const relTime = (iso) => {
@@ -163,8 +175,8 @@ function OrderDetailsModal({ order, onClose }) {
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-              📋 Order Details
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+              <ClipboardList size={20} color="#7c3aed" /> Order Details
             </div>
             <div style={{ fontSize: 11, color: "var(--text2)", fontFamily: "monospace", marginTop: 4 }}>
               {String(order._id)}
@@ -228,8 +240,9 @@ function OrderDetailsModal({ order, onClose }) {
             padding: "12px 16px", borderRadius: 12,
             background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)",
             color: "#dc2626", fontSize: 13, fontWeight: 600, marginBottom: 20,
+            display: "flex", alignItems: "center", gap: 8,
           }}>
-            ❌ Order {status} — no further action needed.
+            <XCircle size={16} color="#dc2626" /> Order {status} — no further action needed.
           </div>
         )}
 
@@ -257,7 +270,9 @@ function OrderDetailsModal({ order, onClose }) {
 
         {/* Delivery address */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 10 }}>
-          <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>📍 Delivery Address</div>
+          <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6, display: "flex", alignItems: "center", gap: 5 }}>
+            <MapPin size={13} color="#7c3aed" /> Delivery Address
+          </div>
           <div style={{ fontSize: 13, color: "#0f172a", lineHeight: 1.6 }}>{fmtAddr(order.deliveryAddress)}</div>
         </div>
 
@@ -523,49 +538,49 @@ export default function SellerDashboard() {
   if (stats) {
     if (outOfStock.length > 0) actionItems.push({
       urgency: "red",
-      icon: "🚫",
+      icon: Ban,
       text: `${outOfStock.length} product${outOfStock.length !== 1 ? "s" : ""} out of stock`,
       link: "/seller/products",
       linkLabel: "Restock →",
     });
     if (pipeline.pending > 0) actionItems.push({
       urgency: "red",
-      icon: "📦",
+      icon: Package,
       text: `${pipeline.pending} order${pipeline.pending !== 1 ? "s" : ""} pending — awaiting farmer response`,
       link: "/seller/orders",
       linkLabel: "Review Orders →",
     });
     if (pipeline.accepted > 0) actionItems.push({
       urgency: "amber",
-      icon: "✅",
+      icon: CheckCircle2,
       text: `${pipeline.accepted} accepted order${pipeline.accepted !== 1 ? "s" : ""} in progress`,
       link: "/seller/orders",
       linkLabel: "Track Orders →",
     });
     if (pipeline.shipped > 0) actionItems.push({
       urgency: "blue",
-      icon: "🚚",
+      icon: Truck,
       text: `${pipeline.shipped} shipment${pipeline.shipped !== 1 ? "s" : ""} in transit`,
       link: "/seller/logistics",
       linkLabel: "Track Shipments →",
     });
     if (criticalStock.length > 0) actionItems.push({
       urgency: "amber",
-      icon: "⚠️",
+      icon: AlertTriangle,
       text: `${criticalStock.length} product${criticalStock.length !== 1 ? "s" : ""} critically low (< ${STOCK_CRITICAL_KG} kg)`,
       link: "/seller/products",
       linkLabel: "Update Products →",
     });
     if (lowStock.length > 0) actionItems.push({
       urgency: "amber",
-      icon: "📉",
+      icon: TrendingDown,
       text: `${lowStock.length} product${lowStock.length !== 1 ? "s" : ""} running low on stock`,
       link: "/seller/products",
       linkLabel: "Manage Inventory →",
     });
     if (stats.activeProducts === 0 && products.length === 0) actionItems.push({
       urgency: "green",
-      icon: "🛍️",
+      icon: ShoppingBag,
       text: "No products listed yet — add your first product to start selling",
       link: "/seller/products/add",
       linkLabel: "Add Product →",
@@ -580,7 +595,7 @@ export default function SellerDashboard() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 8)
     .map(o => ({
-      icon: STATUS_LABEL[o.status]?.split(" ")[0] || "📋",
+      icon: STATUS_ICON[o.status] || ClipboardList,
       label: o.status === "pending"    ? "Order sent to farmer"
            : o.status === "accepted"   ? "Farmer accepted order"
            : o.status === "processing" ? "Order being packed"
@@ -613,7 +628,7 @@ export default function SellerDashboard() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Seller Dashboard</div>
-          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Seller"} 👋</h1>
+          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Seller"}</h1>
           <p className="pg-sub" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             Your procurement & business control center.
             {lastUpdated && (
@@ -657,7 +672,7 @@ export default function SellerDashboard() {
         <div className="card" style={{ marginBottom: 24, borderColor: "rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+              <AlertTriangle size={20} color="#dc2626" />
               <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>{errors.dash}</span>
             </div>
             <button onClick={() => load(false)} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}><RefreshCw size={13} strokeWidth={2} style={{ marginRight: 5 }} />Retry</button>
@@ -744,16 +759,21 @@ export default function SellerDashboard() {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {actionItems.map((item, i) => (
-                  <div key={i} className="sd-act-row" style={{ borderColor: urgencyBorder[item.urgency] }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: urgencyDot[item.urgency], flexShrink: 0, boxShadow: `0 0 8px ${urgencyDot[item.urgency]}80` }} />
-                      <span style={{ fontSize: 16, flexShrink: 0 }}>{item.icon}</span>
-                      <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.text}</span>
+                {actionItems.map((item, i) => {
+                  const ActionIcon = item.icon;
+                  return (
+                    <div key={i} className="sd-act-row" style={{ borderColor: urgencyBorder[item.urgency] }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: urgencyDot[item.urgency], flexShrink: 0, boxShadow: `0 0 8px ${urgencyDot[item.urgency]}80` }} />
+                        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                          {typeof ActionIcon === "function" ? <ActionIcon size={16} /> : ActionIcon}
+                        </span>
+                        <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.text}</span>
+                      </div>
+                      <Link to={item.link} className="sd-act-link">{item.linkLabel}</Link>
                     </div>
-                    <Link to={item.link} className="sd-act-link">{item.linkLabel}</Link>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -783,17 +803,17 @@ export default function SellerDashboard() {
                 </div>
                 <div className="sd-pipe-stages">
                   {[
-                    { key: "pending",    emoji: "⏳", label: "Pending",    color: "#b45309" },
-                    { key: "accepted",   emoji: "✅", label: "Accepted",   color: "#0369a1" },
-                    { key: "processing", emoji: "📦", label: "Processing", color: "#7c3aed" },
-                    { key: "shipped",    emoji: "🚚", label: "Shipped",    color: "#fb923c" },
-                    { key: "delivered",  emoji: "🎉", label: "Delivered",  color: "#15803d" },
+                    { key: "pending",    Icon: Clock,        label: "Pending",    color: "#b45309" },
+                    { key: "accepted",   Icon: CheckCircle2, label: "Accepted",   color: "#0369a1" },
+                    { key: "processing", Icon: Package,      label: "Processing", color: "#7c3aed" },
+                    { key: "shipped",    Icon: Truck,        label: "Shipped",    color: "#fb923c" },
+                    { key: "delivered",  Icon: CheckCircle2, label: "Delivered",  color: "#15803d" },
                   ].map(s => (
                     <Link key={s.key} to="/seller/orders" className="sd-pipe-stage"
                       onMouseEnter={e => { e.currentTarget.style.borderColor = `${s.color}40`; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
                     >
-                      <div style={{ fontSize: 18, marginBottom: 6 }}>{s.emoji}</div>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 6, color: s.color }}><s.Icon size={18} strokeWidth={1.75} /></div>
                       <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: s.color }}>{pipeline[s.key]}</div>
                       <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>{s.label}</div>
                     </Link>
@@ -803,13 +823,13 @@ export default function SellerDashboard() {
                 {(pipeline.rejected > 0 || pipeline.cancelled > 0) && (
                   <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
                     {pipeline.rejected > 0 && (
-                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
-                        ❌ {pipeline.rejected} Rejected
+                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                        <XCircle size={12} color="#dc2626" /> {pipeline.rejected} Rejected
                       </span>
                     )}
                     {pipeline.cancelled > 0 && (
-                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
-                        🚫 {pipeline.cancelled} Cancelled
+                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                        <Ban size={12} color="#dc2626" /> {pipeline.cancelled} Cancelled
                       </span>
                     )}
                   </div>
@@ -820,8 +840,8 @@ export default function SellerDashboard() {
                 <div className="empty-emoji"><Package size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                 <div className="empty-title">No orders yet</div>
                 <div className="empty-sub">Your order pipeline will appear here as you place procurement orders.</div>
-                <Link to="/seller/procurement" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", marginTop: 12, display: "inline-flex" }}>
-                  🛒 Browse Farmer Produce
+                <Link to="/seller/procurement" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <ShoppingCart size={14} /> Browse Farmer Produce
                 </Link>
               </div>
             )}
@@ -829,7 +849,7 @@ export default function SellerDashboard() {
 
           {/* ── Supplier Overview + Procurement Analytics ─── */}
           <div className="sd-grid2">
-            {/* 🌾 Supplier Overview */}
+            {/* Supplier Overview */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="card-title"><Wheat size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Supplier Overview</div>
@@ -837,7 +857,9 @@ export default function SellerDashboard() {
               </div>
 
               {errors.orders && (
-                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load order data.</div>
+                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0", display: "flex", alignItems: "center", gap: 6 }}>
+                  <AlertTriangle size={14} /> Unable to load order data.
+                </div>
               )}
 
               {!errors.orders && allOrders.length === 0 && (
@@ -882,7 +904,7 @@ export default function SellerDashboard() {
               )}
             </div>
 
-            {/* 📊 Procurement Analytics */}
+            {/* Procurement Analytics */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Procurement Analytics</div>
@@ -934,7 +956,7 @@ export default function SellerDashboard() {
 
           {/* ── Sales Performance + Recent Orders ──────────── */}
           <div className="sd-grid2">
-            {/* 📈 Sales Performance */}
+            {/* Sales Performance */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="card-title"><TrendingUp size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Sales Performance</div>
@@ -943,7 +965,7 @@ export default function SellerDashboard() {
 
               {errors.revenue && (
                 <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
-                  <span>⚠️</span> Unable to load revenue data.
+                  <AlertTriangle size={14} color="#dc2626" /> Unable to load revenue data.
                   <button onClick={() => load(false)} style={{ color: "#7c3aed", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Retry</button>
                 </div>
               )}
@@ -976,7 +998,7 @@ export default function SellerDashboard() {
               )}
             </div>
 
-            {/* 🕐 Recent Orders */}
+            {/* Recent Orders */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="card-title"><Clock size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Recent Orders</div>
@@ -1120,15 +1142,17 @@ export default function SellerDashboard() {
 
           {/* ── Low Stock Alerts (3-tier) + Recent Activity ── */}
           <div className="sd-grid2">
-            {/* ⚠️ Stock Alerts */}
+            {/* Stock Alerts */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">⚠️ Stock Alerts</div>
+                <div className="card-title"><AlertTriangle size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#d97706", verticalAlign: "middle" }} />Stock Alerts</div>
                 <Link to="/seller/products" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>All Products →</Link>
               </div>
 
               {errors.products && (
-                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load product data.</div>
+                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0", display: "flex", alignItems: "center", gap: 6 }}>
+                  <AlertTriangle size={14} /> Unable to load product data.
+                </div>
               )}
 
               {!errors.products && outOfStock.length === 0 && criticalStock.length === 0 && lowStock.length === 0 && (
@@ -1147,7 +1171,9 @@ export default function SellerDashboard() {
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-out" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                        <span style={{ fontSize: 10, color: "#dc2626", fontWeight: 800 }}>🔴 OUT OF STOCK</span>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, color: "#dc2626", fontWeight: 800 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#dc2626" }} /> OUT OF STOCK
+                        </span>
                       </div>
                       <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Restock →</div>
                     </Link>
@@ -1157,8 +1183,8 @@ export default function SellerDashboard() {
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-critical" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                        <div style={{ fontSize: 11, color: "#fb923c" }}>
-                          🟠 Critical: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
+                        <div style={{ fontSize: 11, color: "#fb923c", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fb923c" }} /> Critical: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
                         </div>
                       </div>
                       <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Update →</div>
@@ -1169,8 +1195,8 @@ export default function SellerDashboard() {
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-low" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                        <div style={{ fontSize: 11, color: "#b45309" }}>
-                          🟡 Low: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
+                        <div style={{ fontSize: 11, color: "#b45309", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#eab308" }} /> Low: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
                         </div>
                       </div>
                       <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Update →</div>
@@ -1186,7 +1212,7 @@ export default function SellerDashboard() {
               )}
             </div>
 
-            {/* 🕐 Recent Procurement Activity */}
+            {/* Recent Procurement Activity */}
             <div className="card">
               <div className="card-title" style={{ marginBottom: 16 }}><Clock size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Recent Procurement Activity</div>
               {activities.length === 0 ? (
@@ -1197,27 +1223,30 @@ export default function SellerDashboard() {
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {activities.map((a, i) => (
-                    <div
-                      key={i}
-                      style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}
-                      onClick={() => setModalOrder(a.order)}
-                    >
-                      <div style={{
-                        width: 28, height: 28, borderRadius: 8, flexShrink: 0,
-                        background: `${a.color}15`, border: `1px solid ${a.color}30`,
-                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13,
-                      }}>
-                        {a.icon}
+                  {activities.map((a, i) => {
+                    const ActIcon = a.icon;
+                    return (
+                      <div
+                        key={i}
+                        style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}
+                        onClick={() => setModalOrder(a.order)}
+                      >
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                          background: `${a.color}15`, border: `1px solid ${a.color}30`,
+                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13,
+                        }}>
+                          {typeof ActIcon === "function" ? <ActIcon size={14} color={a.color} /> : a.icon}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 12, color: "var(--text)", fontWeight: 700, lineHeight: 1.4 }}>{a.label}</div>
+                          <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.detail}</div>
+                          <div style={{ fontSize: 11, color: a.color, marginTop: 2, fontWeight: 600 }}>{a.time}</div>
+                        </div>
+                        <div style={{ fontSize: 10, color: "var(--text2)", flexShrink: 0 }}>details →</div>
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 12, color: "var(--text)", fontWeight: 700, lineHeight: 1.4 }}>{a.label}</div>
-                        <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.detail}</div>
-                        <div style={{ fontSize: 11, color: a.color, marginTop: 2, fontWeight: 600 }}>{a.time}</div>
-                      </div>
-                      <div style={{ fontSize: 10, color: "var(--text2)", flexShrink: 0 }}>details →</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1225,23 +1254,23 @@ export default function SellerDashboard() {
 
           {/* ── Quick Actions ─────────────────────────────── */}
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>⚡ Quick Actions</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Zap size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Quick Actions</div>
             <div className="sd-quick-grid">
               {[
-                { emoji: "🛒", label: "Procure Produce",  to: "/seller/procurement",   color: "#15803d" },
-                { emoji: "📦", label: "Manage Orders",    to: "/seller/orders",        color: "#0369a1" },
-                { emoji: "🛍️", label: "My Products",     to: "/seller/products",      color: "#7c3aed" },
-                { emoji: "➕", label: "Add Product",      to: "/seller/products/add",  color: "#c4b5fd" },
-                { emoji: "💰", label: "Revenue Report",   to: "/seller/revenue",       color: "#fb923c" },
-                { emoji: "📈", label: "Analytics",        to: "/seller/analytics",     color: "#f472b6" },
-                { emoji: "🚚", label: "Logistics",        to: "/seller/logistics",     color: "#b45309" },
-                { emoji: "📊", label: "Market Trends",    to: "/seller/market-trends", color: "#94a3b8" },
+                { Icon: ShoppingCart, label: "Procure Produce",  to: "/seller/procurement",   color: "#15803d" },
+                { Icon: Package,      label: "Manage Orders",    to: "/seller/orders",        color: "#0369a1" },
+                { Icon: ShoppingBag,  label: "My Products",      to: "/seller/products",      color: "#7c3aed" },
+                { Icon: PlusCircle,   label: "Add Product",      to: "/seller/products/add",  color: "#c4b5fd" },
+                { Icon: IndianRupee,  label: "Revenue Report",   to: "/seller/revenue",       color: "#fb923c" },
+                { Icon: TrendingUp,   label: "Analytics",        to: "/seller/analytics",     color: "#f472b6" },
+                { Icon: Truck,        label: "Logistics",        to: "/seller/logistics",     color: "#b45309" },
+                { Icon: BarChart3,    label: "Market Trends",    to: "/seller/market-trends", color: "#94a3b8" },
               ].map(q => (
                 <Link key={q.label} to={q.to} className="sd-quick-link"
                   onMouseEnter={e => { e.currentTarget.style.borderColor = `${q.color}35`; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
                 >
-                  <span style={{ fontSize: 18 }}>{q.emoji}</span>
+                  <span style={{ display: "flex", alignItems: "center", justifyContent: "center", color: q.color }}><q.Icon size={18} strokeWidth={1.75} /></span>
                   <span style={{ fontSize: 12, fontWeight: 600, color: "#0f172a" }}>{q.label}</span>
                 </Link>
               ))}

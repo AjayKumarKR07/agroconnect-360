@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { ClipboardList, Clock, CheckCircle2, Truck, XCircle, Inbox } from "lucide-react";
+import { ClipboardList, Clock, CheckCircle2, Truck, Package, XCircle, Ban, Settings, Inbox, User, CalendarDays, MapPin, RefreshCw, AlertTriangle, Sprout, PackageCheck } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────────
    CONSTANTS — derived from actual Order model enum values
@@ -10,13 +10,13 @@ import { ClipboardList, Clock, CheckCircle2, Truck, XCircle, Inbox } from "lucid
                          delivered | rejected | cancelled
 ───────────────────────────────────────────────────────────────────── */
 const STATUS_META = {
-  pending:    { label: "Pending",    badge: "badge-amber",  emoji: "⏳" },
-  accepted:   { label: "Accepted",   badge: "badge-blue",   emoji: "✅" },
-  processing: { label: "Processing", badge: "badge-blue",   emoji: "⚙️" },
-  shipped:    { label: "Shipped",    badge: "badge-purple", emoji: "🚚" },
-  delivered:  { label: "Delivered",  badge: "badge-green",  emoji: "📦" },
-  rejected:   { label: "Rejected",   badge: "badge-red",    emoji: "❌" },
-  cancelled:  { label: "Cancelled",  badge: "badge-red",    emoji: "🚫" },
+  pending:    { label: "Pending",    badge: "badge-amber",  Icon: Clock,         iconColor: "#b45309" },
+  accepted:   { label: "Accepted",   badge: "badge-blue",   Icon: CheckCircle2,  iconColor: "#0369a1" },
+  processing: { label: "Processing", badge: "badge-blue",   Icon: Settings,      iconColor: "#7c3aed" },
+  shipped:    { label: "Shipped",    badge: "badge-purple", Icon: Truck,         iconColor: "#7c3aed" },
+  delivered:  { label: "Delivered",  badge: "badge-green",  Icon: Package,       iconColor: "#15803d" },
+  rejected:   { label: "Rejected",   badge: "badge-red",    Icon: XCircle,       iconColor: "#dc2626" },
+  cancelled:  { label: "Cancelled",  badge: "badge-red",    Icon: Ban,           iconColor: "#dc2626" },
 };
 
 const PAYMENT_LABELS = {
@@ -183,7 +183,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
           {/* STATUS BADGE */}
           <div style={{ marginBottom: 20 }}>
             <span className={`od-badge od-badge-${order.status === "pending" ? "amber" : order.status === "delivered" ? "green" : order.status === "rejected" || order.status === "cancelled" ? "red" : order.status === "shipped" ? "purple" : "blue"}`}>
-              {meta.emoji} {meta.label}
+                {meta.Icon ? <span style={{ display: "inline-flex", verticalAlign: "middle", marginRight: 4 }}><meta.Icon size={12} strokeWidth={2} /></span> : null}{meta.label}
             </span>
           </div>
 
@@ -192,7 +192,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
             <OdRow label="Order ID"     value={`#${order._id}`} mono />
             <OdRow label="Order Date"   value={fmtDate(order.createdAt)} />
             <OdRow label="Last Updated" value={fmtDate(order.updatedAt)} />
-            <OdRow label="Status"       value={<span className={`od-badge od-badge-${order.status === "pending" ? "amber" : order.status === "delivered" ? "green" : order.status === "rejected" || order.status === "cancelled" ? "red" : order.status === "shipped" ? "purple" : "blue"}`}>{meta.emoji} {meta.label}</span>} />
+            <OdRow label="Status"       value={<span className={`od-badge od-badge-${order.status === "pending" ? "amber" : order.status === "delivered" ? "green" : order.status === "rejected" || order.status === "cancelled" ? "red" : order.status === "shipped" ? "purple" : "blue"}`}>{meta.Icon && <meta.Icon size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />}{meta.label}</span>} />
           </OdSection>
 
           {/* ── BUYER INFORMATION ── */}
@@ -220,8 +220,9 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                   <div style={{
                     fontSize: 14, fontWeight: 700, color: "#0f172a",
                     marginBottom: 8, fontFamily: "'Space Grotesk', sans-serif",
+                    display: "flex", alignItems: "center", gap: 6,
                   }}>
-                    🌿 {na(item.cropName)}
+                    <Sprout size={14} color="#16a34a" /> {na(item.cropName)}
                   </div>
                   <OdRow label="Quantity"     value={`${na(item.quantity)} ${na(item.unit)}`} />
                   <OdRow label="Price / Unit" value={inr(item.price)} />
@@ -287,7 +288,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                         boxShadow: state === "active" ? "0 0 16px rgba(34,197,94,0.4)" : "none",
                         transition: "all 0.2s",
                       }}>
-                        {state === "done" ? "✓" : state === "negative" ? "✕" : sm.emoji}
+                        {state === "done" ? <CheckCircle2 size={13} strokeWidth={2.5} /> : state === "negative" ? <XCircle size={13} strokeWidth={2.5} /> : (sm.Icon ? <sm.Icon size={13} strokeWidth={2} /> : null)}
                       </div>
                       {!isLast && (
                         <div style={{
@@ -303,7 +304,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                         fontWeight: (state === "active" || state === "negative") ? 700 : 500,
                         color: state === "done" ? "#4ade80" : state === "active" ? "#fff" : state === "negative" ? "#f87171" : "#7a8fa6",
                       }}>
-                        {sm.emoji} {sm.label}
+                        {sm.Icon && <sm.Icon size={13} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />}{sm.label}
                         {(state === "active" || state === "negative") && (
                           <span style={{ fontSize: 11, marginLeft: 8, opacity: 0.55 }}>← current</span>
                         )}
@@ -330,13 +331,13 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                     disabled={updatingId === order._id}
                     className="od-btn-green"
                     style={{ flex: 1, minWidth: 140 }}
-                  >✅ Accept Order</button>
+                  ><CheckCircle2 size={15} /> Accept Order</button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onUpdateStatus(order._id, "rejected"); }}
                     disabled={updatingId === order._id}
                     className="od-btn-danger"
                     style={{ flex: 1, minWidth: 140 }}
-                  >❌ Reject</button>
+                  ><XCircle size={15} /> Reject</button>
                 </>
               )}
               {(order.status === "accepted" || order.status === "processing") && (
@@ -345,7 +346,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                   disabled={updatingId === order._id}
                   className="od-btn-ghost"
                   style={{ flex: 1, minWidth: 160, color: "#c4b5fd", borderColor: "rgba(167,139,250,0.25)" }}
-                >🚚 Mark as Shipped</button>
+                ><Truck size={15} /> Mark as Shipped</button>
               )}
               {order.status === "shipped" && (
                 <button
@@ -353,7 +354,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                   disabled={updatingId === order._id}
                   className="od-btn-green"
                   style={{ flex: 1, minWidth: 160 }}
-                >📦 Mark as Delivered</button>
+                ><PackageCheck size={15} /> Mark as Delivered</button>
               )}
             </div>
           )}
@@ -633,16 +634,18 @@ export default function Orders() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm Sales</div>
-          <h1 className="pg-title">📦 Incoming Orders</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Package size={24} color="#16a34a" /> Incoming Orders
+          </h1>
           <p className="pg-sub">Manage orders for your crops — auto-refreshes every 30 s.</p>
         </div>
-        <button className="btn-ghost" onClick={fetchOrders} style={{ marginTop: 8 }}>
-          🔄 Refresh
+        <button className="btn-ghost" onClick={fetchOrders} style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <RefreshCw size={14} /> Refresh
         </button>
       </div>
 
       {/* ── Error banner ── */}
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {/* ── Stats row ── */}
       {!loading && (
@@ -672,7 +675,7 @@ export default function Orders() {
             className={`tab-btn ${filter === t ? "active" : ""}`}
             onClick={() => setFilter(t)}
           >
-            {STATUS_META[t]?.emoji || "📋"} {t.charAt(0).toUpperCase() + t.slice(1)}
+            {(() => { const TabIcon = STATUS_META[t]?.Icon; return TabIcon ? <span style={{ display: "inline-flex", verticalAlign: "middle", marginRight: 4 }}><TabIcon size={12} strokeWidth={2} /></span> : null; })()}{t.charAt(0).toUpperCase() + t.slice(1)}
             <span className="tab-count">{counts[t]}</span>
           </button>
         ))}
@@ -730,27 +733,28 @@ export default function Orders() {
                 }}>
                   <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
                     <div style={{
-                      fontSize: 32, lineHeight: 1,
                       padding: "10px",
                       background: "var(--surface)", borderRadius: 12,
                       border: "1px solid var(--border)", flexShrink: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: meta.iconColor || "#64748b", width: 52, height: 52,
                     }}>
-                      {meta.emoji}
+                      {meta.Icon ? <meta.Icon size={26} strokeWidth={1.75} /> : null}
                     </div>
                     <div>
                       <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
                         {order.cropName || "Crop Order"}
                       </div>
-                      <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 3 }}>
-                        👤 {order.buyerName || order.buyer?.name || "Buyer"}
-                        &nbsp;·&nbsp;
-                        📅 {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                          day: "numeric", month: "short", year: "numeric",
-                        })}
-                      </div>
+                        <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 3 }}>
+                          <User size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />{order.buyerName || order.buyer?.name || "Buyer"}
+                          &nbsp;·&nbsp;
+                          <CalendarDays size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />{new Date(order.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric", month: "short", year: "numeric",
+                          })}
+                        </div>
                       {order.deliveryAddress && (
                         <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 3 }}>
-                          📍 {typeof order.deliveryAddress === "string"
+                          <MapPin size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />{typeof order.deliveryAddress === "string"
                             ? order.deliveryAddress
                             : fmtAddress(order.deliveryAddress)}
                         </div>
@@ -759,7 +763,7 @@ export default function Orders() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
-                    <span className={`badge ${meta.badge}`}>{meta.emoji} {meta.label}</span>
+                    <span className={`badge ${meta.badge}`}>{meta.Icon && <meta.Icon size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />}{meta.label}</span>
                     <div style={{ fontSize: 20, fontWeight: 800, color: "#15803d" }}>
                       ₹{Number(total).toLocaleString("en-IN")}
                     </div>
@@ -780,13 +784,13 @@ export default function Orders() {
                       style={{ flex: 1, justifyContent: "center" }}
                       disabled={updatingId === order._id}
                       onClick={(e) => { e.stopPropagation(); updateStatus(order._id, "accepted"); }}
-                    >✅ Accept Order</button>
+                    ><CheckCircle2 size={14} /> Accept Order</button>
                     <button
                       className="card-btn-danger"
                       style={{ flex: 1, justifyContent: "center" }}
                       disabled={updatingId === order._id}
                       onClick={(e) => { e.stopPropagation(); updateStatus(order._id, "rejected"); }}
-                    >❌ Reject</button>
+                    ><XCircle size={14} /> Reject</button>
                   </div>
                 )}
 
@@ -794,10 +798,10 @@ export default function Orders() {
                   <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
                     <button
                       className="card-btn-ghost"
-                      style={{ color: "#c4b5fd", borderColor: "rgba(167,139,250,0.22)" }}
+                      style={{ color: "#c4b5fd", borderColor: "rgba(167,139,250,0.22)", justifyContent: "center", width: "100%" }}
                       disabled={updatingId === order._id}
                       onClick={(e) => { e.stopPropagation(); updateStatus(order._id, "shipped"); }}
-                    >🚚 Mark as Shipped</button>
+                    ><Truck size={14} /> Mark as Shipped</button>
                   </div>
                 )}
 
@@ -805,9 +809,10 @@ export default function Orders() {
                   <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
                     <button
                       className="card-btn-green"
+                      style={{ justifyContent: "center", width: "100%" }}
                       disabled={updatingId === order._id}
                       onClick={(e) => { e.stopPropagation(); updateStatus(order._id, "delivered"); }}
-                    >📦 Mark as Delivered</button>
+                    ><PackageCheck size={14} /> Mark as Delivered</button>
                   </div>
                 )}
               </div>

@@ -1,5 +1,6 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
+import { Scroll, Info, AlertTriangle, FileText, Sprout, Trash2, Loader2, X } from "lucide-react";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -82,7 +83,9 @@ function AddContractModal({ onClose, onSaved }) {
       <div className="modal-box">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📜 Add LC / Contract</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+              <Scroll size={22} color="#d97706" /> Add LC / Contract
+            </div>
             <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Record a new Letter of Credit or trade contract</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
@@ -139,16 +142,30 @@ function AddContractModal({ onClose, onSaved }) {
             <textarea className="field-input" rows={2} style={{ resize: "none" }} placeholder="Any additional contract terms…" value={form.notes} onChange={e => set("notes", e.target.value)} />
           </div>
 
-          <div style={{ fontSize: 12, color: "#a38a5d", padding: "8px 12px", borderRadius: 8, background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.12)" }}>
-            ℹ️ Default payment milestones: 20% Advance → 50% BL Onboard → 30% Port Customs. You can mark each as released after saving.
+          <div style={{ fontSize: 12, color: "#a38a5d", padding: "8px 12px", borderRadius: 8, background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.12)", display: "flex", alignItems: "center", gap: 6 }}>
+            <Info size={14} color="#0284c7" style={{ flexShrink: 0 }} />
+            <span>Default payment milestones: 20% Advance → 50% BL Onboard → 30% Port Customs. You can mark each as released after saving.</span>
           </div>
 
-          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>⚠️ {err}</div>}
+          {err && (
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+              <AlertTriangle size={14} color="#dc2626" /> {err}
+            </div>
+          )}
 
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center", padding: "12px" }} onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: "center", padding: "12px" }} disabled={saving}>
-              {saving ? "⏳ Saving…" : "📜 Add Contract"}
+            <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: "center", padding: "12px", display: "inline-flex", alignItems: "center", gap: 8 }} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Scroll size={14} /> Add Contract
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -159,14 +176,17 @@ function AddContractModal({ onClose, onSaved }) {
 
 /* ─── Main Component ─────────────────────────────────────────────────── */
 export default function ExportContracts() {
-  const [contracts,   setContracts]   = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [showAdd,     setShowAdd]     = useState(false);
-  const [toast,       setToast]       = useState("");
-  const [deleteConfId, setDeleteConfId] = useState(null);
-  const [milestoneUpdating, setMilestoneUpdating] = useState(null); // "contractId-idx"
+  const [contracts, setContracts]         = useState([]);
+  const [loading, setLoading]             = useState(true);
+  const [showAdd, setShowAdd]             = useState(false);
+  const [milestoneUpdating, setMilestoneUpdating] = useState(null);
+  const [deleteConfId, setDeleteConfId]   = useState(null);
+  const [toast, setToast]                 = useState("");
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3500); };
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3500);
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -183,7 +203,7 @@ export default function ExportContracts() {
   const onSaved = (contract) => {
     setContracts(p => [contract, ...p]);
     setShowAdd(false);
-    showToast("✅ Contract added successfully");
+    showToast("Contract added successfully");
   };
 
   /* Toggle milestone released/pending */
@@ -198,7 +218,7 @@ export default function ExportContracts() {
       const d = await r.json();
       if (!d.success) throw new Error(d.message);
       setContracts(p => p.map(c => c._id === contractId ? d.contract : c));
-    } catch (e) { showToast("⚠️ " + e.message); }
+    } catch (e) { showToast(e.message); }
     finally { setMilestoneUpdating(null); }
   };
 
@@ -210,8 +230,8 @@ export default function ExportContracts() {
       if (!d.success) throw new Error(d.message);
       setContracts(p => p.filter(c => c._id !== id));
       setDeleteConfId(null);
-      showToast("✅ Contract deleted");
-    } catch (e) { showToast("⚠️ " + e.message); }
+      showToast("Contract deleted");
+    } catch (e) { showToast(e.message); }
   };
 
   const getMilestoneProgress = (milestones) => {
@@ -237,7 +257,9 @@ export default function ExportContracts() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Bank Letters of Credit & Trade Contracts</div>
-          <h1 className="pg-title">📜 Export Contracts & LC Hub</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Scroll size={26} color="#d97706" /> Export Contracts & LC Hub
+          </h1>
           <p className="pg-sub">Manage Letters of Credit, milestone payment releases, and trade contracts.</p>
         </div>
         <button className="btn-gold" onClick={() => setShowAdd(true)}>+ Add Contract / LC</button>
@@ -251,12 +273,16 @@ export default function ExportContracts() {
         </div>
       ) : contracts.length === 0 ? (
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
-          <div style={{ fontSize: 52, marginBottom: 14 }}>📜</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+            <Scroll size={52} color="#d97706" strokeWidth={1.5} />
+          </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Contracts Yet</div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export LC or trade contract to track payment milestones and buyer details.
           </div>
-          <button className="btn-gold" onClick={() => setShowAdd(true)}>📜 Add First Contract</button>
+          <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Scroll size={16} /> Add First Contract
+          </button>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -283,8 +309,8 @@ export default function ExportContracts() {
                       {c.buyerName}{c.buyerCountry ? <span style={{ fontSize: 13, color: "#a38a5d", fontWeight: 400 }}> · {c.buyerCountry}</span> : ""}
                     </div>
                     {c.cropName && (
-                      <div style={{ fontSize: 13, color: "#0369a1", fontWeight: 600, marginTop: 2 }}>
-                        🌾 {c.cropName}{c.quantityTons ? ` (${c.quantityTons} MT)` : ""}
+                      <div style={{ fontSize: 13, color: "#0369a1", fontWeight: 600, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Sprout size={14} color="#0369a1" /> {c.cropName}{c.quantityTons ? ` (${c.quantityTons} MT)` : ""}
                       </div>
                     )}
                     {c.issuingBank && <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Issuing Bank: <strong style={{ color: "#0f172a" }}>{c.issuingBank}</strong></div>}
@@ -343,8 +369,9 @@ export default function ExportContracts() {
 
                 {/* Notes */}
                 {c.notes && (
-                  <div style={{ fontSize: 13, color: "#a38a5d", marginBottom: 12, fontStyle: "italic" }}>
-                    📋 {c.notes}
+                  <div style={{ fontSize: 13, color: "#a38a5d", marginBottom: 12, fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: 6 }}>
+                    <FileText size={14} color="#a38a5d" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span>{c.notes}</span>
                   </div>
                 )}
 
@@ -360,8 +387,8 @@ export default function ExportContracts() {
                       </button>
                     </>
                   ) : (
-                    <button className="btn-ghost" style={{ color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(c._id)}>
-                      🗑 Delete
+                    <button className="btn-ghost" style={{ color: "#dc2626", borderColor: "rgba(239,68,68,0.2)", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setDeleteConfId(c._id)}>
+                      <Trash2 size={13} /> Delete
                     </button>
                   )}
                 </div>

@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
+import {
+  Wheat, Microscope, TrendingUp, TrendingDown, CloudSun,
+  BarChart3, Stethoscope, Store, Ship, ShoppingBag,
+  Smartphone, Sprout, Zap, Pill, ShieldCheck, Lock
+} from "lucide-react";
 
 /* ─── Animated counter hook ────────────────────────────────────────────── */
 function useCounter(target, duration = 2000, start = false) {
@@ -36,14 +41,14 @@ function useInView(threshold = 0.2) {
 
 /* ─── Ticker items ─────────────────────────────────────────────────────── */
 const tickerItems = [
-  { crop: "🍅 Tomato", market: "Bangalore APMC", price: "₹2,840/q", trend: "+12%" },
-  { crop: "🧅 Onion", market: "Nasik Mandi", price: "₹1,650/q", trend: "+4%" },
-  { crop: "🥔 Potato", market: "Agra Mandi", price: "₹980/q", trend: "-2%" },
-  { crop: "🌾 Wheat", market: "Delhi APMC", price: "₹2,125/q", trend: "+8%" },
-  { crop: "🌽 Maize", market: "Hyderabad", price: "₹1,890/q", trend: "+6%" },
-  { crop: "🍚 Rice", market: "Chennai APMC", price: "₹3,200/q", trend: "+3%" },
-  { crop: "🫛 Green Peas", market: "Pune Mandi", price: "₹4,500/q", trend: "+15%" },
-  { crop: "🫑 Capsicum", market: "Mysuru APMC", price: "₹3,100/q", trend: "+9%" },
+  { crop: "Tomato", market: "Bangalore APMC", price: "₹2,840/q", trend: "+12%" },
+  { crop: "Onion", market: "Nasik Mandi", price: "₹1,650/q", trend: "+4%" },
+  { crop: "Potato", market: "Agra Mandi", price: "₹980/q", trend: "-2%" },
+  { crop: "Wheat", market: "Delhi APMC", price: "₹2,125/q", trend: "+8%" },
+  { crop: "Maize", market: "Hyderabad", price: "₹1,890/q", trend: "+6%" },
+  { crop: "Rice", market: "Chennai APMC", price: "₹3,200/q", trend: "+3%" },
+  { crop: "Green Peas", market: "Pune Mandi", price: "₹4,500/q", trend: "+15%" },
+  { crop: "Capsicum", market: "Mysuru APMC", price: "₹3,100/q", trend: "+9%" },
 ];
 
 export default function Home() {
@@ -59,45 +64,45 @@ export default function Home() {
   const features = [
     {
       id: 0,
-      emoji: "🌾",
+      Icon: Wheat,
       title: "Live Mandi & Market Prices",
       subtitle: "Direct APMC market intelligence",
       desc: "Track real-time commodity prices across 340+ APMC mandis in India. Compare prices between neighboring markets, analyze daily trends, and sell at maximum profitability.",
       bullets: ["340+ Verified APMC mandis", "Min, Max & Modal prices updated daily", "Direct market-to-market comparison", "Official Data.gov.in integrated data"],
-      visual: "📊",
+      Visual: BarChart3,
     },
     {
       id: 1,
-      emoji: "🔬",
+      Icon: Microscope,
       title: "Crop Disease AI Diagnosis",
       subtitle: "Instant photo-based leaf scanner",
       desc: "Take a photo of any diseased crop leaf. Our multi-engine AI (Gemini Vision + Agronomist Enrichment) identifies the disease, confidence level, chemical and organic treatments, and prevention guidelines.",
       bullets: ["50+ crop diseases recognized", "Accurate confidence scoring", "Organic & chemical dosage remedies", "Actionable prevention roadmap"],
-      visual: "🩺",
+      Visual: Stethoscope,
     },
     {
       id: 2,
-      emoji: "📈",
+      Icon: TrendingUp,
       title: "ML Price Predictions",
       subtitle: "7–30 day price forecasting engine",
       desc: "Machine learning models trained on historical APMC patterns forecast commodity prices up to 30 days ahead, empowering farmers to time harvests and lock in the best rates.",
       bullets: ["7–30 day advance price forecasts", "Historical trend analysis", "MSP reference benchmarks", "Confidence band indicators"],
-      visual: "📉",
+      Visual: TrendingDown,
     },
     {
       id: 3,
-      emoji: "🌦️",
+      Icon: CloudSun,
       title: "Hyperlocal Weather Advisory",
       subtitle: "Pincode-level field forecasting",
       desc: "Get field-level meteorological forecasts with crop-specific action advisories. Know exactly when to irrigate, spray fertilizers, or harvest to minimize weather damage.",
       bullets: ["5-day precision forecast", "Irrigation & spraying schedule", "Rain & pest risk alerts", "Temperature & humidity monitoring"],
-      visual: "🌤️",
+      Visual: CloudSun,
     },
   ];
 
   const roles = [
     {
-      emoji: "👨‍🌾",
+      Icon: Wheat,
       title: "Farmers",
       badge: "Producer",
       accent: "#16a34a",
@@ -105,7 +110,7 @@ export default function Home() {
       perks: ["List & sell produce directly", "Instant AI disease detection", "Daily APMC mandi alerts", "Hyperlocal weather advisory"],
     },
     {
-      emoji: "🏪",
+      Icon: Store,
       title: "Sellers & Traders",
       badge: "Commerce",
       accent: "#7c3aed",
@@ -113,7 +118,7 @@ export default function Home() {
       perks: ["Direct farm-gate sourcing", "Bulk procurement management", "Live inventory tracking", "Real-time mandi analytics"],
     },
     {
-      emoji: "🚢",
+      Icon: Ship,
       title: "Exporters",
       badge: "Global",
       accent: "#d97706",
@@ -121,7 +126,7 @@ export default function Home() {
       perks: ["Bulk export sourcing", "Quality certification tracking", "Global price comparisons", "Shipment coordination"],
     },
     {
-      emoji: "🛍️",
+      Icon: ShoppingBag,
       title: "Buyers & Consumers",
       badge: "Direct Farm",
       accent: "#0284c7",
@@ -131,10 +136,10 @@ export default function Home() {
   ];
 
   const steps = [
-    { n: "01", icon: "📱", title: "Quick OTP Login", desc: "Sign in with your email in 30 seconds. No passwords required." },
-    { n: "02", icon: "🌱", title: "Select Your Role", desc: "Choose Farmer, Seller, Exporter, or Buyer to unlock your tailored workspace." },
-    { n: "03", icon: "⚡", title: "Access Smart Tools", desc: "Check live mandi rates, scan diseased crops, or forecast commodity prices." },
-    { n: "04", icon: "📈", title: "Grow Your Business", desc: "Make data-backed decisions, eliminate middlemen, and increase income." },
+    { n: "01", Icon: Smartphone, title: "Quick OTP Login", desc: "Sign in with your email in 30 seconds. No passwords required." },
+    { n: "02", Icon: Sprout,     title: "Select Your Role", desc: "Choose Farmer, Seller, Exporter, or Buyer to unlock your tailored workspace." },
+    { n: "03", Icon: Zap,        title: "Access Smart Tools", desc: "Check live mandi rates, scan diseased crops, or forecast commodity prices." },
+    { n: "04", Icon: TrendingUp, title: "Grow Your Business", desc: "Make data-backed decisions, eliminate middlemen, and increase income." },
   ];
 
   return (
@@ -929,7 +934,7 @@ export default function Home() {
         <div className="hero-inner">
           <div>
             <div className="hero-badge">
-              <span>🌱</span> India's Smart Agriculture Platform
+              <span style={{ display: "inline-flex", alignItems: "center", marginRight: 6 }}><Sprout size={14} color="#16a34a" /></span> India's Smart Agriculture Platform
             </div>
 
             <h1 className="hero-title">
@@ -966,7 +971,7 @@ export default function Home() {
           <div className="preview-card">
             <div className="preview-header">
               <div className="preview-app-title">
-                <span>🌱</span> AgroConnect Live Dashboard
+                <span style={{ display: "inline-flex", alignItems: "center", marginRight: 6 }}><Sprout size={16} color="#16a34a" /></span> AgroConnect Live Dashboard
               </div>
               <span className="preview-status">● Live Data</span>
             </div>
@@ -986,7 +991,9 @@ export default function Home() {
 
             <div className="preview-mandi-box">
               <div>
-                <div className="preview-mandi-crop">🍅 Tomato (Hybrid)</div>
+                <div className="preview-mandi-crop" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Sprout size={14} color="#16a34a" /> Tomato (Hybrid)
+                </div>
                 <div className="preview-mandi-market">Bangalore APMC Mandi</div>
               </div>
               <div className="preview-mandi-price">₹28 - ₹32 / kg</div>
@@ -1004,11 +1011,13 @@ export default function Home() {
         <div className={`ticker-inner ${tickerPaused ? "paused" : ""}`}>
           {[...tickerItems, ...tickerItems].map((item, i) => (
             <div className="ticker-item" key={i}>
-              <span className="ticker-crop-name">{item.crop}</span>
+              <span className="ticker-crop-name" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <Sprout size={13} color="#16a34a" /> {item.crop}
+              </span>
               <span className="ticker-mkt">({item.market})</span>
               <span className="ticker-val">{item.price}</span>
-              <span className={item.trend.startsWith("+") ? "ticker-up" : "ticker-dn"}>
-                {item.trend.startsWith("+") ? "▲" : "▼"} {item.trend}
+              <span className={item.trend.startsWith("+") ? "ticker-up" : "ticker-dn"} style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+                {item.trend.startsWith("+") ? <TrendingUp size={12} /> : <TrendingDown size={12} />} {item.trend}
               </span>
               <span style={{ color: "#cbd5e1", marginLeft: 8 }}>|</span>
             </div>
@@ -1063,7 +1072,7 @@ export default function Home() {
                 className={`feature-item-btn ${activeFeature === f.id ? "active" : ""}`}
                 onClick={() => setActiveFeature(f.id)}
               >
-                <div className="feature-icon-box">{f.emoji}</div>
+                <div className="feature-icon-box" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "inherit" }}><f.Icon size={20} strokeWidth={1.75} /></div>
                 <div>
                   <div className="feature-item-title">{f.title}</div>
                   <div className="feature-item-subtitle">{f.subtitle}</div>
@@ -1073,7 +1082,7 @@ export default function Home() {
           </div>
 
           <div className="feature-display-card">
-            <div className="feature-display-icon">{features[activeFeature].visual}</div>
+            {(() => { const FeatureIcon = features[activeFeature].Visual; return <div className="feature-display-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}><FeatureIcon size={48} strokeWidth={1.5} /></div>; })()}
             <h3 className="feature-display-title">{features[activeFeature].title}</h3>
             <p className="feature-display-desc">{features[activeFeature].desc}</p>
             <div className="feature-bullets">
@@ -1101,7 +1110,7 @@ export default function Home() {
         <div className="roles-grid">
           {roles.map((r) => (
             <div className="role-box" key={r.title}>
-              <div className="role-emoji-wrap">{r.emoji}</div>
+              <div className="role-emoji-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "center", color: r.accent }}><r.Icon size={30} strokeWidth={1.5} /></div>
               <h3 className="role-box-title">{r.title}</h3>
               <p className="role-box-desc">{r.desc}</p>
               <ul className="role-perks-list">
@@ -1128,15 +1137,15 @@ export default function Home() {
             </p>
             <div className="ai-feats-list">
               <div className="ai-feat-row">
-                <span>🔬</span>
+                <Microscope size={18} color="#16a34a" style={{ flexShrink: 0 }} />
                 <span>Identifies 50+ diseases across tomatoes, potatoes, rice, cotton and more</span>
               </div>
               <div className="ai-feat-row">
-                <span>💊</span>
+                <Pill size={18} color="#16a34a" style={{ flexShrink: 0 }} />
                 <span>Exact chemical fungicide/pesticide dosage and organic alternatives</span>
               </div>
               <div className="ai-feat-row">
-                <span>🛡️</span>
+                <ShieldCheck size={18} color="#16a34a" style={{ flexShrink: 0 }} />
                 <span>Proactive prevention guidelines to protect adjacent crops</span>
               </div>
             </div>
@@ -1145,7 +1154,7 @@ export default function Home() {
           <div className="ai-demo-card">
             <div className="ai-demo-header">
               <div className="ai-demo-title">
-                <span>🌱</span> Leaf Diagnosis Result
+                <span style={{ display: "inline-flex", alignItems: "center", marginRight: 6 }}><Sprout size={16} color="#16a34a" /></span> Leaf Diagnosis Result
               </div>
               <span className="ai-demo-badge">94.7% Match</span>
             </div>
@@ -1179,7 +1188,7 @@ export default function Home() {
             {steps.map((s) => (
               <div className="how-card" key={s.n}>
                 <div className="how-num">{s.n}</div>
-                <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8, color: "#16a34a" }}><s.Icon size={24} strokeWidth={1.75} /></div>
                 <h4 className="how-card-title">{s.title}</h4>
                 <p className="how-card-desc">{s.desc}</p>
               </div>
@@ -1205,7 +1214,7 @@ export default function Home() {
           <div className="footer-cols">
             <div>
               <div className="footer-brand">
-                <span>🌱</span> AgroConnect 360
+                <span style={{ display: "inline-flex", alignItems: "center", marginRight: 6 }}><Sprout size={18} color="#16a34a" /></span> AgroConnect 360
               </div>
               <p className="footer-bio">
                 India's modern agricultural intelligence and trade platform, empowering farmers and traders with data-driven tools.
@@ -1244,11 +1253,11 @@ export default function Home() {
           </div>
 
           <div className="footer-legal">
-            <div>© {new Date().getFullYear()} AgroConnect 360. All rights reserved.</div>
+            <div>&copy; {new Date().getFullYear()} AgroConnect 360. All rights reserved.</div>
             <div style={{ display: "flex", gap: 16 }}>
-              <span>🔒 Secure OTP Auth</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Lock size={12} /> Secure OTP Auth</span>
               <span>🇮🇳 Built for India</span>
-              <span>🌾 100% Free Plan</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Sprout size={12} /> 100% Free Plan</span>
             </div>
           </div>
         </div>

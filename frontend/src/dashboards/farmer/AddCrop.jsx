@@ -1,7 +1,8 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Sprout, AlertTriangle, FileText, Camera, Lightbulb, ArrowLeft, X } from "lucide-react";
 
 const CATEGORIES = ["Vegetables","Fruits","Grains","Pulses","Oilseeds","Spices","Flowers","Other"];
 const UNITS = ["kg","quintal","ton"];
@@ -54,23 +55,29 @@ export default function AddCrop() {
         @media(max-width:640px){.form-grid{grid-template-columns:1fr;}}
       `}</style>
 
-      <button onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ marginBottom: 24, fontSize: 13 }}>← Back to My Crops</button>
+      <button onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ marginBottom: 24, fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <ArrowLeft size={14} /> Back to My Crops
+      </button>
 
       <div className="pg-head" style={{ marginBottom: 28 }}>
         <div>
           <div className="eyebrow">Farm Management</div>
-          <h1 className="pg-title">🌱 Add New Crop</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Sprout size={26} color="#16a34a" /> Add New Crop
+          </h1>
           <p className="pg-sub">List your agricultural produce for direct sale to buyers.</p>
         </div>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 24, alignItems: "start" }}>
           {/* Left — form fields */}
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 20 }}>📋 Crop Details</div>
+            <div className="card-title" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+              <FileText size={18} color="#16a34a" /> Crop Details
+            </div>
             <div className="form-grid">
               <div className="form-group">
                 <label className="field-label">Crop Name *</label>
@@ -112,9 +119,9 @@ export default function AddCrop() {
               <div className="form-group">
                 <label className="field-label">Listing Status *</label>
                 <select name="status" value={form.status} onChange={handleChange} required className="field-input field-select">
-                  <option value="listed">🟢 Listed — Visible to buyers now</option>
-                  <option value="growing">🌱 Growing — Not yet ready</option>
-                  <option value="ready">⚡ Ready — Harvested, listing soon</option>
+                  <option value="listed">Listed — Visible to buyers now</option>
+                  <option value="growing">Growing — Not yet ready</option>
+                  <option value="ready">Ready — Harvested, listing soon</option>
                 </select>
               </div>
               <div className="form-group full">
@@ -127,18 +134,20 @@ export default function AddCrop() {
           {/* Right — image + submit */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 16 }}>📸 Crop Photo</div>
+              <div className="card-title" style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <Camera size={18} color="#16a34a" /> Crop Photo
+              </div>
               {imagePreview ? (
                 <div style={{ position: "relative" }}>
                   <img src={imagePreview} alt="Preview" style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
-                  <button type="button" onClick={removeImage} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 13, fontWeight: 700 }}>✕ Remove</button>
+                  <button type="button" onClick={removeImage} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 8px", color: "#ffffff", cursor: "pointer", fontSize: 12, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}><X size={14} /> Remove</button>
                 </div>
               ) : (
                 <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "32px 16px", borderRadius: 12, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer", transition: "border-color 0.2s" }}
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(34,197,94,0.35)"}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border2)"}
                 >
-                  <span style={{ fontSize: 40 }}>📷</span>
+                  <Camera size={40} color="#94a3b8" />
                   <span style={{ fontSize: 14, color: "var(--text2)", textAlign: "center" }}>Click to upload crop photo<br /><span style={{ fontSize: 12 }}>JPG, PNG, WEBP — max 5MB</span></span>
                   <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} style={{ display: "none" }} />
                 </label>
@@ -147,15 +156,15 @@ export default function AddCrop() {
 
             <div className="card" style={{ background: "#f0fdf4", borderColor: "rgba(34,197,94,0.15)" }}>
               <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.7 }}>
-                <strong style={{ color: "#15803d" }}>💡 Tips for better listings:</strong><br />
+                <strong style={{ color: "#15803d", display: "inline-flex", alignItems: "center", gap: 6 }}><Lightbulb size={14} /> Tips for better listings:</strong><br />
                 • Use clear, daylight photos<br />
                 • Set competitive prices using the Price Prediction tool<br />
                 • Add accurate location for local buyers to find you
               </div>
             </div>
 
-            <button type="submit" className="btn-green" disabled={loading} style={{ width: "100%", justifyContent: "center", padding: "16px" }}>
-              {loading ? <><span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} /> Publishing…</> : "🌱 Publish Crop Listing"}
+            <button type="submit" className="btn-green" disabled={loading} style={{ width: "100%", justifyContent: "center", padding: "16px", display: "inline-flex", alignItems: "center", gap: 8 }}>
+              {loading ? <><span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} /> Publishing…</> : <><Sprout size={16} /> Publish Crop Listing</>}
             </button>
           </div>
         </div>

@@ -3,19 +3,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
 import { ALL_INDIA_STATES, getDistrictsForState } from "../../utils/indiaData";
-import { ShieldCheck, User, Lock, Zap, RefreshCw } from "lucide-react";
+import {
+  ShieldCheck, User, Lock, Zap, RefreshCw,
+  Users, Wheat, Package, Ship, IndianRupee, Scale, Megaphone, FileText, Bot,
+  AlertTriangle, MapPin, Save, CheckCircle2
+} from "lucide-react";
 
 const PRIVILEGES = [
-  { module: "User Lifecycle", perm: "Read, Update, Suspend, Activate", icon: "👥" },
-  { module: "Crop Moderation", perm: "Delete, Verify, Moderate", icon: "🌾" },
-  { module: "Domestic Orders", perm: "Status Override, Dispute Mediation", icon: "📦" },
-  { module: "Export Marketplace", perm: "RFQ Review, Shipment Oversight", icon: "🚢" },
-  { module: "Financial Engine", perm: "GMV Aggregation, Commission Audit", icon: "💰" },
-  { module: "Dispute Arbitration", perm: "Binding Resolution & Rejection", icon: "⚖️" },
-  { module: "Global Broadcasts", perm: "Platform-Wide Push Notifications", icon: "📢" },
-  { module: "Audit Logging", perm: "Full Security Trail Access", icon: "📜" },
-  { module: "System Telemetry", perm: "Health Checks, Diagnostics", icon: "⚡" },
-  { module: "AI Models & OCR", perm: "Service Monitoring & Tuning", icon: "🤖" },
+  { module: "User Lifecycle", perm: "Read, Update, Suspend, Activate", Icon: Users },
+  { module: "Crop Moderation", perm: "Delete, Verify, Moderate", Icon: Wheat },
+  { module: "Domestic Orders", perm: "Status Override, Dispute Mediation", Icon: Package },
+  { module: "Export Marketplace", perm: "RFQ Review, Shipment Oversight", Icon: Ship },
+  { module: "Financial Engine", perm: "GMV Aggregation, Commission Audit", Icon: IndianRupee },
+  { module: "Dispute Arbitration", perm: "Binding Resolution & Rejection", Icon: Scale },
+  { module: "Global Broadcasts", perm: "Platform-Wide Push Notifications", Icon: Megaphone },
+  { module: "Audit Logging", perm: "Full Security Trail Access", Icon: FileText },
+  { module: "System Telemetry", perm: "Health Checks, Diagnostics", Icon: Zap },
+  { module: "AI Models & OCR", perm: "Service Monitoring & Tuning", Icon: Bot },
 ];
 
 export default function AdminProfile() {
@@ -133,12 +137,12 @@ export default function AdminProfile() {
       if (d.success && d.user) {
         setFormData((prev) => ({ ...prev, ...d.user }));
         localStorage.setItem("agroconnect_user", JSON.stringify({ ...cachedUser, ...d.user }));
-        showToast("✅ Admin profile updated successfully!");
+        showToast("Admin profile updated successfully!");
       } else {
         showToast(d.message || "Failed to update profile", "error");
       }
     } catch (err) {
-      showToast("Network error while saving profile", "error");
+      showToast(err.message, "error");
     } finally {
       setSaving(false);
     }
@@ -158,10 +162,10 @@ export default function AdminProfile() {
       {/* ── Page Header ── */}
       <div className="pg-head">
         <div>
-          <div className="eyebrow">AgroConnect 360 — Platform Administration</div>
-          <h1 className="pg-title"><ShieldCheck size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Administrator Profile & Security</h1>
+          <div className="eyebrow">Governance & Security</div>
+          <h1 className="pg-title"><ShieldCheck size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Administrative Profile & Access</h1>
           <p className="pg-sub">
-            Manage superuser credentials, administrative headquarters, security authority, and regional jurisdiction.
+            Manage your command center contact credentials, jurisdiction limits, and administrative privileges.
           </p>
         </div>
 
@@ -169,8 +173,8 @@ export default function AdminProfile() {
           <Link to="/admin/dashboard" className="tab-btn" style={{ textDecoration: "none" }}>
             ← Control Center
           </Link>
-          <Link to="/admin/audit-logs" className="tab-btn" style={{ textDecoration: "none" }}>
-            📜 Audit Trail
+          <Link to="/admin/audit-logs" className="tab-btn" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <FileText size={13} /> Audit Trail
           </Link>
         </div>
       </div>
@@ -195,7 +199,7 @@ export default function AdminProfile() {
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
                 <div className="card-title"><User size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Identity & Contact Credentials</div>
-                <span className="badge badge-active">🛡️ SUPERADMIN</span>
+                <span className="badge badge-active" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><ShieldCheck size={11} /> SUPERADMIN</span>
               </div>
 
               <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -240,8 +244,8 @@ export default function AdminProfile() {
                       onChange={(e) => handleChange("phone", e.target.value)}
                     />
                     {formData.phone && formData.phone.length > 0 && formData.phone.length !== 10 && (
-                      <div style={{ fontSize: 11, color: "#b45309", marginTop: 4 }}>
-                        ⚠️ Enter exactly 10 digits ({formData.phone.length}/10)
+                      <div style={{ fontSize: 11, color: "#b45309", marginTop: 4, display: "flex", alignItems: "center", gap: 4 }}>
+                        <AlertTriangle size={12} /> Enter exactly 10 digits ({formData.phone.length}/10)
                       </div>
                     )}
                   </div>
@@ -302,13 +306,13 @@ export default function AdminProfile() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
                   <div style={{ fontSize: 12, color: "#a5b4fc" }}>
                     {formData.state && formData.district ? (
-                      <span>📍 Jurisdiction: <strong style={{ color: "#15803d" }}>{formData.district}, {formData.state}</strong></span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> Jurisdiction: <strong style={{ color: "#15803d" }}>{formData.district}, {formData.state}</strong></span>
                     ) : (
-                      <span>📍 Select state &amp; district to configure your jurisdiction</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> Select state &amp; district to configure your jurisdiction</span>
                     )}
                   </div>
-                  <button type="submit" className="btn-indigo" disabled={saving} style={{ padding: "12px 28px" }}>
-                    {saving ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "💾"} Save Changes
+                  <button type="submit" className="btn-indigo" disabled={saving} style={{ padding: "12px 28px", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    {saving ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <Save size={14} />} Save Changes
                   </button>
                 </div>
               </form>
@@ -364,8 +368,8 @@ export default function AdminProfile() {
               <div style={{ fontSize: 13, color: "#a5b4fc", marginBottom: 12 }}>{formData.email}</div>
 
               <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 16 }}>
-                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(248,113,113,0.15)", color: "#dc2626", fontWeight: 800 }}>
-                  🛡️ SUPERADMIN
+                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(248,113,113,0.15)", color: "#dc2626", fontWeight: 800, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <ShieldCheck size={11} /> SUPERADMIN
                 </span>
                 <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(74,222,128,0.15)", color: "#15803d", fontWeight: 800 }}>
                   ● ACTIVE
@@ -405,11 +409,11 @@ export default function AdminProfile() {
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-                      <span style={{ fontSize: 16 }}>{p.icon}</span>
+                      <span style={{ display: "flex", alignItems: "center", color: "#4f46e5" }}>{p.Icon && <p.Icon size={16} strokeWidth={1.75} />}</span>
                       <span style={{ fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{p.module}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: "#15803d", fontWeight: 700, flexShrink: 0 }}>
-                      ✅ Granted
+                    <div style={{ fontSize: 11, color: "#15803d", fontWeight: 700, flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                      <CheckCircle2 size={11} /> Granted
                     </div>
                   </div>
                 ))}
@@ -431,7 +435,7 @@ export default function AdminProfile() {
                 }}
                 onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
               >
-                🔄 Change My Role
+                <RefreshCw size={14} /> Change My Role
               </button>
             </div>
           </div>

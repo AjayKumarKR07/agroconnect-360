@@ -4,20 +4,21 @@ import { API_URL } from "../config/api";
 import { relativeTime } from "../dashboards/admin/adminStyles";
 import {
   LayoutDashboard, Users, Package, ClipboardList, BarChart3,
-  Settings, User, ShieldCheck, Bell, Repeat2, LogOut, ChevronLeft, ChevronRight
+  Settings, User, ShieldCheck, Bell, Repeat2, LogOut, ChevronLeft, ChevronRight,
+  Flag, Ban, CheckCircle2, RefreshCw, AlertTriangle, Trash2, Zap
 } from "lucide-react";
 
 // Notification type icon + color helper
 const NOTIF_CONFIG = {
-  user_registered:   { emoji: "👤", color: "#4f46e5" },
-  listing_reported:  { emoji: "🚩", color: "#dc2626" },
-  user_suspended:    { emoji: "🚫", color: "#dc2626" },
-  user_activated:    { emoji: "✅", color: "#16a34a" },
-  role_changed:      { emoji: "🔄", color: "#7c3aed" },
-  listing_flagged:   { emoji: "⚠️", color: "#d97706" },
-  listing_deleted:   { emoji: "🗑️", color: "#dc2626" },
-  bulk_action:       { emoji: "⚡", color: "#0284c7" },
-  system:            { emoji: "⚙️", color: "#4f46e5" },
+  user_registered:   { Icon: User,          color: "#4f46e5" },
+  listing_reported:  { Icon: Flag,          color: "#dc2626" },
+  user_suspended:    { Icon: Ban,           color: "#dc2626" },
+  user_activated:    { Icon: CheckCircle2,  color: "#16a34a" },
+  role_changed:      { Icon: RefreshCw,     color: "#7c3aed" },
+  listing_flagged:   { Icon: AlertTriangle, color: "#d97706" },
+  listing_deleted:   { Icon: Trash2,        color: "#dc2626" },
+  bulk_action:       { Icon: Zap,           color: "#0284c7" },
+  system:            { Icon: Settings,      color: "#4f46e5" },
 };
 
 export default function AdminLayout() {
@@ -558,6 +559,7 @@ export default function AdminLayout() {
                       ) : (
                         notifications.map((n) => {
                           const cfg = NOTIF_CONFIG[n.type] || NOTIF_CONFIG.system;
+                          const NotifIcon = cfg.Icon || Settings;
                           return (
                             <button
                               key={n._id}
@@ -565,8 +567,8 @@ export default function AdminLayout() {
                               onClick={() => handleNotifClick(n)}
                               style={{ width: "100%", background: "none", border: "none", font: "inherit" }}
                             >
-                              <div className="notif-icon" style={{ background: `${cfg.color}15` }}>
-                                <span style={{ filter: "grayscale(0)" }}>{cfg.emoji}</span>
+                              <div className="notif-icon" style={{ background: `${cfg.color}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <NotifIcon size={16} strokeWidth={2} color={cfg.color} />
                               </div>
                               <div className="notif-content">
                                 <div className="notif-title-text">{n.title}</div>

@@ -2,7 +2,19 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Plus, RefreshCw, ShoppingBag } from "lucide-react";
+import {
+  Plus,
+  RefreshCw,
+  ShoppingBag,
+  Carrot,
+  Apple,
+  Wheat,
+  AlertTriangle,
+  Edit3,
+  Trash2,
+  Loader2,
+  X,
+} from "lucide-react";
 
 const Skel = () => (
   <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden" }}>
@@ -47,6 +59,14 @@ export default function SellerProducts() {
 
   const filtered = products.filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()) || p.category?.toLowerCase().includes(search.toLowerCase()));
 
+  const renderCatIcon = (category) => {
+    const cat = (category || "").toLowerCase();
+    if (cat.includes("vegetable") || cat.includes("veggie")) return <Carrot size={48} color="#a78bfa" />;
+    if (cat.includes("fruit")) return <Apple size={48} color="#a78bfa" />;
+    if (cat.includes("grain") || cat.includes("cereal")) return <Wheat size={48} color="#a78bfa" />;
+    return <ShoppingBag size={48} color="#a78bfa" />;
+  };
+
   return (
     <>
       <style>{DS + `
@@ -67,7 +87,9 @@ export default function SellerProducts() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Inventory</div>
-          <h1 className="pg-title">🛍️ My Products</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <ShoppingBag size={24} color="#7c3aed" /> My Products
+          </h1>
           <p className="pg-sub">Manage your listed products and inventory.</p>
         </div>
         <Link to="/seller/products/add" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", boxShadow: "0 4px 14px rgba(167,139,250,0.3)", display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add Product</Link>
@@ -75,8 +97,8 @@ export default function SellerProducts() {
 
       {/* Search + count */}
       <div style={{ display: "flex", gap: 12, marginBottom: 24, alignItems: "center" }}>
-        <input className="field-input" placeholder="🔍 Search products…" value={search} onChange={e => setSearch(e.target.value)} style={{ maxWidth: 320 }} />
-        {search && <button className="btn-ghost" onClick={() => setSearch("")}>✕ Clear</button>}
+        <input className="field-input" placeholder="Search products…" value={search} onChange={e => setSearch(e.target.value)} style={{ maxWidth: 320 }} />
+        {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><X size={12} /> Clear</button>}
         <div style={{ marginLeft: "auto", fontSize: 13, color: "var(--text2)" }}>{filtered.length} products</div>
       </div>
 
@@ -90,7 +112,7 @@ export default function SellerProducts() {
         <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+              <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0 }} />
               <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load products — {error}</span>
             </div>
             <button onClick={fetchProducts} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
@@ -113,7 +135,7 @@ export default function SellerProducts() {
             <div key={p._id} className="prod-card">
               {p.imageUrl
                 ? <img src={p.imageUrl} alt={p.name} className="prod-img" />
-                : <div className="prod-img-placeholder">{p.category === "vegetables" ? "🥬" : p.category === "fruits" ? "🍎" : p.category === "grains" ? "🌾" : "🛍️"}</div>
+                : <div className="prod-img-placeholder">{renderCatIcon(p.category)}</div>
               }
               <div className="prod-body">
                 <div className="prod-name">{p.name}</div>
@@ -124,24 +146,31 @@ export default function SellerProducts() {
                     <div className="prod-unit">per {p.unit}</div>
                   </div>
                   <span style={{
-                    fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 700,
+                    fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 5,
                     ...(p.status === "listed"  ? { background: "rgba(34,197,94,0.1)",   color: "#15803d" } :
                         p.status === "ready"   ? { background: "rgba(56,189,248,0.1)",  color: "#0369a1" } :
                         p.status === "growing" ? { background: "rgba(251,191,36,0.1)",  color: "#b45309" } :
                         p.status === "sold"    ? { background: "rgba(148,163,184,0.1)", color: "#94a3b8" } :
                                                  { background: "rgba(167,139,250,0.1)", color: "#7c3aed" }),
                   }}>
-                    {p.status === "listed"  ? "✅ Listed"  :
-                     p.status === "ready"   ? "🔵 Ready"   :
-                     p.status === "growing" ? "🌱 Growing" :
-                     p.status === "sold"    ? "📦 Sold"    :
+                    <span style={{
+                      width: 6, height: 6, borderRadius: "50%",
+                      background: p.status === "listed" ? "#16a34a" :
+                                  p.status === "ready" ? "#0284c7" :
+                                  p.status === "growing" ? "#d97706" :
+                                  p.status === "sold" ? "#64748b" : "#7c3aed"
+                    }} />
+                    {p.status === "listed"  ? "Listed"  :
+                     p.status === "ready"   ? "Ready"   :
+                     p.status === "growing" ? "Growing" :
+                     p.status === "sold"    ? "Sold"    :
                      p.status || "Unknown"}
                   </span>
                 </div>
                 <div className="prod-actions">
-                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => navigate(`/seller/products/${p._id}/edit`)}>✏️ Edit</button>
-                  <button className="btn-del" disabled={deleting === p._id} style={{ flex: 1, justifyContent: "center", fontSize: 12, padding: "8px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 700 }} onClick={() => deleteProduct(p._id)}>
-                    {deleting === p._id ? "⏳" : "🗑️ Delete"}
+                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 5 }} onClick={() => navigate(`/seller/products/${p._id}/edit`)}><Edit3 size={13} /> Edit</button>
+                  <button className="btn-del" disabled={deleting === p._id} style={{ flex: 1, justifyContent: "center", fontSize: 12, padding: "8px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 5 }} onClick={() => deleteProduct(p._id)}>
+                    {deleting === p._id ? <Loader2 size={13} className="animate-spin" /> : <><Trash2 size={13} /> Delete</>}
                   </button>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { MessageSquare, Plus, Send, Mail, MapPin, User, Wheat, Lightbulb, X } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -222,7 +222,9 @@ export default function UserInquiries() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Direct Communication</div>
-          <h1 className="pg-title">💬 Farmer Inquiries & Bulk Requests</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <MessageSquare size={26} color="#0ea5e9" /> Farmer Inquiries & Bulk Requests
+          </h1>
           <p className="pg-sub">Negotiate bulk prices, ask about farming practices, or request custom harvests.</p>
         </div>
         <button className="btn-cyan" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> New Bulk Inquiry</button>
@@ -247,7 +249,9 @@ export default function UserInquiries() {
                   {i.status}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: "#0369a1", fontWeight: 600, marginBottom: 3 }}>🌾 {i.crop} ({i.qty})</div>
+              <div style={{ fontSize: 12, color: "#0369a1", fontWeight: 600, marginBottom: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                <Wheat size={12} /> {i.crop} ({i.qty})
+              </div>
               <div style={{ fontSize: 11, color: "var(--text2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {i.lastMsg}
               </div>
@@ -262,11 +266,11 @@ export default function UserInquiries() {
             {/* Chat header */}
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(14,165,233,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a" }}>
-                  👨‍🌾 {activeInq.farmerName}
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 6 }}>
+                  <User size={18} color="#0ea5e9" /> {activeInq.farmerName}
                 </div>
-                <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>
-                  📍 {activeInq.location} · Product: <strong style={{ color: "#0369a1" }}>{activeInq.crop}</strong> ({activeInq.qty})
+                <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                  <MapPin size={12} /> {activeInq.location} · Product: <strong style={{ color: "#0369a1" }}>{activeInq.crop}</strong> ({activeInq.qty})
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -336,9 +340,9 @@ export default function UserInquiries() {
                 className="btn-cyan"
                 onClick={sendReply}
                 disabled={!newMsg.trim() || isTyping}
-                style={{ opacity: (!newMsg.trim() || isTyping) ? 0.5 : 1, flexShrink: 0, cursor: (!newMsg.trim() || isTyping) ? "not-allowed" : "pointer", padding: "11px 20px" }}
+                style={{ opacity: (!newMsg.trim() || isTyping) ? 0.5 : 1, flexShrink: 0, cursor: (!newMsg.trim() || isTyping) ? "not-allowed" : "pointer", padding: "11px 20px", display: "inline-flex", alignItems: "center", gap: 6 }}
               >
-                Send 🚀
+                Send <Send size={14} />
               </button>
             </div>
           </div>
@@ -354,10 +358,10 @@ export default function UserInquiries() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.78)", backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="card" style={{ maxWidth: 480, width: "100%", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 20px 40px rgba(0,0,0,0.12)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-                📩 Start New Farmer Inquiry
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+                <Mail size={18} color="#0ea5e9" /> Start New Farmer Inquiry
               </div>
-              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 22, cursor: "pointer" }}>✕</button>
+              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center" }}><X size={18} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -379,14 +383,14 @@ export default function UserInquiries() {
                 <label className="field-label">Your Opening Message</label>
                 <textarea className="field-input" rows={3} style={{ resize: "none" }} value={newForm.message} onChange={e => setNewForm({ ...newForm, message: e.target.value })} />
               </div>
-              <div style={{ fontSize: 12, color: "var(--text2)", background: "rgba(14,165,233,0.06)", padding: "8px 12px", borderRadius: 10, border: "1px solid #e2e8f0" }}>
-                💡 The farmer will be notified and typically responds within a few minutes.
+              <div style={{ fontSize: 12, color: "var(--text2)", background: "rgba(14,165,233,0.06)", padding: "8px 12px", borderRadius: 10, border: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: 6 }}>
+                <Lightbulb size={14} color="#0ea5e9" style={{ flexShrink: 0 }} /> The farmer will be notified and typically responds within a few minutes.
               </div>
             </div>
 
             <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
               <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn-cyan" style={{ flex: 2 }} onClick={createInquiry}>Send Inquiry →</button>
+              <button className="btn-cyan" style={{ flex: 2, justifyContent: "center" }} onClick={createInquiry}>Send Inquiry →</button>
             </div>
           </div>
         </div>

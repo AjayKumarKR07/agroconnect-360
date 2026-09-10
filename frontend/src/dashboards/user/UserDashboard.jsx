@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import {
   Package, Clock, CheckCircle2, IndianRupee,
-  ShoppingCart, TrendingUp, Heart, Bot, User, Zap, Lightbulb, Sprout
+  ShoppingCart, TrendingUp, Heart, Bot, User, Zap, Lightbulb, Sprout,
+  Carrot, Apple, Wheat, Flame, Milk, Egg, MapPin
 } from "lucide-react";
 
 const DS_USER = `
@@ -34,14 +35,23 @@ const DS_USER = `
   .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
   .feat-card{background:rgba(14,165,233,0.03);border:1px solid rgba(14,165,233,0.1);border-radius:14px;overflow:hidden;transition:all 0.2s;cursor:pointer;}
   .feat-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
-  .feat-ph{width:100%;height:130px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;font-size:40px;}
+  .feat-ph{width:100%;height:130px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;}
   .feat-img{width:100%;height:130px;object-fit:cover;}
   .ql-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
   .ql-link{text-decoration:none;padding:14px 12px;background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:14px;display:flex;align-items:center;gap:9px;transition:all 0.2s;}
   .ql-link:hover{background:rgba(14,165,233,0.09);border-color:rgba(14,165,233,0.2);}
 `;
 
-const catEmoji = (cat) => ({ vegetables:"🥬", fruits:"🍎", grains:"🌾", spices:"🌶️", dairy:"🥛", poultry:"🐔" })[cat] || "📦";
+const renderCatIcon = (cat) => {
+  const c = (cat || "").toLowerCase();
+  if (c.includes("vegetable") || c.includes("veggie")) return <Carrot size={36} color="#0ea5e9" />;
+  if (c.includes("fruit")) return <Apple size={36} color="#0ea5e9" />;
+  if (c.includes("grain") || c.includes("cereal")) return <Wheat size={36} color="#0ea5e9" />;
+  if (c.includes("spice")) return <Flame size={36} color="#0ea5e9" />;
+  if (c.includes("dairy")) return <Milk size={36} color="#0ea5e9" />;
+  if (c.includes("poultry") || c.includes("egg")) return <Egg size={36} color="#0ea5e9" />;
+  return <Package size={36} color="#0ea5e9" />;
+};
 
 export default function UserDashboard() {
   const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
@@ -107,14 +117,19 @@ export default function UserDashboard() {
 
   const statusBadge = (s) => {
     const map = {
-      pending:   { bg: "rgba(251,191,36,0.12)",  color: "#b45309", label: "⏳ Pending" },
-      confirmed: { bg: "rgba(14,165,233,0.12)",  color: "#0369a1", label: "✅ Confirmed" },
-      shipped:   { bg: "rgba(167,139,250,0.12)", color: "#7c3aed", label: "🚚 Shipped" },
-      delivered: { bg: "rgba(34,197,94,0.12)",   color: "#15803d", label: "📦 Delivered" },
-      cancelled: { bg: "rgba(239,68,68,0.12)",   color: "#dc2626", label: "🚫 Cancelled" },
+      pending:   { bg: "rgba(251,191,36,0.12)",  color: "#b45309", label: "Pending" },
+      confirmed: { bg: "rgba(14,165,233,0.12)",  color: "#0369a1", label: "Confirmed" },
+      shipped:   { bg: "rgba(167,139,250,0.12)", color: "#7c3aed", label: "Shipped" },
+      delivered: { bg: "rgba(34,197,94,0.12)",   color: "#15803d", label: "Delivered" },
+      cancelled: { bg: "rgba(239,68,68,0.12)",   color: "#dc2626", label: "Cancelled" },
     };
     const m = map[s] || { bg: "rgba(255,255,255,0.06)", color: "var(--text2)", label: s };
-    return <span style={{ padding: "3px 10px", borderRadius: 8, background: m.bg, color: m.color, fontSize: 12, fontWeight: 700 }}>{m.label}</span>;
+    return (
+      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 8, background: m.bg, color: m.color, fontSize: 12, fontWeight: 700 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: m.color }} />
+        {m.label}
+      </span>
+    );
   };
 
   const quickLinks = [
@@ -141,10 +156,10 @@ export default function UserDashboard() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Buyer Dashboard</div>
-          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Buyer"} 👋</h1>
+          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Buyer"}</h1>
           <p className="pg-sub">Your fresh produce marketplace — farm to your door.</p>
         </div>
-        <Link to="/user/browse" className="btn-cyan" id="buyer-browse-now">🛒 Shop Now</Link>
+        <Link to="/user/browse" className="btn-cyan" id="buyer-browse-now" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><ShoppingCart size={15} /> Shop Now</Link>
       </div>
 
       {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading dashboard…</span></div>}
@@ -179,7 +194,7 @@ export default function UserDashboard() {
                   <div className="empty-emoji"><ShoppingCart size={40} strokeWidth={1.5} color="#bae6fd" /></div>
                   <div className="empty-title">No orders yet</div>
                   <div className="empty-sub">Browse fresh produce from local farmers and place your first order.</div>
-                  <Link to="/user/browse" className="btn-cyan" style={{ marginTop: 8 }}>🛒 Start Shopping</Link>
+                  <Link to="/user/browse" className="btn-cyan" style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6 }}><ShoppingCart size={15} /> Start Shopping</Link>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -218,7 +233,7 @@ export default function UserDashboard() {
 
               {/* Tip box */}
               <div style={{ marginTop: 18, padding: "14px 16px", background: "rgba(14,165,233,0.06)", borderRadius: 12, border: "1px solid rgba(14,165,233,0.14)" }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 6 }}>💡 Buyer Tips</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 6 }}><Lightbulb size={14} /> Buyer Tips</div>
                 <ul style={{ fontSize: 12, color: "var(--text2)", paddingLeft: 16, lineHeight: 1.8, margin: 0 }}>
                   <li>Free delivery on orders above ₹500</li>
                   <li>Set price alerts to buy at the right time</li>
@@ -243,18 +258,18 @@ export default function UserDashboard() {
                   <div key={c._id} className="feat-card">
                     {c.image?.url
                       ? <img src={c.image.url} alt={c.name} className="feat-img" />
-                      : <div className="feat-ph">{catEmoji(c.category)}</div>
+                      : <div className="feat-ph">{renderCatIcon(c.category)}</div>
                     }
                     <div style={{ padding: "12px 14px" }}>
                       <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 14, marginBottom: 2 }}>{c.name}</div>
-                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 10 }}>
-                        📍 {c.location} · {c.quantity} {c.unit} avail.
+                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}>
+                        <MapPin size={11} style={{ flexShrink: 0 }} /> {c.location} · {c.quantity} {c.unit} avail.
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0ea5e9" }}>
                           ₹{c.price}<span style={{ fontSize: 10, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span>
                         </div>
-                        <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 5, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}>🌿 FRESH</span>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 7px", borderRadius: 5, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}><Sprout size={10} /> FRESH</span>
                       </div>
                       <button
                         onClick={() => addToCart(c)}
@@ -264,9 +279,14 @@ export default function UserDashboard() {
                           background: addedId === c._id ? "rgba(34,197,94,0.15)" : "linear-gradient(135deg,#0284c7,#0ea5e9)",
                           color: addedId === c._id ? "#4ade80" : "#fff",
                           transition: "all 0.2s",
+                          display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
                         }}
                       >
-                        {addedId === c._id ? "✅ Added!" : "🛒 Add to Cart"}
+                        {addedId === c._id ? (
+                          <><CheckCircle2 size={13} /> Added!</>
+                        ) : (
+                          <><ShoppingCart size={13} /> Add to Cart</>
+                        )}
                       </button>
                     </div>
                   </div>

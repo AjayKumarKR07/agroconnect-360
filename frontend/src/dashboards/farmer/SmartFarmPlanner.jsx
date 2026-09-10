@@ -1,7 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Ruler, MapPin, Thermometer, Sprout, BarChart3, Trophy } from "lucide-react";
+import {
+  Ruler, MapPin, Thermometer, Sprout, BarChart3, Trophy, Droplets, Wind,
+  Cloud, Gauge, CloudSun, CheckCircle2, AlertTriangle, AlertOctagon,
+  TrendingUp, TrendingDown, Coins, Bookmark, Download, RotateCcw,
+  RefreshCw, ClipboardList, Info, Bot, Cpu, Sparkles, Lightbulb
+} from "lucide-react";
 
 // ============================================================
 // HELPERS
@@ -21,14 +26,14 @@ const scoreBg = (s) =>
     ? "rgba(251,191,36,0.12)"
     : "rgba(239,68,68,0.12)";
 
-const RANKS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+const RANKS = ["#1", "#2", "#3", "#4", "#5"];
 const SIGNAL_STYLES = {
-  favorable: { bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.25)", color: "#15803d", icon: "🟢" },
-  neutral:   { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)", color: "#fde68a", icon: "🟡" },
-  unfavorable: { bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)", color: "#dc2626", icon: "🔴" },
+  favorable: { bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.25)", color: "#15803d", icon: CheckCircle2, iconColor: "#16a34a" },
+  neutral:   { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)", color: "#b45309", icon: AlertTriangle, iconColor: "#eab308" },
+  unfavorable: { bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)", color: "#dc2626", icon: AlertOctagon, iconColor: "#ef4444" },
 };
 
-const SUITABILITY_ICON = { Suitable: "✅", Moderate: "⚠️", Unfavorable: "❌" };
+const SUITABILITY_ICON = { Suitable: CheckCircle2, Moderate: AlertTriangle, Unfavorable: AlertOctagon };
 
 // ============================================================
 // EXTRA PAGE STYLES (extend DS)
@@ -124,18 +129,18 @@ function WeatherPanel({ weather }) {
   if (!weather || weather.unavailable) {
     return (
       <div className="card" style={{ marginBottom: 20 }}>
-        <div className="sfp-section-title">🌦️ Weather Analysis</div>
-        <div className="alert-warn">⚠️ {weather?.message || "Weather data unavailable. Please check your location name."}</div>
+        <div className="sfp-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><CloudSun size={18} color="#0284c7" /> Weather Analysis</div>
+        <div className="alert-warn" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {weather?.message || "Weather data unavailable. Please check your location name."}</div>
       </div>
     );
   }
-  const icon = SUITABILITY_ICON[weather.suitabilityLabel] || "🌤️";
+  const SuitabilityIcon = SUITABILITY_ICON[weather.suitabilityLabel] || CloudSun;
   return (
     <div className="card" style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
-        <div className="sfp-section-title" style={{ marginBottom: 0 }}>🌦️ Weather Analysis — {weather.city}</div>
+        <div className="sfp-section-title" style={{ marginBottom: 0, display: "flex", alignItems: "center", gap: 8 }}><CloudSun size={18} color="#0284c7" /> Weather Analysis — {weather.city}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", borderRadius: 12, background: scoreBg(weather.suitabilityScore), border: `1px solid ${scoreColor(weather.suitabilityScore)}33` }}>
-          <span style={{ fontSize: 22 }}>{icon}</span>
+          <span style={{ display: "flex", alignItems: "center" }}><SuitabilityIcon size={24} color={scoreColor(weather.suitabilityScore)} /></span>
           <div>
             <div style={{ fontSize: 11, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Suitability</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: scoreColor(weather.suitabilityScore), fontFamily: "'Space Grotesk',sans-serif" }}>
@@ -147,22 +152,22 @@ function WeatherPanel({ weather }) {
       </div>
       <div className="sfp-grid3" style={{ marginBottom: 16 }}>
         {[
-          { emoji: "🌡️", val: `${weather.temperature?.toFixed(1)}°C`, lbl: "Temperature" },
-          { emoji: "💧", val: `${weather.humidity}%`, lbl: "Humidity" },
-          { emoji: "💨", val: `${weather.windSpeed?.toFixed(1)} m/s`, lbl: "Wind Speed" },
-          { emoji: "☁️", val: weather.condition || "—", lbl: "Condition" },
-          { emoji: "🌡️", val: `${weather.feelsLike?.toFixed(1)}°C`, lbl: "Feels Like" },
-          { emoji: "🔵", val: `${weather.pressure} hPa`, lbl: "Pressure" },
-        ].map(({ emoji, val, lbl }) => (
+          { Icon: Thermometer, iconColor: "#dc2626", val: `${weather.temperature?.toFixed(1)}°C`, lbl: "Temperature" },
+          { Icon: Droplets,    iconColor: "#0369a1", val: `${weather.humidity}%`,                  lbl: "Humidity" },
+          { Icon: Wind,        iconColor: "#475569", val: `${weather.windSpeed?.toFixed(1)} m/s`,  lbl: "Wind Speed" },
+          { Icon: Cloud,       iconColor: "#64748b", val: weather.condition || "—",               lbl: "Condition" },
+          { Icon: Thermometer, iconColor: "#b45309", val: `${weather.feelsLike?.toFixed(1)}°C`,   lbl: "Feels Like" },
+          { Icon: Gauge,       iconColor: "#4f46e5", val: `${weather.pressure} hPa`,              lbl: "Pressure" },
+        ].map(({ Icon, iconColor, val, lbl }) => (
           <div key={lbl} className="sfp-weather-metric">
-            <div style={{ fontSize: 22, marginBottom: 6 }}>{emoji}</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 6, color: iconColor }}><Icon size={20} strokeWidth={1.75} /></div>
             <div className="sfp-weather-val">{val}</div>
             <div className="sfp-weather-lbl">{lbl}</div>
           </div>
         ))}
       </div>
       <div style={{ fontSize: 13, color: "var(--text2)", background: "var(--surface)", padding: "10px 14px", borderRadius: 10 }}>
-        📍 <strong style={{ color: "var(--text)" }}>{weather.description}</strong> — Weather data from OpenWeatherMap
+        <MapPin size={12} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} /><strong style={{ color: "var(--text)" }}>{weather.description}</strong> — Weather data from OpenWeatherMap
       </div>
     </div>
   );
@@ -172,22 +177,22 @@ function MarketPanel({ market, district }) {
   if (!market || market.unavailable) {
     return (
       <div className="card" style={{ marginBottom: 20 }}>
-        <div className="sfp-section-title">📊 Market Intelligence</div>
-        <div className="alert-warn">⚠️ {market?.message || "Market data is temporarily unavailable for this district. Please try again."}</div>
+        <div className="sfp-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><BarChart3 size={18} color="#0369a1" /> Market Intelligence</div>
+        <div className="alert-warn" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {market?.message || "Market data is temporarily unavailable for this district. Please try again."}</div>
       </div>
     );
   }
   return (
     <div className="card" style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 8 }}>
-        <div className="sfp-section-title" style={{ marginBottom: 0 }}>📊 Market Intelligence — {district}</div>
+        <div className="sfp-section-title" style={{ marginBottom: 0, display: "flex", alignItems: "center", gap: 8 }}><BarChart3 size={18} color="#0369a1" /> Market Intelligence — {district}</div>
         <span className="badge badge-blue">{market.totalRecords} records</span>
       </div>
 
       <div className="sfp-grid2" style={{ marginBottom: 20 }}>
         {/* Highest Price */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#15803d", marginBottom: 12 }}>🔥 Top Value Crops</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#15803d", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}><TrendingUp size={15} color="#16a34a" /> Top Value Crops</div>
           {market.highest?.slice(0, 5).map((m, i) => (
             <div key={i} className="sfp-market-row">
               <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600 }}>{m.commodity}</span>
@@ -200,7 +205,7 @@ function MarketPanel({ market, district }) {
         </div>
         {/* Lowest Price */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#dc2626", marginBottom: 12 }}>⚠️ Low Trend Crops</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#dc2626", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}><TrendingDown size={15} color="#dc2626" /> Low Trend Crops</div>
           {market.lowest?.slice(0, 5).map((m, i) => (
             <div key={i} className="sfp-market-row">
               <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600 }}>{m.commodity}</span>
@@ -222,7 +227,7 @@ function MarketPanel({ market, district }) {
 function RecommendationsTable({ recommendations, selectedCrop, onSelect }) {
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="sfp-section-title">🌾 Crop Recommendation Engine — Top 5</div>
+      <div className="sfp-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><Sprout size={18} color="#16a34a" /> Crop Recommendation Engine — Top 5</div>
       <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 16 }}>
         Scored using: Agricultural Suitability 30% · Weather 25% · Market Trend 20% · Profit 15% · Water 10%
       </div>
@@ -245,7 +250,7 @@ function RecommendationsTable({ recommendations, selectedCrop, onSelect }) {
           style={{ cursor: "pointer", background: selectedCrop?.crop === r.crop ? "rgba(34,197,94,0.06)" : undefined }}
           onClick={() => onSelect(r.crop === selectedCrop?.crop ? null : r)}
         >
-          <span style={{ fontSize: 18 }}>{RANKS[r.rank - 1]}</span>
+          <span style={{ fontSize: 13, fontWeight: 800, color: r.rank === 1 ? "#15803d" : "var(--text2)" }}>{RANKS[r.rank - 1]}</span>
           <div>
             <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{r.crop}</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>{r.duration}</div>
@@ -270,8 +275,8 @@ function RecommendationsTable({ recommendations, selectedCrop, onSelect }) {
           </span>
         </div>
       ))}
-      <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 12 }}>
-        💡 Click any row to see farming requirements and profit breakdown.
+      <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 12, display: "flex", alignItems: "center", gap: 4 }}>
+        <Lightbulb size={12} color="#ca8a04" /> Click any row to see farming requirements and profit breakdown.
       </div>
     </div>
   );
@@ -293,7 +298,7 @@ function CropDetailPanel({ rec }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 16, marginBottom: 20 }}>
       {/* Farming Requirements */}
       <div className="card">
-        <div className="sfp-section-title">🌱 Farming Requirements — {rec.crop}</div>
+        <div className="sfp-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><Sprout size={18} color="#16a34a" /> Farming Requirements — {rec.crop}</div>
         {reqItems.map(({ label, val }) => (
           <div key={label} className="sfp-req-item">
             <span className="sfp-req-label">{label}</span>
@@ -313,7 +318,7 @@ function CropDetailPanel({ rec }) {
 
       {/* Profit Calculator */}
       <div className="card">
-        <div className="sfp-section-title">💰 Expected Profit — {rec.crop}</div>
+        <div className="sfp-section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><Coins size={18} color="#16a34a" /> Expected Profit — {rec.crop}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
           <div className="sfp-profit-card">
             <div className="sfp-profit-val">
@@ -344,7 +349,13 @@ function CropDetailPanel({ rec }) {
               {fin.estimatedProfit != null ? `₹${fmt(Math.abs(fin.estimatedProfit))}` : "Data unavailable"}
             </div>
             <div className="sfp-profit-lbl">
-              {fin.estimatedProfit != null ? (fin.estimatedProfit >= 0 ? "📈 Estimated Profit" : "📉 Estimated Loss") : "Market price unavailable for calculation"}
+              {fin.estimatedProfit != null ? (
+                fin.estimatedProfit >= 0 ? (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><TrendingUp size={13} color="#16a34a" /> Estimated Profit</span>
+                ) : (
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><TrendingDown size={13} color="#dc2626" /> Estimated Loss</span>
+                )
+              ) : "Market price unavailable for calculation"}
             </div>
           </div>
         </div>
@@ -527,8 +538,8 @@ export default function SmartFarmPlanner() {
     });
 
     const rankLabel = ["1st", "2nd", "3rd", "4th", "5th"];
-    const trendDot  = (t) => t === "Rising" ? "🟢" : t === "Stable" ? "🟡" : "🔴";
-    const riskDot   = (r) => r === "Low"    ? "🟢" : r === "Medium" ? "🟡" : "🔴";
+    const trendDot  = (t) => `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${t === "Rising" ? "#16a34a" : t === "Stable" ? "#ca8a04" : "#dc2626"};margin-right:4px;"></span>`;
+    const riskDot   = (r) => `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r === "Low" ? "#16a34a" : r === "Medium" ? "#ca8a04" : "#dc2626"};margin-right:4px;"></span>`;
     const scoreBar  = (score, max) => {
       const pct = Math.min(100, Math.round((score / max) * 100));
       const col = pct >= 75 ? "#22c55e" : pct >= 50 ? "#f59e0b" : "#ef4444";
@@ -559,7 +570,7 @@ export default function SmartFarmPlanner() {
     padding-bottom:20px;border-bottom:3px solid #16a34a;}
   .brand{display:flex;align-items:center;gap:12px;}
   .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#16a34a,#059669);
-    display:flex;align-items:center;justify-content:center;font-size:22px;}
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:800;}
   .brand-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;color:#166534;}
   .brand-sub{font-size:11px;color:#6b7280;margin-top:2px;}
   .report-info{text-align:right;font-size:12px;color:#6b7280;}
@@ -587,36 +598,36 @@ export default function SmartFarmPlanner() {
   th{text-align:left;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;
     letter-spacing:.04em;padding:8px 10px;border-bottom:2px solid #e5e7eb;background:#f9fafb;}
   td{padding:9px 10px;border-bottom:1px solid #f3f4f6;vertical-align:top;}
-  tr:nth-child(even) td{background:#f9fafb;}
-  .score-chip{display:inline-block;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:700;}
-  .green{background:#dcfce7;color:#166534;}
-  .amber{background:#fef9c3;color:#854d0e;}
-  .red{background:#fee2e2;color:#991b1b;}
-  /* Req table */
-  .req-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f3f4f6;}
-  .req-lbl{font-size:12px;color:#6b7280;min-width:160px;flex-shrink:0;}
-  .req-val{font-size:12px;font-weight:600;color:#111827;}
-  /* Profit grid */
-  .profit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px;}
-  .profit-card{border:1px solid #e5e7eb;border-radius:8px;padding:14px;text-align:center;}
-  .profit-card .val{font-size:17px;font-weight:800;color:#1f2937;font-family:'Space Grotesk',sans-serif;}
-  .profit-card .lbl{font-size:10px;color:#6b7280;margin-top:3px;}
-  .profit-highlight{grid-column:span 2;background:#f0fdf4;border-color:#86efac;}
-  .profit-highlight .val{color:#15803d;font-size:20px;}
-  /* Sell box */
-  .sell-box{border-radius:10px;padding:16px;margin-bottom:24px;}
-  .sell-box.favorable{background:#f0fdf4;border:1px solid #86efac;}
-  .sell-box.neutral{background:#fefce8;border:1px solid #fde68a;}
-  /* AI */
-  .ai-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;
-    font-size:13px;line-height:1.8;color:#374151;white-space:pre-wrap;}
+  tr:hover td{background:#f9fafb;}
+  .score-chip{display:inline-block;padding:2px 8px;border-radius:12px;font-weight:700;font-size:11px;}
+  .score-chip.green{background:#dcfce7;color:#15803d;}
+  .score-chip.amber{background:#fef9c3;color:#a16207;}
+  .score-chip.red{background:#fee2e2;color:#b91c1c;}
+  /* Requirements */
+  .req-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f3f4f6;}
+  .req-lbl{color:#6b7280;}
+  .req-val{font-weight:600;color:#111827;}
+  /* Profit */
+  .profit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+  .profit-card{border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;}
+  .profit-card .val{font-size:16px;font-weight:800;color:#111827;}
+  .profit-card .lbl{font-size:10px;color:#6b7280;margin-top:2px;}
+  .profit-highlight{grid-column:span 2;background:#f0fdf4;border-color:#bbf7d0;}
+  .profit-highlight .val{font-size:22px;color:#15803d;}
   /* Market rows */
-  .mkt-row{display:flex;justify-content:space-between;align-items:center;
-    padding:8px 10px;border-radius:6px;margin-bottom:6px;background:#f9fafb;}
-  .mkt-price{font-size:13px;font-weight:800;}
+  .mkt-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f3f4f6;font-size:12px;}
+  .mkt-price{font-weight:700;}
+  /* Selling box */
+  .sell-box{border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+  .sell-box.favorable{background:#f0fdf4;border:1px solid #bbf7d0;}
+  .sell-box.neutral{background:#fffbeb;border:1px solid #fde68a;}
+  .sell-box.unfavorable{background:#fef2f2;border:1px solid #fecaca;}
+  /* AI box */
+  .ai-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;
+    line-height:1.7;color:#334155;white-space:pre-wrap;}
   /* Disclaimer */
-  .disclaimer{margin-top:28px;padding:14px 16px;border-radius:8px;background:#f3f4f6;
-    font-size:11px;color:#6b7280;line-height:1.7;}
+  .disclaimer{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px 18px;
+    font-size:10px;color:#6b7280;line-height:1.6;margin-top:28px;}
   /* Weights table */
   .weights{display:flex;gap:14px;flex-wrap:wrap;padding:10px 0;}
   .weight-item{font-size:11px;color:#6b7280;}
@@ -635,7 +646,7 @@ export default function SmartFarmPlanner() {
   <!-- HEADER -->
   <div class="header">
     <div class="brand">
-      <div class="logo">🌱</div>
+      <div class="logo">AC</div>
       <div>
         <div class="brand-name">AgroConnect 360</div>
         <div class="brand-sub">Farmer Portal — Smart Farm Planner</div>
@@ -665,7 +676,7 @@ export default function SmartFarmPlanner() {
   <div class="sum-grid">
     <div class="sum-card">
       <div class="title">Top Recommended Crop</div>
-      <div class="val">🥇 ${top?.crop || "—"}</div>
+      <div class="val">#1 ${top?.crop || "—"}</div>
       <div class="sub">Score: ${top?.totalScore}/100 · Risk: ${top?.risk}</div>
     </div>
     <div class="sum-card">
@@ -675,16 +686,16 @@ export default function SmartFarmPlanner() {
     </div>
     <div class="sum-card">
       <div class="title">Best Market</div>
-      <div class="val">🏆 ${plan.bestMarket?.market || "—"}</div>
+      <div class="val">${plan.bestMarket?.market || "—"}</div>
       <div class="sub">${plan.bestMarket ? `₹${plan.bestMarket.price?.toLocaleString("en-IN")}/q · ${top?.crop}` : "Data unavailable"}</div>
     </div>
   </div>
 
   <!-- WEATHER ANALYSIS -->
   <div class="section">
-    <h2>🌦️ Weather Analysis${w?.city ? " — " + w.city : ""}</h2>
+    <h2>Weather Analysis${w?.city ? " — " + w.city : ""}</h2>
     ${w?.unavailable
-      ? `<p style="color:#b45309;background:#fef9c3;padding:10px 14px;border-radius:8px;border:1px solid #fde68a;">⚠️ ${w.message}</p>`
+      ? `<p style="color:#b45309;background:#fef9c3;padding:10px 14px;border-radius:8px;border:1px solid #fde68a;">Note: ${w.message}</p>`
       : `<div class="wx-grid">
           <div class="wx-cell"><div class="val">${w.temperature?.toFixed(1)}°C</div><div class="lbl">Temperature</div></div>
           <div class="wx-cell"><div class="val">${w.humidity}%</div><div class="lbl">Humidity</div></div>
@@ -698,19 +709,19 @@ export default function SmartFarmPlanner() {
 
   <!-- MARKET INTELLIGENCE -->
   <div class="section">
-    <h2>📊 Market Intelligence — ${fd.district}</h2>
+    <h2>Market Intelligence — ${fd.district}</h2>
     ${m?.unavailable
-      ? `<p style="color:#b45309;background:#fef9c3;padding:10px 14px;border-radius:8px;border:1px solid #fde68a;">⚠️ ${m.message}</p>`
+      ? `<p style="color:#b45309;background:#fef9c3;padding:10px 14px;border-radius:8px;border:1px solid #fde68a;">Note: ${m.message}</p>`
       : `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
           <div>
-            <h3>🔥 Top Value Crops</h3>
+            <h3>Top Value Crops</h3>
             ${(m.highest?.slice(0, 6) || []).map(item =>
               `<div class="mkt-row"><span>${item.commodity}${item.variety ? " ("+item.variety+")" : ""}<br/><span style="font-size:10px;color:#6b7280;">${item.market}</span></span>
                <span class="mkt-price" style="color:#15803d;">₹${item.maxPrice?.toLocaleString("en-IN")}/q</span></div>`
             ).join("")}
           </div>
           <div>
-            <h3>⚠️ Low Trend Crops</h3>
+            <h3>Low Trend Crops</h3>
             ${(m.lowest?.slice(0, 6) || []).map(item =>
               `<div class="mkt-row"><span>${item.commodity}${item.variety ? " ("+item.variety+")" : ""}<br/><span style="font-size:10px;color:#6b7280;">${item.market}</span></span>
                <span class="mkt-price" style="color:#991b1b;">₹${item.minPrice?.toLocaleString("en-IN")}/q</span></div>`
@@ -722,7 +733,7 @@ export default function SmartFarmPlanner() {
 
   <!-- CROP RECOMMENDATIONS -->
   <div class="section">
-    <h2>🌾 Crop Recommendations — Top 5</h2>
+    <h2>Crop Recommendations — Top 5</h2>
     <p style="font-size:11px;color:#6b7280;margin-bottom:12px;">Scoring weights: Agricultural Suitability 30% · Weather 25% · Market 20% · Profit 15% · Water 10%</p>
     <table>
       <thead><tr>
@@ -754,7 +765,7 @@ export default function SmartFarmPlanner() {
   <!-- TOP CROP DETAILS -->
   ${top ? `
   <div class="section">
-    <h2>🌱 Farming Requirements — ${top.crop}</h2>
+    <h2>Farming Requirements — ${top.crop}</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
       <div>
         ${[
@@ -784,7 +795,7 @@ export default function SmartFarmPlanner() {
 
   <!-- PROFIT CALCULATOR -->
   <div class="section">
-    <h2>💰 Profit Calculator — ${top.crop}</h2>
+    <h2>Profit Calculator — ${top.crop}</h2>
     <div class="profit-grid">
       <div class="profit-card">
         <div class="val">${top.yield.total} quintals</div>
@@ -813,18 +824,18 @@ export default function SmartFarmPlanner() {
   <!-- SELLING RECOMMENDATION -->
   ${sell ? `
   <div class="section">
-    <h2>📈 Smart Selling Recommendation</h2>
+    <h2>Smart Selling Recommendation</h2>
     <div class="sell-box ${sell.signal}">
-      <p style="font-size:14px;font-weight:700;color:#166534;margin-bottom:8px;">${sell.signal === "favorable" ? "🟢" : "🟡"} ${sell.headline}</p>
+      <p style="font-size:14px;font-weight:700;color:#166534;margin-bottom:8px;">${sell.headline}</p>
       <p style="font-size:13px;color:#374151;margin-bottom:10px;">${sell.details}</p>
-      <p style="font-size:11px;color:#6b7280;font-style:italic;">⚠️ ${sell.disclaimer}</p>
+      <p style="font-size:11px;color:#6b7280;font-style:italic;">Note: ${sell.disclaimer}</p>
     </div>
   </div>` : ""}
 
   <!-- AI EXPLANATION -->
   ${plan.aiExplanation ? `
   <div class="section">
-    <h2>🤖 AI Explanation</h2>
+    <h2>AI Explanation</h2>
     <p style="font-size:11px;color:#6b7280;margin-bottom:10px;">Powered by Groq (Llama 3.3 70B) · Based on actual calculated data above</p>
     <div class="ai-box">${plan.aiExplanation}</div>
   </div>` : ""}
@@ -876,10 +887,12 @@ export default function SmartFarmPlanner() {
         {plan ? (
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {planSaved ? (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 30, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontSize: 13, fontWeight: 700 }}>✅ Plan Saved</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 30, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontSize: 13, fontWeight: 700 }}>
+                <CheckCircle2 size={14} /> Plan Saved
+              </span>
             ) : (
-              <button className="btn-green" onClick={handleSavePlan} disabled={planSaving} id="sfp-save-plan-btn">
-                {planSaving ? "💾 Saving…" : "💾 Save Farm Plan"}
+              <button className="btn-green" onClick={handleSavePlan} disabled={planSaving} id="sfp-save-plan-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                {planSaving ? <><RefreshCw size={14} className="animate-spin" /> Saving…</> : <><Bookmark size={14} /> Save Farm Plan</>}
               </button>
             )}
             <button
@@ -888,22 +901,23 @@ export default function SmartFarmPlanner() {
               id="sfp-download-report-btn"
               style={{ display: "flex", alignItems: "center", gap: 8 }}
             >
-              📄 Download Report
+              <Download size={14} /> Download Report
             </button>
             <button
               className="btn-ghost"
               onClick={() => { setPlan(null); setSelectedCrop(null); setError(""); setPlanSaved(false); setPlanSaveError(""); }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              🔄 New Plan
+              <RotateCcw size={14} /> New Plan
             </button>
           </div>
         ) : (
-          <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} id="sfp-use-my-farm-btn" style={{ color: "#15803d", borderColor: "rgba(34,197,94,0.3)" }}>
-            {farmLoading ? "⏳ Loading…" : farmLoaded ? "✅ Farm Details Loaded" : "🌾 Use My Farm Details"}
+          <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} id="sfp-use-my-farm-btn" style={{ color: "#15803d", borderColor: "rgba(34,197,94,0.3)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {farmLoading ? <><RefreshCw size={14} className="animate-spin" /> Loading…</> : farmLoaded ? <><CheckCircle2 size={14} /> Farm Details Loaded</> : <><Sprout size={14} /> Use My Farm Details</>}
           </button>
         )}
       </div>
-      {planSaveError && <div className="alert-error" style={{ marginBottom: 16 }}>⚠️ {planSaveError}</div>}
+      {planSaveError && <div className="alert-error" style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {planSaveError}</div>}
 
       {/* ── SUMMARY CARDS (after plan) ────────────────────────── */}
       {plan && topRec && (
@@ -930,17 +944,19 @@ export default function SmartFarmPlanner() {
       {!plan && (
         <div className="card" style={{ marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 10 }}>
-            <div className="sfp-section-title" style={{ marginBottom: 0 }}>🗂️ Farm Planning Details</div>
-            <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} style={{ fontSize: 12, padding: "7px 14px", color: "#15803d", borderColor: "rgba(34,197,94,0.3)" }}>
-              {farmLoading ? "⏳ Loading…" : farmLoaded ? "✅ Farm Loaded" : "🌾 Use My Farm Details"}
+            <div className="sfp-section-title" style={{ marginBottom: 0 }}>
+              <ClipboardList size={18} color="#16a34a" /> Farm Planning Details
+            </div>
+            <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} style={{ fontSize: 12, padding: "7px 14px", color: "#15803d", borderColor: "rgba(34,197,94,0.3)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              {farmLoading ? <><RefreshCw size={12} className="animate-spin" /> Loading…</> : farmLoaded ? <><CheckCircle2 size={12} /> Farm Loaded</> : <><Sprout size={12} /> Use My Farm Details</>}
             </button>
           </div>
-          {farmLoaded && <div style={{ fontSize: 12, color: "#15803d", marginBottom: 12 }}>✅ Farm details auto-filled from My Farm profile. You can adjust any field below.</div>}
+          {farmLoaded && <div style={{ fontSize: 12, color: "#15803d", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={14} /> Farm details auto-filled from My Farm profile. You can adjust any field below.</div>}
           <p className="card-sub" style={{ marginBottom: 24 }}>
             Enter your farm details to generate a personalised crop recommendation.
           </p>
 
-          {error && <div className="alert-error">⚠️ {error}</div>}
+          {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="sfp-form-grid">
@@ -1081,8 +1097,9 @@ export default function SmartFarmPlanner() {
             </div>
 
             {/* Example hint */}
-            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.12)", fontSize: 13, color: "var(--text2)", marginBottom: 24 }}>
-              💡 <strong style={{ color: "#15803d" }}>Example:</strong> State: Karnataka · District: Kolar · Area: 1 Acre · Soil: Loamy · Irrigation: Available · Season: Current Season
+            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.12)", fontSize: 13, color: "var(--text2)", marginBottom: 24, display: "flex", alignItems: "center", gap: 8 }}>
+              <Lightbulb size={16} color="#15803d" style={{ flexShrink: 0 }} />
+              <span><strong style={{ color: "#15803d" }}>Example:</strong> State: Karnataka · District: Kolar · Area: 1 Acre · Soil: Loamy · Irrigation: Available · Season: Current Season</span>
             </div>
 
             <button
@@ -1098,7 +1115,9 @@ export default function SmartFarmPlanner() {
                   Generating Smart Farm Plan…
                 </>
               ) : (
-                "🌾 Generate Smart Farm Plan"
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  <Sparkles size={16} /> Generate Smart Farm Plan
+                </span>
               )}
             </button>
           </form>
@@ -1122,7 +1141,9 @@ export default function SmartFarmPlanner() {
 
       {/* ── ERROR ─────────────────────────────────────────────── */}
       {error && !submitting && plan === null && (
-        <div className="alert-error">⚠️ {error}</div>
+        <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <AlertTriangle size={16} /> {error}
+        </div>
       )}
 
       {/* ── PLAN RESULTS ──────────────────────────────────────── */}
@@ -1147,9 +1168,13 @@ export default function SmartFarmPlanner() {
           {/* Best Market Comparison */}
           {plan.bestMarket && (
             <div className="card" style={{ marginBottom: 20 }}>
-              <div className="sfp-section-title">🏆 Best Available Market — {plan.bestMarket.crop}</div>
+              <div className="sfp-section-title">
+                <Trophy size={18} color="#b45309" /> Best Available Market — {plan.bestMarket.crop}
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "16px 20px", borderRadius: 14, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 32 }}>🏆</span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 48, height: 48, borderRadius: 12, background: "rgba(180,83,9,0.12)", color: "#b45309" }}>
+                  <Trophy size={28} />
+                </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", fontFamily: "'Space Grotesk',sans-serif" }}>
                     {plan.bestMarket.market}
@@ -1179,7 +1204,7 @@ export default function SmartFarmPlanner() {
           {plan.sellingRecommendation && (
             <div className="card" style={{ marginBottom: 20, background: selStyle.bg, border: `1px solid ${selStyle.border}` }}>
               <div className="sfp-section-title" style={{ color: selStyle.color }}>
-                {selStyle.icon} Smart Selling Recommendation
+                {selStyle.icon && <selStyle.icon size={18} color={selStyle.iconColor} />} Smart Selling Recommendation
               </div>
               <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 10 }}>
                 {plan.sellingRecommendation.headline}
@@ -1187,28 +1212,32 @@ export default function SmartFarmPlanner() {
               <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7, marginBottom: 12 }}>
                 {plan.sellingRecommendation.details}
               </div>
-              <div style={{ fontSize: 12, color: "var(--text2)", fontStyle: "italic" }}>
-                ⚠️ {plan.sellingRecommendation.disclaimer}
+              <div style={{ fontSize: 12, color: "var(--text2)", fontStyle: "italic", display: "flex", alignItems: "center", gap: 6 }}>
+                <Info size={14} /> {plan.sellingRecommendation.disclaimer}
               </div>
             </div>
           )}
 
           {/* AI Explanation */}
           <div className="card" style={{ marginBottom: 20 }}>
-            <div className="sfp-section-title">🤖 AI Explanation — {topRec?.crop}</div>
+            <div className="sfp-section-title">
+              <Bot size={18} color="#16a34a" /> AI Explanation — {topRec?.crop}
+            </div>
             <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 16 }}>
               Powered by Groq (Llama 3.3 70B) · Explanation based on actual calculated data above
             </div>
             {typeof plan.aiExplanation === "string" && plan.aiExplanation ? (
               <div className="sfp-ai-text">{plan.aiExplanation}</div>
             ) : (
-              <div className="alert-warn">⚠️ AI explanation is temporarily unavailable. The recommendation data above is calculated from real market and weather data.</div>
+              <div className="alert-warn" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <AlertTriangle size={16} /> AI explanation is temporarily unavailable. The recommendation data above is calculated from real market and weather data.
+              </div>
             )}
           </div>
 
           {/* Engine Info */}
-          <div style={{ padding: "12px 16px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 12, color: "var(--text2)", marginBottom: 20 }}>
-            ⚙️ {plan.meta?.engine} · Generated: {new Date(plan.meta?.generatedAt).toLocaleString("en-IN")} ·{" "}
+          <div style={{ padding: "12px 16px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 12, color: "var(--text2)", marginBottom: 20, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Cpu size={14} /> {plan.meta?.engine}</span> · Generated: {new Date(plan.meta?.generatedAt).toLocaleString("en-IN")} ·{" "}
             <span title="Weights: Agri 30% · Weather 25% · Market 20% · Profit 15% · Water 10%">
               Weights: Agri {(plan.meta?.weights?.agriculturalSuitability * 100)}% · Weather {(plan.meta?.weights?.weatherSuitability * 100)}% · Market {(plan.meta?.weights?.marketTrend * 100)}% · Profit {(plan.meta?.weights?.expectedProfit * 100)}% · Water {(plan.meta?.weights?.waterRequirement * 100)}%
             </span>

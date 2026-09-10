@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+import { useState } from "react";
+import { Bell, TrendingDown, Plus, Trash2, Radio, Sprout, Tag, X } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -20,9 +21,9 @@ const INITIAL_ALERTS = [
 ];
 
 const NOTIFS = [
-  { id: "n-1", emoji: "📉", title: "Price Drop Alert!", text: "Red Onions dropped from ₹25/kg to ₹22/kg in Nashik.", time: "10 mins ago", unread: true },
-  { id: "n-2", emoji: "🌿", title: "Fresh Harvest Arrival", text: "Ramesh Patil just listed 500kg fresh Tomatoes.", time: "1 hour ago", unread: true },
-  { id: "n-3", emoji: "🎉", title: "Special Offer", text: "Free shipping on orders above ₹500 today!", time: "4 hours ago", unread: false },
+  { id: "n-1", icon: "trending-down", title: "Price Drop Alert!", text: "Red Onions dropped from ₹25/kg to ₹22/kg in Nashik.", time: "10 mins ago", unread: true },
+  { id: "n-2", icon: "sprout", title: "Fresh Harvest Arrival", text: "Ramesh Patil just listed 500kg fresh Tomatoes.", time: "1 hour ago", unread: true },
+  { id: "n-3", icon: "tag", title: "Special Offer", text: "Free shipping on orders above ₹500 today!", time: "4 hours ago", unread: false },
 ];
 
 export default function UserAlerts() {
@@ -30,6 +31,15 @@ export default function UserAlerts() {
   const [notifs, setNotifs] = useState(NOTIFS);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ crop: "Fresh Tomatoes", targetPrice: 25, unit: "kg" });
+
+  const renderNotifIcon = (icon) => {
+    switch (icon) {
+      case "trending-down": return <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(14,165,233,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><TrendingDown size={18} color="#0ea5e9" /></div>;
+      case "sprout": return <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(34,197,94,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Sprout size={18} color="#22c55e" /></div>;
+      case "tag": return <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(234,179,8,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Tag size={18} color="#eab308" /></div>;
+      default: return <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(14,165,233,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Bell size={18} color="#0ea5e9" /></div>;
+    }
+  };
 
   const toggleAlert = (id) => {
     const updated = alerts.map(a => a.id === id ? { ...a, active: !a.active } : a);
@@ -68,11 +78,13 @@ export default function UserAlerts() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Smart Notifications</div>
-          <h1 className="pg-title">🔔 Price Drop & Harvest Alerts</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Bell size={26} color="#0ea5e9" /> Price Drop & Harvest Alerts
+          </h1>
           <p className="pg-sub">Set automated price triggers and receive fresh harvest updates from local farms.</p>
         </div>
-        <button className="btn-cyan" onClick={() => setShowModal(true)}>
-          ➕ Set Price Alert
+        <button className="btn-cyan" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Plus size={16} /> Set Price Alert
         </button>
       </div>
 
@@ -80,8 +92,8 @@ export default function UserAlerts() {
         {/* Left column: Price Trackers */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-              📉 Active Price Trackers ({alerts.length})
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+              <TrendingDown size={18} color="#0ea5e9" /> Active Price Trackers ({alerts.length})
             </div>
           </div>
 
@@ -99,8 +111,8 @@ export default function UserAlerts() {
                     style={{ padding: "5px 12px", borderRadius: 8, border: `1px solid ${a.active ? "rgba(34,197,94,0.3)" : "rgba(148,163,184,0.3)"}`, background: a.active ? "rgba(34,197,94,0.12)" : "rgba(148,163,184,0.1)", color: a.active ? "#4ade80" : "#94a3b8", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
                     {a.active ? "ON" : "OFF"}
                   </button>
-                  <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: "#dc2626", cursor: "pointer", fontSize: 14 }}>
-                    🗑️
+                  <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: "#dc2626", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }} title="Remove alert">
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>
@@ -111,16 +123,16 @@ export default function UserAlerts() {
         {/* Right column: Recent Activity Feed */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-              📣 Market Feed & Activity
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+              <Radio size={18} color="#0ea5e9" /> Market Feed & Activity
             </div>
             <button className="btn-ghost" onClick={markAllRead}>Mark All Read</button>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {notifs.map(n => (
-              <div key={n.id} style={{ padding: "14px 16px", borderRadius: 14, background: n.unread ? "rgba(14,165,233,0.08)" : "rgba(14,165,233,0.02)", border: `1px solid ${n.unread ? "rgba(14,165,233,0.2)" : "rgba(14,165,233,0.06)"}`, display: "flex", gap: 12 }}>
-                <span style={{ fontSize: 24, flexShrink: 0 }}>{n.emoji}</span>
+              <div key={n.id} style={{ padding: "14px 16px", borderRadius: 14, background: n.unread ? "rgba(14,165,233,0.08)" : "rgba(14,165,233,0.02)", border: `1px solid ${n.unread ? "rgba(14,165,233,0.2)" : "rgba(14,165,233,0.06)"}`, display: "flex", gap: 12, alignItems: "center" }}>
+                {renderNotifIcon(n.icon)}
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
                     <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{n.title}</span>
@@ -139,10 +151,10 @@ export default function UserAlerts() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="card" style={{ maxWidth: 420, width: "100%", background: "#041a1f", border: "1px solid rgba(14,165,233,0.3)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-                🔔 Create Price Alert
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+                <Bell size={18} color="#0ea5e9" /> Create Price Alert
               </div>
-              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 20, cursor: "pointer" }}>✕</button>
+              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center" }}><X size={18} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -168,7 +180,7 @@ export default function UserAlerts() {
 
             <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
               <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn-cyan" style={{ flex: 2 }} onClick={addAlert}>Create Alert →</button>
+              <button className="btn-cyan" style={{ flex: 2, justifyContent: "center" }} onClick={addAlert}>Create Alert →</button>
             </div>
           </div>
         </div>

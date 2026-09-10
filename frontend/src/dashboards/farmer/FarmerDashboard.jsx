@@ -4,7 +4,10 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 import {
   Sprout, Package, IndianRupee, Wheat, AlertTriangle, Bell,
-  RefreshCw, Plus, Clock, BarChart3, AlertCircle
+  RefreshCw, Plus, Clock, BarChart3, AlertCircle,
+  Globe2, Microscope, TrendingUp, CloudSun, Bot, Home, TrendingDown,
+  Camera, Lightbulb, MapPin, CheckCircle2, Settings, Truck,
+  XCircle, Ban, Wrench, Trophy, Leaf, User, Rocket
 } from "lucide-react";
 
 /* ─── Extra styles ────────────────────────────────────────────────────── */
@@ -172,7 +175,7 @@ function Skel({ h = 54 }) {
 function SectionError({ msg, onRetry }) {
   return (
     <div style={{ padding: "12px 16px", borderRadius: 10, background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-      <span>⚠️ {msg}</span>
+      <span><AlertTriangle size={13} strokeWidth={2} style={{ marginRight: 5, verticalAlign: "middle" }} />{msg}</span>
       {onRetry && (
         <button onClick={onRetry} style={{ background: "none", border: "1px solid #fecaca", color: "#dc2626", borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>
           Retry
@@ -330,13 +333,13 @@ export default function FarmerDashboard() {
       const ts = o.updatedAt || o.createdAt;
       if (!ts) return;
       const map = {
-        pending:    { icon: "📦", color: "#b45309", text: `Order received: ${o.cropName || "Crop"}` },
-        accepted:   { icon: "✅", color: "#16a34a", text: `Order accepted: ${o.cropName || "Crop"}` },
-        processing: { icon: "⚙️", color: "#7c3aed", text: `Order processing: ${o.cropName || "Crop"}` },
-        shipped:    { icon: "🚚", color: "#0369a1", text: `Order shipped: ${o.cropName || "Crop"}` },
-        delivered:  { icon: "🏆", color: "#16a34a", text: `Delivered: ${o.cropName || "Crop"} to ${o.buyerName || "buyer"}` },
-        cancelled:  { icon: "❌", color: "#dc2626", text: `Order cancelled: ${o.cropName || "Crop"}` },
-        rejected:   { icon: "🚫", color: "#64748b", text: `Order rejected: ${o.cropName || "Crop"}` },
+        pending:    { icon: <Package    size={13} strokeWidth={2} />, color: "#b45309", text: `Order received: ${o.cropName || "Crop"}` },
+        accepted:   { icon: <CheckCircle2 size={13} strokeWidth={2} />, color: "#16a34a", text: `Order accepted: ${o.cropName || "Crop"}` },
+        processing: { icon: <Wrench     size={13} strokeWidth={2} />, color: "#7c3aed", text: `Order processing: ${o.cropName || "Crop"}` },
+        shipped:    { icon: <Truck      size={13} strokeWidth={2} />, color: "#0369a1", text: `Order shipped: ${o.cropName || "Crop"}` },
+        delivered:  { icon: <Trophy     size={13} strokeWidth={2} />, color: "#16a34a", text: `Delivered: ${o.cropName || "Crop"} to ${o.buyerName || "buyer"}` },
+        cancelled:  { icon: <XCircle    size={13} strokeWidth={2} />, color: "#dc2626", text: `Order cancelled: ${o.cropName || "Crop"}` },
+        rejected:   { icon: <Ban        size={13} strokeWidth={2} />, color: "#64748b", text: `Order rejected: ${o.cropName || "Crop"}` },
       };
       const cfg = map[o.status];
       if (cfg) events.push({ ts: new Date(ts).getTime(), ...cfg });
@@ -345,7 +348,7 @@ export default function FarmerDashboard() {
       .filter(c => c.createdAt && daysUntil(c.createdAt) >= -30)
       .forEach(c => events.push({
         ts:   new Date(c.createdAt).getTime(),
-        icon: "🌿", color: "#16a34a",
+        icon: <Leaf size={13} strokeWidth={2} />, color: "#16a34a",
         text: `Crop added: ${c.name} (${c.quantity} ${c.unit})`,
       }));
     return events.sort((a, b) => b.ts - a.ts).slice(0, 8);
@@ -355,11 +358,11 @@ export default function FarmerDashboard() {
   const buildActions = () => {
     const actions = [];
 
-    // 🚨 URGENT — pending orders (farmer must act now)
+    // URGENT — pending orders (farmer must act now)
     if (!loadingStats && stats && pendingCount > 0)
       actions.push({
-        priority: "urgent", label: "🚨 Urgent",
-        icon: "📦", color: "#dc2626",
+        priority: "urgent", label: "Urgent",
+        icon: <Package size={16} strokeWidth={2} />, color: "#dc2626",
         msg: `${pendingCount} order${pendingCount > 1 ? "s" : ""} awaiting your response`,
         sub: recentOrders.find(o => o.status === "pending")?.cropName
           ? `Latest: ${recentOrders.find(o => o.status === "pending").cropName}`
@@ -367,45 +370,45 @@ export default function FarmerDashboard() {
         to: "/farmer/orders", cta: "Review →",
       });
 
-    // 🚨 URGENT — overdue harvests (past date, not actioned)
+    // URGENT — overdue harvests (past date, not actioned)
     if (!loadingCrops && overdueHarvests.length > 0)
       actions.push({
-        priority: "urgent", label: "🚨 Urgent",
-        icon: "🌾", color: "#dc2626",
+        priority: "urgent", label: "Urgent",
+        icon: <Wheat size={16} strokeWidth={2} />, color: "#dc2626",
         msg: `${overdueHarvests.length} crop${overdueHarvests.length > 1 ? "s" : ""} past harvest date — update status`,
         sub: overdueHarvests[0]?.name ? `e.g. ${overdueHarvests[0].name}` : undefined,
         to: "/farmer/crops", cta: "Update →",
       });
 
-    // ⚠️ ATTENTION — accepted orders ready to pack/ship
+    // ATTENTION — accepted orders ready to pack/ship
     if (!loadingStats && stats && acceptedCount > 0)
       actions.push({
-        priority: "attention", label: "⚠️ Attention",
-        icon: "✅", color: "#b45309",
+        priority: "attention", label: "Attention",
+        icon: <CheckCircle2 size={16} strokeWidth={2} />, color: "#b45309",
         msg: `${acceptedCount} accepted order${acceptedCount > 1 ? "s" : ""} ready to pack`,
         to: "/farmer/orders", cta: "View →",
       });
 
-    // ⚠️ ATTENTION — exporter interests awaiting reply
+    // ATTENTION — exporter interests awaiting reply
     if (!loadingExport && exportStats && pendingInterests > 0)
       actions.push({
-        priority: "attention", label: "⚠️ Attention",
-        icon: "🌍", color: "#b45309",
+        priority: "attention", label: "Attention",
+        icon: <Globe2 size={16} strokeWidth={2} />, color: "#b45309",
         msg: `${pendingInterests} export interest${pendingInterests > 1 ? "s" : ""} awaiting your reply`,
         sub: exportStats.unreadInterests > 0 ? `${exportStats.unreadInterests} unread` : undefined,
         to: "/farmer/export", cta: "Review →",
         navState: { tab: "interests" },
       });
 
-    // 🌱 UPCOMING — near harvests (≤ 7 days)
+    // UPCOMING — near harvests (<= 7 days)
     const nearHarvests = upcomingHarvests.filter(c => {
       const d = daysUntil(c.harvestDate);
       return d !== null && d <= 7;
     });
     if (!loadingCrops && nearHarvests.length > 0)
       actions.push({
-        priority: "upcoming", label: "🌱 Upcoming",
-        icon: "🌱", color: "#15803d",
+        priority: "upcoming", label: "Upcoming",
+        icon: <Sprout size={16} strokeWidth={2} />, color: "#15803d",
         msg: nearHarvests.length === 1
           ? `${nearHarvests[0].name} harvest in ${daysUntil(nearHarvests[0].harvestDate)} day${daysUntil(nearHarvests[0].harvestDate) !== 1 ? "s" : ""}`
           : `${nearHarvests.length} crops harvesting within 7 days`,
@@ -430,7 +433,7 @@ export default function FarmerDashboard() {
           <div className="eyebrow" style={{ color: "#16a34a", fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>
             Farmer Dashboard
           </div>
-          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Farmer"} 👋</h1>
+          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Farmer"}</h1>
           <p className="pg-sub">Here's your farm and marketplace activity overview.</p>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -513,7 +516,7 @@ export default function FarmerDashboard() {
           </div>
         ) : actions.length === 0 ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 10, background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#15803d", fontSize: 13, fontWeight: 600 }}>
-            ✓ No urgent actions right now. Everything looks good!
+            <CheckCircle2 size={14} strokeWidth={2} /> No urgent actions right now. Everything looks good!
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -565,7 +568,7 @@ export default function FarmerDashboard() {
             <SectionError msg={errCrops} onRetry={fetchCrops} />
           ) : upcomingHarvests.length === 0 ? (
             <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text2)", fontSize: 13 }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>🌿</div>
+              <div style={{ marginBottom: 6 }}><Sprout size={28} strokeWidth={1.5} color="#bbf7d0" /></div>
               No upcoming harvests found.
               <div style={{ marginTop: 10 }}>
                 <Link to="/farmer/crops" style={{ fontSize: 12, color: "#16a34a", fontWeight: 700, textDecoration: "none" }}>
@@ -582,8 +585,8 @@ export default function FarmerDashboard() {
                   <Link key={c._id} to={`/farmer/crops/${c._id}`} className="fd-harvest-row" style={{ textDecoration: "none" }}>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
-                      <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
-                        📍 {c.location} · {c.quantity} {c.unit}
+                      <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                        <MapPin size={10} strokeWidth={2} />{c.location} · {c.quantity} {c.unit}
                       </div>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -657,7 +660,7 @@ export default function FarmerDashboard() {
             </div>
           ) : errPrices ? (
             <div style={{ textAlign: "center", padding: "12px 0" }}>
-              <div style={{ color: "var(--text2)", fontSize: 13, marginBottom: 12 }}>⚠️ {errPrices}</div>
+              <div style={{ color: "var(--text2)", fontSize: 13, marginBottom: 12, display: "flex", alignItems: "center", gap: 5 }}><AlertTriangle size={13} strokeWidth={2} />{errPrices}</div>
               <Link to="/farmer/market-trends" className="btn-ghost" style={{ fontSize: 12, padding: "7px 14px" }}>
                 View Market Trends →
               </Link>
@@ -687,8 +690,8 @@ export default function FarmerDashboard() {
                   )}
                   {/* Market name — only when API supplies it */}
                   {p.market && (
-                    <div style={{ fontSize: 10, color: "#15803d", marginTop: 2, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      📍 {p.market}
+                    <div style={{ fontSize: 10, color: "#15803d", marginTop: 2, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 3 }}>
+                      <MapPin size={9} strokeWidth={2} />{p.market}
                     </div>
                   )}
                   {/* arrivalDate — the mandi data collection date from the API.
@@ -712,7 +715,7 @@ export default function FarmerDashboard() {
         <div className="card" style={{ borderColor: "rgba(56,189,248,0.18)", background: "#f0f9ff" }}>
           <div className="fd-sec-head">
             <div>
-              <div className="card-title">🌍 Export Opportunities</div>
+              <div className="card-title"><Globe2 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Export Opportunities</div>
               <div className="card-sub">Connect with international buyers</div>
             </div>
             <ViewAllLink to="/farmer/export" label="Open →" color="#0369a1" />
@@ -740,9 +743,9 @@ export default function FarmerDashboard() {
               <div style={{ display: "flex", gap: 8 }}>
                 <button
                   onClick={() => navigate("/farmer/export", { state: { tab: "listings" } })}
-                  style={{ flex: 1, padding: "10px", borderRadius: 10, background: "#f0f9ff", border: "1px solid #bae6fd", color: "#0369a1", fontWeight: 700, fontSize: 12, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                  style={{ flex: 1, padding: "10px", borderRadius: 10, background: "#f0f9ff", border: "1px solid #bae6fd", color: "#0369a1", fontWeight: 700, fontSize: 12, cursor: "pointer", fontFamily: "'Inter',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}
                 >
-                  📋 My Listings
+                  <Wheat size={13} strokeWidth={2} /> My Listings
                 </button>
                 <button
                   onClick={() => navigate("/farmer/export", { state: { tab: "listings", openCreate: true } })}
@@ -765,7 +768,7 @@ export default function FarmerDashboard() {
             <div className="card" style={{ borderColor: "rgba(251,191,36,0.18)", background: "#fffbeb" }}>
               <div className="fd-sec-head">
                 <div>
-                  <div className="card-title">🌾 Stock Alerts</div>
+                  <div className="card-title"><AlertCircle size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#d97706", verticalAlign: "middle" }} />Stock Alerts</div>
                   <div className="card-sub">Listed/ready crops with low quantity</div>
                 </div>
                 <ViewAllLink to="/farmer/crops" label="Manage →" color="#d97706" />
@@ -801,7 +804,7 @@ export default function FarmerDashboard() {
             <div className="card">
               <div className="fd-sec-head">
                 <div>
-                  <div className="card-title">👤 Profile Completion</div>
+                  <div className="card-title"><User size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Profile Completion</div>
                   <div className="card-sub">Strengthen your farmer profile</div>
                 </div>
                 <span style={{ fontSize: 16, fontWeight: 800, color: profile.pct >= 80 ? "#16a34a" : profile.pct >= 50 ? "#d97706" : "#dc2626" }}>
@@ -828,8 +831,8 @@ export default function FarmerDashboard() {
           {/* If crops loaded & no low-stock but profile complete — show healthy stock note */}
           {lowStockCrops.length === 0 && profile.pct >= 100 && crops.length > 0 && (
             <div className="card" style={{ background: "#f0fdf4", borderColor: "rgba(34,197,94,0.15)" }}>
-              <div style={{ color: "#15803d", fontSize: 13, fontWeight: 600 }}>
-                ✓ Stock levels are healthy
+              <div style={{ color: "#15803d", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center" }}>
+                <CheckCircle2 size={15} strokeWidth={2} style={{ marginRight: 6, color: "#16a34a" }} /> Stock levels are healthy
               </div>
               <div style={{ color: "var(--text2)", fontSize: 12, marginTop: 4 }}>
                 All your listed crops have sufficient quantity.
@@ -844,18 +847,18 @@ export default function FarmerDashboard() {
         <div className="card-title" style={{ marginBottom: 16 }}>Quick Actions</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12 }}>
           {[
-            { emoji: "➕",  label: "Add New Crop",       to: "/farmer/crops/add",          color: "#16a34a" },
-            { emoji: "🌍",  label: "Export Produce",      to: "/farmer/export",             color: "#0369a1" },
-            { emoji: "🌾",  label: "Smart Farm Planner", to: "/farmer/smart-farm-planner", color: "#16a34a" },
-            { emoji: "🔬",  label: "Check Crop Disease", to: "/farmer/disease-detection",  color: "#7c3aed" },
-            { emoji: "📈",  label: "Price Prediction",   to: "/farmer/price-prediction",   color: "#0369a1" },
-            { emoji: "🌦️", label: "Weather Advisory",   to: "/farmer/weather",            color: "#b45309" },
-            { emoji: "📊",  label: "Market Trends",      to: "/farmer/market-trends",      color: "#fb923c" },
-            { emoji: "🤖",  label: "AI Assistant",       to: "/farmer/assistant",          color: "#f472b6" },
-            { emoji: "🏡",  label: "My Farm Profile",    to: "/farmer/my-farm",            color: "#15803d" },
-            { emoji: "📉",  label: "Farm Analytics",     to: "/farmer/farm-analytics",     color: "#60a5fa" },
-            { emoji: "🔔",  label: "Notifications",      to: "/farmer/notifications",      color: "#fb923c" },
-          ].map(({ emoji, label, to, color }) => (
+                      { Icon: Plus,         label: "Add New Crop",       to: "/farmer/crops/add",          color: "#16a34a" },
+            { Icon: Globe2,       label: "Export Produce",      to: "/farmer/export",             color: "#0369a1" },
+            { Icon: Wheat,        label: "Smart Farm Planner", to: "/farmer/smart-farm-planner", color: "#16a34a" },
+            { Icon: Microscope,   label: "Check Crop Disease", to: "/farmer/disease-detection",  color: "#7c3aed" },
+            { Icon: TrendingUp,   label: "Price Prediction",   to: "/farmer/price-prediction",   color: "#0369a1" },
+            { Icon: CloudSun,     label: "Weather Advisory",   to: "/farmer/weather",            color: "#b45309" },
+            { Icon: BarChart3,    label: "Market Trends",      to: "/farmer/market-trends",      color: "#fb923c" },
+            { Icon: Bot,          label: "AI Assistant",       to: "/farmer/assistant",          color: "#f472b6" },
+            { Icon: Home,         label: "My Farm Profile",    to: "/farmer/my-farm",            color: "#15803d" },
+            { Icon: TrendingDown, label: "Farm Analytics",     to: "/farmer/farm-analytics",     color: "#60a5fa" },
+            { Icon: Bell,         label: "Notifications",      to: "/farmer/notifications",      color: "#fb923c" },
+          ].map(({ Icon, label, to, color }) => (
             <Link
               key={to} to={to}
               style={{
@@ -868,7 +871,9 @@ export default function FarmerDashboard() {
               onMouseEnter={e => { e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.borderColor = color + "33"; e.currentTarget.style.transform = "translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}
             >
-              <span style={{ fontSize: 26 }}>{emoji}</span>
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 12, background: color + "15", border: `1px solid ${color}22` }}>
+                <Icon size={22} strokeWidth={1.75} color={color} />
+              </span>
               {label}
             </Link>
           ))}
@@ -882,7 +887,7 @@ export default function FarmerDashboard() {
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div>
-              <div className="card-title">🌿 Crop Summary</div>
+              <div className="card-title"><Leaf size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Crop Summary</div>
               <div className="card-sub">Your active listings</div>
             </div>
             <ViewAllLink to="/farmer/crops" />
@@ -909,7 +914,7 @@ export default function FarmerDashboard() {
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <div>
-              <div className="card-title">📦 Order Summary</div>
+              <div className="card-title"><Package size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Order Summary</div>
               <div className="card-sub">Incoming farm orders</div>
             </div>
             <ViewAllLink to="/farmer/orders" />
@@ -934,13 +939,13 @@ export default function FarmerDashboard() {
 
         {/* Get Started Tips */}
         <div className="card">
-          <div className="card-title" style={{ marginBottom: 16 }}>🚀 Get Started Tips</div>
+          <div className="card-title" style={{ marginBottom: 16 }}><Rocket size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Get Started Tips</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
-              ["🌿", "Add your first crop listing",         "/farmer/crops/add"],
-              ["📸", "Upload crop photos for better sales", "/farmer/crops"],
-              ["🔬", "Scan any diseased crop leaf",         "/farmer/disease-detection"],
-              ["💡", "Check today's best market prices",    "/farmer/price-prediction"],
+              [<Leaf      size={15} strokeWidth={1.75} />, "Add your first crop listing",         "/farmer/crops/add"],
+              [<Camera    size={15} strokeWidth={1.75} />, "Upload crop photos for better sales", "/farmer/crops"],
+              [<Microscope size={15} strokeWidth={1.75} />, "Scan any diseased crop leaf",        "/farmer/disease-detection"],
+              [<Lightbulb size={15} strokeWidth={1.75} />, "Check today's best market prices",   "/farmer/price-prediction"],
             ].map(([icon, text, to]) => (
               <Link key={to} to={to}
                 style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: 10, background: "var(--surface)", textDecoration: "none", color: "var(--text)", fontSize: 13, transition: "background 0.2s" }}

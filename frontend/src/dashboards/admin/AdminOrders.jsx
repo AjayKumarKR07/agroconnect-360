@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, fmtINR, relativeTime } from "./adminStyles";
-import { Package } from "lucide-react";
+import { Package, RefreshCw, AlertTriangle, CheckCircle2, Clock, XCircle, Undo2 } from "lucide-react";
 
 const ORDER_STATUSES = ["all", "pending", "accepted", "processing", "shipped", "delivered", "cancelled", "rejected"];
 
@@ -18,10 +18,10 @@ const STATUS_STYLE = {
 
 // Payment status badges
 const PAY_STATUS_STYLE = {
-  paid:    { label: "✅ Paid",     bg: "rgba(34,197,94,0.12)",   color: "#15803d" },
-  pending: { label: "⏳ Pending",  bg: "rgba(251,191,36,0.12)",  color: "#b45309" },
-  failed:  { label: "❌ Failed",   bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
-  refunded:{ label: "↩️ Refunded", bg: "rgba(167,139,250,0.12)", color: "#7c3aed" },
+  paid:    { label: "Paid",     Icon: CheckCircle2, bg: "rgba(34,197,94,0.12)",   color: "#15803d" },
+  pending: { label: "Pending",  Icon: Clock,        bg: "rgba(251,191,36,0.12)",  color: "#b45309" },
+  failed:  { label: "Failed",   Icon: XCircle,      bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
+  refunded:{ label: "Refunded", Icon: Undo2,        bg: "rgba(167,139,250,0.12)", color: "#7c3aed" },
 };
 
 const PAY_METHOD_LABEL = {
@@ -59,8 +59,8 @@ function ConfirmModal({ order, newStatus, onConfirm, onCancel, loading }) {
               <div style={{ fontSize: 13, color: sc.color, fontWeight: 800, textTransform: "uppercase" }}>{newStatus}</div>
             </div>
           </div>
-          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
-            ⚠️ This change is shared — the Farmer and Buyer will both see the updated order status immediately.
+          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+            <AlertTriangle size={15} style={{ flexShrink: 0 }} /> This change is shared — the Farmer and Buyer will both see the updated order status immediately.
           </div>
         </div>
         <div className="modal-actions">
@@ -193,7 +193,7 @@ export default function AdminOrders() {
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {ORDER_STATUSES.map((s) => (
             <button key={s} className={`tab-btn ${statusFilter === s ? "active" : ""}`} onClick={() => { setStatusFilter(s); setPage(1); load(1, s); }}>
-              {s === "all" ? "🌐 All" : s}
+              {s === "all" ? "All" : s}
             </button>
           ))}
         </div>
@@ -203,7 +203,7 @@ export default function AdminOrders() {
       <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
         <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Payment:</span>
         {/* Payment STATUS filter */}
-        {[["all", "💳 All"], ["paid", "✅ Paid"], ["pending", "⏳ Pending"], ["failed", "❌ Failed"]].map(([val, lbl]) => (
+        {[["all", "All"], ["paid", "Paid"], ["pending", "Pending"], ["failed", "Failed"]].map(([val, lbl]) => (
           <button key={val} className={`tab-btn ${paymentStatusFilter === val ? "active" : ""}`}
             onClick={() => { setPaymentStatusFilter(val); setPage(1); load(1, statusFilter, search, val, paymentMethodFilter); }}>
             {lbl}
@@ -213,12 +213,12 @@ export default function AdminOrders() {
         {/* COD filter — paymentMethod since COD is not a paymentStatus */}
         <button className={`tab-btn ${paymentMethodFilter === "cod" ? "active" : ""}`}
           onClick={() => { const v = paymentMethodFilter === "cod" ? "all" : "cod"; setPaymentMethodFilter(v); setPage(1); load(1, statusFilter, search, paymentStatusFilter, v); }}>
-          💵 COD
+          COD
         </button>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-          <input className="field-input" style={{ maxWidth: 220 }} placeholder="🔍 Search crop, buyer, city…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="field-input" style={{ maxWidth: 220 }} placeholder="Search crop, buyer, city…" value={search} onChange={(e) => setSearch(e.target.value)} />
           <button type="submit" className="btn-indigo" style={{ padding: "10px 14px" }}>Go</button>
-          <button type="button" className="tab-btn" onClick={() => load(page)}>🔄</button>
+          <button type="button" className="tab-btn" onClick={() => load(page)} title="Refresh"><RefreshCw size={13} /></button>
         </form>
       </div>
 
@@ -230,7 +230,7 @@ export default function AdminOrders() {
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
           <div className="error-state-msg">Unable to load orders</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
@@ -239,7 +239,7 @@ export default function AdminOrders() {
 
       {!loading && !error && orders.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-icon"><Package size={36} color="#94a3b8" /></div>
           <div className="empty-state-msg">No orders found</div>
           <div className="empty-state-sub">{statusFilter !== "all" ? `No ${statusFilter} orders.` : "No orders yet on the platform."}</div>
         </div>
@@ -288,7 +288,8 @@ export default function AdminOrders() {
                                 <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: pm.bg, color: pm.color }}>
                                   {pm.label}
                                 </span>
-                                <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: ps.bg, color: ps.color }}>
+                                <span style={{ padding: "2px 7px", borderRadius: 6, fontSize: 11, fontWeight: 700, background: ps.bg, color: ps.color, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                                  {ps.Icon && <ps.Icon size={11} strokeWidth={2.5} />}
                                   {ps.label}
                                 </span>
                               </div>

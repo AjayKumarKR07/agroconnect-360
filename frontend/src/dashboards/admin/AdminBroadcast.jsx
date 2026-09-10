@@ -111,7 +111,7 @@ export default function AdminBroadcast() {
       const d = await r.json();
       setShowConfirm(false);
       if (d.success) {
-        showToast(`✅ Broadcast sent to ${d.count} user${d.count !== 1 ? "s" : ""}`);
+        showToast(`Broadcast sent to ${d.count} user${d.count !== 1 ? "s" : ""}`);
         setForm({ title: "", message: "", targetRole: "all" });
         setRecipientCount(null);
         loadHistory();
@@ -168,7 +168,7 @@ export default function AdminBroadcast() {
               onChange={(e) => setForm((f) => ({ ...f, targetRole: e.target.value }))}
             >
               {ROLE_OPTIONS.map((r) => (
-                <option key={r} value={r}>{r === "all" ? "🌐 All Active Users" : `${r.charAt(0).toUpperCase() + r.slice(1)}s only`}</option>
+                <option key={r} value={r}>{r === "all" ? "All Active Users" : `${r.charAt(0).toUpperCase() + r.slice(1)}s only`}</option>
               ))}
             </select>
           </div>

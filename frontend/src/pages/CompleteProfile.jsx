@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../config/api";
+import { Wheat, ShoppingCart, Store, Ship, Sprout, AlertTriangle, ArrowRight } from "lucide-react";
 
 const ROLES = [
-  { id: "farmer",   emoji: "🌾", label: "Farmer",    desc: "Sell your crops directly to buyers and exporters" },
-  { id: "user",     emoji: "🛒", label: "Consumer",  desc: "Buy fresh produce directly from local farmers" },
-  { id: "seller",   emoji: "🏪", label: "Seller",    desc: "Operate as a local trader or APMC agent" },
-  { id: "exporter", emoji: "🚢", label: "Exporter",  desc: "Export agricultural commodities internationally" },
+  { id: "farmer",   Icon: Wheat,        color: "#16a34a", label: "Farmer",    desc: "Sell your crops directly to buyers and exporters" },
+  { id: "user",     Icon: ShoppingCart, color: "#0284c7", label: "Consumer",  desc: "Buy fresh produce directly from local farmers" },
+  { id: "seller",   Icon: Store,        color: "#7c3aed", label: "Seller",    desc: "Operate as a local trader or APMC agent" },
+  { id: "exporter", Icon: Ship,         color: "#d97706", label: "Exporter",  desc: "Export agricultural commodities internationally" },
 ];
 
 export default function CompleteProfile() {
@@ -140,21 +141,21 @@ export default function CompleteProfile() {
 
         <div className="cp-card">
           <div className="cp-brand">
-            <div className="cp-brand-logo">🌱</div>
+            <div className="cp-brand-logo"><Sprout size={20} strokeWidth={2} color="#fff" /></div>
             <div className="cp-brand-name">AgroConnect 360</div>
           </div>
 
           <div className="cp-step">Step 3 of 3 — Profile Setup</div>
           <h1 className="cp-title">Complete Your Profile</h1>
           <p className="cp-sub">Tell us how you'll be using AgroConnect 360.</p>
-          {email && <div className="cp-email">✉️ {email}</div>}
+          {email && <div className="cp-email">{email}</div>}
 
           {/* Role selection */}
           <div className="role-section-label">Select Your Role</div>
           <div className="role-grid">
-            {ROLES.map(({ id, emoji, label, desc }) => (
+            {ROLES.map(({ id, Icon, color, label, desc }) => (
               <button key={id} type="button" className={`role-btn ${role === id ? "selected" : ""}`} onClick={() => setRole(id)}>
-                <span className="role-emoji">{emoji}</span>
+                <span className="role-emoji" style={{ display: "flex" }}><Icon size={22} strokeWidth={1.75} color={color} /></span>
                 <span className="role-label">{label}</span>
                 <span className="role-desc">{desc}</span>
               </button>
@@ -184,10 +185,10 @@ export default function CompleteProfile() {
               </div>
             </div>
 
-            {error && <div className="cp-error">⚠️ {error}</div>}
+            {error && <div className="cp-error" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {error}</div>}
 
-            <button id="complete-profile-btn" type="submit" className="cp-submit" disabled={loading}>
-              {loading ? "⏳ Setting up your account…" : `🚀 Enter as ${ROLES.find(r => r.id === role)?.label}`}
+            <button id="complete-profile-btn" type="submit" className="cp-submit" disabled={loading} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {loading ? "Setting up your account…" : <>Enter as {ROLES.find(r => r.id === role)?.label} <ArrowRight size={16} /></>}
             </button>
           </form>
 

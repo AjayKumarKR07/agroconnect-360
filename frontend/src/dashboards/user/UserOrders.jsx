@@ -1,7 +1,15 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import RazorpayCheckout from "../../components/RazorpayCheckout";
-import { RefreshCw, Package } from "lucide-react";
+import {
+  RefreshCw,
+  Package,
+  Calendar,
+  MapPin,
+  Ban,
+  CreditCard,
+  RotateCcw,
+} from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -20,21 +28,21 @@ const DS_USER = `
 `;
 
 const STATUS_CONFIG = {
-  pending:    { label: "⏳ Pending",    bg: "rgba(251,191,36,0.12)", color: "#b45309" },
-  accepted:   { label: "✅ Accepted",   bg: "rgba(14,165,233,0.12)", color: "#0369a1" },
-  processing: { label: "⚙️ Processing", bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
-  shipped:    { label: "🚚 Shipped",    bg: "rgba(56,189,248,0.12)", color: "#0369a1" },
-  delivered:  { label: "📦 Delivered",  bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
-  rejected:   { label: "❌ Rejected",   bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
-  cancelled:  { label: "🚫 Cancelled",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
+  pending:    { label: "Pending",    bg: "rgba(251,191,36,0.12)", color: "#b45309" },
+  accepted:   { label: "Accepted",   bg: "rgba(14,165,233,0.12)", color: "#0369a1" },
+  processing: { label: "Processing", bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
+  shipped:    { label: "Shipped",    bg: "rgba(56,189,248,0.12)", color: "#0369a1" },
+  delivered:  { label: "Delivered",  bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  rejected:   { label: "Rejected",   bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
+  cancelled:  { label: "Cancelled",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
 };
 
 // Payment status badge config
 const PAY_STATUS_CONFIG = {
-  paid:    { label: "💰 Paid",    bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
-  pending: { label: "⏳ Pending", bg: "rgba(251,191,36,0.12)", color: "#b45309" },
-  failed:  { label: "❌ Failed",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
-  refunded:{ label: "↩️ Refunded",bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
+  paid:    { label: "Paid",    bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  pending: { label: "Pending", bg: "rgba(251,191,36,0.12)", color: "#b45309" },
+  failed:  { label: "Failed",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
+  refunded:{ label: "Refunded",bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
 };
 
 // Order/paymentStatuses where retry is BLOCKED
@@ -132,7 +140,9 @@ export default function UserOrders() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Shopping</div>
-          <h1 className="pg-title">📦 My Orders</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Package size={24} color="#0ea5e9" /> My Orders
+          </h1>
           <p className="pg-sub">Track all your purchases and delivery status.</p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
@@ -173,11 +183,14 @@ export default function UserOrders() {
                   <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>
                     {o.items?.map(it => it.cropName).join(", ") || "Order"}
                   </div>
-                  <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: st.bg, color: st.color }}>{st.label}</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: st.bg, color: st.color }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: st.color }} />
+                    {st.label}
+                  </span>
                 </div>
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", marginTop: 4 }}>
-                  <div style={{ fontSize: 12, color: "var(--text2)" }}>🗓️ {new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
-                  <div style={{ fontSize: 12, color: "var(--text2)" }}>📦 {o.items?.length || 1} item(s)</div>
+                  <div style={{ fontSize: 12, color: "var(--text2)", display: "flex", alignItems: "center", gap: 4 }}><Calendar size={12} /> {new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
+                  <div style={{ fontSize: 12, color: "var(--text2)", display: "flex", alignItems: "center", gap: 4 }}><Package size={12} /> {o.items?.length || 1} item(s)</div>
                   {/* Payment method */}
                   <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "rgba(14,165,233,0.08)", color: "#0369a1", letterSpacing: "0.04em" }}>
                     {(o.paymentMethod === "razorpay" ? "ONLINE" : (o.paymentMethod || "COD").toUpperCase())}
@@ -186,7 +199,8 @@ export default function UserOrders() {
                   {(() => {
                     const ps = PAY_STATUS_CONFIG[o.paymentStatus] || PAY_STATUS_CONFIG.pending;
                     return (
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: ps.bg, color: ps.color }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: ps.bg, color: ps.color }}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: ps.color }} />
                         {ps.label}
                       </span>
                     );
@@ -234,15 +248,15 @@ export default function UserOrders() {
 
                 {/* Delivery address */}
                 {o.deliveryAddress && (
-                  <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14 }}>
-                    📍 <span style={{ color: "var(--text)" }}>{o.deliveryAddress.address}, {o.deliveryAddress.city}, {o.deliveryAddress.state} - {o.deliveryAddress.pincode}</span>
+                  <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+                    <MapPin size={14} style={{ flexShrink: 0 }} /> <span style={{ color: "var(--text)" }}>{o.deliveryAddress.address}, {o.deliveryAddress.city}, {o.deliveryAddress.state} - {o.deliveryAddress.pincode}</span>
                   </div>
                 )}
 
                 {/* Cancel button */}
                 {o.status === "pending" && (
-                  <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
-                    🚫 Cancel Order
+                  <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <Ban size={14} /> Cancel Order
                   </button>
                 )}
 
@@ -271,16 +285,16 @@ export default function UserOrders() {
                         // component can open immediately without a second fetch
                         preloadedData={retryState.rzpData}
                       >
-                        <span style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, fontFamily: "'Inter',sans-serif", cursor: "pointer" }}>
-                          💳 Complete Payment
+                        <span style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, fontFamily: "'Inter',sans-serif", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                          <CreditCard size={14} /> Complete Payment
                         </span>
                       </RazorpayCheckout>
                     ) : (
                       <button
                         onClick={() => handleRetry(o._id)}
-                        style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                        style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif", display: "inline-flex", alignItems: "center", gap: 6 }}
                       >
-                        🔄 Retry Payment
+                        <RefreshCw size={14} /> Retry Payment
                       </button>
                     )}
                   </div>
@@ -310,11 +324,11 @@ export default function UserOrders() {
                       });
                       localStorage.setItem("ac_cart", JSON.stringify(updated));
                       window.dispatchEvent(new Event("ac_cart_update"));
-                      alert("✅ Items added to cart! Head to your cart to checkout.");
+                      alert("Items added to cart! Head to your cart to checkout.");
                     }}
-                    style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.25)", background: "rgba(14,165,233,0.07)", color: "#0369a1", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                    style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.25)", background: "rgba(14,165,233,0.07)", color: "#0369a1", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif", display: "inline-flex", alignItems: "center", gap: 6 }}
                   >
-                    🔄 Reorder
+                    <RotateCcw size={14} /> Reorder
                   </button>
                 )}
               </div>

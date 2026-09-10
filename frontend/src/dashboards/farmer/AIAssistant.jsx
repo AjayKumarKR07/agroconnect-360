@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { API_URL } from "../../config/api";
+import { Bot, User, Trash2, Sprout, Leaf, Wheat, Clock, Bug, DollarSign, Send, RefreshCw } from "lucide-react";
 
 const QUICK_PROMPTS = [
-  { icon: "🌱", text: "Kharif season crops?" },
-  { icon: "🍅", text: "Tomato yellowing leaves?" },
-  { icon: "🌾", text: "Best wheat fertilizer?" },
-  { icon: "🧅", text: "When to harvest onion?" },
-  { icon: "🐛", text: "Cotton pest control?" },
-  { icon: "💰", text: "MSP for paddy this year?" },
+  { Icon: Sprout, text: "Kharif season crops?" },
+  { Icon: Leaf, text: "Tomato yellowing leaves?" },
+  { Icon: Wheat, text: "Best wheat fertilizer?" },
+  { Icon: Clock, text: "When to harvest onion?" },
+  { Icon: Bug, text: "Cotton pest control?" },
+  { Icon: DollarSign, text: "MSP for paddy this year?" },
 ];
 
 const STYLES = `
@@ -151,7 +152,7 @@ const STYLES = `
   .bubble.user code { background: rgba(255,255,255,0.25); color: #ffffff; border-color: rgba(255,255,255,0.3); }
 `;
 
-const INIT_MSG = { role: "assistant", text: "👋 Hello! I'm your AgroConnect AI assistant powered by Gemini. Ask me anything about farming — crop care, weather, pest control, market prices, government schemes, and more!", time: new Date() };
+const INIT_MSG = { role: "assistant", text: "Hello! I'm your AgroConnect AI assistant powered by Gemini. Ask me anything about farming — crop care, weather, pest control, market prices, government schemes, and more!", time: new Date() };
 
 export default function AIAssistant() {
   const [messages, setMessages] = useState([INIT_MSG]);
@@ -181,7 +182,7 @@ export default function AIAssistant() {
       const reply = d.reply || d.message || "Sorry, I couldn't get a response. Please try again.";
       setMessages(p => [...p, { role: "assistant", text: reply, time: new Date() }]);
     } catch {
-      setMessages(p => [...p, { role: "assistant", text: "⚠️ Network error. Please check your connection and try again.", time: new Date() }]);
+      setMessages(p => [...p, { role: "assistant", text: "Network error. Please check your connection and try again.", time: new Date() }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -191,7 +192,7 @@ export default function AIAssistant() {
   const formatTime = (d) => d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
   const clearChat = () => {
-    setMessages([{ ...INIT_MSG, text: "👋 New conversation! How can I help you with farming today?", time: new Date() }]);
+    setMessages([{ ...INIT_MSG, text: "New conversation! How can I help you with farming today?", time: new Date() }]);
     setInput("");
   };
 
@@ -212,12 +213,14 @@ export default function AIAssistant() {
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#16a34a", marginBottom: 4 }}>
             ✦ Powered by Gemini AI
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-            🤖 AI Farming Assistant
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
+            <Bot size={26} color="#16a34a" /> AI Farming Assistant
           </h1>
           <p style={{ fontSize: 14, color: "#64748b", marginTop: 4, marginBottom: 0 }}>Ask anything about crops, weather, prices, pests, and government schemes.</p>
         </div>
-        <button className="clear-btn" onClick={clearChat}>🗑 Clear Chat</button>
+        <button className="clear-btn" onClick={clearChat} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Trash2 size={13} /> Clear Chat
+        </button>
       </div>
 
       {/* Main chat card */}
@@ -226,7 +229,9 @@ export default function AIAssistant() {
         {/* Header bar inside card */}
         <div className="ai-header">
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div className="ai-avatar-wrap">🤖</div>
+            <div className="ai-avatar-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Bot size={20} color="#15803d" />
+            </div>
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 700, color: "#0f172a" }}>AgroConnect AI</div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
@@ -245,7 +250,7 @@ export default function AIAssistant() {
           {messages.map((m, i) => (
             <div key={i} className={`msg-row ${m.role === "user" ? "user" : ""}`}>
               <div className={`msg-avatar ${m.role === "user" ? "user" : "ai"}`}>
-                {m.role === "assistant" ? "🤖" : "👤"}
+                {m.role === "assistant" ? <Bot size={16} color="#15803d" /> : <User size={16} color="#0369a1" />}
               </div>
               <div className="bubble-wrap">
                 <div
@@ -260,7 +265,9 @@ export default function AIAssistant() {
           {/* Typing indicator */}
           {loading && (
             <div className="msg-row">
-              <div className="msg-avatar ai">🤖</div>
+              <div className="msg-avatar ai">
+                <Bot size={16} color="#15803d" />
+              </div>
               <div className="bubble-wrap">
                 <div className="typing-pill">
                   <div className="td" /><div className="td" /><div className="td" />
@@ -277,16 +284,19 @@ export default function AIAssistant() {
         <div className="ai-footer">
           {/* Quick prompts */}
           <div className="quick-row">
-            {QUICK_PROMPTS.map((p) => (
-              <button
-                key={p.text}
-                className="quick-chip"
-                onClick={() => sendMessage(p.text)}
-                disabled={loading}
-              >
-                <span>{p.icon}</span> {p.text}
-              </button>
-            ))}
+            {QUICK_PROMPTS.map((p) => {
+              const IconComp = p.Icon;
+              return (
+                <button
+                  key={p.text}
+                  className="quick-chip"
+                  onClick={() => sendMessage(p.text)}
+                  disabled={loading}
+                >
+                  <IconComp size={13} color="#16a34a" /> {p.text}
+                </button>
+              );
+            })}
           </div>
 
           {/* Input box */}
@@ -306,8 +316,8 @@ export default function AIAssistant() {
               }}
               disabled={loading}
             />
-            <button type="submit" className="send-btn" disabled={loading || !input.trim()} title="Send (Enter)">
-              {loading ? "⏳" : "➤"}
+            <button type="submit" className="send-btn" disabled={loading || !input.trim()} title="Send (Enter)" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              {loading ? <RefreshCw size={15} className="animate-spin" /> : <Send size={15} />}
             </button>
           </form>
 

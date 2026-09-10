@@ -4,7 +4,9 @@ import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 import {
   DollarSign, Ship, Package, CheckCircle2, Inbox, ClipboardList,
-  Wheat, Globe2, Calculator, FileCheck, RefreshCw
+  Wheat, Globe2, Calculator, FileCheck, RefreshCw, AlertTriangle,
+  Clock, X, Check, MessageSquare, Handshake, Ban, Trophy,
+  FileText, ArrowLeftRight, BarChart2, Tag, User, MapPin, Globe
 } from "lucide-react";
 
 /* ─── Exporter-specific overrides on top of DS ─────────────────────────── */
@@ -241,8 +243,8 @@ function Skeleton({ h = 60, mb = 0 }) {
 
 function SectionError({ msg, onRetry }) {
   return (
-    <div style={{ padding:"16px", borderRadius:12, background: "#fef2f2", border:"1px solid rgba(239,68,68,0.15)", color:"#fca5a5", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
-      <span>⚠️ {msg}</span>
+    <div style={{ padding:"16px", borderRadius:12, background: "#fef2f2", border:"1px solid rgba(239,68,68,0.15)", color:"#dc2626", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+      <span style={{ display:"inline-flex", alignItems:"center", gap:8 }}><AlertTriangle size={16} style={{ flexShrink: 0 }} /> {msg}</span>
       {onRetry && (
         <button onClick={onRetry} style={{ background:"none", border:"1px solid rgba(239,68,68,0.25)", color: "#dc2626", borderRadius:8, padding:"5px 12px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
           Retry
@@ -252,10 +254,12 @@ function SectionError({ msg, onRetry }) {
   );
 }
 
-function EmptyState({ icon, msg, action }) {
+function EmptyState({ icon: Icon, msg, action }) {
   return (
     <div style={{ textAlign:"center", padding:"28px 16px", color:"var(--text2)", fontSize:13 }}>
-      <div style={{ fontSize:32, marginBottom:8 }}>{icon}</div>
+      <div style={{ display:"flex", justifyContent:"center", marginBottom:8, color:"#d97706" }}>
+        {typeof Icon === "function" ? <Icon size={32} /> : Icon ? Icon : <Package size={32} />}
+      </div>
       <div style={{ color: "#0f172a", fontWeight:600, marginBottom:6 }}>{msg}</div>
       {action}
     </div>
@@ -267,7 +271,7 @@ function EtaDisplay({ eta, status }) {
   if (status === "cancelled")  return <span className="badge badge-red">Cancelled</span>;
   if (!eta)                    return <span style={{ color:"var(--text2)", fontSize:12 }}>ETA not set</span>;
   const d = daysUntil(eta);
-  if (d < 0) return <span className="badge badge-red">⚠️ Overdue</span>;
+  if (d < 0) return <span className="badge badge-red"><AlertTriangle size={11} style={{ marginRight: 3, verticalAlign: "middle" }} /> Overdue</span>;
   if (d === 0) return <span className="badge badge-amber">Today</span>;
   if (d <= 3)  return <span className="badge badge-amber">{d}d left</span>;
   return <span style={{ fontSize:12, color:"var(--text2)" }}>{fmtDate(eta)}</span>;
@@ -452,7 +456,7 @@ export default function ExporterDashboard() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Global Trade Dashboard</div>
-          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Exporter"} 👋</h1>
+          <h1 className="pg-title">{greeting()}, {user.name?.split(" ")[0] || "Exporter"}</h1>
           <p className="pg-sub">Manage your sourcing, shipments and international trade from one place.</p>
         </div>
         <button
@@ -548,7 +552,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">🌾 Farmer Produce</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Wheat size={18} style={{ color: "#d97706" }} /> Farmer Produce
+              </div>
               <div className="card-sub">Available export listings from farmers</div>
             </div>
             <Link to="/exporter/sourcing" className="btn-amber" style={{ fontSize:13, padding:"8px 16px" }}>
@@ -564,7 +570,7 @@ export default function ExporterDashboard() {
             <SectionError msg={errList} onRetry={fetchListings} />
           ) : listings.length === 0 ? (
             <EmptyState
-              icon="🌾" msg="No farmer export listings available."
+              icon={Wheat} msg="No farmer export listings available."
               action={<Link to="/exporter/sourcing" className="btn-amber" style={{ fontSize:13, padding:"8px 16px", marginTop:8, display:"inline-flex" }}>Browse Farmer Produce</Link>}
             />
           ) : (
@@ -574,16 +580,38 @@ export default function ExporterDashboard() {
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
                     <div style={{ flex:1 }}>
                       <div style={{ fontWeight:700, color: "#0f172a", fontSize:14 }}>{l.name}</div>
-                      <div style={{ fontSize:12, color:"var(--text2)", marginTop:3 }}>
-                        👤 {l.farmer?.name || "Farmer"} &nbsp;·&nbsp; 📍 {l.location || l.farmer?.location || "—"}
+                      <div style={{ fontSize:12, color:"var(--text2)", marginTop:3, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+                        <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
+                          <User size={12} style={{ color: "#d97706" }} /> {l.farmer?.name || "Farmer"}
+                        </span>
+                        <span>·</span>
+                        <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
+                          <MapPin size={12} style={{ color: "#d97706" }} /> {l.location || l.farmer?.location || "—"}
+                        </span>
                       </div>
-                      <div style={{ fontSize:12, color:"var(--text2)", marginTop:2 }}>
-                        📦 {l.exportQuantity} {l.exportUnit || "MT"}
-                        {l.exportGrade && <> &nbsp;·&nbsp; 🏷️ {l.exportGrade}</>}
-                        {l.expectedExportPrice > 0 && <> &nbsp;·&nbsp; ₹{Number(l.expectedExportPrice).toLocaleString("en-IN")}/{l.exportUnit || "MT"}</>}
+                      <div style={{ fontSize:12, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+                        <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
+                          <Package size={12} style={{ color: "#d97706" }} /> {l.exportQuantity} {l.exportUnit || "MT"}
+                        </span>
+                        {l.exportGrade && (
+                          <>
+                            <span>·</span>
+                            <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
+                              <Tag size={12} style={{ color: "#d97706" }} /> {l.exportGrade}
+                            </span>
+                          </>
+                        )}
+                        {l.expectedExportPrice > 0 && (
+                          <>
+                            <span>·</span>
+                            <span>₹{Number(l.expectedExportPrice).toLocaleString("en-IN")}/{l.exportUnit || "MT"}</span>
+                          </>
+                        )}
                       </div>
                       {l.preferredDestination && (
-                        <div style={{ fontSize:11, color:"#f59e0b", marginTop:2 }}>🌍 Preferred: {l.preferredDestination}</div>
+                        <div style={{ fontSize:11, color:"#f59e0b", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
+                          <Globe size={11} /> Preferred: {l.preferredDestination}
+                        </div>
                       )}
                     </div>
                     <Link
@@ -608,7 +636,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">📩 Export Interests</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Inbox size={18} style={{ color: "#d97706" }} /> Export Interests
+              </div>
               <div className="card-sub">Your farmer negotiations</div>
             </div>
             <Link to="/exporter/my-interests" className="btn-ghost" style={{ fontSize:13, padding:"8px 14px" }}>
@@ -624,7 +654,7 @@ export default function ExporterDashboard() {
             <SectionError msg={errInt} onRetry={fetchInterests} />
           ) : interests.length === 0 ? (
             <EmptyState
-              icon="📩" msg="No export interests yet."
+              icon={Inbox} msg="No export interests yet."
               action={<Link to="/exporter/sourcing" className="btn-amber" style={{ fontSize:12, padding:"7px 14px", marginTop:8, display:"inline-flex" }}>Browse Farmer Produce</Link>}
             />
           ) : (
@@ -653,8 +683,8 @@ export default function ExporterDashboard() {
                       Latest Pending
                     </div>
                     <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{top.listing?.name || "—"}</div>
-                    <div style={{ fontSize:12, color:"var(--text2)", marginTop:2 }}>
-                      👤 {top.farmer?.name || "Farmer"} &nbsp;·&nbsp; {top.requestedQty} {top.requestedUnit || "MT"}
+                    <div style={{ fontSize:12, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
+                      <User size={12} style={{ color: "#d97706" }} /> {top.farmer?.name || "Farmer"} &nbsp;·&nbsp; {top.requestedQty} {top.requestedUnit || "MT"}
                     </div>
                     <Link
                       to="/exporter/my-interests"
@@ -676,7 +706,7 @@ export default function ExporterDashboard() {
         if (!loadingInt && !errInt) {
           if (pendingInt.length > 0)
             actions.push({
-              icon:"📩",
+              Icon: Inbox,
               color: "#b45309",
               msg:`${pendingInt.length} farmer interest${pendingInt.length > 1 ? "s" : ""} awaiting your review`,
               sub: pendingInt[0]?.listing?.name ? `Latest: ${pendingInt[0].listing.name}` : undefined,
@@ -685,7 +715,7 @@ export default function ExporterDashboard() {
             });
           if (negotiatingInt.length > 0)
             actions.push({
-              icon:"💬",
+              Icon: MessageSquare,
               color: "#7c3aed",
               msg:`${negotiatingInt.length} interest${negotiatingInt.length > 1 ? "s" : ""} in active negotiation`,
               sub: negotiatingInt[0]?.listing?.name ? `Latest: ${negotiatingInt[0].listing.name}` : undefined,
@@ -695,7 +725,7 @@ export default function ExporterDashboard() {
         }
         if (!loadingShip && !errShip && approachingShipments.length > 0)
           actions.push({
-            icon:"🚢",
+            Icon: Ship,
             color: "#0369a1",
             msg:`${approachingShipments.length} shipment${approachingShipments.length > 1 ? "s" : ""} arriving within 3 days`,
             sub: approachingShipments[0]?.containerNo ? `Container: ${approachingShipments[0].containerNo}` : undefined,
@@ -705,7 +735,7 @@ export default function ExporterDashboard() {
         const overdueShipments = activeShipments.filter(s => { const d = daysUntil(s.eta); return d !== null && d < 0; });
         if (!loadingShip && !errShip && overdueShipments.length > 0)
           actions.push({
-            icon:"⚠️",
+            Icon: AlertTriangle,
             color: "#dc2626",
             msg:`${overdueShipments.length} shipment${overdueShipments.length > 1 ? "s" : ""} past ETA — follow up required`,
             sub: overdueShipments[0]?.containerNo ? `Container: ${overdueShipments[0].containerNo}` : undefined,
@@ -714,7 +744,7 @@ export default function ExporterDashboard() {
           });
         if (!loadingRfqs && !errRfqs && pendingRfqs.length > 0)
           actions.push({
-            icon:"📋",
+            Icon: ClipboardList,
             color:"#fb923c",
             msg:`${pendingRfqs.length} RFQ${pendingRfqs.length > 1 ? "s" : ""} awaiting response`,
             sub: pendingRfqs[0]?.cropName ? `Latest: ${pendingRfqs[0].cropName} → ${pendingRfqs[0].destinationCountry}` : undefined,
@@ -723,7 +753,7 @@ export default function ExporterDashboard() {
           });
         if (!loadingComp && !errComp && complianceAlerts.length > 0)
           actions.push({
-            icon:"📑",
+            Icon: FileText,
             color: "#dc2626",
             msg:`${complianceAlerts.length} compliance document${complianceAlerts.length > 1 ? "s" : ""} need attention`,
             sub: complianceAlerts[0]?.title || undefined,
@@ -737,7 +767,9 @@ export default function ExporterDashboard() {
           <div className="card" style={{ marginBottom:18 }}>
             <div className="sec-head">
               <div>
-                <div className="card-title">⚠️ Action Required</div>
+                <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <AlertTriangle size={18} style={{ color: "#dc2626" }} /> Action Required
+                </div>
                 <div className="card-sub">Items that need your attention right now</div>
               </div>
               {actions.length > 0 && (
@@ -750,15 +782,15 @@ export default function ExporterDashboard() {
               </div>
             ) : actions.length === 0 ? (
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background: "#f0fdf4", border:"1px solid rgba(34,197,94,0.15)", color: "#15803d", fontSize:13, fontWeight:600 }}>
-                ✓ No urgent actions right now. Everything looks good.
+                <CheckCircle2 size={16} style={{ color: "#15803d" }} /> No urgent actions right now. Everything looks good.
               </div>
             ) : (
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                 {actions.map((a, i) => (
                   <Link key={i} to={a.to} className="action-item">
                     <div style={{ display:"flex", alignItems:"center", gap:12, flex:1 }}>
-                      <div style={{ width:36, height:36, borderRadius:10, background:`${a.color}18`, border:`1px solid ${a.color}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
-                        {a.icon}
+                      <div style={{ width:36, height:36, borderRadius:10, background:`${a.color}18`, border:`1px solid ${a.color}30`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                        <a.Icon size={18} style={{ color: a.color }} />
                       </div>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:13, fontWeight:600, color: "#0f172a" }}>{a.msg}</div>
@@ -783,7 +815,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">🚢 Shipment Alerts</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Ship size={18} style={{ color: "#d97706" }} /> Shipment Alerts
+              </div>
               <div className="card-sub">Shipments needing attention</div>
             </div>
             <Link to="/exporter/logistics" className="btn-ghost" style={{ fontSize:12, padding:"7px 12px" }}>All Shipments →</Link>
@@ -807,7 +841,7 @@ export default function ExporterDashboard() {
 
             if (alerts.length === 0) return (
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background: "#f0fdf4", border:"1px solid rgba(34,197,94,0.15)", color: "#15803d", fontSize:13, fontWeight:600 }}>
-                ✓ No shipment alerts.
+                <CheckCircle2 size={16} style={{ color: "#15803d" }} /> No shipment alerts.
               </div>
             );
 
@@ -816,15 +850,15 @@ export default function ExporterDashboard() {
                 {alerts.slice(0,6).map(({ s, kind }, i) => {
                   const d = daysUntil(s.eta);
                   const kindCfg = kind === 'overdue'
-                    ? { color:'#f87171', bg:'rgba(239,68,68,0.06)', icon:'⚠️', label:'Past ETA' }
+                    ? { color:'#f87171', bg:'rgba(239,68,68,0.06)', Icon: AlertTriangle, label:'Past ETA' }
                     : kind === 'soon'
-                    ? { color:'#fbbf24', bg:'rgba(251,191,36,0.06)', icon:'🕐', label: d === 0 ? 'Due Today' : `${d}d to ETA` }
-                    : { color:'#94a3b8', bg:'rgba(148,163,184,0.06)', icon:'❌', label:'Cancelled' };
+                    ? { color:'#fbbf24', bg:'rgba(251,191,36,0.06)', Icon: Clock, label: d === 0 ? 'Due Today' : `${d}d to ETA` }
+                    : { color:'#94a3b8', bg:'rgba(148,163,184,0.06)', Icon: X, label:'Cancelled' };
                   return (
                     <div key={s._id || i} className="ship-alert-item" style={{ borderColor:`${kindCfg.color}22`, background:kindCfg.bg }}>
                       <div style={{ flex:1 }}>
                         <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
-                          <span style={{ fontSize:13 }}>{kindCfg.icon}</span>
+                          <kindCfg.Icon size={14} style={{ color: kindCfg.color }} />
                           <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#b45309" }}>{s.containerNo}</span>
                           <span style={{ fontSize:11, fontWeight:700, color:kindCfg.color }}>{kindCfg.label}</span>
                         </div>
@@ -849,7 +883,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">🕐 Recent Activity</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Clock size={18} style={{ color: "#d97706" }} /> Recent Activity
+              </div>
               <div className="card-sub">Latest events across your account</div>
             </div>
           </div>
@@ -864,16 +900,16 @@ export default function ExporterDashboard() {
               const ts = int.updatedAt || int.createdAt;
               if (!ts) return;
               const statusMap = {
-                pending:     { icon:'📩', color:'#fbbf24', text:`Interest submitted for ${int.listing?.name || 'a listing'}` },
-                accepted:    { icon:'✅', color:'#4ade80', text:`Interest accepted: ${int.listing?.name || 'listing'}` },
-                negotiating: { icon:'💬', color:'#a78bfa', text:`Negotiating: ${int.listing?.name || 'listing'} with ${int.farmer?.name || 'farmer'}` },
-                confirmed:   { icon:'🤝', color:'#4ade80', text:`Deal confirmed: ${int.listing?.name || 'listing'}` },
-                rejected:    { icon:'❌', color:'#f87171', text:`Interest rejected: ${int.listing?.name || 'listing'}` },
-                cancelled:   { icon:'🚫', color:'#94a3b8', text:`Interest cancelled: ${int.listing?.name || 'listing'}` },
-                completed:   { icon:'🏆', color:'#4ade80', text:`Deal completed: ${int.listing?.name || 'listing'}` },
+                pending:     { Icon: Inbox, color:'#fbbf24', text:`Interest submitted for ${int.listing?.name || 'a listing'}` },
+                accepted:    { Icon: CheckCircle2, color:'#4ade80', text:`Interest accepted: ${int.listing?.name || 'listing'}` },
+                negotiating: { Icon: MessageSquare, color:'#a78bfa', text:`Negotiating: ${int.listing?.name || 'listing'} with ${int.farmer?.name || 'farmer'}` },
+                confirmed:   { Icon: Handshake, color:'#4ade80', text:`Deal confirmed: ${int.listing?.name || 'listing'}` },
+                rejected:    { Icon: X, color:'#f87171', text:`Interest rejected: ${int.listing?.name || 'listing'}` },
+                cancelled:   { Icon: Ban, color:'#94a3b8', text:`Interest cancelled: ${int.listing?.name || 'listing'}` },
+                completed:   { Icon: Trophy, color:'#4ade80', text:`Deal completed: ${int.listing?.name || 'listing'}` },
               };
               const cfg = statusMap[int.status];
-              if (cfg) events.push({ ts: new Date(ts).getTime(), icon:cfg.icon, color:cfg.color, text:cfg.text });
+              if (cfg) events.push({ ts: new Date(ts).getTime(), Icon:cfg.Icon, color:cfg.color, text:cfg.text });
             });
 
             // Shipments — use updatedAt for status change events
@@ -883,7 +919,7 @@ export default function ExporterDashboard() {
               const cfg = SHIPMENT_STATUSES[s.status];
               events.push({
                 ts: new Date(ts).getTime(),
-                icon: '🚢',
+                Icon: Ship,
                 color: '#38bdf8',
                 text: `Shipment ${s.containerNo} — ${cfg?.label || s.status}${ s.cargo ? ` (${s.cargo})` : '' }`,
               });
@@ -895,7 +931,7 @@ export default function ExporterDashboard() {
               if (!ts) return;
               events.push({
                 ts: new Date(ts).getTime(),
-                icon: '📋',
+                Icon: ClipboardList,
                 color: '#fb923c',
                 text: `RFQ created: ${r.cropName} → ${r.destinationCountry} (${r.quantityTons} MT)`,
               });
@@ -931,8 +967,9 @@ export default function ExporterDashboard() {
                     <div className="activity-dot" style={{ background:ev.color, boxShadow:`0 0 6px ${ev.color}60` }} />
                     <div style={{ flex:1 }}>
                       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:8 }}>
-                        <div style={{ fontSize:13, color: "#0f172a", fontWeight:500, lineHeight:1.4 }}>
-                          <span style={{ marginRight:6 }}>{ev.icon}</span>{ev.text}
+                        <div style={{ fontSize:13, color: "#0f172a", fontWeight:500, lineHeight:1.4, display:"flex", alignItems:"flex-start", gap:6 }}>
+                          <ev.Icon size={14} style={{ color: ev.color, flexShrink: 0, marginTop: 2 }} />
+                          <span>{ev.text}</span>
                         </div>
                         <span style={{ fontSize:10, color:"var(--text2)", whiteSpace:"nowrap", flexShrink:0, paddingTop:2 }}>{relTime(ev.ts)}</span>
                       </div>
@@ -952,7 +989,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">🚢 Shipment Pipeline</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Ship size={18} style={{ color: "#d97706" }} /> Shipment Pipeline
+              </div>
               <div className="card-sub">{shipments.length} total shipments tracked</div>
             </div>
             <Link to="/exporter/logistics" className="btn-ghost" style={{ fontSize:13, padding:"8px 14px" }}>
@@ -987,7 +1026,7 @@ export default function ExporterDashboard() {
               {/* Active shipment rows */}
               {activeShipments.length === 0 ? (
                 <EmptyState
-                  icon="🚢" msg="No active shipments."
+                  icon={Ship} msg="No active shipments."
                   action={<Link to="/exporter/logistics" className="btn-ghost" style={{ fontSize:12, padding:"7px 14px", marginTop:8, display:"inline-flex" }}>Add Shipment</Link>}
                 />
               ) : (
@@ -1005,7 +1044,7 @@ export default function ExporterDashboard() {
                             <div style={{ fontSize:12, color: "#0f172a", fontWeight:600 }}>{s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}</div>
                             <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
                               {s.portOfOrigin} → <strong style={{ color:"#e5e7eb" }}>{s.destPort || s.destinationCountry}</strong>
-                              {s.vessel && <> &nbsp;·&nbsp; 🚢 {s.vessel}</>}
+                              {s.vessel && <> &nbsp;·&nbsp; <Ship size={11} style={{ verticalAlign: "middle", color: "#d97706" }} /> {s.vessel}</>}
                             </div>
                           </div>
                           <EtaDisplay eta={s.eta} status={s.status} />
@@ -1028,7 +1067,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">📋 RFQ Overview</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <ClipboardList size={18} style={{ color: "#d97706" }} /> RFQ Overview
+              </div>
               <div className="card-sub">Export requests for quotation</div>
             </div>
             <Link to="/exporter/sourcing" className="btn-ghost" style={{ fontSize:13, padding:"8px 14px" }}>
@@ -1044,7 +1085,7 @@ export default function ExporterDashboard() {
             <SectionError msg={errRfqs} onRetry={fetchRfqs} />
           ) : rfqs.length === 0 ? (
             <EmptyState
-              icon="📋" msg="No RFQs raised yet."
+              icon={ClipboardList} msg="No RFQs raised yet."
               action={<Link to="/exporter/sourcing" className="btn-amber" style={{ fontSize:12, padding:"7px 14px", marginTop:8, display:"inline-flex" }}>Browse & Request</Link>}
             />
           ) : (
@@ -1072,8 +1113,8 @@ export default function ExporterDashboard() {
                     <div key={r._id} style={{ padding:"10px 12px", borderRadius:10, background:"var(--surface)", border:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                       <div>
                         <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{r.cropName}</div>
-                        <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
-                          🌍 {r.destinationCountry} &nbsp;·&nbsp; {r.quantityTons} MT
+                        <div style={{ fontSize:11, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
+                          <Globe size={11} style={{ color: "#d97706" }} /> {r.destinationCountry} &nbsp;·&nbsp; {r.quantityTons} MT
                           {r.targetPriceUsd > 0 && <> &nbsp;·&nbsp; ${r.targetPriceUsd}/MT</>}
                         </div>
                         <div style={{ fontSize:10, color:"var(--text2)", marginTop:1 }}>{fmtDate(r.createdAt)}</div>
@@ -1092,7 +1133,9 @@ export default function ExporterDashboard() {
       <div className="card" style={{ marginBottom:18 }}>
         <div className="sec-head">
           <div>
-            <div className="card-title">💱 Exchange Rates</div>
+            <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <ArrowLeftRight size={18} style={{ color: "#d97706" }} /> Exchange Rates
+            </div>
             <div className="card-sub">
               {errFx
                 ? "Exchange rate data unavailable"
@@ -1108,7 +1151,7 @@ export default function ExporterDashboard() {
             disabled={loadingFx}
             style={{ fontSize:13, padding:"8px 14px", display:"flex", alignItems:"center", gap:6 }}
           >
-            {loadingFx ? <span className="spinner" style={{ width:12, height:12, borderWidth:2 }} /> : "🔄"} Refresh
+            {loadingFx ? <span className="spinner" style={{ width:12, height:12, borderWidth:2 }} /> : <RefreshCw size={12} />} Refresh
           </button>
         </div>
 
@@ -1139,7 +1182,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">📑 Compliance Overview</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <FileCheck size={18} style={{ color: "#d97706" }} /> Compliance Overview
+              </div>
               <div className="card-sub">Your export documents & certifications</div>
             </div>
             <Link to="/exporter/compliance" className="btn-ghost" style={{ fontSize:13, padding:"8px 14px" }}>
@@ -1155,7 +1200,7 @@ export default function ExporterDashboard() {
             <SectionError msg={errComp} onRetry={fetchCompliance} />
           ) : compliance.length === 0 ? (
             <EmptyState
-              icon="📑" msg="No compliance documents added yet."
+              icon={FileCheck} msg="No compliance documents added yet."
               action={<Link to="/exporter/compliance" className="btn-amber" style={{ fontSize:12, padding:"7px 14px", marginTop:8, display:"inline-flex" }}>Add Documents</Link>}
             />
           ) : (
@@ -1189,7 +1234,15 @@ export default function ExporterDashboard() {
                           <div style={{ fontSize:11, color:"var(--text2)" }}>Lifetime · {doc.docType}</div>
                         ) : doc.validTill ? (
                           <div style={{ fontSize:11, color: expired ? "#f87171" : expiring ? "#fbbf24" : "var(--text2)" }}>
-                            {expired ? "⚠️ Expired" : expiring ? `⚠️ Expires in ${dl}d` : `Valid till ${fmtDate(doc.validTill)}`}
+                            {expired ? (
+                              <span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>
+                                <AlertTriangle size={11} /> Expired
+                              </span>
+                            ) : expiring ? (
+                              <span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>
+                                <AlertTriangle size={11} /> Expires in {dl}d
+                              </span>
+                            ) : `Valid till ${fmtDate(doc.validTill)}`}
                           </div>
                         ) : (
                           <div style={{ fontSize:11, color:"var(--text2)" }}>{doc.docType}</div>
@@ -1213,7 +1266,9 @@ export default function ExporterDashboard() {
         <div className="card">
           <div className="sec-head">
             <div>
-              <div className="card-title">📊 Export Analytics</div>
+              <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <BarChart2 size={18} style={{ color: "#d97706" }} /> Export Analytics
+              </div>
               <div className="card-sub">Volume, revenue and interest trends</div>
             </div>
           </div>
@@ -1226,16 +1281,16 @@ export default function ExporterDashboard() {
           ) : (
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               {[
-                { label:"Total Shipments",    val: stats?.totalShipments ?? "—",    icon:"🚢" },
-                { label:"Delivered",          val: deliveredShipments.length,       icon:"✅" },
-                { label:"Total Volume",       val: totalVolume > 0 ? `${totalVolume} MT` : "—", icon:"📦" },
-                { label:"Total Interests",    val: interests.length,                icon:"📩" },
-                { label:"Confirmed Deals",    val: confirmedInt.length,             icon:"🤝" },
-                { label:"Total RFQs",         val: rfqs.length,                     icon:"📋" },
-              ].map(({ label, val, icon }) => (
+                { label:"Total Shipments",    val: stats?.totalShipments ?? "—",    Icon: Ship },
+                { label:"Delivered",          val: deliveredShipments.length,       Icon: CheckCircle2 },
+                { label:"Total Volume",       val: totalVolume > 0 ? `${totalVolume} MT` : "—", Icon: Package },
+                { label:"Total Interests",    val: interests.length,                Icon: Inbox },
+                { label:"Confirmed Deals",    val: confirmedInt.length,             Icon: Handshake },
+                { label:"Total RFQs",         val: rfqs.length,                     Icon: ClipboardList },
+              ].map(({ label, val, Icon }) => (
                 <div key={label} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 14px", borderRadius:10, background:"var(--surface)", border:"1px solid var(--border)" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <span style={{ fontSize:16 }}>{icon}</span>
+                    <Icon size={16} style={{ color: "#d97706" }} />
                     <span style={{ fontSize:13, color:"var(--text2)" }}>{label}</span>
                   </div>
                   <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color: "#0f172a" }}>{val}</span>
@@ -1253,7 +1308,9 @@ export default function ExporterDashboard() {
       <div className="card">
         <div className="sec-head">
           <div>
-            <div className="card-title">📦 Recent Shipments</div>
+            <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Package size={18} style={{ color: "#d97706" }} /> Recent Shipments
+            </div>
             <div className="card-sub">{shipments.length} total records</div>
           </div>
           <Link to="/exporter/logistics" className="btn-ghost" style={{ fontSize:13, padding:"8px 14px" }}>
@@ -1269,7 +1326,7 @@ export default function ExporterDashboard() {
           <SectionError msg={errShip} onRetry={fetchShipments} />
         ) : shipments.length === 0 ? (
           <EmptyState
-            icon="📦" msg="No shipments found."
+            icon={Package} msg="No shipments found."
             action={<Link to="/exporter/logistics" className="btn-amber" style={{ fontSize:12, padding:"7px 14px", marginTop:8, display:"inline-flex" }}>Add First Shipment</Link>}
           />
         ) : (

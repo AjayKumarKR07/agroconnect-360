@@ -1,15 +1,19 @@
-﻿import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DS } from "../styles/ds";
+import {
+  TrendingUp, TrendingDown, Coins, Store, MapPin,
+  Clock, BarChart3, RotateCcw, AlertTriangle, X
+} from "lucide-react";
 
 const API_URL = "http://localhost:5000/api";
 
 const SECTIONS = [
-  { key: "highest",   label: "📈 Top Highest Prices",    color: "#15803d", accent: "rgba(34,197,94,0.08)",   border: "rgba(34,197,94,0.15)"  },
-  { key: "lowest",    label: "📉 Top Lowest Prices",     color: "#dc2626", accent: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.15)"  },
-  { key: "avg",       label: "💰 Avg by Commodity",      color: "#0369a1", accent: "rgba(56,189,248,0.08)",  border: "rgba(56,189,248,0.15)" },
-  { key: "markets",   label: "🏪 Most Active Markets",   color: "#b45309", accent: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.15)" },
-  { key: "districts", label: "📍 District Statistics",   color: "#7c3aed", accent: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)"},
-  { key: "latest",    label: "⏱️ Latest Market Prices",  color: "#94a3b8", accent: "rgba(148,163,184,0.08)", border: "rgba(148,163,184,0.15)"},
+  { key: "highest",   label: "Top Highest Prices",   Icon: TrendingUp,   color: "#15803d", accent: "rgba(34,197,94,0.08)",   border: "rgba(34,197,94,0.15)"  },
+  { key: "lowest",    label: "Top Lowest Prices",    Icon: TrendingDown, color: "#dc2626", accent: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.15)"  },
+  { key: "avg",       label: "Avg by Commodity",     Icon: Coins,        color: "#0369a1", accent: "rgba(56,189,248,0.08)",  border: "rgba(56,189,248,0.15)" },
+  { key: "markets",   label: "Most Active Markets",  Icon: Store,        color: "#b45309", accent: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.15)" },
+  { key: "districts", label: "District Statistics",  Icon: MapPin,       color: "#7c3aed", accent: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)"},
+  { key: "latest",    label: "Latest Market Prices", Icon: Clock,        color: "#94a3b8", accent: "rgba(148,163,184,0.08)", border: "rgba(148,163,184,0.15)"},
 ];
 
 export default function MarketTrends() {
@@ -103,56 +107,58 @@ export default function MarketTrends() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Live APMC Data · All India</div>
-          <h1 className="pg-title">📊 Market Trends</h1>
+          <h1 className="pg-title"><BarChart3 size={22} strokeWidth={2} style={{ marginRight: 8, color: "#16a34a", verticalAlign: "middle" }} />Market Trends</h1>
           <p className="pg-sub">Agricultural commodity prices across Indian markets — filter by State & District.</p>
         </div>
-        <button onClick={loadTrends} className="btn-ghost" style={{ fontSize: 13 }}>🔄 Refresh</button>
+        <button onClick={loadTrends} className="btn-ghost" style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <RotateCcw size={14} /> Refresh
+        </button>
       </div>
 
       <div className="mt-filter-bar">
         <span className="mt-filter-label">Filter by:</span>
         <select id="mt-state-select" className="mt-filter-select" value={selState} onChange={e => setSelState(e.target.value)}>
-          <option value="">🌏 All States</option>
+          <option value="">All States</option>
           {states.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
         {selState && (
           <select id="mt-district-select" className="mt-filter-select" value={selDistrict} onChange={e => setSelDistrict(e.target.value)}>
-            <option value="">📍 All Districts</option>
+            <option value="">All Districts</option>
             {districts.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
         )}
         {selState && (
           <span className="filter-chip">
             {selState}
-            <span className="chip-x" onClick={() => { setSelState(""); setSelDistrict(""); }}>✕</span>
+            <X size={12} className="chip-x" onClick={() => { setSelState(""); setSelDistrict(""); }} />
           </span>
         )}
         {selDistrict && (
           <span className="filter-chip" style={{ background:"rgba(167,139,250,0.08)", borderColor:"rgba(167,139,250,0.2)", color: "#7c3aed" }}>
             {selDistrict}
-            <span className="chip-x" onClick={() => setSelDistrict("")}>✕</span>
+            <X size={12} className="chip-x" onClick={() => setSelDistrict("")} />
           </span>
         )}
       </div>
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12, marginBottom:28 }}>
         {[
-          ["📈","Highest",    topHighest.length,        "#4ade80"],
-          ["📉","Lowest",     topLowest.length,         "#f87171"],
-          ["💰","Commodities",commodityAverage.length,  "#38bdf8"],
-          ["🏪","Markets",    marketStats.length,       "#fbbf24"],
-          ["📍","Districts",  districtStats.length,     "#a78bfa"],
-          ["⏱️","Latest",     latestPrices.length,      "#94a3b8"],
-        ].map(([icon, label, val, color]) => (
+          [TrendingUp,   "Highest",     topHighest.length,        "#4ade80"],
+          [TrendingDown, "Lowest",      topLowest.length,         "#f87171"],
+          [Coins,        "Commodities", commodityAverage.length,  "#38bdf8"],
+          [Store,        "Markets",     marketStats.length,       "#fbbf24"],
+          [MapPin,       "Districts",   districtStats.length,     "#a78bfa"],
+          [Clock,        "Latest",      latestPrices.length,      "#94a3b8"],
+        ].map(([Icon, label, val, color]) => (
           <div key={label} style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:14, padding:"16px 18px", display:"flex", flexDirection:"column", gap:6 }}>
-            <div style={{ fontSize:18 }}>{icon}</div>
+            <div style={{ color }}><Icon size={20} /></div>
             <div style={{ fontSize:11, color:"var(--text2)", textTransform:"uppercase", letterSpacing:"0.05em" }}>{label}</div>
             <div style={{ fontSize:28, fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, color }}>{loading ? "—" : val}</div>
           </div>
         ))}
       </div>
 
-      {error  && <div className="alert-error">⚠️ {error}</div>}
+      {error  && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
       {loading && <div className="loading-wrap"><div className="spinner" /><span>Loading market data…</span></div>}
 
       {!loading && !error && (
@@ -162,7 +168,7 @@ export default function MarketTrends() {
               <button key={s.key} className={`mt-tab ${activeTab === s.key ? "active" : ""}`}
                 style={activeTab === s.key ? { background:`${s.accent}`, color:s.color, border:`1px solid ${s.border}` } : {}}
                 onClick={() => setActiveTab(s.key)}>
-                {s.label}
+                {s.Icon && <s.Icon size={14} style={{ verticalAlign: "middle", marginRight: 6 }} />}{s.label}
               </button>
             ))}
           </div>
@@ -170,7 +176,9 @@ export default function MarketTrends() {
           <div className="card" style={{ padding:0, overflow:"hidden", borderColor:activeSection?.border, background:`linear-gradient(180deg, ${activeSection?.accent} 0%, transparent 60%)` }}>
             <div style={{ padding:"18px 22px", borderBottom:`1px solid ${activeSection?.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <div>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color:activeSection?.color }}>{activeSection?.label}</div>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color:activeSection?.color, display: "flex", alignItems: "center", gap: 8 }}>
+                  {activeSection?.Icon && <activeSection.Icon size={18} />} {activeSection?.label}
+                </div>
                 <div style={{ fontSize:12, color:"var(--text2)", marginTop:2 }}>
                   {selState ? `${selState}${selDistrict ? " › " + selDistrict : ""}` : "All India"} · APMC price data
                 </div>
@@ -252,7 +260,7 @@ export default function MarketTrends() {
                       return marketStats.map((item, i) => (
                         <tr key={i}>
                           <td><span className="mt-rank" style={{ background:"rgba(251,191,36,0.1)", color: "#b45309" }}>{i+1}</span></td>
-                          <td style={{ fontWeight:700, color: "#0f172a" }}>🏪 {item._id}</td>
+                          <td style={{ fontWeight:700, color: "#0f172a" }}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Store size={15} color="#b45309" /> {item._id}</span></td>
                           <td>
                             <div className="bar-wrap">
                               <span style={{ fontWeight:700, color: "#b45309", width:60, flexShrink:0 }}>{item.records}</span>
@@ -272,7 +280,7 @@ export default function MarketTrends() {
                     {districtStats.map((item, i) => (
                       <tr key={i}>
                         <td><span className="mt-rank" style={{ background:"rgba(167,139,250,0.1)", color: "#7c3aed" }}>{i+1}</span></td>
-                        <td style={{ fontWeight:700, color: "#0f172a" }}>📍 {item.district}</td>
+                        <td style={{ fontWeight:700, color: "#0f172a" }}><span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><MapPin size={15} color="#7c3aed" /> {item.district}</span></td>
                         <td style={{ color:"var(--text2)" }}>{item.cropCount}</td>
                         <td style={{ color:"var(--text2)" }}>{item.marketCount}</td>
                         <td><span style={{ fontWeight:700, color: "#7c3aed" }}>Rs.{Math.round(item.avgPrice).toLocaleString("en-IN")}</span></td>

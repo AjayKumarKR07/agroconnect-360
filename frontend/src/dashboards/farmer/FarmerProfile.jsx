@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { ClipboardList, RefreshCw } from "lucide-react";
+import { ClipboardList, RefreshCw, User, Edit3, Save, CheckCircle2, AlertTriangle, LogOut, Mail, MapPin, Globe, Shield, Hash } from "lucide-react";
 
 const token = () => localStorage.getItem("agroconnect_token");
 const authH = () => ({ Authorization: `Bearer ${token()}`, "Content-Type": "application/json" });
@@ -76,7 +76,7 @@ export default function FarmerProfile() {
       const d = await r.json();
       if (!r.ok) throw new Error(d.message || "Update failed");
       localStorage.setItem("agroconnect_user", JSON.stringify(d.user));
-      setSuccess("✅ Profile updated! District and state saved.");
+      setSuccess("Profile updated! District and state saved.");
     } catch (e) { setError(e.message); }
     finally { setSaving(false); }
   };
@@ -107,7 +107,9 @@ export default function FarmerProfile() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Account Settings</div>
-          <h1 className="pg-title">👤 My Profile</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <User size={24} color="#16a34a" /> My Profile
+          </h1>
           <p className="pg-sub">Manage your personal information and account preferences.</p>
         </div>
       </div>
@@ -129,10 +131,12 @@ export default function FarmerProfile() {
             </div>
           </div>
 
-          <div className="card-title" style={{ marginBottom: 18 }}>✏️ Edit Information</div>
+          <div className="card-title" style={{ marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}>
+            <Edit3 size={16} color="#16a34a" /> Edit Information
+          </div>
 
-          {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16 }}>{success}</div>}
-          {error   && <div className="alert-error">{error}</div>}
+          {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}><CheckCircle2 size={16} color="#15803d" /> {success}</div>}
+          {error   && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="pf-grid">
@@ -196,8 +200,8 @@ export default function FarmerProfile() {
               </div>
             </div>
 
-            <button type="submit" className="btn-green" disabled={saving} style={{ marginTop: 20, minWidth: 160 }}>
-              {saving ? "💾 Saving…" : "💾 Save Changes"}
+            <button type="submit" className="btn-green" disabled={saving} style={{ marginTop: 20, minWidth: 160, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {saving ? <><RefreshCw size={15} /> Saving…</> : <><Save size={15} /> Save Changes</>}
             </button>
           </form>
         </div>
@@ -208,15 +212,17 @@ export default function FarmerProfile() {
           <div className="card">
             <div className="card-title" style={{ marginBottom: 16 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Account Info</div>
             {[
-              ["🆔", "User ID",  user.id || user._id || "—"],
-              ["📧", "Email",    user.email    || "—"],
-              ["📍", "District", user.district || "—"],
-              ["🗺️", "State",    user.state    || "—"],
-              ["🎭", "Role",     user.role     || "farmer"],
-              ["✅", "Profile",  user.profileCompleted ? "Complete" : "Incomplete"],
-            ].map(([icon, label, val]) => (
-              <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
-                <span style={{ color: "var(--text2)" }}>{icon} {label}</span>
+              { Icon: Hash, label: "User ID",  val: user.id || user._id || "—" },
+              { Icon: Mail, label: "Email",    val: user.email    || "—" },
+              { Icon: MapPin, label: "District", val: user.district || "—" },
+              { Icon: Globe, label: "State",    val: user.state    || "—" },
+              { Icon: Shield, label: "Role",     val: user.role     || "farmer" },
+              { Icon: CheckCircle2, label: "Profile",  val: user.profileCompleted ? "Complete" : "Incomplete" },
+            ].map(({ Icon, label, val }) => (
+              <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
+                <span style={{ color: "var(--text2)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <Icon size={14} color="#16a34a" /> {label}
+                </span>
                 <span style={{ fontWeight: 600, color: "#0f172a", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", textAlign: "right" }}>{val}</span>
               </div>
             ))}
@@ -226,21 +232,23 @@ export default function FarmerProfile() {
           <div className="card" style={{ borderColor: "rgba(56,189,248,0.15)" }}>
             <div className="card-title" style={{ marginBottom: 10 }}><RefreshCw size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Switch Role</div>
             <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>Want to use AgroConnect as a different user? Switch your role here.</p>
-            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
-              🔄 Change My Role
+            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 8, color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
+              <RefreshCw size={14} /> Change My Role
             </button>
           </div>
 
           {/* Danger zone */}
           <div className="card" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertTriangle size={16} color="#dc2626" /> Danger Zone
+            </div>
             <button
               onClick={handleLogout}
-              style={{ width: "100%", justifyContent: "center", padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s" }}
+              style={{ width: "100%", justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 8, padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s" }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.12)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.06)"}
             >
-              🚪 Sign Out
+              <LogOut size={16} /> Sign Out
             </button>
           </div>
         </div>

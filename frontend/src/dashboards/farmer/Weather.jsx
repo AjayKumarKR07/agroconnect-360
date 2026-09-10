@@ -1,21 +1,26 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Thermometer, CloudRain, CalendarDays, Bot, Sprout } from "lucide-react";
+import {
+  Thermometer, CloudRain, CalendarDays, Bot, Sprout, CloudLightning,
+  Snowflake, CloudFog, Cloud, Sun, CloudSun, Droplets, Wind, Eye,
+  Gauge, Sunrise, Sunset, Clock, MapPin, Search, AlertTriangle,
+  Lightbulb, Wheat, FlaskConical, Calendar, Bug
+} from "lucide-react";
 
 /* ─── helpers ─────────────────────────────────────────────── */
 const owmIcon = (code) =>
   `https://openweathermap.org/img/wn/${code}@2x.png`;
 
-const getEmoji = (desc = "") => {
-  const d = desc.toLowerCase();
-  if (d.includes("thunder")) return "⛈️";
-  if (d.includes("rain") || d.includes("drizzle")) return "🌧️";
-  if (d.includes("snow")) return "❄️";
-  if (d.includes("mist") || d.includes("fog") || d.includes("haze")) return "🌫️";
-  if (d.includes("cloud")) return "☁️";
-  if (d.includes("clear") || d.includes("sun")) return "☀️";
-  return "🌤️";
+const WeatherIcon = ({ desc = "", size = 24, className = "" }) => {
+  const d = (desc || "").toLowerCase();
+  if (d.includes("thunder")) return <CloudLightning size={size} color="#eab308" className={className} />;
+  if (d.includes("rain") || d.includes("drizzle")) return <CloudRain size={size} color="#0284c7" className={className} />;
+  if (d.includes("snow")) return <Snowflake size={size} color="#38bdf8" className={className} />;
+  if (d.includes("mist") || d.includes("fog") || d.includes("haze")) return <CloudFog size={size} color="#94a3b8" className={className} />;
+  if (d.includes("cloud")) return <Cloud size={size} color="#64748b" className={className} />;
+  if (d.includes("clear") || d.includes("sun")) return <Sun size={size} color="#f59e0b" className={className} />;
+  return <CloudSun size={size} color="#f59e0b" className={className} />;
 };
 
 const fmtTime = (unixSec) => {
@@ -106,15 +111,20 @@ const WCSS = `
 `;
 
 const FARM_TIPS = [
-  { e: "💧", title: "Irrigation Timing", tip: "Water in early morning (5–8 AM) or late evening to cut evaporation losses by up to 40%." },
-  { e: "🌱", title: "Pre-Sowing Check", tip: "Check the 7-day rain forecast before sowing to avoid waterlogging or drought stress." },
-  { e: "🐛", title: "Pest Pressure", tip: "Humidity >75% accelerates fungal growth — inspect crops every 2–3 days." },
-  { e: "🌾", title: "Harvest Window", tip: "Harvest before predicted heavy rainfall. Grain moisture >16% risks storage losses." },
-  { e: "🧪", title: "Spray Timing", tip: "Avoid agrochemical spraying when wind >10 km/h or rain probability >50%." },
-  { e: "🌡️", title: "Heat Stress", tip: "Apply mulching & shade nets when temperatures exceed 35°C to protect root zones." },
+  { icon: Droplets, color: "#0284c7", title: "Irrigation Timing", tip: "Water in early morning (5–8 AM) or late evening to cut evaporation losses by up to 40%." },
+  { icon: Sprout, color: "#16a34a", title: "Pre-Sowing Check", tip: "Check the 7-day rain forecast before sowing to avoid waterlogging or drought stress." },
+  { icon: Bug, color: "#ef4444", title: "Pest Pressure", tip: "Humidity >75% accelerates fungal growth — inspect crops every 2–3 days." },
+  { icon: Wheat, color: "#d97706", title: "Harvest Window", tip: "Harvest before predicted heavy rainfall. Grain moisture >16% risks storage losses." },
+  { icon: FlaskConical, color: "#8b5cf6", title: "Spray Timing", tip: "Avoid agrochemical spraying when wind >10 km/h or rain probability >50%." },
+  { icon: Thermometer, color: "#ea580c", title: "Heat Stress", tip: "Apply mulching & shade nets when temperatures exceed 35°C to protect root zones." },
 ];
 
-const TABS = ["🌤️ Current", "📅 7-Day", "📆 15-Day", "📅 Calendar"];
+const TABS = [
+  { label: "Current", icon: CloudSun },
+  { label: "7-Day", icon: Calendar },
+  { label: "15-Day", icon: CalendarDays },
+  { label: "Calendar", icon: Calendar },
+];
 
 /* ─── sub-components ──────────────────────────────────────── */
 function SunBar({ sunrise, sunset }) {
@@ -125,19 +135,25 @@ function SunBar({ sunrise, sunset }) {
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, padding: "20px 24px", marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-        <div style={{ fontWeight: 700, color: "#b45309", fontSize: 14 }}>🌅 Sunrise / Sunset</div>
+        <div style={{ fontWeight: 700, color: "#b45309", fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>
+          <Sunrise size={16} color="#d97706" /> Sunrise / Sunset
+        </div>
         <div style={{ fontSize: 11, color: "var(--text2)" }}>Daylight: {Math.round(total / 3600)}h {Math.round((total % 3600) / 60)}m</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>
-        <span>🌄 {fmtTime(sunrise)}</span>
-        <span>🌇 {fmtTime(sunset)}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Sunrise size={14} color="#f59e0b" /> {fmtTime(sunrise)}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Sunset size={14} color="#ea580c" /> {fmtTime(sunset)}</span>
       </div>
       <div className="sun-bar">
         <div className="sun-fill" style={{ width: `${pct}%` }} />
         <div className="sun-dot" style={{ left: `${pct}%` }} />
       </div>
       <div style={{ textAlign: "center", fontSize: 11, color: "var(--text2)", marginTop: 8 }}>
-        {now < sunrise ? "Before sunrise" : now > sunset ? "After sunset" : `☀️ ${Math.round((sunset - now) / 3600)}h ${Math.round(((sunset - now) % 3600) / 60)}m until sunset`}
+        {now < sunrise ? "Before sunrise" : now > sunset ? "After sunset" : (
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <Sun size={12} color="#f59e0b" /> {Math.round((sunset - now) / 3600)}h {Math.round(((sunset - now) % 3600) / 60)}m until sunset
+          </span>
+        )}
       </div>
     </div>
   );
@@ -146,7 +162,9 @@ function SunBar({ sunrise, sunset }) {
 function HourlyStrip({ hourly }) {
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card-title" style={{ marginBottom: 14 }}>⏰ Next 24-Hour Forecast</div>
+      <div className="card-title" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+        <Clock size={15} strokeWidth={1.75} color="#16a34a" /> Next 24-Hour Forecast
+      </div>
       <div className="hourly-scroll">
         {hourly.map((h, i) => {
           const t = new Date(h.time);
@@ -156,8 +174,8 @@ function HourlyStrip({ hourly }) {
               <div style={{ fontSize: 10, color: "var(--text2)", marginBottom: 4 }}>{label}</div>
               <img src={owmIcon(h.icon)} alt={h.description} style={{ width: 40, height: 40 }} />
               <div style={{ fontWeight: 800, fontSize: 16, color: "#0f172a", margin: "2px 0" }}>{h.temp}°</div>
-              <div style={{ fontSize: 10, color: "#0369a1" }}>💧{h.rainProb}%</div>
-              <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 2 }}>💨{h.windSpeed}m/s</div>
+              <div style={{ fontSize: 10, color: "#0369a1", display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}><Droplets size={10} />{h.rainProb}%</div>
+              <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}><Wind size={10} />{h.windSpeed}m/s</div>
             </div>
           );
         })}
@@ -169,8 +187,9 @@ function HourlyStrip({ hourly }) {
 function FcStrip({ days, selected, onSelect, is15 }) {
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card-title" style={{ marginBottom: 14 }}>
-        {is15 ? "📆 15-Day Outlook" : "📅 7-Day Forecast"}
+      <div className="card-title" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}>
+        {is15 ? <CalendarDays size={15} strokeWidth={1.75} color="#16a34a" /> : <Calendar size={15} strokeWidth={1.75} color="#16a34a" />}
+        {is15 ? "15-Day Outlook" : "7-Day Forecast"}
         {is15 && <span style={{ fontSize: 11, color: "var(--text2)", marginLeft: 10, fontWeight: 400 }}>days 6–15 are trend-based estimates</span>}
       </div>
       <div className="fc-strip">
@@ -180,7 +199,7 @@ function FcStrip({ days, selected, onSelect, is15 }) {
             <img src={owmIcon(d.icon)} alt={d.description} style={{ width: 44, height: 44 }} />
             <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{d.maxTemp}°</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>{d.minTemp}°</div>
-            <div style={{ fontSize: 10, color: rainColor(d.rainProb), marginTop: 4 }}>💧{d.rainProb}%</div>
+            <div style={{ fontSize: 10, color: rainColor(d.rainProb), marginTop: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}><Droplets size={10} />{d.rainProb}%</div>
             <div className="rbar" style={{ background: rainColor(d.rainProb), opacity: 0.5 + d.rainProb / 200 }} />
           </div>
         ))}
@@ -208,9 +227,14 @@ function DayDetail({ day }) {
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, minWidth: 240 }}>
-          {[["💧","Humidity",`${day.avgHumidity}%`],["💨","Max Wind",`${day.maxWindSpeed} m/s`],["🌧️","Rain Chance",`${day.rainProb}%`],["🌡️","Temp Range",`${day.minTemp}°–${day.maxTemp}°C`]].map(([ic,lbl,val])=>(
+          {[
+            [Droplets, "#0284c7", "Humidity", `${day.avgHumidity}%`],
+            [Wind, "#64748b", "Max Wind", `${day.maxWindSpeed} m/s`],
+            [CloudRain, "#0284c7", "Rain Chance", `${day.rainProb}%`],
+            [Thermometer, "#ea580c", "Temp Range", `${day.minTemp}°–${day.maxTemp}°C`]
+          ].map(([Icon, color, lbl, val]) => (
             <div key={lbl} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"12px 14px" }}>
-              <div style={{ fontSize:16, marginBottom:4 }}>{ic}</div>
+              <div style={{ marginBottom:4 }}><Icon size={18} color={color} /></div>
               <div style={{ fontSize:10, color:"var(--text2)" }}>{lbl}</div>
               <div style={{ fontSize:15, fontWeight:700, color: "#0f172a", marginTop:2 }}>{val}</div>
             </div>
@@ -224,10 +248,10 @@ function DayDetail({ day }) {
       </div>
       {day.advisories?.length > 0 && (
         <>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginTop: 20, marginBottom: 8 }}>🌾 Farming Impact for This Day</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginTop: 20, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><Wheat size={15} color="#d97706" /> Farming Impact for This Day</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {day.advisories.map((a, i) => (
-              <div key={i} className="adv-item"><span style={{ fontSize: 16, flexShrink: 0 }}>💡</span><span>{a}</span></div>
+              <div key={i} className="adv-item"><span style={{ flexShrink: 0, display: "flex", alignItems: "center" }}><Lightbulb size={16} color="#eab308" /></span><span>{a}</span></div>
             ))}
           </div>
         </>
@@ -271,7 +295,7 @@ function RainBars({ days, onSelect }) {
             <span style={{ fontSize: 12, color: "var(--text2)", width: 70, flexShrink: 0 }}>{fmtDay(d.date, true)}</span>
             <div className="rpm-bg"><div className="rpm-fill" style={{ width: `${d.rainProb}%`, background: rainColor(d.rainProb) }} /></div>
             <span style={{ fontSize: 12, fontWeight: 700, color: rainColor(d.rainProb), width: 34, textAlign: "right", flexShrink: 0 }}>{d.rainProb}%</span>
-            <span style={{ fontSize: 16, flexShrink: 0 }}>{d.rainProb >= 70 ? "🌧️" : d.rainProb >= 40 ? "🌦️" : "☀️"}</span>
+            <span style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>{d.rainProb >= 70 ? <CloudRain size={16} color="#0284c7" /> : d.rainProb >= 40 ? <CloudSun size={16} color="#0284c7" /> : <Sun size={16} color="#f59e0b" />}</span>
           </div>
         ))}
       </div>
@@ -309,7 +333,7 @@ function WeatherCalendar({ days }) {
               </div>
               <div className="rpm-row" style={{ marginTop: 8 }}>
                 <div className="rpm-bg"><div className="rpm-fill" style={{ width: `${d.rainProb}%`, background: rainColor(d.rainProb) }} /></div>
-                <span style={{ fontSize: 10, color: rainColor(d.rainProb), minWidth: 28 }}>💧{d.rainProb}%</span>
+                <span style={{ fontSize: 10, color: rainColor(d.rainProb), minWidth: 28, display: "inline-flex", alignItems: "center", gap: 2 }}><Droplets size={10} />{d.rainProb}%</span>
               </div>
             </div>
           );
@@ -376,26 +400,37 @@ export default function Weather() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Smart Advisory</div>
-          <h1 className="pg-title">🌦️ Weather Advisory</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><CloudSun size={28} color="#16a34a" /> Weather Advisory</h1>
           <p className="pg-sub">Hyperlocal forecasts · 7-day & 15-day outlooks · Farming advisories</p>
         </div>
       </div>
 
       <form onSubmit={handleSearch} style={{ display: "flex", gap: 10, marginBottom: 28, maxWidth: 480 }}>
-        <input className="field-input" placeholder="📍  Enter city or district…" value={searchCity} onChange={(e) => setSearchCity(e.target.value)} style={{ flex: 1 }} />
-        <button type="submit" className="btn-green" disabled={loading || fcLoading} id="weather-search-btn">
-          {loading || fcLoading ? "…" : "🔍 Search"}
+        <input className="field-input" placeholder="Enter city or district…" value={searchCity} onChange={(e) => setSearchCity(e.target.value)} style={{ flex: 1 }} />
+        <button type="submit" className="btn-green" disabled={loading || fcLoading} id="weather-search-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          {loading || fcLoading ? "…" : <><Search size={15} /> Search</>}
         </button>
       </form>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {error}</div>}
       {(loading || fcLoading) && <div className="loading-wrap"><div className="spinner" /><span>Fetching weather…</span></div>}
 
       {weather && !loading && (
         <div className="w-tabs">
-          {TABS.map((t, i) => (
-            <button key={t} id={`weather-tab-${i}`} className={`w-tab${tab === i ? " active" : ""}`} onClick={() => setTab(i)}>{t}</button>
-          ))}
+          {TABS.map((t, i) => {
+            const TabIcon = t.icon;
+            return (
+              <button
+                key={t.label}
+                id={`weather-tab-${i}`}
+                className={`w-tab${tab === i ? " active" : ""}`}
+                onClick={() => setTab(i)}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+              >
+                <TabIcon size={14} /> {t.label}
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -405,9 +440,13 @@ export default function Weather() {
           <div className="w-hero">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 24 }}>
               <div>
-                <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 6 }}>📍 {weather.city || searchCity}, {weather.country || "IN"}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ fontSize: 72, lineHeight: 1 }}>{getEmoji(weather.description)}</div>
+                <div style={{ fontSize: 13, color: "var(--text2)", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>
+                  <MapPin size={13} color="#16a34a" /> {weather.city || searchCity}, {weather.country || "IN"}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <WeatherIcon desc={weather.description} size={64} />
+                  </div>
                   <div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 64, fontWeight: 900, background: tempGradient(weather.temperature), WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1 }}>
                       {Math.round(weather.temperature)}°C
@@ -418,17 +457,17 @@ export default function Weather() {
               </div>
               <div className="w-stats-grid" style={{ minWidth: 280 }}>
                 {[
-                  ["💧","Humidity",`${weather.humidity}%`],
-                  ["💨","Wind",`${weather.windSpeed} m/s`],
-                  ["🌡️","Feels Like",`${Math.round(weather.feelsLike)}°C`],
-                  ["👁️","Visibility",`${((weather.visibility||10000)/1000).toFixed(1)} km`],
-                  ["📊","Pressure",`${weather.pressure} hPa`],
-                  ["☁️","Condition",weather.condition||"—"],
-                ].map(([ic,lbl,val])=>(
+                  [Droplets, "#0284c7", "Humidity", `${weather.humidity}%`],
+                  [Wind, "#64748b", "Wind", `${weather.windSpeed} m/s`],
+                  [Thermometer, "#ea580c", "Feels Like", `${Math.round(weather.feelsLike)}°C`],
+                  [Eye, "#0369a1", "Visibility", `${((weather.visibility||10000)/1000).toFixed(1)} km`],
+                  [Gauge, "#16a34a", "Pressure", `${weather.pressure} hPa`],
+                  [CloudSun, "#f59e0b", "Condition", weather.condition||"—"],
+                ].map(([Icon, color, lbl, val]) => (
                   <div key={lbl} className="w-stat">
-                    <div style={{ fontSize:20, marginBottom:4 }}>{ic}</div>
-                    <div style={{ fontSize:10, color:"var(--text2)" }}>{lbl}</div>
-                    <div style={{ fontSize:16, fontWeight:700, color: "#0f172a", marginTop:2 }}>{val}</div>
+                    <div style={{ marginBottom: 4 }}><Icon size={20} color={color} /></div>
+                    <div style={{ fontSize: 10, color: "var(--text2)" }}>{lbl}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginTop: 2 }}>{val}</div>
                   </div>
                 ))}
               </div>
@@ -443,7 +482,7 @@ export default function Weather() {
               <div className="card-title" style={{ marginBottom: 14 }}><Bot size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />AI Farming Advisories</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {advisories.map((a, i) => (
-                  <div key={i} className="adv-item"><span style={{ fontSize: 18, flexShrink: 0 }}>💡</span><span style={{ fontSize: 13, lineHeight: 1.6 }}>{a}</span></div>
+                  <div key={i} className="adv-item"><span style={{ flexShrink: 0, display: "flex", alignItems: "center" }}><Lightbulb size={18} color="#eab308" /></span><span style={{ fontSize: 13, lineHeight: 1.6 }}>{a}</span></div>
                 ))}
               </div>
             </div>
@@ -452,9 +491,9 @@ export default function Weather() {
           <div className="card">
             <div className="card-title" style={{ marginBottom: 16 }}><Sprout size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Farming Best Practices</div>
             <div className="tips-grid">
-              {FARM_TIPS.map(({ e, title, tip }) => (
+              {FARM_TIPS.map(({ icon: Icon, color, title, tip }) => (
                 <div key={title} className="tip-card">
-                  <div style={{ fontSize: 28, marginBottom: 10 }}>{e}</div>
+                  <div style={{ marginBottom: 10 }}><Icon size={28} color={color} /></div>
                   <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 6, fontSize: 13 }}>{title}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.7 }}>{tip}</div>
                 </div>
@@ -479,7 +518,7 @@ export default function Weather() {
             </>
           )}
           {!fcLoading && !activeDays && (
-            <div className="alert-error">⚠️ Could not load forecast. Please try again.</div>
+            <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> Could not load forecast. Please try again.</div>
           )}
         </>
       )}
@@ -501,7 +540,7 @@ export default function Weather() {
             </>
           )}
           {!fcLoading && !forecast?.forecast15 && (
-            <div className="alert-error">⚠️ Could not load calendar data. Please try again.</div>
+            <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> Could not load calendar data. Please try again.</div>
           )}
         </>
       )}

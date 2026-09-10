@@ -1,7 +1,19 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { CalendarDays, Tag, Trophy, ClipboardList } from "lucide-react";
+import { 
+  CalendarDays, 
+  Tag, 
+  Trophy, 
+  ClipboardList, 
+  TrendingUp, 
+  AlertTriangle, 
+  BarChart2, 
+  DollarSign, 
+  Package, 
+  Award, 
+  Folder 
+} from "lucide-react";
 
 /* ─── Styles ──────────────────────────────────────────────────────────── */
 const STYLES = `
@@ -112,7 +124,9 @@ export default function SellerAnalytics() {
       <div className="pg-head">
         <div>
           <div className="eyebrow" style={{ color: "#7c3aed" }}>Seller Exclusive</div>
-          <h1 className="pg-title">📈 Sales Analytics</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <TrendingUp size={24} color="#7c3aed" /> Sales Analytics
+          </h1>
           <p className="pg-sub">Detailed performance insights for your seller account.</p>
         </div>
       </div>
@@ -132,15 +146,17 @@ export default function SellerAnalytics() {
 
       {/* Error state */}
       {error && !data && (
-        <div className="alert-error" style={{ marginBottom: 24 }}>
-          ⚠️ {error}
+        <div className="alert-error" style={{ marginBottom: 24, display: "flex", alignItems: "center", gap: 8 }}>
+          <AlertTriangle size={16} /> {error}
         </div>
       )}
 
       {/* No data state */}
       {!error && !data && (
         <div className="sa-card sa-empty">
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
+          <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}>
+            <BarChart2 size={40} color="var(--text2)" />
+          </div>
           <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>No analytics data yet</div>
           <div>Make your first sales to see analytics here.</div>
         </div>
@@ -151,24 +167,29 @@ export default function SellerAnalytics() {
           {/* KPI Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14, marginBottom: 24 }}>
             {[
-              { icon: "💰", label: "Total Revenue",   val: `₹${Number(data.totalRevenue).toLocaleString("en-IN")}`,   color: "#15803d"  },
-              { icon: "📦", label: "Orders",           val: data.totalOrders,                                           color: "#0369a1"  },
-              { icon: "📊", label: "Avg Order Value",  val: `₹${Number(data.avgOrderValue).toLocaleString("en-IN")}`,  color: "#7c3aed"  },
-              { icon: "🏆", label: "Top Product",      val: data.topProduct || "—",                                     color: "#fb923c"  },
-            ].map(k => (
-              <div key={k.label} className="sa-card">
-                <div style={{ fontSize: 22, marginBottom: 8 }}>{k.icon}</div>
-                <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{k.label}</div>
-                <div style={{
-                  fontFamily: "'Space Grotesk',sans-serif",
-                  fontSize: String(k.val).length > 10 ? 14 : String(k.val).length > 6 ? 18 : 24,
-                  fontWeight: 800, color: k.color,
-                  wordBreak: "break-word",
-                }}>
-                  {k.val}
+              { icon: DollarSign, label: "Total Revenue",   val: `₹${Number(data.totalRevenue).toLocaleString("en-IN")}`,   color: "#15803d"  },
+              { icon: Package,    label: "Orders",          val: data.totalOrders,                                          color: "#0369a1"  },
+              { icon: BarChart2,  label: "Avg Order Value", val: `₹${Number(data.avgOrderValue).toLocaleString("en-IN")}`, color: "#7c3aed"  },
+              { icon: Award,      label: "Top Product",     val: data.topProduct || "—",                                    color: "#fb923c"  },
+            ].map(k => {
+              const IconComp = k.icon;
+              return (
+                <div key={k.label} className="sa-card">
+                  <div style={{ marginBottom: 8, display: "flex", alignItems: "center" }}>
+                    <IconComp size={22} color={k.color} />
+                  </div>
+                  <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{k.label}</div>
+                  <div style={{
+                    fontFamily: "'Space Grotesk',sans-serif",
+                    fontSize: String(k.val).length > 10 ? 14 : String(k.val).length > 6 ? 18 : 24,
+                    fontWeight: 800, color: k.color,
+                    wordBreak: "break-word",
+                  }}>
+                    {k.val}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="sa-grid-2">
@@ -279,15 +300,20 @@ export default function SellerAnalytics() {
           <div className="sa-card">
             <div className="card-title" style={{ marginBottom: 16 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Period Summary</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {buildInsights(data, period).map((ins, i) => (
-                <div key={i} className="sa-insight">
-                  <div style={{ fontSize: 26, flexShrink: 0 }}>{ins.icon}</div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{ins.title}</div>
-                    <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.6 }}>{ins.body}</div>
+              {buildInsights(data, period).map((ins, i) => {
+                const InsIcon = ins.icon;
+                return (
+                  <div key={i} className="sa-insight">
+                    <div style={{ flexShrink: 0, padding: 8, borderRadius: 10, background: "rgba(167,139,250,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <InsIcon size={20} color="#7c3aed" />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{ins.title}</div>
+                      <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.6 }}>{ins.body}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </>
@@ -325,13 +351,13 @@ function buildInsights(data, period) {
   // Revenue summary
   if (data.totalRevenue > 0) {
     insights.push({
-      icon: "💰",
+      icon: DollarSign,
       title: "Revenue Summary",
       body: `Total revenue of ₹${Number(data.totalRevenue).toLocaleString("en-IN")} across ${data.totalOrders} order${data.totalOrders !== 1 ? "s" : ""} in the last ${days} day${days !== 1 ? "s" : ""}.`,
     });
   } else {
     insights.push({
-      icon: "📊",
+      icon: BarChart2,
       title: "No Sales Yet",
       body: `No orders found in the last ${days} day${days !== 1 ? "s" : ""}. Try expanding the time range or adding more products.`,
     });
@@ -340,7 +366,7 @@ function buildInsights(data, period) {
   // Top product
   if (data.topProduct) {
     insights.push({
-      icon: "🏆",
+      icon: Award,
       title: "Best Performer",
       body: `"${data.topProduct}" is your top-revenue product in this period with ₹${Number(data.topProducts[0]?.revenue ?? 0).toLocaleString("en-IN")} in sales.`,
     });
@@ -349,7 +375,7 @@ function buildInsights(data, period) {
   // Avg order value
   if (data.avgOrderValue > 0) {
     insights.push({
-      icon: "📦",
+      icon: Package,
       title: "Order Size",
       body: `Average order value is ₹${Number(data.avgOrderValue).toLocaleString("en-IN")}. Higher average order values generally indicate bulk buyers.`,
     });
@@ -359,7 +385,7 @@ function buildInsights(data, period) {
   if (data.byCategory.length > 1) {
     const top = [...data.byCategory].sort((a, b) => (b.revenue || 0) - (a.revenue || 0))[0];
     insights.push({
-      icon: "🗂️",
+      icon: Folder,
       title: "Top Category",
       body: `"${top.name}" is your strongest category this period with ₹${Number(top.revenue).toLocaleString("en-IN")} in revenue.`,
     });

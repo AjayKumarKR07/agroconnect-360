@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
-import { CheckCircle2, XCircle, Search } from "lucide-react";
+import { CheckCircle2, XCircle, Search, AlertCircle, AlertTriangle, User, Mail, Tag, CalendarDays, Package, Scale, RefreshCw } from "lucide-react";
 
 const STATUS_COLORS = {
-  open:         { bg: "rgba(56,189,248,0.12)",  color: "#0369a1",  label: "🔵 Open" },
-  under_review: { bg: "rgba(251,191,36,0.12)",  color: "#b45309",  label: "🔍 Under Review" },
-  resolved:     { bg: "rgba(34,197,94,0.12)",   color: "#15803d",  label: "✅ Resolved" },
-  rejected:     { bg: "rgba(239,68,68,0.12)",   color: "#dc2626",  label: "❌ Rejected" },
+  open:         { bg: "rgba(56,189,248,0.12)",  color: "#0369a1",  label: "Open",         Icon: AlertCircle },
+  under_review: { bg: "rgba(251,191,36,0.12)",  color: "#b45309",  label: "Under Review", Icon: Search },
+  resolved:     { bg: "rgba(34,197,94,0.12)",   color: "#15803d",  label: "Resolved",     Icon: CheckCircle2 },
+  rejected:     { bg: "rgba(239,68,68,0.12)",   color: "#dc2626",  label: "Rejected",     Icon: XCircle },
 };
 
 const PRIORITY_COLORS = {
@@ -47,8 +47,8 @@ function ConfirmModal({ dispute, targetStatus, adminNotes, resolution, onConfirm
               <strong style={{ color: "#15803d" }}>Resolution:</strong> {resolution}
             </div>
           )}
-          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
-            ⚠️ The original submitter will see this updated dispute status in their account.
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+            <AlertTriangle size={15} style={{ flexShrink: 0 }} /> The original submitter will see this updated dispute status in their account.
           </div>
         </div>
         <div className="modal-actions">
@@ -110,15 +110,18 @@ function DisputeCard({ dispute, onAction, updating }) {
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
             <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{dispute.subject}</span>
-            <span style={{ padding: "2px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 11, fontWeight: 700 }}>{sc.label}</span>
+            <span style={{ padding: "2px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 11, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
+              {sc.Icon && <sc.Icon size={11} strokeWidth={2} />}
+              {sc.label}
+            </span>
             <span style={{ padding: "2px 9px", borderRadius: 7, background: `${pc.color}15`, color: pc.color, fontSize: 11, fontWeight: 700 }}>{pc.label} Priority</span>
           </div>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 12, color: "#a5b4fc" }}>
-            <span>👤 {dispute.raisedBy?.name || "Unknown"} ({dispute.raisedBy?.role || "user"})</span>
-            <span>📧 {dispute.raisedBy?.email || "—"}</span>
-            <span>🏷️ {dispute.category}</span>
-            <span>📅 {relativeTime(dispute.createdAt)}</span>
-            {dispute.order && <span>📦 Order: {fmtAmount(dispute.order?.totalAmount)}</span>}
+            <span><User size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />{dispute.raisedBy?.name || "Unknown"} ({dispute.raisedBy?.role || "user"})</span>
+            <span><Mail size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />{dispute.raisedBy?.email || "—"}</span>
+            <span><Tag size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />{dispute.category}</span>
+            <span><CalendarDays size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />{relativeTime(dispute.createdAt)}</span>
+            {dispute.order && <span><Package size={13} style={{ verticalAlign: "middle", marginRight: 4 }} />Order: {fmtAmount(dispute.order?.totalAmount)}</span>}
           </div>
         </div>
         <div style={{ fontSize: 12, color: "#a5b4fc", flexShrink: 0 }}>{expanded ? "▲ Hide" : "▼ Details"}</div>
@@ -172,8 +175,8 @@ function DisputeCard({ dispute, onAction, updating }) {
                   }}
                 />
                 {valError && (
-                  <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4, fontWeight: 600 }}>
-                    ⚠️ {valError}
+                  <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4, fontWeight: 600, display: "flex", alignItems: "center", gap: 5 }}>
+                    <AlertTriangle size={14} /> {valError}
                   </div>
                 )}
               </div>
@@ -291,7 +294,7 @@ export default function AdminDisputes() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Platform Mediation</div>
-          <h1 className="pg-title">⚖️ Dispute Resolution Center</h1>
+          <h1 className="pg-title"><Scale size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Dispute Resolution Center</h1>
           <p className="pg-sub">Review and resolve disputes raised by platform users. All decisions persist in MongoDB.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
@@ -304,17 +307,19 @@ export default function AdminDisputes() {
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 24 }}>
         {STATUS_FILTERS.map((f) => (
           <button key={f} className={`tab-btn ${statusFilter === f ? "active" : ""}`} onClick={() => setStatusFilter(f)}>
-            {f === "all" ? "🌐 All" : STATUS_COLORS[f]?.label || f}
+            {f === "all" ? "All" : STATUS_COLORS[f]?.label || f}
           </button>
         ))}
-        <button className="tab-btn" style={{ marginLeft: "auto" }} onClick={() => load(page)}>🔄 Refresh</button>
+        <button className="tab-btn" style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => load(page)}>
+          <RefreshCw size={13} /> Refresh
+        </button>
       </div>
 
       {loading && <div className="loading-wrap"><span className="spinner" /><span>Loading disputes…</span></div>}
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
           <div className="error-state-msg">Unable to load disputes</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
@@ -323,7 +328,7 @@ export default function AdminDisputes() {
 
       {!loading && !error && disputes.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-state-icon">⚖️</div>
+          <div className="empty-state-icon"><Scale size={36} color="#94a3b8" /></div>
           <div className="empty-state-msg">No disputes found</div>
           <div className="empty-state-sub">{statusFilter !== "all" ? `No ${statusFilter.replace("_"," ")} disputes.` : "No disputes have been raised yet."}</div>
         </div>

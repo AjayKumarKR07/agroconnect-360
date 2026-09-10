@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
+import { Sprout, MailCheck, Mail, Check, AlertTriangle, ShieldCheck } from "lucide-react";
 
 export default function VerifyOTP() {
   const location = useLocation();
@@ -103,7 +104,7 @@ export default function VerifyOTP() {
       if (!response.ok) throw new Error(data.message || "Unable to resend code");
       setOtp(["", "", "", "", "", ""]);
       setCountdown(60);
-      setMessage("✓ New code sent to your inbox!");
+      setMessage("New code sent to your inbox!");
       inputRefs.current[0]?.focus();
     } catch (err) {
       setError(err.message);
@@ -307,59 +308,66 @@ export default function VerifyOTP() {
       <div className="auth-page">
         {/* ── LEFT ── */}
         <div className="auth-left">
-          <div>
-            <Link to="/" className="auth-brand">
-              <div className="auth-brand-logo">🌱</div>
-              <div>
-                <div className="auth-brand-name">AgroConnect 360</div>
-                <div className="auth-brand-sub">Smart Agriculture Platform</div>
-              </div>
-            </Link>
-
-            <div className="verify-illustration">📬</div>
-
-            <h2 className="auth-left-title">
-              One Code Away from Your <span className="hl">Agri Hub</span>
-            </h2>
-            <p className="auth-left-desc">
-              We sent a 6-digit verification code to your email. Enter it below to access your tailored dashboard.
-            </p>
-
-            {email && (
-              <div className="email-chip">
-                ✉️ {email}
-              </div>
-            )}
-
-            <div className="steps-list">
-              <div className="step-row">
-                <div className="step-bubble done">✓</div>
-                <span className="step-text done">Enter your email address</span>
-              </div>
-              <div className="step-row">
-                <div className="step-bubble active">2</div>
-                <span className="step-text active">Verify 6-digit code</span>
-              </div>
-              <div className="step-row">
-                <div className="step-bubble">3</div>
-                <span className="step-text pending">Select your role</span>
-              </div>
-              <div className="step-row">
-                <div className="step-bubble">4</div>
-                <span className="step-text pending">Access smart tools</span>
-              </div>
+          <Link to="/" className="auth-brand">
+            <div className="auth-brand-logo"><Sprout size={22} color="#16a34a" /></div>
+            <div>
+              <div className="auth-brand-name">AgroConnect 360</div>
+              <div className="auth-brand-sub">Smart Agriculture Platform</div>
             </div>
+          </Link>
+
+          <div className="verify-illustration" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <MailCheck size={48} color="#16a34a" />
+          </div>
+
+          <h2 className="auth-left-title">
+            One Code Away from Your <span className="hl">Agri Hub</span>
+          </h2>
+          <p className="auth-left-desc">
+            We sent a 6-digit verification code to your email. Enter it below to access your tailored dashboard.
+          </p>
+
+          {email && (
+            <div className="email-chip" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Mail size={14} /> {email}
+            </div>
+          )}
+
+          <div className="steps-list">
+            <div className="step-row">
+              <div className="step-bubble done"><Check size={12} strokeWidth={3} /></div>
+              <span className="step-text done">Enter your email address</span>
+            </div>
+            <div className="step-row">
+              <div className="step-bubble active">2</div>
+              <span className="step-text active">Verify 6-digit code</span>
+            </div>
+            <div className="step-row">
+              <div className="step-bubble">3</div>
+              <span className="step-text pending">Select your role</span>
+            </div>
+          </div>
+
+          <div className="auth-left-footer">
+            <span>&copy; {new Date().getFullYear()} AgroConnect 360</span>
+            <span>·</span>
+            <span>Privacy Policy</span>
+            <span>·</span>
+            <span>Help Center</span>
           </div>
         </div>
 
         {/* ── RIGHT ── */}
         <div className="auth-right">
           <div className="auth-card">
-            <Link to="/login" className="auth-back">← Use a different email</Link>
+            <Link to="/login" className="auth-back">
+              ← Change Email
+            </Link>
 
-            <h1 className="auth-title">Enter Verification Code</h1>
-            <p className="auth-sub">
-              Enter the 6-digit code sent to <strong>{email || "your email"}</strong>. Check spam if not received.
+            <h1 className="auth-card-title">Check your inbox</h1>
+            <p className="auth-card-sub">
+              We've sent a 6-digit code to <strong style={{ color: "#16a34a" }}>{email || "your email"}</strong>.
+              Enter it below to continue.
             </p>
 
             <form className="otp-form" onSubmit={handleSubmit}>
@@ -383,7 +391,9 @@ export default function VerifyOTP() {
               </div>
 
               {error && (
-                <div className="auth-alert error">⚠️ {error}</div>
+                <div className="auth-alert error" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <AlertTriangle size={15} /> {error}
+                </div>
               )}
               {message && (
                 <div className="auth-alert success">{message}</div>
@@ -398,7 +408,7 @@ export default function VerifyOTP() {
                 {loading ? (
                   <><div className="auth-spinner" /> Verifying…</>
                 ) : isComplete ? (
-                  <>🔓 Verify & Continue</>
+                  <><ShieldCheck size={16} style={{ marginRight: 6, verticalAlign: "middle" }} /> Verify & Continue</>
                 ) : (
                   <>Enter all 6 digits to continue</>
                 )}

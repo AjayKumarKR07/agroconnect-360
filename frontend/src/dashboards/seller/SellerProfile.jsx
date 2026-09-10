@@ -2,7 +2,36 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Package, ClipboardList, BarChart3, RefreshCw } from "lucide-react";
+import {
+  Package,
+  ClipboardList,
+  BarChart3,
+  RefreshCw,
+  LayoutDashboard,
+  ShoppingCart,
+  ShoppingBag,
+  IndianRupee,
+  TrendingUp,
+  Truck,
+  Bot,
+  Zap,
+  User,
+  CheckCircle2,
+  AlertTriangle,
+  MapPin,
+  Edit3,
+  Save,
+  Loader2,
+  RotateCcw,
+  Hash,
+  Mail,
+  Phone,
+  Globe,
+  UserCheck,
+  Clock,
+  Users,
+  LogOut,
+} from "lucide-react";
 
 const tkn  = () => localStorage.getItem("agroconnect_token");
 const authH = () => ({ Authorization: `Bearer ${tkn()}`, "Content-Type": "application/json" });
@@ -148,7 +177,7 @@ export default function SellerProfile() {
       const d = await r.json();
       if (!r.ok) throw new Error(d.message || "Update failed");
       localStorage.setItem("agroconnect_user", JSON.stringify(d.user));
-      setSuccess("✅ Profile updated successfully!");
+      setSuccess("Profile updated successfully!");
       setTimeout(() => setSuccess(""), 4000);
     } catch (err) {
       setError(err.message);
@@ -173,7 +202,9 @@ export default function SellerProfile() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Account Settings</div>
-          <h1 className="pg-title">👤 Seller Profile</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <User size={24} color="#7c3aed" /> Seller Profile
+          </h1>
           <p className="pg-sub">Manage your personal details and business account.</p>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -230,15 +261,16 @@ export default function SellerProfile() {
                 </div>
                 <div style={{ fontSize: 13, color: "rgba(167,139,250,0.7)", marginTop: 3 }}>{cached.email}</div>
                 <div className="sp-badge-row">
-                  <span className="sp-badge" style={{ background: "rgba(167,139,250,0.12)", color: "#7c3aed", border: "1px solid rgba(167,139,250,0.25)" }}>
-                    🛍️ Seller
+                  <span className="sp-badge" style={{ background: "rgba(167,139,250,0.12)", color: "#7c3aed", border: "1px solid rgba(167,139,250,0.25)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    <ShoppingBag size={12} /> Seller
                   </span>
-                  <span className="sp-badge" style={{ background: cached.profileCompleted ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", color: cached.profileCompleted ? "#4ade80" : "#fbbf24", border: `1px solid ${cached.profileCompleted ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}` }}>
-                    {cached.profileCompleted ? "✅ Profile Complete" : "⚠️ Incomplete"}
+                  <span className="sp-badge" style={{ background: cached.profileCompleted ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", color: cached.profileCompleted ? "#4ade80" : "#fbbf24", border: `1px solid ${cached.profileCompleted ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}`, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    {cached.profileCompleted ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
+                    {cached.profileCompleted ? "Profile Complete" : "Incomplete"}
                   </span>
                   {cached.state && (
-                    <span className="sp-badge" style={{ background: "rgba(56,189,248,0.08)", color: "#0369a1", border: "1px solid rgba(56,189,248,0.15)" }}>
-                      📍 {[cached.district, cached.state].filter(Boolean).join(", ")}
+                    <span className="sp-badge" style={{ background: "rgba(56,189,248,0.08)", color: "#0369a1", border: "1px solid rgba(56,189,248,0.15)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                      <MapPin size={12} /> {[cached.district, cached.state].filter(Boolean).join(", ")}
                     </span>
                   )}
                 </div>
@@ -252,16 +284,18 @@ export default function SellerProfile() {
 
           {/* Edit form */}
           <div className="card sp-fadein">
-            <div className="card-title" style={{ marginBottom: 20 }}>✏️ Edit Personal Information</div>
+            <div className="card-title" style={{ marginBottom: 20 }}><Edit3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Edit Personal Information</div>
 
             {success && (
-              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16 }}>
-                {success}
+              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <CheckCircle2 size={16} color="#15803d" style={{ flexShrink: 0 }} />
+                <span>{success}</span>
               </div>
             )}
             {error && (
-              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 14, marginBottom: 16 }}>
-                ⚠️ {error}
+              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 14, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                <AlertTriangle size={16} color="#dc2626" style={{ flexShrink: 0 }} />
+                <span>{error}</span>
               </div>
             )}
 
@@ -349,15 +383,20 @@ export default function SellerProfile() {
                     color: "#0f172a", fontWeight: 800, fontSize: 14, fontFamily: "'Inter',sans-serif",
                     boxShadow: saving ? "none" : "0 4px 16px rgba(124,58,237,0.4)",
                     transition: "all 0.2s",
+                    display: "inline-flex", alignItems: "center", gap: 6,
                   }}
                 >
-                  {saving ? "💾 Saving…" : "💾 Save Changes"}
+                  {saving ? (
+                    <><Loader2 size={15} className="animate-spin" /> Saving…</>
+                  ) : (
+                    <><Save size={15} /> Save Changes</>
+                  )}
                 </button>
                 <button
                   type="button" onClick={() => { setSuccess(""); setError(""); setForm({ name: cached.name||"", phone: cached.phone||"", district: cached.district||"", state: cached.state||"", location: cached.location||"" }); }}
-                  style={{ padding: "12px 20px", borderRadius: 12, border: "1px solid var(--border2)", background: "none", color: "var(--text2)", cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: "'Inter',sans-serif" }}
+                  style={{ padding: "12px 20px", borderRadius: 12, border: "1px solid var(--border2)", background: "none", color: "var(--text2)", cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: "'Inter',sans-serif", display: "inline-flex", alignItems: "center", gap: 6 }}
                 >
-                  ↩ Reset
+                  <RotateCcw size={14} /> Reset
                 </button>
               </div>
             </form>
@@ -401,17 +440,19 @@ export default function SellerProfile() {
           <div className="card sp-fadein">
             <div className="card-title" style={{ marginBottom: 14 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Account Details</div>
             {[
-              ["🆔", "User ID",       (cached._id || cached.id || "—").toString().slice(-8).toUpperCase()],
-              ["📧", "Email",         cached.email       || "—"],
-              ["📱", "Phone",         cached.phone       || "Not set"],
-              ["📍", "District",      cached.district    || "Not set"],
-              ["🗺️", "State",         cached.state       || "Not set"],
-              ["🎭", "Role",          "Seller"],
-              ["✅", "Profile",       cached.profileCompleted ? "Complete" : "Incomplete"],
-            ].map(([icon, label, val]) => (
+              { Icon: Hash, label: "User ID", val: (cached._id || cached.id || "—").toString().slice(-8).toUpperCase() },
+              { Icon: Mail, label: "Email", val: cached.email || "—" },
+              { Icon: Phone, label: "Phone", val: cached.phone || "Not set" },
+              { Icon: MapPin, label: "District", val: cached.district || "Not set" },
+              { Icon: Globe, label: "State", val: cached.state || "Not set" },
+              { Icon: UserCheck, label: "Role", val: "Seller" },
+              { Icon: CheckCircle2, label: "Profile", val: cached.profileCompleted ? "Complete" : "Incomplete" },
+            ].map(({ Icon, label, val }) => (
               <div key={label} className="sp-info-row">
-                <span style={{ color: "var(--text2)", fontSize: 12 }}>{icon} {label}</span>
-                <span className="sp-info-val" style={{ color: label === "Profile" ? (cached.profileCompleted ? "#4ade80" : "#fbbf24") : "#fff" }}>{val}</span>
+                <span style={{ color: "var(--text2)", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <Icon size={14} color="#7c3aed" /> {label}
+                </span>
+                <span className="sp-info-val" style={{ color: label === "Profile" ? (cached.profileCompleted ? "#4ade80" : "#fbbf24") : "#0f172a" }}>{val}</span>
               </div>
             ))}
           </div>
@@ -420,15 +461,17 @@ export default function SellerProfile() {
           <div className="card sp-fadein" style={{ borderColor: "rgba(167,139,250,0.18)" }}>
             <div className="card-title" style={{ marginBottom: 14 }}><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Business Summary</div>
             {[
-              ["💰", "Total Procurement", fmtINR(totalProcurement)],
-              ["📦", "Total Orders",      allOrders.length],
-              ["🎉", "Delivered",         deliveredCount],
-              ["⏳", "Pending",           pendingCount],
-              ["🌾", "Suppliers",         uniqueSuppliers],
-              ["🛍️", "Active Products",  activeProducts],
-            ].map(([icon, label, val]) => (
+              { Icon: IndianRupee, label: "Total Procurement", val: fmtINR(totalProcurement) },
+              { Icon: Package, label: "Total Orders", val: allOrders.length },
+              { Icon: CheckCircle2, label: "Delivered", val: deliveredCount },
+              { Icon: Clock, label: "Pending", val: pendingCount },
+              { Icon: Users, label: "Suppliers", val: uniqueSuppliers },
+              { Icon: ShoppingBag, label: "Active Products", val: activeProducts },
+            ].map(({ Icon, label, val }) => (
               <div key={label} className="sp-info-row">
-                <span style={{ color: "var(--text2)", fontSize: 12 }}>{icon} {label}</span>
+                <span style={{ color: "var(--text2)", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <Icon size={14} color="#7c3aed" /> {label}
+                </span>
                 <span className="sp-info-val">{val}</span>
               </div>
             ))}
@@ -436,20 +479,20 @@ export default function SellerProfile() {
 
           {/* Quick navigation */}
           <div className="card sp-fadein">
-            <div className="card-title" style={{ marginBottom: 12 }}>⚡ Quick Navigation</div>
+            <div className="card-title" style={{ marginBottom: 12 }}><Zap size={14} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Quick Navigation</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {[
-                { emoji: "🏠", label: "Dashboard",      to: "/seller/dashboard" },
-                { emoji: "🛒", label: "Procurement",    to: "/seller/procurement" },
-                { emoji: "📦", label: "Orders",         to: "/seller/orders" },
-                { emoji: "🛍️", label: "My Products",   to: "/seller/products" },
-                { emoji: "💰", label: "Revenue",        to: "/seller/revenue" },
-                { emoji: "📈", label: "Analytics",      to: "/seller/analytics" },
-                { emoji: "🚚", label: "Logistics",      to: "/seller/logistics" },
-                { emoji: "🤖", label: "AI Assistant",   to: "/seller/assistant" },
+                { Icon: LayoutDashboard, label: "Dashboard",    to: "/seller/dashboard" },
+                { Icon: ShoppingCart,   label: "Procurement",  to: "/seller/procurement" },
+                { Icon: Package,        label: "Orders",       to: "/seller/orders" },
+                { Icon: ShoppingBag,    label: "My Products",  to: "/seller/products" },
+                { Icon: IndianRupee,    label: "Revenue",      to: "/seller/revenue" },
+                { Icon: TrendingUp,     label: "Analytics",    to: "/seller/analytics" },
+                { Icon: Truck,          label: "Logistics",    to: "/seller/logistics" },
+                { Icon: Bot,            label: "AI Assistant", to: "/seller/assistant" },
               ].map(nav => (
                 <Link key={nav.label} to={nav.to} className="sp-nav-link">
-                  <span>{nav.emoji}</span>
+                  <span style={{ display: "flex", alignItems: "center", color: "#4f46e5" }}><nav.Icon size={14} strokeWidth={1.75} /></span>
                   <span>{nav.label}</span>
                   <span style={{ marginLeft: "auto", fontSize: 11, opacity: 0.4 }}>→</span>
                 </Link>
@@ -465,16 +508,18 @@ export default function SellerProfile() {
             </p>
             <button
               className="btn-ghost"
-              style={{ width: "100%", justifyContent: "center", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)", fontSize: 13 }}
+              style={{ width: "100%", justifyContent: "center", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}
               onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
             >
-              🔄 Change My Role
+              <RefreshCw size={14} /> Change My Role
             </button>
           </div>
 
           {/* Danger zone */}
           <div className="card sp-fadein" style={{ borderColor: "rgba(239,68,68,0.12)" }}>
-            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, fontSize: 13 }}>⚠️ Danger Zone</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: 700, color: "#dc2626", marginBottom: 10, fontSize: 13 }}>
+              <AlertTriangle size={15} color="#dc2626" /> Danger Zone
+            </div>
             <button
               onClick={handleLogout}
               style={{
@@ -485,11 +530,12 @@ export default function SellerProfile() {
                 fontWeight: 700, fontSize: 14,
                 fontFamily: "'Inter',sans-serif",
                 transition: "background 0.2s",
+                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
               }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.12)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.06)"}
             >
-              🚪 Sign Out
+              <LogOut size={15} /> Sign Out
             </button>
           </div>
 

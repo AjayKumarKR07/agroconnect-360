@@ -1,7 +1,20 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { RefreshCw, Inbox } from "lucide-react";
+import {
+  RefreshCw,
+  Inbox,
+  ShoppingBag,
+  Carrot,
+  Apple,
+  Wheat,
+  Flame,
+  Sprout,
+  X,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
 
 /* ── Skeleton card ─────────────────────────────────────────────────── */
 const SkCard = () => (
@@ -114,7 +127,7 @@ export default function SellerProcurement() {
 
       if (r.ok && d.success !== false) {
         // Success — close modal, show banner, refresh crop list
-        setSuccess(`✅ Order placed for ${qty} ${orderModal.unit} of ${orderModal.name}! The farmer has been notified.`);
+        setSuccess(`Order placed for ${qty} ${orderModal.unit} of ${orderModal.name}! The farmer has been notified.`);
         setTimeout(() => setSuccess(""), 5000);
         setOrderModal(null);
         setOrderForm({ quantity: "", note: "" });
@@ -130,16 +143,16 @@ export default function SellerProcurement() {
     }
   };
 
-  /* Category pill emoji */
-  const catEmoji = (cat) => {
-    if (!cat) return "🛒";
+  /* Category icon helper */
+  const renderCatIcon = (cat) => {
+    if (!cat) return <ShoppingBag size={42} color="#a78bfa" />;
     const c = cat.toLowerCase();
-    if (c.includes("vegetable") || c.includes("veggie")) return "🥬";
-    if (c.includes("fruit")) return "🍎";
-    if (c.includes("grain") || c.includes("cereal")) return "🌾";
-    if (c.includes("spice")) return "🌶️";
-    if (c.includes("pulse") || c.includes("legume")) return "🫘";
-    return "🛒";
+    if (c.includes("vegetable") || c.includes("veggie")) return <Carrot size={42} color="#a78bfa" />;
+    if (c.includes("fruit")) return <Apple size={42} color="#a78bfa" />;
+    if (c.includes("grain") || c.includes("cereal")) return <Wheat size={42} color="#a78bfa" />;
+    if (c.includes("spice")) return <Flame size={42} color="#a78bfa" />;
+    if (c.includes("pulse") || c.includes("legume")) return <Sprout size={42} color="#a78bfa" />;
+    return <ShoppingBag size={42} color="#a78bfa" />;
   };
 
   return (
@@ -161,7 +174,9 @@ export default function SellerProcurement() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Seller Exclusive</div>
-          <h1 className="pg-title">📥 Procurement</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <ShoppingBag size={24} color="#7c3aed" /> Procurement
+          </h1>
           <p className="pg-sub">Browse and buy crops directly from farmers for resale.</p>
         </div>
         <div style={{ fontSize: 13, color: "var(--text2)", textAlign: "right" }}>
@@ -174,8 +189,9 @@ export default function SellerProcurement() {
 
       {/* Success banner */}
       {success && (
-        <div className="alert-success" style={{ marginBottom: 16, padding: "14px 18px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontWeight: 600, fontSize: 14 }}>
-          {success}
+        <div className="alert-success" style={{ marginBottom: 16, padding: "14px 18px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+          <CheckCircle2 size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+          <span>{success}</span>
         </div>
       )}
 
@@ -184,7 +200,7 @@ export default function SellerProcurement() {
         <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+              <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0 }} />
               <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load farmer produce — {error}</span>
             </div>
             <button onClick={fetchCrops} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
@@ -197,12 +213,12 @@ export default function SellerProcurement() {
         <div style={{ display: "flex", gap: 12, marginBottom: 18, alignItems: "center", flexWrap: "wrap" }}>
           <input
             className="field-input"
-            placeholder="🔍 Search crops…"
+            placeholder="Search crops…"
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ maxWidth: 280 }}
           />
-          {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ fontSize: 12 }}>✕ Clear</button>}
+          {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4 }}><X size={12} /> Clear</button>}
         </div>
       )}
 
@@ -246,7 +262,7 @@ export default function SellerProcurement() {
             <div key={c._id} className="proc-card">
               {c.image?.url || c.imageUrl
                 ? <img src={c.image?.url || c.imageUrl} alt={c.name} className="proc-img" />
-                : <div className="proc-ph">{catEmoji(c.category)}</div>
+                : <div className="proc-ph">{renderCatIcon(c.category)}</div>
               }
               <div className="proc-body">
                 <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 4 }}>{c.name}</div>
@@ -262,20 +278,21 @@ export default function SellerProcurement() {
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#15803d" }}>₹{Number(c.price).toLocaleString("en-IN")}</div>
                     <div style={{ fontSize: 11, color: "var(--text2)" }}>per {c.unit} · {c.quantity} {c.unit} avail.</div>
                   </div>
-                  <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 8, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}>
-                    {c.status === "ready" ? "🔵 Ready" : "✅ Listed"}
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, padding: "3px 10px", borderRadius: 8, background: c.status === "ready" ? "rgba(59,130,246,0.1)" : "rgba(34,197,94,0.1)", color: c.status === "ready" ? "#2563eb" : "#15803d", fontWeight: 700 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: c.status === "ready" ? "#2563eb" : "#16a34a" }} />
+                    {c.status === "ready" ? "Ready" : "Listed"}
                   </span>
                 </div>
                 <button
                   className="btn-green"
-                  style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#a78bfa)", fontSize: 13 }}
+                  style={{ width: "100%", justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#a78bfa)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}
                   onClick={() => {
                     setOrderModal(c);
                     setOrderForm({ quantity: "", note: "" });
                     setOrderError("");
                   }}
                 >
-                  📥 Place Bulk Order
+                  <ShoppingBag size={14} /> Place Bulk Order
                 </button>
               </div>
             </div>
@@ -292,7 +309,9 @@ export default function SellerProcurement() {
           <div style={{ background: "#0b0a1f", border: "1px solid rgba(167,139,250,0.2)", borderRadius: 24, padding: 28, width: "100%", maxWidth: 440 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📥 Bulk Order</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
+                  <ShoppingBag size={20} color="#7c3aed" /> Bulk Order
+                </div>
                 <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>
                   {orderModal.name} · ₹{Number(orderModal.price).toLocaleString("en-IN")}/{orderModal.unit}
                 </div>
@@ -302,14 +321,15 @@ export default function SellerProcurement() {
               </div>
               <button
                 onClick={() => { if (!ordering) { setOrderModal(null); setOrderError(""); }}}
-                style={{ background: "var(--surface)", border: "none", borderRadius: 8, padding: "6px 10px", color: "var(--text2)", cursor: ordering ? "not-allowed" : "pointer", fontSize: 14 }}
-              >✕</button>
+                style={{ background: "var(--surface)", border: "none", borderRadius: 8, padding: "6px 10px", color: "var(--text2)", cursor: ordering ? "not-allowed" : "pointer", fontSize: 14, display: "inline-flex", alignItems: "center" }}
+              ><X size={16} /></button>
             </div>
 
             {/* Real backend error */}
             {orderError && (
-              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
-                ⚠️ {orderError}
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, marginBottom: 16, lineHeight: 1.5, display: "flex", alignItems: "center", gap: 8 }}>
+                <AlertTriangle size={16} color="#dc2626" style={{ flexShrink: 0 }} />
+                <span>{orderError}</span>
               </div>
             )}
 
@@ -371,9 +391,10 @@ export default function SellerProcurement() {
               {/* Live total preview or warning */}
               {orderForm.quantity && Number(orderForm.quantity) > 0 && (
                 Number(orderForm.quantity) > Number(orderModal.quantity) ? (
-                  <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12 }}>
+                  <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                    <AlertTriangle size={16} color="#dc2626" style={{ flexShrink: 0 }} />
                     <div style={{ fontSize: 13, color: "#dc2626", fontWeight: 600 }}>
-                      ⚠️ Quantity exceeds available stock of {orderModal.quantity} {orderModal.unit}.
+                      Quantity exceeds available stock of {orderModal.quantity} {orderModal.unit}.
                     </div>
                   </div>
                 ) : (
@@ -437,7 +458,11 @@ export default function SellerProcurement() {
                   }}
                   onClick={placeOrder}
                 >
-                  {ordering ? "⏳ Placing Order…" : "✅ Confirm Order"}
+                  {ordering ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Loader2 size={15} className="animate-spin" /> Placing Order…</span>
+                  ) : (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={15} /> Confirm Order</span>
+                  )}
                 </button>
               </div>
             </div>

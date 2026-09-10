@@ -1,4 +1,4 @@
-﻿/**
+/**
  * RazorpayCheckout.jsx
  *
  * Reusable Razorpay payment component.
@@ -14,6 +14,7 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { API_URL } from "../config/api";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
@@ -216,7 +217,7 @@ export default function RazorpayCheckout({
           fontSize: 13,
           fontWeight: 600,
         }}>
-          ⚠️ {error}{" "}
+          <AlertTriangle size={14} style={{ verticalAlign: "middle", marginRight: 6 }} />{error}{" "}
           {/* Always allow retry */}
           <button
             onClick={() => { setError(""); setProcessing(false); rzpRef.current = null; }}
@@ -231,7 +232,12 @@ export default function RazorpayCheckout({
         disabled={disabled || processing}
         style={{ opacity: disabled || processing ? 0.55 : 1, cursor: disabled || processing ? "not-allowed" : "pointer" }}
       >
-        {processing ? "⏳ Processing…" : children}
+        {processing ? (
+          <>
+            <Loader2 size={14} style={{ display: "inline", verticalAlign: "middle", marginRight: 6, animation: "spin 1s linear infinite" }} />
+            Processing…
+          </>
+        ) : children}
       </button>
     </div>
   );

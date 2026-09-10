@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { MapPin, Store, BarChart2, TrendingUp } from "lucide-react";
+import { MapPin, Store, BarChart2, TrendingUp, Search, RefreshCw, Lightbulb, AlertTriangle, Wheat, Trophy, DollarSign, Sprout, Clock, Calendar } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -120,7 +120,9 @@ export default function MarketComparison() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">APMC Market Prices</div>
-          <h1 className="pg-title">📊 Market Comparison</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <BarChart2 size={24} color="#16a34a" /> Market Comparison
+          </h1>
           <p className="pg-sub">Select your state and district to fetch real-time mandi prices from APMC data.</p>
         </div>
       </div>
@@ -176,19 +178,19 @@ export default function MarketComparison() {
               className="btn-green"
               onClick={handleFetch}
               disabled={loading || !state}
-              style={{ width: "100%" }}
+              style={{ width: "100%", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
             >
-              {loading ? "⏳ Fetching…" : "🔍 Fetch Prices"}
+              {loading ? <><RefreshCw size={14} className="animate-spin" /> Fetching…</> : <><Search size={14} /> Fetch Prices</>}
             </button>
           </div>
         </div>
 
-        <p style={{ fontSize: 12, color: "var(--text2)" }}>
-          💡 Tip: Save your state in <Link to="/farmer/my-farm" style={{ color: "#15803d" }}>My Farm</Link> to have it pre-filled in the Smart Farm Planner.
+        <p style={{ fontSize: 12, color: "var(--text2)", display: "flex", alignItems: "center", gap: 6 }}>
+          <Lightbulb size={14} color="#b45309" /> <span>Tip: Save your state in <Link to="/farmer/my-farm" style={{ color: "#15803d" }}>My Farm</Link> to have it pre-filled in the Smart Farm Planner.</span>
         </p>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {/* Results */}
       {!hasFetched ? (
@@ -203,8 +205,12 @@ export default function MarketComparison() {
         <>
           {/* Tab bar */}
           <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 20, flexWrap: "wrap" }}>
-            <button className={`mc-tab ${tab === "district" ? "active" : ""}`} onClick={() => setTab("district")}>📍 District Prices</button>
-            <button className={`mc-tab ${tab === "trends"   ? "active" : ""}`} onClick={() => setTab("trends")}>📈 Market Trends</button>
+            <button className={`mc-tab ${tab === "district" ? "active" : ""}`} onClick={() => setTab("district")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <MapPin size={13} /> District Prices
+            </button>
+            <button className={`mc-tab ${tab === "trends"   ? "active" : ""}`} onClick={() => setTab("trends")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <TrendingUp size={13} /> Market Trends
+            </button>
             <input className="mc-search" placeholder="Search crop…" value={search} onChange={e => setSearch(e.target.value)} />
           </div>
 
@@ -233,10 +239,12 @@ export default function MarketComparison() {
                     const avgP  = maxP && minP ? Math.round((maxP + minP) / 2) : (maxP || minP);
                     return (
                       <div key={i} className="mc-row">
-                        <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(34,197,94,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>🌾</div>
+                        <div style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(34,197,94,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <Wheat size={16} color="#16a34a" />
+                        </div>
                         <div style={{ flex: 1 }}>
                           <div className="mc-crop">{name}{vty ? ` (${vty})` : ""}</div>
-                          {mkt && <div style={{ fontSize: 11, color: "#94a3b8" }}>📍 {mkt}</div>}
+                          {mkt && <div style={{ fontSize: 11, color: "#94a3b8", display: "flex", alignItems: "center", gap: 4 }}><MapPin size={10} /> {mkt}</div>}
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div className="mc-price">{fmtQ(avgP)}</div>
@@ -266,12 +274,14 @@ export default function MarketComparison() {
                 </div>
               );
 
-              const TrendRow = ({ icon, name, sub, price, label, color }) => (
+              const TrendRow = ({ Icon, name, sub, price, label, color }) => (
                 <div className="mc-row">
-                  <div style={{ width:32,height:32,borderRadius:10,background:`${color}18`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0 }}>{icon}</div>
+                  <div style={{ width:32,height:32,borderRadius:10,background:`${color}18`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0 }}>
+                    <Icon size={16} color={color} />
+                  </div>
                   <div style={{ flex:1 }}>
                     <div className="mc-crop">{name}</div>
-                    {sub && <div style={{ fontSize:11,color:"#94a3b8" }}>📍 {sub}</div>}
+                    {sub && <div style={{ fontSize:11,color:"#94a3b8",display:"flex",alignItems:"center",gap:4 }}><MapPin size={10} /> {sub}</div>}
                   </div>
                   <div style={{ textAlign:"right" }}>
                     <div style={{ fontWeight:800,color,fontSize:14 }}>{price}</div>
@@ -286,10 +296,12 @@ export default function MarketComparison() {
                   {/* Highest priced crops */}
                   {topH.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color: "#15803d",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🏆 Highest Value Crops — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#15803d",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10,display:"flex",alignItems:"center",gap:6 }}>
+                        <Trophy size={14} color="#15803d" /> Highest Value Crops — {state}
+                      </div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {topH.map((t,i) => (
-                          <TrendRow key={i} icon="🌾"
+                          <TrendRow key={i} Icon={Wheat}
                             name={`${t.commodity}${t.variety ? ` (${t.variety})` : ""}`}
                             sub={`${t.market || ""}${t.district ? ` · ${t.district}` : ""}`}
                             price={fmtQ(t.maxPrice)} label="Max price" color="#4ade80" />
@@ -301,10 +313,12 @@ export default function MarketComparison() {
                   {/* Lowest priced crops */}
                   {topL.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color: "#0369a1",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>💰 Most Affordable Crops — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#0369a1",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10,display:"flex",alignItems:"center",gap:6 }}>
+                        <DollarSign size={14} color="#0369a1" /> Most Affordable Crops — {state}
+                      </div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {topL.map((t,i) => (
-                          <TrendRow key={i} icon="🌿"
+                          <TrendRow key={i} Icon={Sprout}
                             name={`${t.commodity}${t.variety ? ` (${t.variety})` : ""}`}
                             sub={`${t.market || ""}${t.district ? ` · ${t.district}` : ""}`}
                             price={fmtQ(t.minPrice)} label="Min price" color="#38bdf8" />
@@ -316,10 +330,12 @@ export default function MarketComparison() {
                   {/* Commodity average prices */}
                   {avgs.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color:"#fb923c",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>📊 Average Price by Crop — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color:"#fb923c",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10,display:"flex",alignItems:"center",gap:6 }}>
+                        <BarChart2 size={14} color="#fb923c" /> Average Price by Crop — {state}
+                      </div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {avgs.map((t,i) => (
-                          <TrendRow key={i} icon="📊"
+                          <TrendRow key={i} Icon={BarChart2}
                             name={t._id || "—"}
                             sub={`${t.records || 0} price records`}
                             price={fmtQ(Math.round(t.averagePrice || 0))} label="Avg modal price" color="#fb923c" />
@@ -331,10 +347,12 @@ export default function MarketComparison() {
                   {/* Latest prices */}
                   {latest.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color: "#7c3aed",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🕒 Latest Arrivals — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#7c3aed",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10,display:"flex",alignItems:"center",gap:6 }}>
+                        <Clock size={14} color="#7c3aed" /> Latest Arrivals — {state}
+                      </div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {latest.map((t,i) => (
-                          <TrendRow key={i} icon="🗓️"
+                          <TrendRow key={i} Icon={Calendar}
                             name={`${t.commodity}${t.variety ? ` (${t.variety})` : ""}`}
                             sub={`${t.market||""}${t.district ? ` · ${t.district}` : ""}${t.arrivalDate ? ` · ${new Date(t.arrivalDate).toLocaleDateString("en-IN")}` : ""}`}
                             price={fmtQ(t.modalPrice || t.maxPrice || 0)}

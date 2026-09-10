@@ -1,7 +1,8 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Edit3, AlertTriangle, FileText, Camera, Save, ArrowLeft, X, Loader2 } from "lucide-react";
 
 const CATEGORIES = ["Vegetables","Fruits","Grains","Pulses","Oilseeds","Spices","Flowers","Other"];
 const UNITS = ["kg","quintal","ton"];
@@ -67,17 +68,21 @@ export default function EditCrop() {
         @media(max-width:640px){.form-grid{grid-template-columns:1fr;}}
       `}</style>
 
-      <button onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ marginBottom: 24, fontSize: 13 }}>← Back to My Crops</button>
+      <button onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ marginBottom: 24, fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <ArrowLeft size={14} /> Back to My Crops
+      </button>
 
       <div className="pg-head" style={{ marginBottom: 28 }}>
         <div>
           <div className="eyebrow">Farm Management</div>
-          <h1 className="pg-title">✏️ Edit Crop Listing</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Edit3 size={24} color="#16a34a" /> Edit Crop Listing
+          </h1>
           <p className="pg-sub">Update your crop details and pricing.</p>
         </div>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading ? (
         <div className="loading-wrap"><div className="spinner" /><span>Loading crop…</span></div>
@@ -86,7 +91,9 @@ export default function EditCrop() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24, alignItems: "start" }}>
             {/* Fields */}
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 20 }}>📋 Crop Details</div>
+              <div className="card-title" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+                <FileText size={18} color="#16a34a" /> Crop Details
+              </div>
               <div className="form-grid">
                 <div className="form-group">
                   <label className="field-label">Crop Name *</label>
@@ -141,23 +148,25 @@ export default function EditCrop() {
             {/* Image + save */}
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div className="card">
-                <div className="card-title" style={{ marginBottom: 14 }}>📸 Crop Photo</div>
+                <div className="card-title" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                  <Camera size={18} color="#16a34a" /> Crop Photo
+                </div>
                 {imagePreview ? (
                   <div style={{ position: "relative" }}>
                     <img src={imagePreview} alt="Preview" style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 10, border: "1px solid var(--border)" }} />
-                    <button type="button" onClick={() => { setImage(null); setImagePreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕</button>
+                    <button type="button" onClick={() => { setImage(null); setImagePreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 8px", color: "#ffffff", cursor: "pointer", display: "flex", alignItems: "center" }}><X size={14} /></button>
                   </div>
                 ) : (
                   <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px 12px", borderRadius: 10, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer" }}>
-                    <span style={{ fontSize: 36 }}>📷</span>
+                    <Camera size={36} color="#94a3b8" />
                     <span style={{ fontSize: 13, color: "var(--text2)", textAlign: "center" }}>Upload new photo</span>
                     <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} style={{ display: "none" }} />
                   </label>
                 )}
               </div>
 
-              <button type="submit" className="btn-green" disabled={saving} style={{ width: "100%", justifyContent: "center", padding: "16px" }}>
-                {saving ? "💾 Saving…" : "💾 Save Changes"}
+              <button type="submit" className="btn-green" disabled={saving} style={{ width: "100%", justifyContent: "center", padding: "16px", display: "inline-flex", alignItems: "center", gap: 8 }}>
+                {saving ? <><Loader2 size={16} className="spinner" /> Saving…</> : <><Save size={16} /> Save Changes</>}
               </button>
               <button type="button" onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ width: "100%", justifyContent: "center" }}>Cancel</button>
             </div>

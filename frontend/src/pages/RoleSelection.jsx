@@ -1,55 +1,56 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../config/api";
+import { Wheat, ShoppingCart, Store, Ship, Settings, Sprout, AlertTriangle, Check } from "lucide-react";
 
 const ROLES = [
   {
     id: "farmer",
-    emoji: "🌾",
-    label: "Farmer",
+    Icon: Wheat,
     color: "#16a34a",
     glow: "rgba(22,163,74,0.12)",
     border: "#86efac",
+    label: "Farmer",
     desc: "Sell crops directly to buyers, track income, get AI disease diagnosis and weather forecasts.",
     features: ["List & Sell Crops", "AI Crop Diagnosis", "Weather Advisory", "Income Tracking"],
   },
   {
     id: "user",
-    emoji: "🛒",
-    label: "Consumer / Buyer",
+    Icon: ShoppingCart,
     color: "#0284c7",
     glow: "rgba(2,132,199,0.12)",
     border: "#7dd3fc",
+    label: "Consumer / Buyer",
     desc: "Browse and buy fresh produce directly from local farmers at market prices.",
     features: ["Browse Fresh Produce", "Direct from Farmers", "Order Tracking", "Market Prices"],
   },
   {
     id: "seller",
-    emoji: "🏪",
-    label: "Seller / Agent",
+    Icon: Store,
     color: "#7c3aed",
     glow: "rgba(124,58,237,0.12)",
     border: "#c4b5fd",
+    label: "Seller / Agent",
     desc: "Operate as a local trader, APMC agent or aggregator between farmers and buyers.",
     features: ["Bulk Trading", "APMC Mandi Prices", "Manage Inventory", "Price Analytics"],
   },
   {
     id: "exporter",
-    emoji: "🚢",
-    label: "Exporter",
+    Icon: Ship,
     color: "#d97706",
     glow: "rgba(217,119,6,0.12)",
     border: "#fde68a",
+    label: "Exporter",
     desc: "Export Indian agricultural commodities internationally with compliance tools.",
     features: ["Export Management", "Global Market Prices", "Compliance Tools", "Bulk Orders"],
   },
   {
     id: "admin",
-    emoji: "⚙️",
-    label: "Admin",
+    Icon: Settings,
     color: "#dc2626",
     glow: "rgba(220,38,38,0.12)",
     border: "#fca5a5",
+    label: "Admin",
     desc: "Manage the AgroConnect 360 platform — users, listings, orders and system settings.",
     features: ["User Management", "Platform Analytics", "Moderate Listings", "System Settings"],
   },
@@ -289,7 +290,7 @@ export default function RoleSelection() {
           {/* Header */}
           <div className="rs-header">
             <Link to="/" className="rs-brand">
-              <div className="rs-brand-logo">🌱</div>
+              <div className="rs-brand-logo"><Sprout size={20} strokeWidth={2} color="#16a34a" /></div>
               <div className="rs-brand-name">AgroConnect 360</div>
             </Link>
 
@@ -298,7 +299,7 @@ export default function RoleSelection() {
                 <div className="rs-eyebrow">Welcome to AgroConnect</div>
                 <h1 className="rs-title">How Will You Use <span>AgroConnect?</span></h1>
                 <p className="rs-sub">Select your primary role to unlock your tailored workspace. You can switch between roles at any time.</p>
-                {email && <div className="rs-email">✉️ Signed in as {email}</div>}
+                {email && <div className="rs-email">Signed in as {email}</div>}
               </>
             ) : (
               <>
@@ -338,7 +339,7 @@ export default function RoleSelection() {
               )}
 
               <div className="rs-grid">
-                {ROLES.map(({ id, emoji, label, color, desc, features }) => {
+                {ROLES.map(({ id, Icon, label, color, desc, features }) => {
                   const isCurrent = savedUser.role === id;
                   return (
                     <div
@@ -348,7 +349,7 @@ export default function RoleSelection() {
                       onClick={() => !loading && handleRoleSelect(id)}
                     >
                       <div className="rs-card-top">
-                        <span className="rs-card-emoji">{emoji}</span>
+                        <span className="rs-card-emoji" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 46, height: 46, borderRadius: 12, background: color + "15" }}><Icon size={24} strokeWidth={1.75} color={color} /></span>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           {isCurrent && (
                             <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#dcfce7", color: "#15803d", border: "1px solid #bbf7d0", textTransform: "uppercase" }}>
@@ -356,7 +357,7 @@ export default function RoleSelection() {
                             </span>
                           )}
                           <div className="rs-card-check">
-                            {selectedRole === id && <span>✓</span>}
+                            {selectedRole === id && <Check size={13} strokeWidth={3} />}
                           </div>
                         </div>
                       </div>
@@ -377,7 +378,7 @@ export default function RoleSelection() {
                 })}
               </div>
 
-              {error && <div className="rs-error" style={{ maxWidth: 480, margin: "0 auto 16px" }}>⚠️ {error}</div>}
+              {error && <div className="rs-error" style={{ maxWidth: 480, margin: "0 auto 16px" }}><AlertTriangle size={14} strokeWidth={2} style={{ flexShrink: 0, marginRight: 4 }} />{error}</div>}
 
               {loading && (
                 <div style={{ textAlign: "center", padding: "16px", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 14, fontWeight: 600 }}>
@@ -392,7 +393,7 @@ export default function RoleSelection() {
             <div className="rs-profile-card">
               <div className="rs-profile-header">
                 <div className="rs-profile-role-badge">
-                  {selectedRoleData.emoji}
+                  {selectedRoleData && <selectedRoleData.Icon size={22} strokeWidth={1.75} color={selectedRoleData.color} />}
                 </div>
                 <div>
                   <div className="rs-profile-title">Your Details</div>
@@ -400,7 +401,7 @@ export default function RoleSelection() {
                 </div>
               </div>
 
-              {error && <div className="rs-error">⚠️ {error}</div>}
+              {error && <div className="rs-error"><AlertTriangle size={14} strokeWidth={2} style={{ flexShrink: 0, marginRight: 4 }} />{error}</div>}
 
               <form onSubmit={(e) => { e.preventDefault(); handleRoleSave(); }}>
                 <div className="rs-fields">
@@ -423,7 +424,7 @@ export default function RoleSelection() {
                   className="rs-btn-primary"
                   disabled={loading}
                 >
-                  {loading ? <><div className="spinner" /> Setting up workspace…</> : `🚀 Enter as ${selectedRoleData.label}`}
+                  {loading ? <><div className="spinner" /> Setting up workspace…</> : `Enter as ${selectedRoleData.label}`}
                 </button>
               </form>
 

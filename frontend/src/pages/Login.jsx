@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
+import { BarChart3, Stethoscope, TrendingUp, CloudSun, Sprout, Check, Mail, AlertTriangle, Lock } from "lucide-react";
 
 const FEATURES = [
-  { emoji: "📊", label: "Live APMC Mandi Prices" },
-  { emoji: "🩺", label: "Crop Disease AI Diagnosis" },
-  { emoji: "📈", label: "ML Price Predictions" },
-  { emoji: "🌦️", label: "Hyperlocal Weather Advisories" },
+  { Icon: BarChart3,    label: "Live APMC Mandi Prices" },
+  { Icon: Stethoscope, label: "Crop Disease AI Diagnosis" },
+  { Icon: TrendingUp,  label: "ML Price Predictions" },
+  { Icon: CloudSun,    label: "Hyperlocal Weather Advisories" },
 ];
 
 const STATS = [
@@ -343,7 +344,7 @@ export default function Login() {
         <div className="auth-left">
           <div>
             <Link to="/" className="auth-brand">
-              <div className="auth-brand-logo">🌱</div>
+              <div className="auth-brand-logo"><Sprout size={22} color="#16a34a" /></div>
               <div>
                 <div className="auth-brand-name">AgroConnect 360</div>
                 <div className="auth-brand-tag">Smart Agriculture Platform</div>
@@ -360,9 +361,9 @@ export default function Login() {
             <div className="auth-feature-list">
               {FEATURES.map((f) => (
                 <div className="auth-feature-item" key={f.label}>
-                  <span>{f.emoji}</span>
+                  <span style={{ display: "flex", alignItems: "center", color: "#16a34a" }}><f.Icon size={16} strokeWidth={1.75} /></span>
                   <span>{f.label}</span>
-                  <div className="auth-feature-check">✓</div>
+                  <div className="auth-feature-check"><Check size={11} strokeWidth={3} /></div>
                 </div>
               ))}
             </div>
@@ -394,7 +395,7 @@ export default function Login() {
               <div>
                 <label className="auth-label" htmlFor="login-email">Email Address</label>
                 <div className="auth-input-wrap">
-                  <span className="auth-input-icon">✉️</span>
+                  <span className="auth-input-icon"><Mail size={16} /></span>
                   <input
                     id="login-email"
                     type="email"
@@ -411,7 +412,7 @@ export default function Login() {
 
               {error && (
                 <div className="auth-error">
-                  <span>⚠️</span> {error}
+                  <AlertTriangle size={15} style={{ marginRight: 6, flexShrink: 0 }} /> {error}
                 </div>
               )}
 
@@ -434,7 +435,7 @@ export default function Login() {
               </button>
 
               <div className="auth-note">
-                <span style={{ fontSize: 16 }}>🔒</span>
+                <Lock size={16} style={{ color: "#16a34a", flexShrink: 0, marginTop: 2 }} />
                 <p className="auth-note-text">
                   <strong>Secure & Passwordless:</strong> A 6-digit code will be sent to your email. First-time users are automatically registered.
                 </p>

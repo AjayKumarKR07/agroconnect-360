@@ -1,7 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Sprout, CircleDot, Package, CheckCircle2, IndianRupee, Stethoscope } from "lucide-react";
+import {
+  Sprout, CircleDot, Package, CheckCircle2, IndianRupee,
+  Stethoscope, BarChart3, RefreshCw, AlertTriangle, TrendingUp,
+  Trophy, Boxes
+} from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -74,19 +78,23 @@ export default function FarmAnalytics() {
         .fa-grid-3 { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
         .fa-chart-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
         .fa-chart-title { font-size:13px; font-weight:700; color:var(--text2); margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em; }
-        .fa-note { padding:14px 16px; background:#fffbeb; border:1px solid rgba(251,191,36,0.15); border-radius:12px; font-size:13px; color:#fde68a; line-height:1.7; margin-top:16px; }
+        .fa-note { padding:14px 16px; background:#fffbeb; border:1px solid rgba(251,191,36,0.15); border-radius:12px; font-size:13px; color:#b45309; line-height:1.7; margin-top:16px; display:flex; align-items:center; gap:8px; }
       `}</style>
 
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm Intelligence</div>
-          <h1 className="pg-title">📊 Farm Analytics</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <BarChart3 size={24} color="#16a34a" /> Farm Analytics
+          </h1>
           <p className="pg-sub">Real data from your crops, orders, and income records.</p>
         </div>
-        <button className="btn-ghost" onClick={load}>🔄 Refresh</button>
+        <button className="btn-ghost" onClick={load} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <RefreshCw size={14} /> Refresh
+        </button>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading ? (
         <div className="loading-wrap"><div className="spinner" /><span>Loading analytics…</span></div>
@@ -113,7 +121,7 @@ export default function FarmAnalytics() {
 
           {/* ── Monthly Income Chart ── */}
           <div className="fa-section">
-            <div className="fa-section-title">💰 Monthly Income This Year</div>
+            <div className="fa-section-title"><IndianRupee size={18} color="#16a34a" /> Monthly Income This Year</div>
             <div className="fa-chart-wrap">
               <div className="fa-chart-title">Income by month (₹)</div>
               {data.income.total === 0 ? (
@@ -134,7 +142,7 @@ export default function FarmAnalytics() {
           <div className="fa-grid fa-grid-2 fa-section">
             {/* Crop Status */}
             <div className="fa-chart-wrap">
-              <div className="fa-chart-title">🌿 Crop Status Breakdown</div>
+              <div className="fa-chart-title" style={{ display: "flex", alignItems: "center", gap: 6 }}><Sprout size={14} /> Crop Status Breakdown</div>
               {data.crops.total === 0 ? (
                 <p style={{ color: "var(--text2)", fontSize: 13 }}>No crops added yet.</p>
               ) : (
@@ -149,7 +157,7 @@ export default function FarmAnalytics() {
 
             {/* Order Status */}
             <div className="fa-chart-wrap">
-              <div className="fa-chart-title">📦 Orders by Status</div>
+              <div className="fa-chart-title" style={{ display: "flex", alignItems: "center", gap: 6 }}><Package size={14} /> Orders by Status</div>
               {data.orders.total === 0 ? (
                 <p style={{ color: "var(--text2)", fontSize: 13 }}>No orders received yet.</p>
               ) : (
@@ -166,7 +174,7 @@ export default function FarmAnalytics() {
           {/* ── Crop-wise Sales ── */}
           {data.cropSales?.length > 0 && (
             <div className="fa-section">
-              <div className="fa-section-title">🏆 Crop-wise Revenue</div>
+              <div className="fa-section-title"><Trophy size={18} color="#eab308" /> Crop-wise Revenue</div>
               <div className="fa-chart-wrap">
                 <div className="fa-chart-title">Revenue per crop (₹ from delivered orders)</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
@@ -192,7 +200,7 @@ export default function FarmAnalytics() {
 
           {/* ── Revenue Trend ── */}
           <div className="fa-section">
-            <div className="fa-section-title">📈 Revenue Trend (Last 6 Months)</div>
+            <div className="fa-section-title"><TrendingUp size={18} color="#0ea5e9" /> Revenue Trend (Last 6 Months)</div>
             <div className="fa-chart-wrap">
               {data.income.total === 0 ? (
                 <p style={{ color: "var(--text2)", fontSize: 13 }}>No revenue data yet.</p>
@@ -209,7 +217,7 @@ export default function FarmAnalytics() {
           {/* ── Crop Inventory ── */}
           {data.cropInventory?.length > 0 && (
             <div className="fa-section">
-              <div className="fa-section-title">📦 Crop Inventory</div>
+              <div className="fa-section-title"><Boxes size={18} color="#16a34a" /> Crop Inventory</div>
               <div style={{ overflowX: "auto" }}>
                 <table className="data-table">
                   <thead><tr><th>Crop</th><th>Quantity</th><th>Unit</th><th>Status</th></tr></thead>
@@ -234,7 +242,7 @@ export default function FarmAnalytics() {
 
           {/* ── Profit note ── */}
           <div className="fa-note">
-            ⚠️ <strong>Expense Data Unavailable:</strong> {data.note}
+            <AlertTriangle size={15} /> <span><strong>Expense Data Unavailable:</strong> {data.note}</span>
           </div>
         </>
       )}

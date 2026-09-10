@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
-import { DS } from "../../styles/ds";
-import { IndianRupee, CalendarDays, CheckCircle2, Scale, BarChart3, ClipboardList, Sprout } from "lucide-react";
+import { IndianRupee, CalendarDays, CheckCircle2, Scale, BarChart3, ClipboardList, Sprout, AlertTriangle } from "lucide-react";
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const fmt  = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
@@ -124,7 +123,7 @@ export default function Income() {
         </div>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading ? (
         <div className="loading-wrap">
@@ -261,7 +260,9 @@ export default function Income() {
                           <td style={{ color: "var(--text2)", fontSize: 12 }}>{txPay}</td>
                           <td style={{ color: "#15803d", fontWeight: 700 }}>{fmt(txAmt)}</td>
                           <td>
-                            <span className="badge badge-green">✅ Delivered</span>
+                            <span className="badge badge-green" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#16a34a" }} /> Delivered
+                            </span>
                           </td>
                         </tr>
                       );

@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { ALL_INDIA_STATES, getDistrictsForState } from "../../utils/indiaData";
-import { ClipboardList, RefreshCw } from "lucide-react";
+import {
+  ClipboardList, RefreshCw, User, LogOut, Save, ShoppingBag,
+  IdCard, Mail, MapPin, Globe, Shield, CheckCircle2, AlertTriangle, Loader2
+} from "lucide-react";
 
 const S = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap');
@@ -95,7 +98,7 @@ export default function BuyerProfile() {
       window.dispatchEvent(new Event("ac_user_update")); // → sidebar updates instantly
       setUser(merged);
       setForm({ name: merged.name || "", phone: merged.phone || "", state: merged.state || "", district: merged.district || "" });
-      setMsg({ type: "ok", text: "✅ Profile saved successfully!" });
+      setMsg({ type: "ok", text: "Profile saved successfully!" });
     } catch (err) {
       setMsg({ type: "err", text: err.message });
     } finally {
@@ -118,13 +121,17 @@ export default function BuyerProfile() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0ea5e9", marginBottom: 4 }}>Buyer Account</div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0 }}>👤 My Profile</h1>
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
+            <User size={26} color="#0ea5e9" /> My Profile
+          </h1>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button className="btn-switch" style={{ width: "auto", padding: "10px 18px" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
-            🔄 Switch Role
+          <button className="btn-switch" style={{ width: "auto", padding: "10px 18px", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
+            <RefreshCw size={14} /> Switch Role
           </button>
-          <button className="btn-out" onClick={logout}>🚪 Sign Out</button>
+          <button className="btn-out" onClick={logout} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <LogOut size={14} /> Sign Out
+          </button>
         </div>
       </div>
 
@@ -139,7 +146,9 @@ export default function BuyerProfile() {
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 19, fontWeight: 800, color: "#0f172a" }}>{user.name || "—"}</div>
               <div style={{ fontSize: 13, color: "#64748b", marginTop: 3 }}>{user.email || "—"}</div>
-              <span style={{ marginTop: 7, display: "inline-block", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "rgba(14,165,233,0.12)", color: "#0369a1", border: "1px solid rgba(14,165,233,0.25)" }}>🛒 Consumer / Buyer</span>
+              <span style={{ marginTop: 7, display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "rgba(14,165,233,0.12)", color: "#0369a1", border: "1px solid rgba(14,165,233,0.25)" }}>
+                <ShoppingBag size={12} /> Consumer / Buyer
+              </span>
             </div>
           </div>
 
@@ -213,8 +222,8 @@ export default function BuyerProfile() {
             </div>
 
             <div style={{ marginTop: 22 }}>
-              <button className="btn-save" type="submit" disabled={saving}>
-                {saving ? "⏳ Saving…" : "💾 Save Changes"}
+              <button className="btn-save" type="submit" disabled={saving} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                {saving ? <><Loader2 size={16} className="spinner" /> Saving…</> : <><Save size={16} /> Save Changes</>}
               </button>
             </div>
           </form>
@@ -226,15 +235,15 @@ export default function BuyerProfile() {
           <div className="bp-side-card">
             <div className="bp-card-title"><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Account Info</div>
             {[
-              ["🆔", "User ID",  user.id || user._id || "—"],
-              ["📧", "Email",    user.email    || "—"],
-              ["📍", "District", user.district || "—"],
-              ["🗺️", "State",    user.state    || "—"],
-              ["🎭", "Role",     user.role     || "user"],
-              ["✅", "Profile",  user.profileCompleted ? "Complete" : "Incomplete"],
+              [<IdCard size={14} color="#0ea5e9" />, "User ID",  user.id || user._id || "—"],
+              [<Mail size={14} color="#0ea5e9" />, "Email",    user.email    || "—"],
+              [<MapPin size={14} color="#0ea5e9" />, "District", user.district || "—"],
+              [<Globe size={14} color="#0ea5e9" />, "State",    user.state    || "—"],
+              [<Shield size={14} color="#0ea5e9" />, "Role",     user.role     || "user"],
+              [<CheckCircle2 size={14} color="#22c55e" />, "Profile",  user.profileCompleted ? "Complete" : "Incomplete"],
             ].map(([icon, label, val]) => (
-              <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13 }}>
-                <span style={{ color: "#64748b" }}>{icon} {label}</span>
+              <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13 }}>
+                <span style={{ color: "#64748b", display: "inline-flex", alignItems: "center", gap: 8 }}>{icon} {label}</span>
                 <span style={{ fontWeight: 600, color: "#0f172a", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", textAlign: "right" }}>{val}</span>
               </div>
             ))}
@@ -246,21 +255,23 @@ export default function BuyerProfile() {
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginBottom: 14, lineHeight: 1.6 }}>
               Want to use AgroConnect as a farmer, seller, or exporter? Switch your role here.
             </p>
-            <button className="btn-switch" onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
-              🔄 Change My Role
+            <button className="btn-switch" onClick={() => navigate("/select-role", { state: { isNewUser: false } })} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <RefreshCw size={14} /> Change My Role
             </button>
           </div>
 
           {/* Danger Zone */}
           <div className="bp-side-card" style={{ borderColor: "rgba(239,68,68,0.18)" }}>
-            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, fontSize: 14 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>
+              <AlertTriangle size={15} /> Danger Zone
+            </div>
             <button
               onClick={logout}
-              style={{ width: "100%", justifyContent: "center", padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s" }}
+              style={{ width: "100%", justifyContent: "center", padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s", display: "inline-flex", alignItems: "center", gap: 8 }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.12)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.06)"}
             >
-              🚪 Sign Out
+              <LogOut size={16} /> Sign Out
             </button>
           </div>
         </div>

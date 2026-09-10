@@ -1,15 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
-import { Zap, Brain, Plug } from "lucide-react";
+import { Zap, Brain, Plug, Database, Clock, Cpu, Lightbulb, Globe, Bot, Microscope, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 
-const dbStateLabel = { connected: "🟢 Connected", disconnected: "🔴 Disconnected", connecting: "🟡 Connecting", disconnecting: "🟠 Disconnecting" };
+const dbStateLabel = { connected: "Connected", disconnected: "Disconnected", connecting: "Connecting", disconnecting: "Disconnecting" };
 const dbStateColor = { connected: "#4ade80", disconnected: "#f87171", connecting: "#fbbf24", disconnecting: "#fb923c" };
 
-function Metric({ label, value, sub, color = "#818cf8", icon }) {
+function Metric({ label, value, sub, color = "#818cf8", Icon }) {
   return (
     <div style={{ padding: "16px 18px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid #e2e8f0" }}>
-      <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+      <div style={{ width: 36, height: 36, borderRadius: 10, background: color + "15", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8, color }}>
+        {Icon && <Icon size={18} strokeWidth={2} />}
+      </div>
       <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
       <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color }}>{value}</div>
       {sub && <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 4 }}>{sub}</div>}
@@ -73,15 +75,21 @@ export default function AdminSystem() {
             Auto-refresh (60s)
           </label>
           {lastChecked && <span style={{ fontSize: 12, color: "#a5b4fc" }}>Checked {relativeTime(lastChecked)}</span>}
-          <button className="btn-indigo" onClick={load} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Check Now
+          <button className="btn-indigo" onClick={load} disabled={loading} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <RefreshCw size={13} />} Check Now
           </button>
         </div>
       </div>
 
+      {loading && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16, marginBottom: 26 }}>
+          {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 110, borderRadius: 18 }} />)}
+        </div>
+      )}
+
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
           <div className="error-state-msg">Health check failed</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={load}>Retry</button>
@@ -98,7 +106,7 @@ export default function AdminSystem() {
         <>
           {/* Overall Status Banner */}
           <div style={{ marginBottom: 24, padding: "16px 20px", background: health.api === "operational" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", borderRadius: 16, border: `1px solid ${health.api === "operational" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ fontSize: 28 }}>{health.api === "operational" ? "✅" : "⚠️"}</span>
+            <span style={{ display: "flex", alignItems: "center" }}>{health.api === "operational" ? <CheckCircle2 size={28} color="#16a34a" /> : <AlertTriangle size={28} color="#dc2626" />}</span>
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: health.api === "operational" ? "#4ade80" : "#f87171" }}>
                 API Status: {health.api.toUpperCase()}
@@ -111,10 +119,10 @@ export default function AdminSystem() {
 
           {/* Metrics Grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 24 }}>
-            <Metric icon="🗄️" label="Database" value={dbStateLabel[health.database] || health.database} color={dbStateColor[health.database] || "#a5b4fc"} sub={health.databaseName ? `DB: ${health.databaseName}` : undefined} />
-            <Metric icon="⏱️" label="Server Uptime" value={health.uptimeFormatted} color="#818cf8" sub={`${health.uptimeSeconds.toLocaleString()} seconds`} />
-            <Metric icon="⚡" label="Response Time" value={`${health.responseTimeMs}ms`} color={health.responseTimeMs < 100 ? "#4ade80" : health.responseTimeMs < 500 ? "#fbbf24" : "#f87171"} sub="Time to process this health check" />
-            <Metric icon="🟢" label="Node.js Version" value={health.nodeVersion} color="#4ade80" sub={`Env: ${health.environment}`} />
+            <Metric Icon={Database} label="Database" value={dbStateLabel[health.database] || health.database} color={dbStateColor[health.database] || "#a5b4fc"} sub={health.databaseName ? `DB: ${health.databaseName}` : undefined} />
+            <Metric Icon={Clock} label="Server Uptime" value={health.uptimeFormatted} color="#818cf8" sub={`${health.uptimeSeconds.toLocaleString()} seconds`} />
+            <Metric Icon={Zap} label="Response Time" value={`${health.responseTimeMs}ms`} color={health.responseTimeMs < 100 ? "#4ade80" : health.responseTimeMs < 500 ? "#fbbf24" : "#f87171"} sub="Time to process this health check" />
+            <Metric Icon={Cpu} label="Node.js Version" value={health.nodeVersion} color="#4ade80" sub={`Env: ${health.environment}`} />
           </div>
 
           {/* Memory Usage */}
@@ -136,7 +144,7 @@ export default function AdminSystem() {
               RSS (total process): <strong style={{ color: "#0f172a" }}>{health.memory.rssMB} MB</strong>
             </div>
             <div style={{ marginTop: 12, fontSize: 12, color: "#818cf8" }}>
-              💡 Heap data from <code>process.memoryUsage()</code>. CPU% not exposed — requires native Node.js addons.
+              <Lightbulb size={13} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 5, color: "#4f46e5" }} /> Heap data from <code>process.memoryUsage()</code>. CPU% not exposed — requires native Node.js addons.
             </div>
           </div>
 
@@ -145,14 +153,14 @@ export default function AdminSystem() {
             <div className="card-title" style={{ marginBottom: 16 }}><Plug size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Integrated Services</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
               {[
-                { name: "MongoDB Atlas", status: health.database === "connected" ? "Connected" : health.database, ok: health.database === "connected", icon: "🗄️" },
-                { name: "AgroConnect API", status: "Operational", ok: health.api === "operational", icon: "🌐" },
-                { name: "Gemini AI (Assistant)", status: "Not polled", ok: null, icon: "🤖", note: "Availability not verified by health check" },
-                { name: "Crop Disease AI", status: "Not polled", ok: null, icon: "🔬", note: "Availability not verified by health check" },
+                { name: "MongoDB Atlas", status: health.database === "connected" ? "Connected" : health.database, ok: health.database === "connected", Icon: Database },
+                { name: "AgroConnect API", status: "Operational", ok: health.api === "operational", Icon: Globe },
+                { name: "Gemini AI (Assistant)", status: "Not polled", ok: null, Icon: Bot, note: "Availability not verified by health check" },
+                { name: "Crop Disease AI", status: "Not polled", ok: null, Icon: Microscope, note: "Availability not verified by health check" },
               ].map((svc) => (
                 <div key={svc.name} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: `1px solid ${svc.ok === true ? "rgba(34,197,94,0.2)" : svc.ok === false ? "rgba(239,68,68,0.2)" : "rgba(251,191,36,0.15)"}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontSize: 20 }}>{svc.icon}</span>
+                    <span style={{ display: "flex", alignItems: "center", color: "#4f46e5" }}>{svc.Icon && <svc.Icon size={18} strokeWidth={1.75} />}</span>
                     <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{svc.name}</span>
                   </div>
                   <div style={{ fontSize: 12, color: svc.ok === true ? "#4ade80" : svc.ok === false ? "#f87171" : "#fbbf24", fontWeight: 700 }}>● {svc.status}</div>

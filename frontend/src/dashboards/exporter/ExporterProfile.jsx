@@ -1,7 +1,24 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import {
+  User,
+  Globe,
+  Edit3,
+  Save,
+  Loader2,
+  ClipboardList,
+  ShieldCheck,
+  Mail,
+  MapPin,
+  Compass,
+  CheckCircle2,
+  Package,
+  RefreshCw,
+  AlertTriangle,
+  LogOut,
+} from "lucide-react";
 
 const token = () => localStorage.getItem("agroconnect_token");
 const authH = () => ({ Authorization: `Bearer ${token()}`, "Content-Type": "application/json" });
@@ -186,7 +203,7 @@ export default function ExporterProfile() {
       const d = await r.json();
       if (!r.ok) throw new Error(d.message || "Update failed");
       localStorage.setItem("agroconnect_user", JSON.stringify(d.user));
-      setSuccess("✅ Profile updated successfully!");
+      setSuccess("Profile updated successfully!");
     } catch (e) { setError(e.message); }
     finally { setSaving(false); }
   };
@@ -207,7 +224,9 @@ export default function ExporterProfile() {
       <div className="pg-head">
         <div>
           <div className="eyebrow" style={{ color: AMBER }}>Account Settings</div>
-          <h1 className="pg-title" style={{ color: "#0f172a" }}>👤 My Profile</h1>
+          <h1 className="pg-title" style={{ color: "#0f172a", display: "flex", alignItems: "center", gap: 10 }}>
+            <User size={26} color="#d97706" /> My Profile
+          </h1>
           <p className="pg-sub">Manage your personal information and export account preferences.</p>
         </div>
       </div>
@@ -240,18 +259,20 @@ export default function ExporterProfile() {
               </div>
               <div style={{ fontSize: 14, color: "var(--text2)", marginTop: 4 }}>{user.email}</div>
               <span style={{
-                marginTop: 8, display: "inline-flex", alignItems: "center", gap: 5,
+                marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6,
                 padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700,
                 background: "rgba(245,158,11,0.12)",
                 color: AMBER_LIGHT,
                 border: `1px solid rgba(245,158,11,0.25)`,
               }}>
-                🌍 {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || "Exporter"}
+                <Globe size={13} color="#d97706" /> {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || "Exporter"}
               </span>
             </div>
           </div>
 
-          <div className="card-title" style={{ marginBottom: 18, color: AMBER_LIGHT }}>✏️ Edit Information</div>
+          <div className="card-title" style={{ marginBottom: 18, color: AMBER_LIGHT, display: "flex", alignItems: "center", gap: 8 }}>
+            <Edit3 size={16} color="#d97706" /> Edit Information
+          </div>
 
           {success && (
             <div style={{
@@ -320,8 +341,17 @@ export default function ExporterProfile() {
               </div>
             </div>
 
-            <button type="submit" className="btn-amber" disabled={saving} style={{ marginTop: 20, minWidth: 160 }}>
-              {saving ? "💾 Saving…" : "💾 Save Changes"}
+            <button type="submit" className="btn-amber" disabled={saving} style={{ marginTop: 20, minWidth: 160, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {saving ? (
+                <>
+                  <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Save size={15} /> Save Changes
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -331,17 +361,21 @@ export default function ExporterProfile() {
 
           {/* Account info card */}
           <div className="card card-amber">
-            <div className="card-title" style={{ marginBottom: 16, color: AMBER_LIGHT }}>📋 Account Info</div>
+            <div className="card-title" style={{ marginBottom: 16, color: AMBER_LIGHT, display: "flex", alignItems: "center", gap: 8 }}>
+              <ClipboardList size={16} color="#d97706" /> Account Info
+            </div>
             {[
-              ["🆔", "User ID",  user.id || user._id || "—"],
-              ["📧", "Email",    user.email    || "—"],
-              ["📍", "District", user.district || "—"],
-              ["🗺️", "State",    user.state    || "—"],
-              ["🎭", "Role",     user.role     || "exporter"],
-              ["✅", "Profile",  user.profileCompleted ? "Complete" : "Incomplete"],
-            ].map(([icon, label, val]) => (
+              { Icon: ShieldCheck, label: "User ID",  val: user.id || user._id || "—" },
+              { Icon: Mail,        label: "Email",    val: user.email    || "—" },
+              { Icon: MapPin,      label: "District", val: user.district || "—" },
+              { Icon: Compass,     label: "State",    val: user.state    || "—" },
+              { Icon: User,        label: "Role",     val: user.role     || "exporter" },
+              { Icon: CheckCircle2,label: "Profile",  val: user.profileCompleted ? "Complete" : "Incomplete" },
+            ].map(({ Icon, label, val }) => (
               <div key={label} className="info-row">
-                <span style={{ color: "var(--text2)" }}>{icon} {label}</span>
+                <span style={{ color: "var(--text2)", display: "flex", alignItems: "center", gap: 6 }}>
+                  <Icon size={14} color="#d97706" /> {label}
+                </span>
                 <span style={{
                   fontWeight: 600, color: label === "Role" ? AMBER_LIGHT : "#fff",
                   maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", textAlign: "right",
@@ -354,11 +388,19 @@ export default function ExporterProfile() {
 
           {/* Export stats pill row */}
           <div className="card card-amber">
-            <div className="card-title" style={{ marginBottom: 14, color: AMBER_LIGHT }}>🌍 Export Account</div>
+            <div className="card-title" style={{ marginBottom: 14, color: AMBER_LIGHT, display: "flex", alignItems: "center", gap: 8 }}>
+              <Globe size={16} color="#d97706" /> Export Account
+            </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              <span className="stat-pill">🌐 Global Exporter</span>
-              <span className="stat-pill">📦 Active</span>
-              <span className="stat-pill">✅ Verified</span>
+              <span className="stat-pill" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Globe size={12} color="#d97706" /> Global Exporter
+              </span>
+              <span className="stat-pill" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Package size={12} color="#16a34a" /> Active
+              </span>
+              <span className="stat-pill" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <CheckCircle2 size={12} color="#16a34a" /> Verified
+              </span>
             </div>
             <p style={{ fontSize: 12, color: "var(--text2)", marginTop: 12, lineHeight: 1.6 }}>
               Your account is verified and enabled for international agricultural export operations.
@@ -367,18 +409,22 @@ export default function ExporterProfile() {
 
           {/* Switch role */}
           <div className="card card-amber">
-            <div className="card-title" style={{ marginBottom: 10 }}>🔄 Switch Role</div>
+            <div className="card-title" style={{ marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+              <RefreshCw size={16} color="#d97706" /> Switch Role
+            </div>
             <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>
               Want to use AgroConnect as a different user? Switch your role here.
             </p>
-            <button className="btn-amber-ghost" onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
-              🔄 Change My Role
+            <button className="btn-amber-ghost" onClick={() => navigate("/select-role", { state: { isNewUser: false } })} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+              <RefreshCw size={14} /> Change My Role
             </button>
           </div>
 
           {/* Danger zone */}
           <div className="card" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+              <AlertTriangle size={15} color="#dc2626" /> Danger Zone
+            </div>
             <button
               onClick={handleLogout}
               style={{
@@ -392,7 +438,7 @@ export default function ExporterProfile() {
               onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.12)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.06)"}
             >
-              🚪 Sign Out
+              <LogOut size={16} /> Sign Out
             </button>
           </div>
 

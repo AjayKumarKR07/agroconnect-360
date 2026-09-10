@@ -1,22 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
-import { ScrollText, RefreshCw, AlertTriangle, Globe, Search } from "lucide-react";
+import { ScrollText, RefreshCw, AlertTriangle, Globe, Search, Ban, CheckCircle2, Trash2, Package, Ship, Anchor, XCircle, FileSearch, FolderOpen, Megaphone, Settings } from "lucide-react";
 
 const ENTITY_TYPES = ["all", "user", "order", "crop", "rfq", "shipment", "dispute", "broadcast", "system"];
 
 const ACTION_ICONS = {
-  user_suspended:       { emoji: "🚫", color: "#dc2626" },
-  user_activated:       { emoji: "✅", color: "#15803d" },
-  crop_deleted:         { emoji: "🗑️", color: "#dc2626" },
-  order_status_changed: { emoji: "📦", color: "#818cf8" },
-  rfq_status_changed:   { emoji: "🚢", color: "#b45309" },
-  shipment_status_changed: { emoji: "⛴️", color: "#0369a1" },
-  dispute_resolved:     { emoji: "✅", color: "#15803d" },
-  dispute_rejected:     { emoji: "❌", color: "#dc2626" },
-  dispute_under_review: { emoji: "🔍", color: "#b45309" },
-  dispute_open:         { emoji: "📂", color: "#0369a1" },
-  broadcast_sent:       { emoji: "📢", color: "#7c3aed" },
+  user_suspended:          { icon: <Ban          size={18} strokeWidth={2} />, color: "#dc2626" },
+  user_activated:          { icon: <CheckCircle2 size={18} strokeWidth={2} />, color: "#15803d" },
+  crop_deleted:            { icon: <Trash2       size={18} strokeWidth={2} />, color: "#dc2626" },
+  order_status_changed:    { icon: <Package      size={18} strokeWidth={2} />, color: "#818cf8" },
+  rfq_status_changed:      { icon: <Ship         size={18} strokeWidth={2} />, color: "#b45309" },
+  shipment_status_changed: { icon: <Anchor       size={18} strokeWidth={2} />, color: "#0369a1" },
+  dispute_resolved:        { icon: <CheckCircle2 size={18} strokeWidth={2} />, color: "#15803d" },
+  dispute_rejected:        { icon: <XCircle      size={18} strokeWidth={2} />, color: "#dc2626" },
+  dispute_under_review:    { icon: <FileSearch   size={18} strokeWidth={2} />, color: "#b45309" },
+  dispute_open:            { icon: <FolderOpen   size={18} strokeWidth={2} />, color: "#0369a1" },
+  broadcast_sent:          { icon: <Megaphone    size={18} strokeWidth={2} />, color: "#7c3aed" },
 };
 
 const LEVEL_STYLE = (action) => {
@@ -144,7 +144,7 @@ export default function AdminAuditLogs() {
           <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 20 }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {logs.map((log, idx) => {
-                const icon = ACTION_ICONS[log.action] || { emoji: "⚙️", color: "#a5b4fc" };
+                const icon = ACTION_ICONS[log.action] || { icon: <Settings size={18} strokeWidth={2} />, color: "#a5b4fc" };
                 const level = LEVEL_STYLE(log.action);
                 return (
                   <div key={log._id} style={{
@@ -153,7 +153,7 @@ export default function AdminAuditLogs() {
                     borderBottom: idx < logs.length - 1 ? "1px solid rgba(99,102,241,0.07)" : "none"
                   }}>
                     <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flex: 1 }}>
-                      <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{icon.emoji}</span>
+                      <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 10, background: icon.color + "18", color: icon.color, flexShrink: 0, marginTop: 2 }}>{icon.icon}</span>
                       <div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
                           <span style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{log.description}</span>

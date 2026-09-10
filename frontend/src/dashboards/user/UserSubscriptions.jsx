@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Leaf, Apple, Wheat, Package, MapPin, X, Zap, Ban, ShoppingBag, CheckCircle2, Info } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -20,7 +21,8 @@ const BOXES = [
   {
     id: "sub-1",
     name: "Organic Veggie Basket",
-    emoji: "🥬",
+    Icon: Leaf,
+    iconColor: "#16a34a",
     price: 499,
     cycle: "Weekly",
     items: ["Tomatoes (2kg)", "Onions (2kg)", "Potatoes (2kg)", "Spinach (500g)", "Green Chillies (250g)"],
@@ -31,7 +33,8 @@ const BOXES = [
   {
     id: "sub-2",
     name: "Seasonal Fruit Box",
-    emoji: "🍎",
+    Icon: Apple,
+    iconColor: "#f59e0b",
     price: 799,
     cycle: "Bi-Weekly",
     items: ["Alphonso Mangoes (1.5kg)", "Green Bananas (1kg)", "Pomegranate (1kg)", "Fresh Apples (1kg)"],
@@ -42,7 +45,8 @@ const BOXES = [
   {
     id: "sub-3",
     name: "Pure Grain & Pulses Pack",
-    emoji: "🌾",
+    Icon: Wheat,
+    iconColor: "#10b981",
     price: 1199,
     cycle: "Monthly",
     items: ["Basmati Rice (5kg)", "Sharbati Wheat (5kg)", "Turmeric Powder (500g)", "Coriander Seeds (250g)"],
@@ -61,7 +65,7 @@ export default function UserSubscriptions() {
   const subscribe = (box) => {
     const exists = activeSubs.some(s => s.id === box.id);
     if (exists) {
-      setMsg(`ℹ️ You are already subscribed to ${box.name}!`);
+      setMsg(`You are already subscribed to ${box.name}!`);
       setTimeout(() => setMsg(""), 3000);
       return;
     }
@@ -76,7 +80,7 @@ export default function UserSubscriptions() {
     setActiveSubs(updated);
     localStorage.setItem("ac_user_subs", JSON.stringify(updated));
     setSelectedBox(null);
-    setMsg(`🎉 Subscribed to ${box.name}! First delivery scheduled.`);
+    setMsg(`Subscribed to ${box.name}! First delivery scheduled.`);
     setTimeout(() => setMsg(""), 3000);
   };
 
@@ -94,7 +98,9 @@ export default function UserSubscriptions() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm-to-Door Service</div>
-          <h1 className="pg-title">🧺 Fresh Farm Subscriptions</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <ShoppingBag size={26} color="#0ea5e9" /> Fresh Farm Subscriptions
+          </h1>
           <p className="pg-sub">Subscribe to recurring fresh produce boxes straight from verified local farmers.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>
@@ -103,8 +109,8 @@ export default function UserSubscriptions() {
       </div>
 
       {msg && (
-        <div style={{ marginBottom: 20, padding: "12px 18px", background: "rgba(14,165,233,0.12)", border: "1px solid rgba(14,165,233,0.25)", borderRadius: 14, color: "#0369a1", fontWeight: 700, fontSize: 14 }}>
-          {msg}
+        <div style={{ marginBottom: 20, padding: "12px 18px", background: "rgba(14,165,233,0.12)", border: "1px solid rgba(14,165,233,0.25)", borderRadius: 14, color: "#0369a1", fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+          <CheckCircle2 size={16} /> {msg}
         </div>
       )}
 
@@ -112,17 +118,17 @@ export default function UserSubscriptions() {
       {activeSubs.length > 0 && (
         <div style={{ marginBottom: 36 }}>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 14 }}>
-            📦 My Active Subscriptions
+            <Package size={16} strokeWidth={1.75} style={{ verticalAlign: "middle", marginRight: 6, color: "#0ea5e9" }} /> My Active Subscriptions
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 16 }}>
             {activeSubs.map(s => (
               <div key={s.id} className="card" style={{ background: "rgba(14,165,233,0.06)", borderColor: "rgba(14,165,233,0.22)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 28 }}>{s.emoji}</span>
+                    <span style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 12, background: (s.iconColor || s.color) + "18", color: s.iconColor || s.color, flexShrink: 0 }}>{s.Icon && <s.Icon size={22} strokeWidth={1.5} />}</span>
                     <div>
                       <div className="card-title" style={{ fontSize: 16 }}>{s.name}</div>
-                      <div style={{ fontSize: 12, color: "var(--text2)" }}>🌾 {s.farmer}</div>
+                      <div style={{ fontSize: 12, color: "var(--text2)" }}><Wheat size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />{s.farmer}</div>
                     </div>
                   </div>
                   <span className="tag" style={{ background: "rgba(34,197,94,0.15)", color: "#15803d", border: "1px solid rgba(34,197,94,0.3)" }}>
@@ -145,8 +151,8 @@ export default function UserSubscriptions() {
                   <strong style={{ color: "#0f172a" }}>Contents:</strong> {s.items.join(", ")}
                 </div>
 
-                <button onClick={() => cancelSub(s.id)} style={{ width: "100%", padding: "9px 0", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
-                  🚫 Cancel Subscription
+                <button onClick={() => cancelSub(s.id)} style={{ width: "100%", padding: "9px 0", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                  <Ban size={14} strokeWidth={2} /> Cancel Subscription
                 </button>
               </div>
             ))}
@@ -155,8 +161,8 @@ export default function UserSubscriptions() {
       )}
 
       {/* Available Plans */}
-      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 14 }}>
-        🌟 Available Farm Basket Plans
+      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+        <Leaf size={18} strokeWidth={1.75} style={{ color: "#0ea5e9" }} /> Available Farm Basket Plans
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20 }}>
@@ -164,13 +170,13 @@ export default function UserSubscriptions() {
           <div key={b.id} className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 36 }}>{b.emoji}</span>
+                <span style={{ width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 14, background: b.color + "18", color: b.color, flexShrink: 0 }}>{b.Icon && <b.Icon size={26} strokeWidth={1.5} />}</span>
                 <span className="tag" style={{ background: `${b.color}20`, color: b.color, border: `1px solid ${b.color}40` }}>
                   {b.badge}
                 </span>
               </div>
               <div className="card-title" style={{ marginBottom: 4 }}>{b.name}</div>
-              <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 14 }}>🌾 Harvested by {b.farmer}</div>
+              <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 14 }}><Wheat size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />Harvested by {b.farmer}</div>
 
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: "#0ea5e9", marginBottom: 16 }}>
                 ₹{b.price} <span style={{ fontSize: 13, color: "var(--text2)", fontWeight: 500 }}>/ {b.cycle.toLowerCase()}</span>
@@ -186,8 +192,8 @@ export default function UserSubscriptions() {
               </div>
             </div>
 
-            <button className="btn-cyan" style={{ width: "100%", justifyContent: "center" }} onClick={() => setSelectedBox(b)}>
-              ⚡ Subscribe Now · ₹{b.price}
+            <button className="btn-cyan" style={{ width: "100%", justifyContent: "center", display: "flex", alignItems: "center", gap: 8 }} onClick={() => setSelectedBox(b)}>
+              <Zap size={14} strokeWidth={2} /> Subscribe Now · ₹{b.price}
             </button>
           </div>
         ))}
@@ -199,7 +205,7 @@ export default function UserSubscriptions() {
           <div className="card" style={{ maxWidth: 440, width: "100%", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 20px 40px rgba(0,0,0,0.12)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 28 }}>{selectedBox.emoji}</span>
+                <span style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 12, background: selectedBox.color + "18", color: selectedBox.color, flexShrink: 0 }}>{selectedBox.Icon && <selectedBox.Icon size={22} strokeWidth={1.5} />}</span>
                 <div className="card-title">{selectedBox.name}</div>
               </div>
               <button onClick={() => setSelectedBox(null)} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 20, cursor: "pointer" }}>✕</button>

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, ROLE_COLOR, relativeTime } from "./adminStyles";
-import { Users } from "lucide-react";
+import { Users, Ban, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
 const ROLE_FILTERS = ["all", "farmer", "seller", "user", "exporter", "admin"];
 
@@ -11,8 +11,9 @@ function ConfirmModal({ user, onConfirm, onCancel, loading }) {
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="users-modal-title">
       <div className="modal-box">
-        <div className="modal-title" id="users-modal-title">
-          {isSuspending ? "🚫 Suspend User?" : "✅ Activate User?"}
+        <div className="modal-title" id="users-modal-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {isSuspending ? <Ban size={18} color="#dc2626" /> : <CheckCircle2 size={18} color="#16a34a" />}
+          {isSuspending ? "Suspend User?" : "Activate User?"}
         </div>
         <div className="modal-body">
           <div style={{ marginBottom: 14 }}>
@@ -30,16 +31,17 @@ function ConfirmModal({ user, onConfirm, onCancel, loading }) {
               <div style={{ fontSize: 13, color: isSuspending ? "#f87171" : "#4ade80", fontWeight: 800 }}>{isSuspending ? "SUSPENDED" : "ACTIVE"}</div>
             </div>
           </div>
-          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
-            ⚠️ {isSuspending
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+            <AlertTriangle size={15} style={{ flexShrink: 0 }} />
+            {isSuspending
               ? "Suspending will immediately block all active sessions for this user."
               : "Restoring access will allow this user to log in and use the platform again."}
           </div>
         </div>
         <div className="modal-actions">
           <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
-          <button className={isSuspending ? "btn-danger" : "btn-success"} onClick={onConfirm} disabled={loading} aria-disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : (isSuspending ? "🚫 Suspend" : "✅ Activate")}
+          <button className={isSuspending ? "btn-danger" : "btn-success"} onClick={onConfirm} disabled={loading} aria-disabled={loading} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : (isSuspending ? <><Ban size={13} /> Suspend</> : <><CheckCircle2 size={13} /> Activate</>)}
           </button>
         </div>
       </div>
@@ -164,12 +166,12 @@ export default function AdminUsers() {
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {ROLE_FILTERS.map((r) => (
             <button key={r} className={`tab-btn ${roleFilter === r ? "active" : ""}`} onClick={() => setRoleFilter(r)}>
-              {r === "all" ? "🌐 All" : r.charAt(0).toUpperCase() + r.slice(1) + "s"}
+              {r === "all" ? "All" : r.charAt(0).toUpperCase() + r.slice(1) + "s"}
             </button>
           ))}
         </div>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-          <input className="field-input" style={{ maxWidth: 220 }} placeholder="🔍 Search name, email, phone…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="field-input" style={{ maxWidth: 220 }} placeholder="Search name, email, phone…" value={search} onChange={(e) => setSearch(e.target.value)} />
           <button type="submit" className="btn-indigo" style={{ padding: "10px 14px" }}>Go</button>
         </form>
       </div>
@@ -182,7 +184,7 @@ export default function AdminUsers() {
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
           <div className="error-state-msg">Unable to load users</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
@@ -191,7 +193,7 @@ export default function AdminUsers() {
 
       {!loading && !error && users.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-state-icon">👥</div>
+          <div className="empty-state-icon"><Users size={36} color="#94a3b8" /></div>
           <div className="empty-state-msg">No users found</div>
           <div className="empty-state-sub">Try adjusting filters or search terms.</div>
         </div>
@@ -243,7 +245,7 @@ export default function AdminUsers() {
                           disabled={updatingId === u._id}
                           onClick={() => setConfirmUser(u)}
                         >
-                          {updatingId === u._id ? <span className="spinner" style={{ width: 12, height: 12 }} /> : u.isActive ? "🚫 Suspend" : "✅ Activate"}
+                          {updatingId === u._id ? <span className="spinner" style={{ width: 12, height: 12 }} /> : u.isActive ? <><Ban size={12} style={{ marginRight: 4, verticalAlign: "middle" }} />Suspend</> : <><CheckCircle2 size={12} style={{ marginRight: 4, verticalAlign: "middle" }} />Activate</>}
                         </button>
                       </td>
                     </tr>
@@ -251,8 +253,8 @@ export default function AdminUsers() {
                       <tr>
                         <td colSpan={7} style={{ background: "rgba(99,102,241,0.04)", padding: "12px 20px" }}>
                           <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 13, color: "#a5b4fc" }}>
-                            <div><strong style={{ color: "#c7d2fe" }}>Email Verified:</strong> {u.isEmailVerified ? "✅ Yes" : "❌ No"}</div>
-                            <div><strong style={{ color: "#c7d2fe" }}>Profile Complete:</strong> {u.profileCompleted ? "✅ Yes" : "⚠️ No"}</div>
+                            <div><strong style={{ color: "#c7d2fe" }}>Email Verified:</strong> {u.isEmailVerified ? <span style={{ color: "#16a34a", display: "inline-flex", alignItems: "center", gap: 3 }}><CheckCircle2 size={12} /> Yes</span> : <span style={{ color: "#dc2626", display: "inline-flex", alignItems: "center", gap: 3 }}><XCircle size={12} /> No</span>}</div>
+                            <div><strong style={{ color: "#c7d2fe" }}>Profile Complete:</strong> {u.profileCompleted ? <span style={{ color: "#16a34a", display: "inline-flex", alignItems: "center", gap: 3 }}><CheckCircle2 size={12} /> Yes</span> : <span style={{ color: "#b45309", display: "inline-flex", alignItems: "center", gap: 3 }}><AlertTriangle size={12} /> No</span>}</div>
                             {u.district && <div><strong style={{ color: "#c7d2fe" }}>District:</strong> {u.district}</div>}
                             {u.state && <div><strong style={{ color: "#c7d2fe" }}>State:</strong> {u.state}</div>}
                           </div>

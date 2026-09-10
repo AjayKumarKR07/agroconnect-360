@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { RefreshCw, Bell } from "lucide-react";
+import { RefreshCw, Bell, Package, CloudRain, TrendingUp, Sprout, Stethoscope, Wheat, Globe, CheckCheck, Clock, AlertTriangle } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -10,14 +10,14 @@ const authHeaders = () => ({
 });
 
 const TYPE_STYLE = {
-  order:     { icon: "📦", color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
-  weather:   { icon: "🌧️", color: "#60a5fa",  bg: "rgba(96,165,250,0.08)"  },
-  market:    { icon: "📈", color: "#b45309",  bg: "rgba(251,191,36,0.08)"  },
-  harvest:   { icon: "🌱", color: "#15803d",  bg: "rgba(34,197,94,0.08)"   },
-  diagnosis: { icon: "🩺", color: "#7c3aed",  bg: "rgba(167,139,250,0.08)" },
-  plan:      { icon: "🌾", color: "#16a34a",  bg: "rgba(34,197,94,0.08)"   },
-  export:    { icon: "🌍", color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
-  system:    { icon: "🔔", color: "#94a3b8",  bg: "rgba(148,163,184,0.06)" },
+  order:     { Icon: Package,     color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
+  weather:   { Icon: CloudRain,   color: "#60a5fa",  bg: "rgba(96,165,250,0.08)"  },
+  market:    { Icon: TrendingUp,  color: "#b45309",  bg: "rgba(251,191,36,0.08)"  },
+  harvest:   { Icon: Sprout,      color: "#15803d",  bg: "rgba(34,197,94,0.08)"   },
+  diagnosis: { Icon: Stethoscope, color: "#7c3aed",  bg: "rgba(167,139,250,0.08)" },
+  plan:      { Icon: Wheat,       color: "#16a34a",  bg: "rgba(34,197,94,0.08)"   },
+  export:    { Icon: Globe,       color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
+  system:    { Icon: Bell,        color: "#94a3b8",  bg: "rgba(148,163,184,0.06)" },
 };
 
 function timeAgo(dateStr) {
@@ -95,13 +95,15 @@ export default function FarmerNotifications() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Alerts & Updates</div>
-          <h1 className="pg-title">🔔 Notifications</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Bell size={24} color="#16a34a" /> Notifications
+          </h1>
           <p className="pg-sub">Stay updated on orders, harvest alerts, and farm plans.</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           {unread > 0 && (
-            <button className="btn-ghost" onClick={markAll} disabled={markingAll}>
-              {markingAll ? "…" : "✅ Mark All Read"}
+            <button className="btn-ghost" onClick={markAll} disabled={markingAll} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              {markingAll ? "…" : <><CheckCheck size={14} /> Mark All Read</>}
             </button>
           )}
           <button className="btn-ghost" onClick={load} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Refresh</button>
@@ -109,12 +111,12 @@ export default function FarmerNotifications() {
       </div>
 
       {unread > 0 && (
-        <div className="alert-warn" style={{ marginBottom: 20 }}>
-          🔔 You have <strong>{unread}</strong> unread notification{unread > 1 ? "s" : ""}.
+        <div className="alert-warn" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+          <Bell size={16} color="#b45309" /> You have <strong>{unread}</strong> unread notification{unread > 1 ? "s" : ""}.
         </div>
       )}
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading ? (
         <div className="loading-wrap"><div className="spinner" /><span>Loading notifications…</span></div>
@@ -132,19 +134,23 @@ export default function FarmerNotifications() {
             if (items.length === 0) return null;
             return (
               <div key={group}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, marginTop: group === "read" ? 20 : 0 }}>
-                  {group === "unread" ? `🔴 Unread (${items.length})` : `✅ Read (${items.length})`}
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, marginTop: group === "read" ? 20 : 0 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: group === "unread" ? "#ef4444" : "#16a34a", display: "inline-block" }} />
+                  {group === "unread" ? `Unread (${items.length})` : `Read (${items.length})`}
                 </div>
                 {items.map(notif => {
                   const s = TYPE_STYLE[notif.type] || TYPE_STYLE.system;
+                  const IconComp = s.Icon;
                   return (
                     <div key={notif._id} className={`notif-item ${!notif.isRead ? "unread" : ""}`} onClick={() => handleClick(notif)}>
-                      <div className="notif-icon" style={{ background: s.bg }}>{s.icon}</div>
+                      <div className="notif-icon" style={{ background: s.bg }}><IconComp size={20} color={s.color} /></div>
                       <div className="notif-body">
                         <div className="notif-title">{notif.title}</div>
                         <div className="notif-msg">{notif.message}</div>
                         <div className="notif-footer">
-                          <span className="notif-time">🕐 {timeAgo(notif.createdAt)}</span>
+                          <span className="notif-time" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                            <Clock size={11} /> {timeAgo(notif.createdAt)}
+                          </span>
                           <span style={{ fontSize: 11, color: s.color, fontWeight: 600 }}>{notif.type.toUpperCase()}</span>
                         </div>
                       </div>

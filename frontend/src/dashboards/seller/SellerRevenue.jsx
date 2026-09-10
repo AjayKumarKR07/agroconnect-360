@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { TrendingUp, Receipt, RefreshCw } from "lucide-react";
+import { TrendingUp, Receipt, RefreshCw, DollarSign, Package, BarChart2, Award, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function SellerRevenue() {
   const [data,    setData]    = useState({ totalRevenue: 0, totalOrders: 0, avgOrderValue: 0, monthly: [] });
@@ -42,7 +42,7 @@ export default function SellerRevenue() {
         <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+              <AlertTriangle size={18} style={{ color: "#dc2626" }} />
               <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load revenue data — {error}</span>
             </div>
             <button onClick={load} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
@@ -55,13 +55,13 @@ export default function SellerRevenue() {
           {/* Summary cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 16, marginBottom: 28 }}>
             {[
-              ["💰", "Total Revenue",   `₹${Number(data.totalRevenue || 0).toLocaleString("en-IN")}`, "#4ade80"],
-              ["📦", "Orders Completed", data.totalOrders || 0, "#38bdf8"],
-              ["📊", "Avg Order Value",  `₹${Math.round(data.avgOrderValue || 0).toLocaleString("en-IN")}`, "#a78bfa"],
-              ["🏆", "Best Month",      data.monthly?.length > 0 ? data.monthly.reduce((a, b) => (a.revenue > b.revenue ? a : b)).month : "—", "#fbbf24"],
-            ].map(([icon, label, val, color]) => (
+              [DollarSign, "Total Revenue",   `₹${Number(data.totalRevenue || 0).toLocaleString("en-IN")}`, "#15803d"],
+              [Package, "Orders Completed", data.totalOrders || 0, "#0369a1"],
+              [BarChart2, "Avg Order Value",  `₹${Math.round(data.avgOrderValue || 0).toLocaleString("en-IN")}`, "#7c3aed"],
+              [Award, "Best Month",      data.monthly?.length > 0 ? data.monthly.reduce((a, b) => (a.revenue > b.revenue ? a : b)).month : "—", "#b45309"],
+            ].map(([Icon, label, val, color]) => (
               <div key={label} className="card" style={{ padding: "22px 24px" }}>
-                <div style={{ fontSize: 26, marginBottom: 10 }}>{icon}</div>
+                <div style={{ marginBottom: 10, color }}><Icon size={24} /></div>
                 <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color }}>{val}</div>
               </div>
@@ -117,7 +117,9 @@ export default function SellerRevenue() {
                       <td style={{ padding: "12px 14px", fontWeight: 800, color: "#15803d", fontSize: 14 }}>₹{Number(t.amount).toLocaleString("en-IN")}</td>
                       <td style={{ padding: "12px 14px", color: "var(--text2)", fontSize: 13 }}>{new Date(t.date).toLocaleDateString("en-IN")}</td>
                       <td style={{ padding: "12px 14px" }}>
-                        <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: "rgba(34,197,94,0.1)", color: "#15803d" }}>✅ {t.status}</span>
+                        <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: "rgba(34,197,94,0.1)", color: "#15803d", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <CheckCircle2 size={12} /> {t.status}
+                        </span>
                       </td>
                     </tr>
                   ))}

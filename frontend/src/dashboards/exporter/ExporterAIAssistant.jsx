@@ -1,13 +1,26 @@
 import { useState, useRef, useEffect } from "react";
 import { API_URL } from "../../config/api";
+import {
+  Globe,
+  Package,
+  FileText,
+  ArrowLeftRight,
+  Ship,
+  BarChart2,
+  Bot,
+  User,
+  Trash2,
+  Send,
+  Loader2,
+} from "lucide-react";
 
 const QUICK_PROMPTS = [
-  { icon: "🌍", text: "Best export markets for wheat?" },
-  { icon: "📦", text: "Cold chain requirements for mangoes?" },
-  { icon: "📋", text: "Phytosanitary certificate process?" },
-  { icon: "💱", text: "USD/INR impact on export margins?" },
-  { icon: "🚢", text: "Sea freight vs air freight costs?" },
-  { icon: "📊", text: "Global rice demand trends 2025?" },
+  { Icon: Globe, text: "Best export markets for wheat?" },
+  { Icon: Package, text: "Cold chain requirements for mangoes?" },
+  { Icon: FileText, text: "Phytosanitary certificate process?" },
+  { Icon: ArrowLeftRight, text: "USD/INR impact on export margins?" },
+  { Icon: Ship, text: "Sea freight vs air freight costs?" },
+  { Icon: BarChart2, text: "Global rice demand trends 2025?" },
 ];
 
 const STYLES = `
@@ -218,7 +231,7 @@ const STYLES = `
 
 const INIT_MSG = {
   role: "assistant",
-  text: "🌍 Hello! I'm your AgroConnect Export AI assistant powered by Gemini. Ask me anything about agricultural exports — global market prices, trade compliance, phytosanitary requirements, freight logistics, forex impact, Letters of Credit, customs documentation, and more!",
+  text: "Hello! I'm your AgroConnect Export AI assistant powered by Gemini. Ask me anything about agricultural exports — global market prices, trade compliance, phytosanitary requirements, freight logistics, forex impact, Letters of Credit, customs documentation, and more!",
   time: new Date(),
 };
 
@@ -250,7 +263,7 @@ export default function ExporterAIAssistant() {
       const reply = d.reply || d.message || "Sorry, I couldn't get a response. Please try again.";
       setMessages(p => [...p, { role: "assistant", text: reply, time: new Date() }]);
     } catch {
-      setMessages(p => [...p, { role: "assistant", text: "⚠️ Network error. Please check your connection and try again.", time: new Date() }]);
+      setMessages(p => [...p, { role: "assistant", text: "Network error. Please check your connection and try again.", time: new Date() }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -260,7 +273,7 @@ export default function ExporterAIAssistant() {
   const formatTime = (d) => d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
   const clearChat = () => {
-    setMessages([{ ...INIT_MSG, text: "🌍 New conversation! How can I assist with your export operations today?", time: new Date() }]);
+    setMessages([{ ...INIT_MSG, text: "New conversation! How can I assist with your export operations today?", time: new Date() }]);
     setInput("");
   };
 
@@ -282,11 +295,13 @@ export default function ExporterAIAssistant() {
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
             <span style={{ color: "#16a34a" }}>✦ Powered by Gemini AI</span>
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-            🌍 Export Trade AI Assistant
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
+            <Bot size={28} color="#d97706" /> Export Trade AI Assistant
           </h1>
         </div>
-        <button className="clear-btn" onClick={clearChat}>🗑 Clear Chat</button>
+        <button className="clear-btn" onClick={clearChat} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Trash2 size={14} /> Clear Chat
+        </button>
       </div>
 
       {/* Main chat card */}
@@ -296,7 +311,9 @@ export default function ExporterAIAssistant() {
         <div className="ai-header">
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div className="ai-avatar-wrap">
-              <div className="ai-avatar-inner">🌍</div>
+              <div className="ai-avatar-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Bot size={18} color="#ffffff" />
+              </div>
             </div>
             <div>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#0f172a" }}>AgroConnect Export AI</div>
@@ -317,8 +334,8 @@ export default function ExporterAIAssistant() {
         <div className="ai-body">
           {messages.map((m, i) => (
             <div key={i} className={`msg-row ${m.role === "user" ? "user" : ""}`}>
-              <div className={`msg-avatar ${m.role === "user" ? "user" : "ai"}`}>
-                {m.role === "assistant" ? "🌍" : "👤"}
+              <div className={`msg-avatar ${m.role === "user" ? "user" : "ai"}`} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {m.role === "assistant" ? <Bot size={15} color="#d97706" /> : <User size={15} color="#0284c7" />}
               </div>
               <div className="bubble-wrap">
                 <div
@@ -333,7 +350,9 @@ export default function ExporterAIAssistant() {
           {/* Typing indicator */}
           {loading && (
             <div className="msg-row">
-              <div className="msg-avatar ai">🌍</div>
+              <div className="msg-avatar ai" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Bot size={15} color="#d97706" />
+              </div>
               <div className="bubble-wrap">
                 <div className="typing-pill">
                   <div className="td" /><div className="td" /><div className="td" />
@@ -350,16 +369,20 @@ export default function ExporterAIAssistant() {
         <div className="ai-footer">
           {/* Quick prompts */}
           <div className="quick-row">
-            {QUICK_PROMPTS.map((p) => (
-              <button
-                key={p.text}
-                className="quick-chip"
-                onClick={() => sendMessage(p.text)}
-                disabled={loading}
-              >
-                <span>{p.icon}</span> {p.text}
-              </button>
-            ))}
+            {QUICK_PROMPTS.map((p) => {
+              const IconComp = p.Icon;
+              return (
+                <button
+                  key={p.text}
+                  className="quick-chip"
+                  onClick={() => sendMessage(p.text)}
+                  disabled={loading}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                  <IconComp size={13} color="#d97706" /> {p.text}
+                </button>
+              );
+            })}
           </div>
 
           {/* Input box */}
@@ -380,7 +403,7 @@ export default function ExporterAIAssistant() {
               disabled={loading}
             />
             <button type="submit" className="send-btn" disabled={loading || !input.trim()} title="Send (Enter)">
-              {loading ? "⏳" : "➤"}
+              {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Send size={16} />}
             </button>
           </form>
 

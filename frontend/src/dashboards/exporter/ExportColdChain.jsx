@@ -1,6 +1,19 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import {
+  Snowflake,
+  Thermometer,
+  Droplets,
+  Battery,
+  Cloud,
+  AlertTriangle,
+  LineChart,
+  Info,
+  Ship,
+  CheckCircle2,
+  MapPin,
+} from "lucide-react";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -95,7 +108,9 @@ export default function ExportColdChain() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">IoT Reefer Container Telematics</div>
-          <h1 className="pg-title">❄️ Cold Chain & Climate Monitoring</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Snowflake size={26} color="#0284c7" /> Cold Chain & Climate Monitoring
+          </h1>
           <p className="pg-sub">
             Simulated IoT telemetry monitoring temperature, humidity, and gas levels
             for your registered shipment containers.
@@ -117,7 +132,9 @@ export default function ExportColdChain() {
       ) : shipments.length === 0 ? (
         /* ── No shipments at all ──────────────────────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
-          <div style={{ fontSize: 52, marginBottom: 14 }}>❄️</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+            <Snowflake size={52} color="#0284c7" strokeWidth={1.5} />
+          </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             No Containers to Monitor
           </div>
@@ -125,19 +142,25 @@ export default function ExportColdChain() {
             Cold Chain IoT monitoring activates automatically once you add shipment containers.
             Add containers from the Shipments & Port page.
           </div>
-          <Link to="/exporter/logistics" className="btn-gold">🚢 Go to Shipments & Port</Link>
+          <Link to="/exporter/logistics" className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Ship size={16} /> Go to Shipments & Port
+          </Link>
         </div>
       ) : reefers.length === 0 ? (
         /* ── All shipments delivered / cancelled ─────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
-          <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+            <CheckCircle2 size={52} color="#16a34a" strokeWidth={1.5} />
+          </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             All Containers Delivered
           </div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 24 }}>
             All your containers have been delivered or cancelled. Cold chain monitoring will appear for active shipments.
           </div>
-          <Link to="/exporter/logistics" className="btn-gold">🚢 View Logistics</Link>
+          <Link to="/exporter/logistics" className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Ship size={16} /> View Logistics
+          </Link>
         </div>
       ) : (
         /* ── Main view ──────────────────────────────────────────── */
@@ -168,10 +191,10 @@ export default function ExportColdChain() {
                   <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 6 }}>
                     {s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}
                   </div>
-                  <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#a38a5d" }}>
-                    <span>🌡️ <strong style={{ color: "#0f172a" }}>{sensors.temp}</strong></span>
-                    <span>💧 <strong style={{ color: "#0f172a" }}>{sensors.humidity}</strong></span>
-                    <span>🔋 <strong style={{ color: "#0f172a" }}>{sensors.battery}</strong></span>
+                  <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#a38a5d", alignItems: "center" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Thermometer size={13} color="#f59e0b" /> <strong style={{ color: "#0f172a" }}>{sensors.temp}</strong></span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Droplets size={13} color="#38bdf8" /> <strong style={{ color: "#0f172a" }}>{sensors.humidity}</strong></span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Battery size={13} color="#4ade80" /> <strong style={{ color: "#0f172a" }}>{sensors.battery}</strong></span>
                   </div>
                 </div>
               );
@@ -184,14 +207,14 @@ export default function ExportColdChain() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16, flexWrap: "wrap", gap: 12 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#b45309" }}>
-                    ❄️ Reefer Unit: {selected.containerNo}
+                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#b45309", display: "flex", alignItems: "center", gap: 8 }}>
+                    <Snowflake size={18} color="#0284c7" /> Reefer Unit: {selected.containerNo}
                   </div>
                   <div style={{ fontSize: 14, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>
                     {selected.cargo} {selected.quantityTons ? `(${selected.quantityTons} MT)` : ""}
                   </div>
-                  <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
-                    📍 Destination: {selected.destPort || selected.destinationCountry || "—"}
+                  <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                    <MapPin size={13} color="#d97706" /> Destination: {selected.destPort || selected.destinationCountry || "—"}
                   </div>
                 </div>
                 <span style={{ fontSize: 12, padding: "4px 12px", borderRadius: 8, background: `${selectedSensors.color}20`, color: selectedSensors.color, fontWeight: 800, border: `1px solid ${selectedSensors.color}40` }}>
@@ -202,13 +225,15 @@ export default function ExportColdChain() {
               {/* 4 Sensor Metric Cards */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 14 }}>
                 {[
-                  ["🌡️ Temperature",      selectedSensors.temp,     `Target: ${selectedSensors.targetTemp}`, "#f59e0b"],
-                  ["💧 Relative Humidity", selectedSensors.humidity, "Optimal Range 80–95%",                  "#38bdf8"],
-                  ["☁️ CO₂ Gas Level",    selectedSensors.co2,      "Controlled Atmosphere",                 "#a78bfa"],
-                  ["🔋 IoT Battery",       selectedSensors.battery,  "Solar + Battery Backup",                "#4ade80"],
-                ].map(([label, val, sub, color]) => (
+                  { label: "Temperature",       Icon: Thermometer, val: selectedSensors.temp,     sub: `Target: ${selectedSensors.targetTemp}`, color: "#f59e0b" },
+                  { label: "Relative Humidity",  Icon: Droplets,    val: selectedSensors.humidity, sub: "Optimal Range 80–95%",                  color: "#38bdf8" },
+                  { label: "CO₂ Gas Level",     Icon: Cloud,       val: selectedSensors.co2,      sub: "Controlled Atmosphere",                 color: "#a78bfa" },
+                  { label: "IoT Battery",        Icon: Battery,     val: selectedSensors.battery,  sub: "Solar + Battery Backup",                color: "#4ade80" },
+                ].map(({ label, Icon, val, sub, color }) => (
                   <div key={label} style={{ background: "rgba(0,0,0,0.25)", padding: "14px 16px", borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>{label}</div>
+                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 5 }}>
+                      <Icon size={12} color={color} /> {label}
+                    </div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color, marginTop: 4 }}>{val}</div>
                     <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 2 }}>{sub}</div>
                   </div>
@@ -217,15 +242,16 @@ export default function ExportColdChain() {
 
               {/* Temp spike alert */}
               {selectedSensors.status === "TEMP SPIKE" && (
-                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "#b45309", fontSize: 13, fontWeight: 600 }}>
-                  ⚠️ Temperature deviation detected. Monitor closely — cargo quality may be affected if deviation persists.
+                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "#b45309", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
+                  <AlertTriangle size={16} color="#d97706" style={{ flexShrink: 0 }} />
+                  <span>Temperature deviation detected. Monitor closely — cargo quality may be affected if deviation persists.</span>
                 </div>
               )}
 
               {/* 24h Climate Log */}
               <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginBottom: 12 }}>
-                  📈 Simulated 24-Hour Climate Log
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                  <LineChart size={16} color="#d97706" /> Simulated 24-Hour Climate Log
                 </div>
                 <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
                   {selectedSensors.log.map((entry, idx) => (
@@ -238,8 +264,9 @@ export default function ExportColdChain() {
               </div>
 
               {/* Info note */}
-              <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#7dd3fc" }}>
-                ℹ️ Sensor readings are simulated from your container data. Connect real IoT devices (Carrier, Daikin, Emerson) to get live telemetry.
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#0369a1", display: "flex", alignItems: "flex-start", gap: 6 }}>
+                <Info size={14} color="#0284c7" style={{ flexShrink: 0, marginTop: 1 }} />
+                <span>Sensor readings are simulated from your container data. Connect real IoT devices (Carrier, Daikin, Emerson) to get live telemetry.</span>
               </div>
             </div>
           )}

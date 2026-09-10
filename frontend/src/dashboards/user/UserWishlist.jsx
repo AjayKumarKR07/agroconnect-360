@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
-import { Heart } from "lucide-react";
+import {
+  Heart, Trash2, ShoppingCart, MapPin, Sprout,
+  CheckCircle2, Carrot, Apple, Wheat, Flame, Milk, Egg, Package, X
+} from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -16,7 +19,7 @@ const DS_USER = `
   .wl-card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;overflow:hidden;transition:all 0.2s;}
   .wl-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
   .wl-img{width:100%;height:150px;object-fit:cover;}
-  .wl-ph{width:100%;height:150px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;font-size:44px;}
+  .wl-ph{width:100%;height:150px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;}
 `;
 
 const DEMO_CROPS = [
@@ -26,7 +29,17 @@ const DEMO_CROPS = [
   { _id: "d7", name: "Turmeric",        category: "spices",     price: 180, unit: "kg", quantity: 60,  location: "Erode",     image: { url: "" } },
 ];
 
-const catEmoji = (cat) => ({ vegetables: "🥬", fruits: "🍎", grains: "🌾", spices: "🌶️", dairy: "🥛", poultry: "🐔" })[cat] || "📦";
+const renderCatIcon = (cat, size = 44) => {
+  switch (cat) {
+    case "vegetables": return <Carrot size={size} color="#22c55e" />;
+    case "fruits": return <Apple size={size} color="#ef4444" />;
+    case "grains": return <Wheat size={size} color="#eab308" />;
+    case "spices": return <Flame size={size} color="#f97316" />;
+    case "dairy": return <Milk size={size} color="#38bdf8" />;
+    case "poultry": return <Egg size={size} color="#fbbf24" />;
+    default: return <Package size={size} color="#94a3b8" />;
+  }
+};
 
 export default function UserWishlist() {
   const [wishlistIds, setWishlistIds] = useState(() => JSON.parse(localStorage.getItem("ac_wishlist") || "[]"));
@@ -56,7 +69,7 @@ export default function UserWishlist() {
       ? cart.map(c => c._id === crop._id ? { ...c, qty: (c.qty || 1) + 1 } : c)
       : [...cart, { ...crop, qty: 1 }];
     localStorage.setItem("ac_cart", JSON.stringify(updated));
-    setCartMsg(`✅ ${crop.name} added to cart!`);
+    setCartMsg(`${crop.name} added to cart!`);
     setTimeout(() => setCartMsg(""), 2000);
   };
 
@@ -73,26 +86,32 @@ export default function UserWishlist() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Saved Items</div>
-          <h1 className="pg-title">❤️ My Wishlist</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Heart size={26} color="#ef4444" fill="#ef4444" /> My Wishlist
+          </h1>
           <p className="pg-sub">Products you've saved for later.</p>
         </div>
         {items.length > 0 && (
-          <button onClick={clearWishlist} style={{ padding: "9px 16px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
-            🗑️ Clear All
+          <button onClick={clearWishlist} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
+            <Trash2 size={14} /> Clear All
           </button>
         )}
       </div>
 
       {cartMsg && (
-        <div style={{ marginBottom: 16, padding: "10px 16px", background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: 12, color: "#0369a1", fontWeight: 600, fontSize: 14 }}>{cartMsg}</div>
+        <div style={{ marginBottom: 16, padding: "10px 16px", background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: 12, color: "#0369a1", fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+          <CheckCircle2 size={16} /> {cartMsg}
+        </div>
       )}
 
       {wishlistIds.length === 0 || items.length === 0 ? (
         <div className="empty-state">
           <div className="empty-emoji"><Heart size={40} strokeWidth={1.5} color="#bae6fd" /></div>
           <div className="empty-title">Your wishlist is empty</div>
-          <div className="empty-sub">Click the ❤️ button on any product to save it here.</div>
-          <Link to="/user/browse" className="btn-cyan">🛒 Browse Products</Link>
+          <div className="empty-sub">Click the heart icon on any product to save it here.</div>
+          <Link to="/user/browse" className="btn-cyan" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <ShoppingCart size={15} /> Browse Products
+          </Link>
         </div>
       ) : (
         <>
@@ -103,20 +122,26 @@ export default function UserWishlist() {
                 <div style={{ position: "relative" }}>
                   {c.image?.url || c.imageUrl
                     ? <img src={c.image?.url || c.imageUrl} alt={c.name} className="wl-img" />
-                    : <div className="wl-ph">{catEmoji(c.category)}</div>
+                    : <div className="wl-ph">{renderCatIcon(c.category, 44)}</div>
                   }
                   <button onClick={() => removeFromWishlist(c._id)}
-                    style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", background: "rgba(239,68,68,0.8)", border: "none", cursor: "pointer", fontSize: 14, color: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    title="Remove from wishlist">✕</button>
+                    style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", background: "rgba(239,68,68,0.85)", border: "none", cursor: "pointer", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    title="Remove from wishlist"><X size={14} /></button>
                 </div>
                 <div style={{ padding: "14px 16px" }}>
                   <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 14, marginBottom: 4 }}>{c.name}</div>
-                  <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>📍 {c.location} · {c.quantity} {c.unit} avail.</div>
+                  <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}>
+                    <MapPin size={12} /> {c.location} · {c.quantity} {c.unit} avail.
+                  </div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>₹{c.price}<span style={{ fontSize: 11, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span></div>
-                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}>🌿 Fresh</span>
+                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <Sprout size={11} /> Fresh
+                    </span>
                   </div>
-                  <button onClick={() => addToCart(c)} className="btn-cyan" style={{ width: "100%", justifyContent: "center", fontSize: 13 }}>🛒 Add to Cart</button>
+                  <button onClick={() => addToCart(c)} className="btn-cyan" style={{ width: "100%", justifyContent: "center", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <ShoppingCart size={14} /> Add to Cart
+                  </button>
                 </div>
               </div>
             ))}

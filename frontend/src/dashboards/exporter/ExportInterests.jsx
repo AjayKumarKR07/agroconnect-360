@@ -1,6 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
-import { Inbox, MessageSquare, Handshake, Clock } from "lucide-react";
+import {
+  Inbox,
+  MessageSquare,
+  Handshake,
+  Clock,
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  Eye,
+  Sprout,
+  MapPin,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 
 const DSX = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -99,8 +112,9 @@ function ActionModal({ interest, onClose, onUpdated }) {
         </div>
 
         {statusInfo.desc && (
-          <div style={{ padding: "8px 14px", borderRadius: 10, background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)", fontSize: 12, color: "#b45309", marginBottom: 16 }}>
-            ℹ️ {statusInfo.desc}
+          <div style={{ padding: "8px 14px", borderRadius: 10, background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)", fontSize: 12, color: "#b45309", marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}>
+            <Info size={14} color="#b45309" style={{ flexShrink: 0 }} />
+            <span>{statusInfo.desc}</span>
           </div>
         )}
 
@@ -127,8 +141,9 @@ function ActionModal({ interest, onClose, onUpdated }) {
         ))}
 
         {err && (
-          <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>
-            ⚠️ {err}
+          <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+            <AlertTriangle size={14} color="#dc2626" style={{ flexShrink: 0 }} />
+            <span>{err}</span>
           </div>
         )}
 
@@ -220,7 +235,7 @@ export default function ExportInterests() {
 
   const onUpdated = (updated) => {
     setInterests(prev => prev.map(i => i._id === updated._id ? { ...i, ...updated } : i));
-    showToast("✅ Interest updated");
+    showToast("Interest updated");
   };
 
   const FILTER_TABS = [
@@ -239,6 +254,14 @@ export default function ExportInterests() {
     return acc;
   }, {});
 
+  const SUMMARY_STATS = [
+    { Icon: Inbox,        label: "Total",       v: interests.length, c: "#fbbf24" },
+    { Icon: Clock,        label: "Pending",     v: interests.filter(i => i.status === "pending").length, c: "#fbbf24" },
+    { Icon: CheckCircle2, label: "Accepted",    v: interests.filter(i => i.status === "accepted").length, c: "#15803d" },
+    { Icon: MessageSquare,label: "Negotiating", v: interests.filter(i => i.status === "negotiating").length, c: "#0284c7" },
+    { Icon: Handshake,    label: "Confirmed",   v: interests.filter(i => i.status === "confirmed").length, c: "#15803d" },
+  ];
+
   return (
     <>
       <style>{DSX}</style>
@@ -255,16 +278,10 @@ export default function ExportInterests() {
 
       {/* Status summary */}
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
-        {[
-          ["📩", "Total", interests.length,                                                                    "#fbbf24"],
-          ["⏳", "Pending",     interests.filter(i => i.status === "pending").length,     "#fbbf24"],
-          ["✅", "Accepted",    interests.filter(i => i.status === "accepted").length,    "#4ade80"],
-          ["💬", "Negotiating", interests.filter(i => i.status === "negotiating").length, "#38bdf8"],
-          ["🤝", "Confirmed",   interests.filter(i => i.status === "confirmed").length,   "#4ade80"],
-        ].map(([e, l, v, c]) => (
-          <div key={l} style={{ padding: "10px 16px", background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.14)", borderRadius: 12, display: "flex", gap: 6, alignItems: "center" }}>
-            <span>{e}</span>
-            <span style={{ fontSize: 12, color: "#a38a5d" }}>{l}</span>
+        {SUMMARY_STATS.map(({ Icon, label, v, c }) => (
+          <div key={label} style={{ padding: "10px 16px", background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.14)", borderRadius: 12, display: "flex", gap: 8, alignItems: "center" }}>
+            <Icon size={16} color={c} />
+            <span style={{ fontSize: 12, color: "#a38a5d" }}>{label}</span>
             <span style={{ fontWeight: 800, color: c, fontSize: 16 }}>{v}</span>
           </div>
         ))}
@@ -295,16 +312,24 @@ export default function ExportInterests() {
       </div>
 
       {error && (
-        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", marginBottom: 20 }}>⚠️ {error}</div>
+        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+          <AlertTriangle size={16} color="#dc2626" style={{ flexShrink: 0 }} />
+          <span>{error}</span>
+        </div>
       )}
 
       {loading ? (
         <div style={{ textAlign: "center", padding: "60px 0", color: "#a38a5d" }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>Loading interests…
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+            <Loader2 size={32} color="#d97706" style={{ animation: "spin 1s linear infinite" }} />
+          </div>
+          Loading interests…
         </div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>📩</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <Inbox size={48} color="#d97706" strokeWidth={1.5} />
+          </div>
           <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>
             {filter === "all" ? "No interest requests yet" : `No ${filter} interests`}
           </div>
@@ -326,7 +351,15 @@ export default function ExportInterests() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{lst.name || "—"}</div>
-                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>🌾 {far.name || "Farmer"} · 📍 {far.location || far.state || "—"}</div>
+                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2, display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        <Sprout size={13} color="#16a34a" /> {far.name || "Farmer"}
+                      </span>
+                      <span>·</span>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        <MapPin size={13} color="#d97706" /> {far.location || far.state || "—"}
+                      </span>
+                    </div>
                   </div>
                   <SBadge status={i.status} />
                 </div>
@@ -349,7 +382,9 @@ export default function ExportInterests() {
 
                 {i.status === "confirmed" && (
                   <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#15803d", marginBottom: 4 }}>🎉 Deal Confirmed!</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#15803d", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
+                      <Sparkles size={14} color="#16a34a" /> Deal Confirmed!
+                    </div>
                     <div style={{ fontSize: 12, color: "#7a8fa6" }}>
                       Agreed: {fmt(i.agreedPrice)}/{i.agreedUnit || "MT"} · {i.agreedQty} {i.agreedUnit || "MT"}
                       {i.shipmentTerms ? ` · ${i.shipmentTerms}` : ""}
@@ -358,12 +393,12 @@ export default function ExportInterests() {
                 )}
 
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => setSelected(i)}>
-                    👁 View Details
+                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setSelected(i)}>
+                    <Eye size={14} /> View Details
                   </button>
                   {canAct && (
-                    <button className="btn-gold" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => setSelected(i)}>
-                      💬 Take Action
+                    <button className="btn-gold" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setSelected(i)}>
+                      <MessageSquare size={14} /> Take Action
                     </button>
                   )}
                 </div>

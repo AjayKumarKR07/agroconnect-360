@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
-import { RefreshCw, AlertTriangle, Sprout, Search } from "lucide-react";
+import {
+  RefreshCw, AlertTriangle, Sprout, Search, Store, Globe,
+  Heart, MapPin, User, ShoppingCart, Check, CheckCircle2,
+  Carrot, Apple, Wheat, Flame, Milk, Egg, Package, X
+} from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -22,8 +26,8 @@ const DS_USER = `
   .prod-card{background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;transition:all 0.25s;display:flex;flex-direction:column;}
   .prod-card:hover{border-color:#bae6fd;transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.08);}
   .prod-img{width:100%;height:165px;object-fit:cover;}
-  .prod-ph{width:100%;height:165px;background:#f0f9ff;display:flex;align-items:center;justify-content:center;font-size:52px;}
-  .cat-pill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:var(--text2);transition:all 0.2s;font-family:'Inter',sans-serif;white-space:nowrap;}
+  .prod-ph{width:100%;height:165px;background:#f0f9ff;display:flex;align-items:center;justify-content:center;}
+  .cat-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:var(--text2);transition:all 0.2s;font-family:'Inter',sans-serif;white-space:nowrap;}
   .cat-pill.active{background:rgba(14,165,233,0.14);color:#0369a1;border-color:rgba(14,165,233,0.3);}
   .qty-ctrl{display:flex;align-items:center;gap:6px;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.15);border-radius:10px;padding:4px 8px;}
   .qty-btn{width:26px;height:26px;border-radius:7px;border:none;background:rgba(14,165,233,0.12);color:#0369a1;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:800;transition:background 0.15s;}
@@ -111,7 +115,7 @@ export default function BrowseProducts() {
     }
     localStorage.setItem("ac_cart", JSON.stringify(updated));
     window.dispatchEvent(new Event("ac_cart_update"));
-    setToast(`✅ ${qty} × ${crop.name} added to cart!`);
+    setToast(`${qty} × ${crop.name} added to cart!`);
     setTimeout(() => setToast(""), 2200);
   };
 
@@ -125,13 +129,24 @@ export default function BrowseProducts() {
   if (sort === "Price: High to Low") filtered = [...filtered].sort((a, b) => b.price - a.price);
   if (sort === "Most Available") filtered = [...filtered].sort((a, b) => (b.quantity || 0) - (a.quantity || 0));
 
-  const catEmoji = (cat) => ({ vegetables: "🥬", fruits: "🍎", grains: "🌾", spices: "🌶️", dairy: "🥛", poultry: "🐔", other: "📦" })[cat] || "🛒";
+  const renderCatIcon = (cat, size = 15) => {
+    switch (cat) {
+      case "vegetables": return <Carrot size={size} color="#22c55e" />;
+      case "fruits": return <Apple size={size} color="#ef4444" />;
+      case "grains": return <Wheat size={size} color="#eab308" />;
+      case "spices": return <Flame size={size} color="#f97316" />;
+      case "dairy": return <Milk size={size} color="#38bdf8" />;
+      case "poultry": return <Egg size={size} color="#fbbf24" />;
+      case "other": return <Package size={size} color="#94a3b8" />;
+      default: return <ShoppingCart size={size} color="#0ea5e9" />;
+    }
+  };
 
   // Stock indicator
   const stockBadge = (qty) => {
     if (!qty || qty === 0) return <span className="cat-pill stock-out" style={{ fontSize: 10, padding: "2px 7px" }}>Out of Stock</span>;
-    if (qty <= 50) return <span className="cat-pill stock-low" style={{ fontSize: 10, padding: "2px 7px" }}>⚠️ Low Stock</span>;
-    return <span className="cat-pill stock-ok" style={{ fontSize: 10, padding: "2px 7px" }}>✓ In Stock</span>;
+    if (qty <= 50) return <span className="cat-pill stock-low" style={{ fontSize: 10, padding: "2px 7px", display: "inline-flex", alignItems: "center", gap: 4 }}><AlertTriangle size={11} color="#b45309" /> Low Stock</span>;
+    return <span className="cat-pill stock-ok" style={{ fontSize: 10, padding: "2px 7px", display: "inline-flex", alignItems: "center", gap: 4 }}><Check size={11} color="#15803d" /> In Stock</span>;
   };
 
   // Farmer name — handles both flat field and nested object
@@ -144,7 +159,9 @@ export default function BrowseProducts() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Marketplace</div>
-          <h1 className="pg-title">🛒 Browse Fresh Produce</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Store size={26} color="#0ea5e9" /> Browse Fresh Produce
+          </h1>
           <p className="pg-sub">Directly from local farmers — fresh, fair-priced, traceable.</p>
         </div>
         <div style={{ fontSize: 13, color: "var(--text2)", fontWeight: 600, background: "rgba(14,165,233,0.07)", border: "1px solid #e2e8f0", padding: "6px 14px", borderRadius: 10 }}>
@@ -153,13 +170,17 @@ export default function BrowseProducts() {
       </div>
 
       {/* Toast notification */}
-      {toast && <div className="cart-toast">{toast}</div>}
+      {toast && (
+        <div className="cart-toast" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          <CheckCircle2 size={16} color="#0284c7" /> {toast}
+        </div>
+      )}
 
       {/* Search + Sort */}
       <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
         <input
           className="field-input"
-          placeholder="🔍 Search products or location…"
+          placeholder="Search products or location…"
           value={search}
           onChange={e => setSearch(e.target.value)}
           style={{ maxWidth: 320 }}
@@ -167,14 +188,14 @@ export default function BrowseProducts() {
         <select className="field-input" style={{ maxWidth: 210, cursor: "pointer" }} value={sort} onChange={e => setSort(e.target.value)}>
           {SORT_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
         </select>
-        {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ fontSize: 12 }}>✕ Clear</button>}
+        {search && <button className="btn-ghost" onClick={() => setSearch("")} style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4 }}><X size={12} /> Clear</button>}
       </div>
 
       {/* Category pills */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 24 }}>
         {CATS.map(c => (
           <button key={c} className={`cat-pill ${category === c ? "active" : ""}`} onClick={() => setCategory(c)}>
-            {c === "all" ? "🌍 All" : `${catEmoji(c)} ${c.charAt(0).toUpperCase() + c.slice(1)}`}
+            {c === "all" ? <><Globe size={13} /> All</> : <>{renderCatIcon(c, 13)} {c.charAt(0).toUpperCase() + c.slice(1)}</>}
           </button>
         ))}
       </div>
@@ -216,18 +237,20 @@ export default function BrowseProducts() {
               <div style={{ position: "relative" }}>
                 {c.image?.url || c.imageUrl
                   ? <img src={c.image?.url || c.imageUrl} alt={c.name} className="prod-img" />
-                  : <div className="prod-ph">{catEmoji(c.category)}</div>
+                  : <div className="prod-ph">{renderCatIcon(c.category, 44)}</div>
                 }
                 {/* Wishlist */}
                 <button
                   onClick={() => toggleWishlist(c._id)}
-                  style={{ position: "absolute", top: 10, right: 10, width: 34, height: 34, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", fontSize: 16, backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  style={{ position: "absolute", top: 10, right: 10, width: 34, height: 34, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }}
                   title={wishlist.includes(c._id) ? "Remove from wishlist" : "Save to wishlist"}
                 >
-                  {wishlist.includes(c._id) ? "❤️" : "🤍"}
+                  <Heart size={16} fill={wishlist.includes(c._id) ? "#ef4444" : "none"} color={wishlist.includes(c._id) ? "#ef4444" : "#ffffff"} />
                 </button>
                 {/* Fresh badge */}
-                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 10, fontWeight: 700, background: "rgba(34,197,94,0.88)", color: "#0f172a", padding: "3px 8px", borderRadius: 6 }}>🌿 FRESH</span>
+                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 10, fontWeight: 700, background: "rgba(34,197,94,0.88)", color: "#0f172a", padding: "3px 8px", borderRadius: 6, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <Sprout size={11} /> FRESH
+                </span>
               </div>
 
               {/* Card body */}
@@ -237,8 +260,10 @@ export default function BrowseProducts() {
                   {stockBadge(c.quantity)}
                 </div>
 
-                <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>
-                  📍 {c.location} &nbsp;·&nbsp; 🌾 {farmerName(c)}
+                <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}><MapPin size={11} /> {c.location}</span>
+                  <span>·</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}><User size={11} /> {farmerName(c)}</span>
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12, marginTop: "auto" }}>
@@ -259,10 +284,10 @@ export default function BrowseProducts() {
                   <button
                     onClick={() => addToCart(c)}
                     className="btn-cyan"
-                    style={{ flex: 1, justifyContent: "center", fontSize: 13, padding: "9px 12px" }}
+                    style={{ flex: 1, justifyContent: "center", fontSize: 13, padding: "9px 12px", display: "inline-flex", alignItems: "center", gap: 6 }}
                     disabled={!c.quantity || c.quantity === 0}
                   >
-                    🛒 Add to Cart
+                    <ShoppingCart size={14} /> Add to Cart
                   </button>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
-import { Wheat } from "lucide-react";
+import { Wheat, Mail, Send, AlertTriangle, Loader2, Sprout, MapPin, User, Globe, Calendar, Eye, CheckCircle2, X } from "lucide-react";
 
 /* ── Exporter design tokens (matching ExporterLayout) ──────────────── */
 const DSX = `
@@ -84,8 +84,12 @@ function InterestModal({ listing, onClose, onSubmitted }) {
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-box" style={{ maxWidth: 480 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
-          <div className="modal-title">📩 Express Interest</div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, fontSize: 18 }}>×</button>
+          <div className="modal-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Send size={18} style={{ color: "#d97706" }} /> Express Interest
+          </div>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <X size={16} />
+          </button>
         </div>
         <div className="modal-sub">
           {listing.name} · {listing.exportGrade || "—"} · {listing.location}
@@ -106,7 +110,11 @@ function InterestModal({ listing, onClose, onSubmitted }) {
           ))}
         </div>
 
-        {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", marginBottom: 14, fontSize: 13 }}>⚠️ {err}</div>}
+        {err && (
+          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", marginBottom: 14, fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertTriangle size={15} style={{ flexShrink: 0 }} /> <span>{err}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 20 }}>
@@ -135,7 +143,7 @@ function InterestModal({ listing, onClose, onSubmitted }) {
           <div style={{ display: "flex", gap: 10 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={onClose}>Cancel</button>
             <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: "center" }} disabled={saving}>
-              {saving ? "⏳ Sending…" : "📩 Send Interest"}
+              {saving ? <><Loader2 size={15} className="spinner" /> Sending…</> : <><Send size={15} /> Send Interest</>}
             </button>
           </div>
         </form>
@@ -155,7 +163,9 @@ function DetailModal({ listing, onClose, onExpress }) {
             <div className="modal-title" style={{ fontSize: 18 }}>{f.name}</div>
             <div style={{ fontSize: 12, color: "#b45309", fontWeight: 700, marginTop: 2 }}>{f.exportGrade || "—"}</div>
           </div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, fontSize: 18 }}>×</button>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <X size={16} />
+          </button>
         </div>
         {[
           ["Farmer",        f.farmer?.name || "—"],
@@ -180,7 +190,7 @@ function DetailModal({ listing, onClose, onExpress }) {
         <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
           <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={onClose}>Close</button>
           <button className="btn-gold" style={{ flex: 2, justifyContent: "center" }} onClick={() => { onClose(); onExpress(listing); }}>
-            📩 Express Interest
+            <Send size={15} /> Express Interest
           </button>
         </div>
       </div>
@@ -250,7 +260,7 @@ export default function ExportSourcing() {
     const listingId = interest.listing?._id || interest.listing;
     setMyInterestListingIds(prev => new Set([...prev, listingId]));
     setInterestTarget(null);
-    showToast("✅ Interest submitted! The farmer will be notified.");
+    showToast("Interest submitted! The farmer will be notified.");
     loadMyInterests();
   };
 
@@ -312,20 +322,20 @@ export default function ExportSourcing() {
 
       {/* ── Error ────────────────────────────────────────────────────── */}
       {error && (
-        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", marginBottom: 20 }}>
-          ⚠️ {error}
+        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+          <AlertTriangle size={16} style={{ flexShrink: 0 }} /> <span>{error}</span>
         </div>
       )}
 
       {/* ── Loading ───────────────────────────────────────────────────── */}
       {loading ? (
         <div style={{ textAlign: "center", padding: "60px 0", color: "#a38a5d" }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
-          Loading farmer listings…
+          <Loader2 size={36} className="spinner" style={{ color: "#d97706", margin: "0 auto 12px" }} />
+          <div>Loading farmer listings…</div>
         </div>
       ) : listings.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🌾</div>
+          <Wheat size={48} style={{ color: "#d97706", opacity: 0.6, margin: "0 auto 16px" }} />
           <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>No export listings found</div>
           <div style={{ fontSize: 14, color: "#a38a5d" }}>
             {search || location || grade || dest
@@ -345,8 +355,12 @@ export default function ExportSourcing() {
                   <span className="badge badge-gold">{l.exportGrade || "Export Ready"}</span>
                 </div>
 
-                <div style={{ fontSize: 12, color: "#a38a5d" }}>📍 {l.location}</div>
-                <div style={{ fontSize: 12, color: "#a38a5d" }}>🌾 Farmer: <strong style={{ color: "#0f172a" }}>{l.farmer?.name || "Verified Farmer"}</strong></div>
+                <div style={{ fontSize: 12, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                  <MapPin size={12} style={{ color: "#d97706" }} /> {l.location}
+                </div>
+                <div style={{ fontSize: 12, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                  <User size={12} style={{ color: "#d97706" }} /> Farmer: <strong style={{ color: "#0f172a" }}>{l.farmer?.name || "Verified Farmer"}</strong>
+                </div>
 
                 {/* Stats */}
                 <div style={{ display: "flex", justifyContent: "space-between", background: "#f1f5f9", padding: "10px 14px", borderRadius: 12 }}>
@@ -368,29 +382,29 @@ export default function ExportSourcing() {
                 {/* Tags */}
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {l.preferredDestination && (
-                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", color: "#0369a1" }}>
-                      🌍 {l.preferredDestination}
+                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", color: "#0369a1", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <Globe size={11} /> {l.preferredDestination}
                     </span>
                   )}
                   {l.availableFrom && (
-                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.15)", color: "#b45309" }}>
-                      📅 {new Date(l.availableFrom).toLocaleDateString("en-IN",{month:"short",year:"numeric"})}
+                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.15)", color: "#b45309", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <Calendar size={11} /> {new Date(l.availableFrom).toLocaleDateString("en-IN",{month:"short",year:"numeric"})}
                     </span>
                   )}
                 </div>
 
                 {/* Action */}
                 <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => setDetailTarget(l)}>
-                    👁 View Details
+                  <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setDetailTarget(l)}>
+                    <Eye size={14} /> View Details
                   </button>
                   {alreadyExpressed ? (
-                    <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, opacity: 0.55 }} disabled title="Already expressed interest">
-                      ✓ Interest Sent
+                    <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, opacity: 0.55, display: "inline-flex", alignItems: "center", gap: 6 }} disabled title="Already expressed interest">
+                      <CheckCircle2 size={14} /> Interest Sent
                     </button>
                   ) : (
-                    <button className="btn-gold" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => setInterestTarget(l)}>
-                      📩 Express Interest
+                    <button className="btn-gold" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setInterestTarget(l)}>
+                      <Send size={14} /> Express Interest
                     </button>
                   )}
                 </div>

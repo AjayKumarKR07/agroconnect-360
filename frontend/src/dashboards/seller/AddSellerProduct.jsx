@@ -1,7 +1,8 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Plus, ArrowLeft, Camera, AlertTriangle, CheckCircle2, PauseCircle, Save, Loader2, X } from "lucide-react";
 
 const CATEGORIES = ["vegetables", "fruits", "grains", "spices", "dairy", "poultry", "other"];
 const UNITS = ["kg", "quintal", "ton"];
@@ -40,15 +41,21 @@ export default function AddSellerProduct() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Inventory</div>
-          <h1 className="pg-title">➕ Add New Product</h1>
+          <h1 className="pg-title"><Plus size={24} style={{ marginRight: 8, verticalAlign: "middle", color: "#7c3aed" }} />Add New Product</h1>
           <p className="pg-sub">List a new product on the AgroConnect marketplace.</p>
         </div>
-        <button className="btn-ghost" onClick={() => navigate("/seller/products")}>← Back</button>
+        <button className="btn-ghost" onClick={() => navigate("/seller/products")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <ArrowLeft size={14} /> Back
+        </button>
       </div>
 
       <div style={{ maxWidth: 700 }}>
         <div className="card">
-          {error && <div className="alert-error" style={{ marginBottom: 20 }}>⚠️ {error}</div>}
+          {error && (
+            <div className="alert-error" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertTriangle size={16} /> <span>{error}</span>
+            </div>
+          )}
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             {/* Image */}
@@ -57,10 +64,12 @@ export default function AddSellerProduct() {
               {preview
                 ? <div style={{ position: "relative" }}>
                     <img src={preview} alt="preview" style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
-                    <button type="button" onClick={() => { setImage(null); setPreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.85)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕ Remove</button>
+                    <button type="button" onClick={() => { setImage(null); setPreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.85)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#ffffff", cursor: "pointer", fontSize: 12, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                      <X size={14} /> Remove
+                    </button>
                   </div>
                 : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "28px 16px", borderRadius: 12, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer" }}>
-                    <span style={{ fontSize: 40 }}>📸</span>
+                    <Camera size={40} style={{ color: "#a78bfa", opacity: 0.8 }} />
                     <span style={{ fontSize: 13, color: "var(--text2)" }}>Click to upload product image</span>
                     <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => { const f = e.target.files?.[0]; if (f) { setImage(f); setPreview(URL.createObjectURL(f)); } }} />
                   </label>
@@ -112,8 +121,8 @@ export default function AddSellerProduct() {
               <label className="field-label">Listing Status</label>
               <div style={{ display: "flex", gap: 10 }}>
                 {["active", "inactive"].map(s => (
-                  <div key={s} onClick={() => setForm(p => ({ ...p, status: s }))} style={{ flex: 1, padding: "12px", borderRadius: 12, border: `1px solid ${form.status === s ? "rgba(167,139,250,0.3)" : "var(--border)"}`, background: form.status === s ? "rgba(167,139,250,0.08)" : "var(--surface)", cursor: "pointer", textAlign: "center", fontWeight: 700, fontSize: 14, color: form.status === s ? "#a78bfa" : "var(--text2)", transition: "all 0.2s" }}>
-                    {s === "active" ? "✅ Active" : "⏸️ Inactive"}
+                  <div key={s} onClick={() => setForm(p => ({ ...p, status: s }))} style={{ flex: 1, padding: "12px", borderRadius: 12, border: `1px solid ${form.status === s ? "rgba(167,139,250,0.3)" : "var(--border)"}`, background: form.status === s ? "rgba(167,139,250,0.08)" : "var(--surface)", cursor: "pointer", textAlign: "center", fontWeight: 700, fontSize: 14, color: form.status === s ? "#a78bfa" : "var(--text2)", transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                    {s === "active" ? <><CheckCircle2 size={15} /> Active</> : <><PauseCircle size={15} /> Inactive</>}
                   </div>
                 ))}
               </div>
@@ -121,8 +130,8 @@ export default function AddSellerProduct() {
 
             <div style={{ display: "flex", gap: 12, paddingTop: 8 }}>
               <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => navigate("/seller/products")}>Cancel</button>
-              <button type="submit" className="btn-green" disabled={saving} style={{ flex: 2, justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#a78bfa)" }}>
-                {saving ? "💾 Saving…" : "💾 Add Product"}
+              <button type="submit" className="btn-green" disabled={saving} style={{ flex: 2, justifyContent: "center", background: "linear-gradient(135deg,#7c3aed,#a78bfa)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                {saving ? <><Loader2 size={16} className="spinner" /> Saving…</> : <><Save size={16} /> Add Product</>}
               </button>
             </div>
           </form>

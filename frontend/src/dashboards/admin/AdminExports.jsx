@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
-import { Ship } from "lucide-react";
+import { Ship, Package, Building2, Anchor, ClipboardCheck, CheckCircle2, XCircle, Globe, User, AlertTriangle, RefreshCw, ClipboardList, Check } from "lucide-react";
 
 const RFQ_STATUSES = ["all", "pending", "accepted", "quoted", "rejected"];
 const SHIPMENT_STATUSES = ["farm_packed", "cfs_cold_storage", "port_gate_in", "customs_cleared", "onboard_vessel", "delivered", "cancelled"];
@@ -15,13 +15,13 @@ const RFQ_STYLE = {
 };
 
 const SHIPMENT_STEP_LABEL = {
-  farm_packed:      { label: "Farm Packed",      emoji: "📦", step: 0 },
-  cfs_cold_storage: { label: "CFS/Cold Storage", emoji: "🏭", step: 1 },
-  port_gate_in:     { label: "Port Gate-In",     emoji: "🏗️", step: 2 },
-  customs_cleared:  { label: "Customs Cleared",  emoji: "📋", step: 3 },
-  onboard_vessel:   { label: "Onboard Vessel",   emoji: "🚢", step: 4 },
-  delivered:        { label: "Delivered",         emoji: "✅", step: 5 },
-  cancelled:        { label: "Cancelled",         emoji: "❌", step: -1 },
+  farm_packed:      { label: "Farm Packed",      Icon: Package,       iconColor: "#0369a1", step: 0 },
+  cfs_cold_storage: { label: "CFS/Cold Storage", Icon: Building2,     iconColor: "#7c3aed", step: 1 },
+  port_gate_in:     { label: "Port Gate-In",     Icon: Anchor,        iconColor: "#b45309", step: 2 },
+  customs_cleared:  { label: "Customs Cleared",  Icon: ClipboardCheck,iconColor: "#0369a1", step: 3 },
+  onboard_vessel:   { label: "Onboard Vessel",   Icon: Ship,          iconColor: "#0369a1", step: 4 },
+  delivered:        { label: "Delivered",         Icon: CheckCircle2,  iconColor: "#15803d", step: 5 },
+  cancelled:        { label: "Cancelled",         Icon: XCircle,       iconColor: "#dc2626", step: -1 },
 };
 
 function ConfirmModal({ message, detail, warning, onConfirm, onCancel, loading }) {
@@ -42,8 +42,8 @@ function ConfirmModal({ message, detail, warning, onConfirm, onCancel, loading }
             </div>
           )}
           {warning && (
-            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
-              ⚠️ {warning}
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+              <AlertTriangle size={15} style={{ flexShrink: 0 }} /> {warning}
             </div>
           )}
         </div>
@@ -199,8 +199,8 @@ export default function AdminExports() {
           <p className="pg-sub">Manage export RFQs and shipment tracking. Status changes are recorded in the audit log.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button className="btn-indigo" onClick={loadAll} disabled={isRefreshing}>
-            {isRefreshing ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+          <button className="btn-indigo" onClick={loadAll} disabled={isRefreshing} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {isRefreshing ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <RefreshCw size={13} />} Refresh
           </button>
         </div>
       </div>
@@ -209,11 +209,11 @@ export default function AdminExports() {
 
       {/* Top tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        <button className={`tab-btn ${tab === "rfqs" ? "active" : ""}`} onClick={() => setTab("rfqs")}>
-          📋 Export RFQs {rfqLoading ? "…" : `(${rfqs.length})`}
+        <button className={`tab-btn ${tab === "rfqs" ? "active" : ""}`} onClick={() => setTab("rfqs")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <ClipboardList size={14} /> Export RFQs {rfqLoading ? "…" : `(${rfqs.length})`}
         </button>
-        <button className={`tab-btn ${tab === "shipments" ? "active" : ""}`} onClick={() => setTab("shipments")}>
-          🚢 Shipments {shipmentLoading ? "…" : `(${shipments.length})`}
+        <button className={`tab-btn ${tab === "shipments" ? "active" : ""}`} onClick={() => setTab("shipments")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Ship size={14} /> Shipments {shipmentLoading ? "…" : `(${shipments.length})`}
         </button>
       </div>
 
@@ -223,7 +223,7 @@ export default function AdminExports() {
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
             {RFQ_STATUSES.map((s) => (
               <button key={s} className={`tab-btn ${rfqFilter === s ? "active" : ""}`} onClick={() => setRfqFilter(s)}>
-                {s === "all" ? "🌐 All" : s}
+                {s === "all" ? "All" : s}
               </button>
             ))}
           </div>
@@ -236,7 +236,7 @@ export default function AdminExports() {
 
           {!rfqLoading && rfqError && (
             <div className="card error-state">
-              <div className="error-state-icon">⚠️</div>
+              <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
               <div className="error-state-msg">Unable to load RFQ data</div>
               <div className="error-state-sub">{rfqError}</div>
               <button className="btn-indigo" onClick={loadRFQs}>Retry RFQs</button>
@@ -245,7 +245,7 @@ export default function AdminExports() {
 
           {!rfqLoading && !rfqError && filteredRFQs.length === 0 && (
             <div className="card empty-state">
-              <div className="empty-state-icon">📋</div>
+              <div className="empty-state-icon"><ClipboardList size={36} color="#94a3b8" /></div>
               <div className="empty-state-msg">No RFQs found</div>
               <div className="empty-state-sub">{rfqFilter !== "all" ? `No ${rfqFilter} RFQs.` : "No export RFQs yet."}</div>
             </div>
@@ -340,7 +340,7 @@ export default function AdminExports() {
 
           {!shipmentLoading && shipmentError && (
             <div className="card error-state">
-              <div className="error-state-icon">⚠️</div>
+              <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
               <div className="error-state-msg">Unable to load shipment data</div>
               <div className="error-state-sub">{shipmentError}</div>
               <button className="btn-indigo" onClick={loadShipments}>Retry Shipments</button>
@@ -349,7 +349,7 @@ export default function AdminExports() {
 
           {!shipmentLoading && !shipmentError && shipments.length === 0 && (
             <div className="card empty-state">
-              <div className="empty-state-icon">🚢</div>
+              <div className="empty-state-icon"><Ship size={36} color="#94a3b8" /></div>
               <div className="empty-state-msg">No shipments found</div>
               <div className="empty-state-sub">Export shipments will appear here once exporters create them.</div>
             </div>
@@ -358,62 +358,67 @@ export default function AdminExports() {
           {!shipmentLoading && !shipmentError && shipments.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {shipments.map((s) => {
-                const stepInfo = SHIPMENT_STEP_LABEL[s.status] || { label: s.status, emoji: "📦", step: 0 };
-                const steps = Object.values(SHIPMENT_STEP_LABEL).filter((x) => x.step >= 0).sort((a, b) => a.step - b.step);
+                const stepInfo = SHIPMENT_STEP_LABEL[s.status] || { label: s.status, Icon: Package, iconColor: "#a5b4fc", step: 0 };
+                const isSelected = selectedShipment?._id === s._id;
                 return (
-                  <div key={s._id} className="card">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
+                  <div
+                    key={s._id}
+                    className="card"
+                    style={{
+                      cursor: "pointer",
+                      border: isSelected ? "1px solid #6366f1" : "1px solid rgba(99,102,241,0.15)",
+                      background: isSelected ? "rgba(99,102,241,0.06)" : undefined,
+                    }}
+                    onClick={() => setSelectedShipment(isSelected ? null : s)}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
                       <div>
-                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
-                          {stepInfo.emoji} {s.cargo} · {s.containerNo}
-                        </div>
-                        <div style={{ fontSize: 13, color: "#a5b4fc" }}>
-                          ⚓ {s.portOfOrigin} → 🌍 {s.destPort}, {s.destinationCountry} · {s.quantityTons}T · 🚢 {s.vessel}
-                        </div>
-                        <div style={{ fontSize: 12, color: "#818cf8", marginTop: 4 }}>
-                          👤 {s.exporter?.name || "—"} · Added {relativeTime(s.createdAt)}
+                        <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{s.shipmentId || s._id}</div>
+                        <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 4 }}>
+                          <Anchor size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />{s.portOfOrigin} → <Globe size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />{s.destinationCountry}
+                          {s.vesselName && <> · <Ship size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />{s.vesselName}</>}
+                          {s.exporter && <> · <User size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />{s.exporter.name || s.exporter.email}</>}
                         </div>
                       </div>
-                      <select
-                        className="field-input"
-                        style={{ padding: "7px 10px", fontSize: 12, width: "auto" }}
-                        value={s.status}
-                        disabled={updating === s._id}
-                        onChange={(e) => {
-                          const ns = e.target.value;
-                          const prev = SHIPMENT_STEP_LABEL[s.status] || { label: s.status };
-                          const next = SHIPMENT_STEP_LABEL[ns] || { label: ns };
-                          setConfirm({
-                            message: `Update shipment ${s.containerNo} (${s.cargo})`,
-                            detail: [
-                              { label: "Current Status", value: prev.label, color: "#a5b4fc" },
-                              { label: "New Status",     value: next.label, color: "#15803d" },
-                              { label: "Container",      value: s.containerNo },
-                              { label: "Exporter",       value: s.exporter?.name || "—" },
-                            ],
-                            warning: "The exporter will see this updated shipment status in their dashboard.",
-                            onConfirm: () => updateShipmentStatus(s._id, ns),
-                          });
-                        }}
-                      >
-                        {SHIPMENT_STATUSES.map((st) => (
-                          <option key={st} value={st}>{SHIPMENT_STEP_LABEL[st]?.label || st}</option>
-                        ))}
-                      </select>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <span style={{ padding: "4px 10px", borderRadius: 8, background: "rgba(99,102,241,0.1)", color: "#6366f1", fontSize: 12, fontWeight: 700 }}>
+                          {stepInfo.label}
+                        </span>
+                        <select
+                          className="field-input"
+                          style={{ padding: "5px 8px", fontSize: 12, width: "auto" }}
+                          value={s.status}
+                          disabled={updatingShipmentId === s._id}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            setConfirmModal({
+                              title: `Update Shipment Status to "${e.target.value}"?`,
+                              body: `This will advance shipment ${s.shipmentId || s._id} and notify the exporter.`,
+                              warning: e.target.value === "cancelled" ? "Cancelling this shipment is permanent." : null,
+                              onConfirm: () => handleUpdateShipment(s._id, e.target.value),
+                            });
+                          }}
+                        >
+                          {SHIPMENT_STATUSES.map((st) => (
+                            <option key={st} value={st}>{st.replace(/_/g, " ")}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
-                    {/* Progress stepper */}
-                    {s.status !== "cancelled" && (
-                      <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 0 }}>
-                        {steps.map((step, idx) => {
-                          const done = (s.statusStep ?? 0) >= step.step;
+                    {/* Progress dots */}
+                    {isSelected && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 0, marginTop: 18, paddingTop: 16, borderTop: "1px solid rgba(99,102,241,0.12)" }}>
+                        {STEPS.map((step, idx) => {
+                          const done = step.step <= stepInfo.step;
                           return (
                             <div key={step.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
                               {idx > 0 && (
                                 <div style={{ position: "absolute", left: "-50%", top: 10, width: "100%", height: 2, background: done ? "#6366f1" : "rgba(99,102,241,0.15)", zIndex: 0 }} />
                               )}
                               <div style={{ width: 22, height: 22, borderRadius: "50%", background: done ? "#6366f1" : "rgba(99,102,241,0.1)", border: `2px solid ${done ? "#6366f1" : "rgba(99,102,241,0.2)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, position: "relative", zIndex: 1, transition: "all 0.3s" }}>
-                                {done ? "✓" : <span style={{ opacity: 0.4 }}>{step.step + 1}</span>}
+                                {done ? <Check size={11} strokeWidth={3} /> : <span style={{ opacity: 0.4 }}>{step.step + 1}</span>}
                               </div>
                               <div style={{ fontSize: 9, color: done ? "#c7d2fe" : "#818cf8", marginTop: 5, textAlign: "center", lineHeight: 1.3, maxWidth: 55 }}>{step.label}</div>
                             </div>

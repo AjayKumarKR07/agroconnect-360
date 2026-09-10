@@ -1,42 +1,61 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { 
+  Package, 
+  ShoppingCart, 
+  IndianRupee, 
+  TrendingUp, 
+  LayoutDashboard,
+  BarChart2,
+  CircleDollarSign,
+  Receipt,
+  Truck,
+  Handshake,
+  ClipboardList,
+  HelpCircle,
+  Store,
+  User,
+  Trash2,
+  Send,
+  Loader2
+} from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════
    SELLER-SPECIFIC QUICK PROMPTS
 ═══════════════════════════════════════════════════════ */
 const QUICK_PROMPTS = [
-  { icon: "📊", text: "Best crops to procure this season?" },
-  { icon: "💰", text: "Current wholesale price of tomato?" },
-  { icon: "🧾", text: "GST on agricultural products?" },
-  { icon: "📦", text: "How to manage bulk inventory?" },
-  { icon: "🚚", text: "Cold chain logistics costs in India?" },
-  { icon: "📈", text: "High-margin crops for resale?" },
-  { icon: "🤝", text: "How to negotiate with farmers?" },
-  { icon: "📋", text: "How to use the Procurement page?" },
+  { icon: BarChart2, text: "Best crops to procure this season?" },
+  { icon: CircleDollarSign, text: "Current wholesale price of tomato?" },
+  { icon: Receipt, text: "GST on agricultural products?" },
+  { icon: Package, text: "How to manage bulk inventory?" },
+  { icon: Truck, text: "Cold chain logistics costs in India?" },
+  { icon: TrendingUp, text: "High-margin crops for resale?" },
+  { icon: Handshake, text: "How to negotiate with farmers?" },
+  { icon: ClipboardList, text: "How to use the Procurement page?" },
 ];
 
 const TOPIC_CARDS = [
   {
-    icon: "🛒",
+    icon: ShoppingCart,
     title: "Procurement",
     desc: "Sourcing, bulk pricing, seasonal availability",
     prompts: ["Best Kharif crops to source?", "How to evaluate a farmer supplier?", "Minimum order quantity for onions?"],
   },
   {
-    icon: "📊",
+    icon: BarChart2,
     title: "Market Prices",
     desc: "APMC rates, wholesale trends, margins",
     prompts: ["Current wholesale price of potato?", "Wheat market trend this season?", "Mango procurement margin?"],
   },
   {
-    icon: "📦",
+    icon: Package,
     title: "Inventory & Logistics",
     desc: "Stock management, cold chain, transport",
     prompts: ["Cold storage cost per quintal?", "How long can I store onions?", "Truck freight rates per ton?"],
   },
   {
-    icon: "📋",
+    icon: HelpCircle,
     title: "Portal Help",
     desc: "How to use AgroConnect Seller Portal",
     prompts: ["How to place a bulk order?", "How to track my orders?", "How to read my revenue report?"],
@@ -283,7 +302,7 @@ const STYLES = `
 ═══════════════════════════════════════════════════════ */
 const INIT_MSG = {
   role: "assistant",
-  text: "🛍️ Hello! I'm your AgroConnect **Seller AI** powered by Groq. I specialize in:\n\n• **Procurement & sourcing** — best crops, seasonal availability, bulk pricing\n• **Market intelligence** — wholesale rates, margins, APMC prices\n• **Inventory & logistics** — stock management, cold chain, freight\n• **Business operations** — GST, FSSAI, working capital\n• **Portal guidance** — how to use Procurement, Orders, Revenue pages\n\nAsk me anything to grow your business! 💼",
+  text: "Hello! I'm your AgroConnect **Seller AI** powered by Groq. I specialize in:\n\n• **Procurement & sourcing** — best crops, seasonal availability, bulk pricing\n• **Market intelligence** — wholesale rates, margins, APMC prices\n• **Inventory & logistics** — stock management, cold chain, freight\n• **Business operations** — GST, FSSAI, working capital\n• **Portal guidance** — how to use Procurement, Orders, Revenue pages\n\nAsk me anything to grow your business!",
   time: new Date(),
 };
 
@@ -327,7 +346,7 @@ export default function SellerAIAssistant() {
       const reply = d.reply || d.message || "Sorry, I couldn't get a response. Please try again.";
       setMessages(p => [...p, { role: "assistant", text: reply, time: new Date() }]);
     } catch {
-      setMessages(p => [...p, { role: "assistant", text: "⚠️ Network error. Please check your connection and try again.", time: new Date() }]);
+      setMessages(p => [...p, { role: "assistant", text: "Network error. Please check your connection and try again.", time: new Date() }]);
     } finally {
       setLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -337,7 +356,7 @@ export default function SellerAIAssistant() {
   const formatTime = (d) => d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
   const clearChat = () => {
-    setMessages([{ ...INIT_MSG, text: "🛍️ New conversation! How can I help you with your seller business today?", time: new Date() }]);
+    setMessages([{ ...INIT_MSG, text: "New conversation! How can I help you with your seller business today?", time: new Date() }]);
     setInput("");
   };
 
@@ -358,8 +377,8 @@ export default function SellerAIAssistant() {
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
             <span className="sai-gemini-badge">✦ Powered by Groq AI</span>
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(20px,3vw,26px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-            🛍️ Seller Business AI
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(20px,3vw,26px)", fontWeight: 800, color: "#0f172a", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
+            <Store size={26} color="#7c3aed" /> Seller Business AI
           </h1>
           <p style={{ fontSize: 12, color: "rgba(167,139,250,0.7)", marginTop: 4 }}>
             Procurement · Market Prices · Inventory · Business Operations
@@ -367,14 +386,16 @@ export default function SellerAIAssistant() {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <Link to="/seller/market-trends"
-            style={{ fontSize: 12, color: "#7c3aed", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
-            📊 Market Trends
+            style={{ fontSize: 12, color: "#7c3aed", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <BarChart2 size={14} /> Market Trends
           </Link>
           <Link to="/seller/procurement"
-            style={{ fontSize: 12, color: "#15803d", background: "rgba(74,222,128,0.07)", border: "1px solid rgba(74,222,128,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
-            🛒 Procurement
+            style={{ fontSize: 12, color: "#15803d", background: "rgba(74,222,128,0.07)", border: "1px solid rgba(74,222,128,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <ShoppingCart size={14} /> Procurement
           </Link>
-          <button className="sai-clear-btn" onClick={clearChat}>🗑 Clear</button>
+          <button className="sai-clear-btn" onClick={clearChat} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <Trash2 size={14} /> Clear
+          </button>
         </div>
       </div>
 
@@ -382,35 +403,38 @@ export default function SellerAIAssistant() {
       <div className="sai-layout">
         {/* Sidebar — topic cards */}
         <div className="sai-sidebar">
-          {TOPIC_CARDS.map(card => (
-            <div key={card.title} className="sai-topic-card">
-              <div className="sai-topic-icon">{card.icon}</div>
-              <div className="sai-topic-title">{card.title}</div>
-              <div className="sai-topic-desc">{card.desc}</div>
-              {card.prompts.map(p => (
-                <button key={p} className="sai-topic-prompt" onClick={() => sendMessage(p)} disabled={loading}>
-                  {p}
-                </button>
-              ))}
-            </div>
-          ))}
+          {TOPIC_CARDS.map(card => {
+            const CardIcon = card.icon;
+            return (
+              <div key={card.title} className="sai-topic-card">
+                <div className="sai-topic-icon"><CardIcon size={20} color="#7c3aed" /></div>
+                <div className="sai-topic-title">{card.title}</div>
+                <div className="sai-topic-desc">{card.desc}</div>
+                {card.prompts.map(p => (
+                  <button key={p} className="sai-topic-prompt" onClick={() => sendMessage(p)} disabled={loading}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            );
+          })}
 
           {/* Quick nav */}
           <div style={{ padding: "12px 14px", background: "#faf5ff", border: "1px solid rgba(167,139,250,0.1)", borderRadius: 14 }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(167,139,250,0.7)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Quick Nav</div>
             {[
-              { emoji: "📦", label: "Orders",      to: "/seller/orders" },
-              { emoji: "🛒", label: "Procurement", to: "/seller/procurement" },
-              { emoji: "💰", label: "Revenue",     to: "/seller/revenue" },
-              { emoji: "📈", label: "Analytics",   to: "/seller/analytics" },
-              { emoji: "🏠", label: "Dashboard",   to: "/seller/dashboard" },
+              { Icon: Package,         label: "Orders",      to: "/seller/orders" },
+              { Icon: ShoppingCart,    label: "Procurement", to: "/seller/procurement" },
+              { Icon: IndianRupee,     label: "Revenue",     to: "/seller/revenue" },
+              { Icon: TrendingUp,      label: "Analytics",   to: "/seller/analytics" },
+              { Icon: LayoutDashboard, label: "Dashboard",   to: "/seller/dashboard" },
             ].map(nav => (
               <Link key={nav.label} to={nav.to}
                 style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", textDecoration: "none", color: "#475569", fontSize: 12, fontWeight: 600, transition: "color 0.15s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "#a78bfa"}
                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.5)"}
               >
-                <span>{nav.emoji}</span> {nav.label}
+                <span style={{ display: "flex" }}><nav.Icon size={14} strokeWidth={1.75} /></span> {nav.label}
               </Link>
             ))}
           </div>
@@ -422,7 +446,9 @@ export default function SellerAIAssistant() {
           <div className="sai-header">
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div className="sai-avatar-ring">
-                <div className="sai-avatar-inner">🛍️</div>
+                <div className="sai-avatar-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Store size={18} color="#a78bfa" />
+                </div>
               </div>
               <div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#0f172a" }}>AgroConnect Seller AI</div>
@@ -442,8 +468,8 @@ export default function SellerAIAssistant() {
           <div className="sai-body">
             {messages.map((m, i) => (
               <div key={i} className={`sai-msg-row ${m.role === "user" ? "user" : ""}`}>
-                <div className={`sai-msg-avatar ${m.role === "user" ? "user" : "ai"}`}>
-                  {m.role === "assistant" ? "🛍️" : "👤"}
+                <div className={`sai-msg-avatar ${m.role === "user" ? "user" : "ai"}`} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {m.role === "assistant" ? <Store size={16} color="#a78bfa" /> : <User size={16} color="#ffffff" />}
                 </div>
                 <div className="sai-bubble-wrap">
                   <div
@@ -457,7 +483,9 @@ export default function SellerAIAssistant() {
 
             {loading && (
               <div className="sai-msg-row">
-                <div className="sai-msg-avatar ai">🛍️</div>
+                <div className="sai-msg-avatar ai" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Store size={16} color="#a78bfa" />
+                </div>
                 <div className="sai-bubble-wrap">
                   <div className="sai-typing-pill">
                     <div className="sai-td" /><div className="sai-td" /><div className="sai-td" />
@@ -474,16 +502,20 @@ export default function SellerAIAssistant() {
           <div className="sai-footer">
             {/* Quick prompts */}
             <div className="sai-quick-row">
-              {QUICK_PROMPTS.map(p => (
-                <button
-                  key={p.text}
-                  className="sai-quick-chip"
-                  onClick={() => sendMessage(p.text)}
-                  disabled={loading}
-                >
-                  <span>{p.icon}</span> {p.text}
-                </button>
-              ))}
+              {QUICK_PROMPTS.map(p => {
+                const QuickIcon = p.icon;
+                return (
+                  <button
+                    key={p.text}
+                    className="sai-quick-chip"
+                    onClick={() => sendMessage(p.text)}
+                    disabled={loading}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                  >
+                    <QuickIcon size={13} style={{ flexShrink: 0 }} /> <span>{p.text}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Input */}
@@ -500,8 +532,8 @@ export default function SellerAIAssistant() {
                 }}
                 disabled={loading}
               />
-              <button type="submit" className="sai-send-btn" disabled={loading || !input.trim()} title="Send (Enter)">
-                {loading ? "⏳" : "➤"}
+              <button type="submit" className="sai-send-btn" disabled={loading || !input.trim()} title="Send (Enter)" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {loading ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
               </button>
             </form>
 

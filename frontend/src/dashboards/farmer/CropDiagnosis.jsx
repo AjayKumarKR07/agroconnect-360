@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Activity, Search, Camera, Bot, Cpu, Target, BookOpen, Pill, FlaskConical, Sprout, Scissors, Check, ShieldCheck, Phone, Calendar, Eye, Trash2, Bug, FileText, CheckCircle2, AlertTriangle, AlertOctagon, RefreshCw } from "lucide-react";
 
 export default function CropDiagnosis() {
   const [cropName, setCropName] = useState("");
@@ -77,8 +77,12 @@ export default function CropDiagnosis() {
 
   const severityBadge = (s) => {
     const m = { low: "badge-green", medium: "badge-amber", high: "badge-red", critical: "badge-red" };
-    const e = { low: "✅", medium: "⚠️", high: "🔴", critical: "💀" };
-    return <span className={`badge ${m[s] || "badge-blue"}`}>{e[s] || "ℹ️"} {s}</span>;
+    return (
+      <span className={`badge ${m[s] || "badge-blue"}`} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+        {s === "low" ? <CheckCircle2 size={12} /> : s === "medium" ? <AlertTriangle size={12} /> : <AlertOctagon size={12} />}
+        {s}
+      </span>
+    );
   };
 
   return (
@@ -110,16 +114,20 @@ export default function CropDiagnosis() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AI-Powered Tools</div>
-          <h1 className="pg-title">🔬 Crop Disease Detection</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Activity size={24} color="#16a34a" /> Crop Disease Detection
+          </h1>
           <p className="pg-sub">Upload a leaf or crop photo for instant AI diagnosis and treatment advice.</p>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="diag-tabs">
-        <button className={`diag-tab ${activeTab === "scan" ? "active" : ""}`} onClick={() => setActiveTab("scan")}>🔍 New Scan</button>
-        <button className={`diag-tab ${activeTab === "history" ? "active" : ""}`} onClick={() => setActiveTab("history")}>
-          📋 History {history.length > 0 && <span style={{ marginLeft: 4, background: "rgba(34,197,94,0.2)", padding: "1px 7px", borderRadius: 10, fontSize: 11 }}>{history.length}</span>}
+        <button className={`diag-tab ${activeTab === "scan" ? "active" : ""}`} onClick={() => setActiveTab("scan")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Search size={14} /> New Scan
+        </button>
+        <button className={`diag-tab ${activeTab === "history" ? "active" : ""}`} onClick={() => setActiveTab("history")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <ClipboardList size={14} /> History {history.length > 0 && <span style={{ marginLeft: 4, background: "rgba(34,197,94,0.2)", padding: "1px 7px", borderRadius: 10, fontSize: 11 }}>{history.length}</span>}
         </button>
       </div>
 
@@ -127,8 +135,10 @@ export default function CropDiagnosis() {
       {activeTab === "scan" && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 20 }}>📷 Upload Crop Image</div>
-            {error && <div className="alert-error">⚠️ {error}</div>}
+            <div className="card-title" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+              <Camera size={18} color="#16a34a" /> Upload Crop Image
+            </div>
+            {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div>
                 <label className="field-label">Crop Name *</label>
@@ -150,14 +160,14 @@ export default function CropDiagnosis() {
                     onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(167,139,250,0.4)"}
                     onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border2)"}
                   >
-                    <span style={{ fontSize: 44 }}>🔬</span>
+                    <Camera size={44} color="#16a34a" />
                     <span style={{ fontSize: 14, color: "var(--text2)", textAlign: "center" }}>Click to upload a leaf or crop photo<br /><span style={{ fontSize: 12 }}>JPG, PNG — clear, well-lit image preferred</span></span>
                     <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: "none" }} />
                   </label>
                 )}
               </div>
-              <button type="submit" className="btn-green" disabled={loading || !image || !cropName} style={{ width: "100%", justifyContent: "center", padding: "16px" }}>
-                {loading ? <><span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} /> Analyzing with AI…</> : "🤖 Run AI Diagnosis"}
+              <button type="submit" className="btn-green" disabled={loading || !image || !cropName} style={{ width: "100%", justifyContent: "center", padding: "16px", display: "inline-flex", alignItems: "center", gap: 8 }}>
+                {loading ? <><RefreshCw size={16} className="animate-spin" /> Analyzing with AI…</> : <><Bot size={16} /> Run AI Diagnosis</>}
               </button>
             </form>
           </div>
@@ -166,7 +176,9 @@ export default function CropDiagnosis() {
           <div>
             {loading && (
               <div className="card" style={{ textAlign: "center", padding: "48px 24px" }}>
-                <div style={{ fontSize: 56, marginBottom: 16 }}>🧠</div>
+                <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>
+                  <Cpu size={56} color="#16a34a" />
+                </div>
                 <div className="loading-wrap" style={{ padding: 0 }}><div className="spinner" /><span>AI is analyzing your crop image…</span></div>
                 <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 12 }}>This may take 10-20 seconds</div>
               </div>
@@ -176,13 +188,15 @@ export default function CropDiagnosis() {
               <div className="card" style={{ background: result.isHealthy ? "rgba(34,197,94,0.04)" : "rgba(239,68,68,0.04)", borderColor: result.isHealthy ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)" }}>
                 {/* Status Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <div className="card-title" style={{ fontSize: 18, color: result.isHealthy ? "#4ade80" : "#f87171" }}>
-                    {result.isHealthy ? "✅ Healthy Crop!" : "⚠️ Disease Detected"}
+                  <div className="card-title" style={{ fontSize: 18, color: result.isHealthy ? "#4ade80" : "#f87171", display: "flex", alignItems: "center", gap: 8 }}>
+                    {result.isHealthy ? <><CheckCircle2 size={18} color="#15803d" /> Healthy Crop!</> : <><AlertTriangle size={18} color="#dc2626" /> Disease Detected</>}
                   </div>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     {result.severity && severityBadge(result.severity)}
                     {typeof result.confidence === "number" && result.confidence > 0 && (
-                      <span className="badge badge-blue">🎯 {result.confidence}% Match</span>
+                      <span className="badge badge-blue" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        <Target size={12} /> {result.confidence}% Match
+                      </span>
                     )}
                   </div>
                 </div>
@@ -204,7 +218,7 @@ export default function CropDiagnosis() {
                   {result.description && (
                     <div style={{ padding: "16px 18px", background: "#f0f9ff", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                        <span style={{ fontSize: 16 }}>📖</span>
+                        <BookOpen size={16} color="#0369a1" />
                         <span style={{ fontSize: 12, fontWeight: 800, color: "#0369a1", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                           Description & Crop Impact
                         </span>
@@ -219,7 +233,7 @@ export default function CropDiagnosis() {
                   {(result.causes?.length > 0 || result.cause) && (
                     <div style={{ padding: "14px 16px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                        <span style={{ fontSize: 16 }}>🔍</span>
+                        <Search size={16} color="var(--text2)" />
                         <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                           Probable Causes & Triggers
                         </span>
@@ -241,7 +255,7 @@ export default function CropDiagnosis() {
                     <div style={{ background: "#f0fdf4", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(34,197,94,0.22)" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 18 }}>💊</span>
+                          <Pill size={18} color="#15803d" />
                           <span style={{ fontSize: 13, fontWeight: 800, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                             Treatment Recommendations
                           </span>
@@ -256,10 +270,10 @@ export default function CropDiagnosis() {
                             const isChem = t.toLowerCase().includes("chemical");
                             const isOrg = t.toLowerCase().includes("organic");
                             const isCult = t.toLowerCase().includes("cultural");
-                            const icon = isChem ? "🧪" : isOrg ? "🌿" : isCult ? "✂️" : "✓";
+                            const TreatmentIcon = isChem ? FlaskConical : isOrg ? Sprout : isCult ? Scissors : Check;
                             return (
                               <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "#f1f5f9", padding: "10px 12px", borderRadius: 10, border: "1px solid #e2e8f0" }}>
-                                <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{icon}</span>
+                                <span style={{ flexShrink: 0, marginTop: 2 }}><TreatmentIcon size={15} color="#15803d" /></span>
                                 <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6 }}>{t}</div>
                               </div>
                             );
@@ -275,7 +289,7 @@ export default function CropDiagnosis() {
                   {(result.preventions?.length > 0 || result.prevention) && (
                     <div style={{ background: "rgba(59,130,246,0.05)", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(59,130,246,0.2)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                        <span style={{ fontSize: 18 }}>🛡️</span>
+                        <ShieldCheck size={18} color="#60a5fa" />
                         <span style={{ fontSize: 13, fontWeight: 800, color: "#60a5fa", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                           Prevention & Field Protection
                         </span>
@@ -310,7 +324,7 @@ export default function CropDiagnosis() {
 
                   {/* Helpline Support Note */}
                   <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "rgba(234,179,8,0.05)", borderRadius: 10, border: "1px solid rgba(234,179,8,0.15)" }}>
-                    <span style={{ fontSize: 20 }}>📞</span>
+                    <Phone size={20} color="#b45309" />
                     <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.5 }}>
                       <strong style={{ color: "#facc15" }}>Kisan Helpline:</strong> Call toll-free <span style={{ color: "#0f172a", fontWeight: 700 }}>1800-180-1551</span> or consult your nearest Krishi Vigyan Kendra (KVK) for regional chemical advice.
                     </div>
@@ -321,7 +335,9 @@ export default function CropDiagnosis() {
 
             {!loading && !result && (
               <div className="card" style={{ padding: "40px 24px", textAlign: "center" }}>
-                <div style={{ fontSize: 60, marginBottom: 16 }}>🌿</div>
+                <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>
+                  <Sprout size={60} color="#86efac" />
+                </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>AI Disease Scanner Ready</div>
                 <div style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.7 }}>Upload a clear photo of a diseased leaf or crop. The AI will identify the disease, its cause, and provide treatment recommendations.</div>
               </div>
@@ -339,7 +355,9 @@ export default function CropDiagnosis() {
               <div className="empty-emoji"><ClipboardList size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
               <div className="empty-title">No scan history</div>
               <div className="empty-sub">Your past diagnosis results will appear here.</div>
-              <button className="btn-green" onClick={() => setActiveTab("scan")}>🔬 Run First Scan</button>
+              <button className="btn-green" onClick={() => setActiveTab("scan")} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <FlaskConical size={16} /> Run First Scan
+              </button>
             </div>
           )}
           {!historyLoading && history.length > 0 && (
@@ -351,22 +369,24 @@ export default function CropDiagnosis() {
                     <div style={{ display: "flex", gap: 14, alignItems: "center", flex: 1, minWidth: 0 }}>
                       {h.imageUrl
                         ? <img src={h.imageUrl} alt={h.cropName} style={{ width: 54, height: 54, borderRadius: 10, objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
-                        : <div style={{ width: 54, height: 54, borderRadius: 10, background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0, border: "1px solid var(--border)" }}>🌿</div>
+                        : <div style={{ width: 54, height: 54, borderRadius: 10, background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--border)" }}><Sprout size={24} color="#16a34a" /></div>
                       }
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 15 }}>{h.cropName}</div>
                         <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>{h.disease || "Healthy"}</div>
-                        <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>📅 {new Date(h.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
+                        <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><Calendar size={12} /> {new Date(h.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
                       </div>
                     </div>
                     {/* Right: badges + buttons */}
                     <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", flexShrink: 0 }}>
                       {h.severity && severityBadge(h.severity)}
-                      {h.isHealthy && <span className="badge badge-green">✅ Healthy</span>}
+                      {h.isHealthy && <span className="badge badge-green" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={12} /> Healthy</span>}
                       <div className="hist-btns">
-                        <button className="btn-view" onClick={() => setViewItem(h)}>👁️ View</button>
-                        <button className="btn-del" disabled={deleting === h._id} onClick={() => deleteDiagnosis(h._id)}>
-                          {deleting === h._id ? "⏳" : "🗑️ Delete"}
+                        <button className="btn-view" onClick={() => setViewItem(h)} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <Eye size={12} /> View
+                        </button>
+                        <button className="btn-del" disabled={deleting === h._id} onClick={() => deleteDiagnosis(h._id)} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          {deleting === h._id ? <RefreshCw size={12} className="animate-spin" /> : <><Trash2 size={12} /> Delete</>}
                         </button>
                       </div>
                     </div>
@@ -384,15 +404,15 @@ export default function CropDiagnosis() {
           <div className="modal-box">
             {viewItem.imageUrl
               ? <img src={viewItem.imageUrl} alt={viewItem.cropName} className="modal-img" />
-              : <div style={{ height: 100, background: "var(--surface)", borderRadius: "20px 20px 0 0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 52 }}>🌿</div>
+              : <div style={{ height: 100, background: "var(--surface)", borderRadius: "20px 20px 0 0", display: "flex", alignItems: "center", justifyContent: "center" }}><Sprout size={48} color="#16a34a" /></div>
             }
             <div className="modal-body">
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
                 <div>
                   <div className="modal-title">{viewItem.cropName}</div>
-                  <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>
-                    📅 {new Date(viewItem.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                  <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                    <Calendar size={13} /> {new Date(viewItem.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
                   </div>
                 </div>
                 <button onClick={() => setViewItem(null)} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, padding: "6px 12px", color: "var(--text2)", cursor: "pointer", fontSize: 16 }}>✕</button>
@@ -401,36 +421,36 @@ export default function CropDiagnosis() {
               {/* Status badges */}
               <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
                 {viewItem.severity && severityBadge(viewItem.severity)}
-                {viewItem.isHealthy && <span className="badge badge-green">✅ Healthy Crop</span>}
+                {viewItem.isHealthy && <span className="badge badge-green" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><CheckCircle2 size={12} /> Healthy Crop</span>}
                 {typeof viewItem.confidence === "number" && (
-                  <span className="badge badge-blue">🎯 {viewItem.confidence}% confidence</span>
+                  <span className="badge badge-blue" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Target size={12} /> {viewItem.confidence}% confidence</span>
                 )}
               </div>
 
               {viewItem.disease && (
                 <div className="modal-row">
-                  <div className="modal-lbl">🦠 Disease Identified</div>
+                  <div className="modal-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><Bug size={14} color="#dc2626" /> Disease Identified</div>
                   <div style={{ fontSize: 18, fontWeight: 800, color: viewItem.isHealthy ? "#4ade80" : "#f87171" }}>{viewItem.disease}</div>
                 </div>
               )}
 
               {viewItem.description && (
                 <div style={{ padding: "14px 16px", background: "#f0f9ff", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#0369a1", marginBottom: 6 }}>📖 Description & Impact</div>
+                  <div className="modal-lbl" style={{ color: "#0369a1", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}><BookOpen size={14} color="#0369a1" /> Description & Impact</div>
                   <div className="modal-val" style={{ whiteSpace: "pre-line" }}>{viewItem.description}</div>
                 </div>
               )}
 
               {viewItem.symptoms && (
                 <div className="modal-row">
-                  <div className="modal-lbl">📝 Reported Symptoms</div>
+                  <div className="modal-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><FileText size={14} color="#16a34a" /> Reported Symptoms</div>
                   <div className="modal-val">{viewItem.symptoms}</div>
                 </div>
               )}
 
               {(viewItem.causes?.length > 0 || viewItem.cause) && (
                 <div className="modal-row">
-                  <div className="modal-lbl">🔍 Causes & Environmental Factors</div>
+                  <div className="modal-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><Search size={14} color="#16a34a" /> Causes & Environmental Factors</div>
                   {viewItem.causes?.length > 0 ? (
                     <ul style={{ margin: "6px 0 0 0", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 4 }}>
                       {viewItem.causes.map((c, i) => (
@@ -445,7 +465,7 @@ export default function CropDiagnosis() {
 
               {(viewItem.treatments?.length > 0 || viewItem.treatment) && (
                 <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#15803d", marginBottom: 8 }}>💊 Treatment Recommendations</div>
+                  <div className="modal-lbl" style={{ color: "#15803d", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><Pill size={14} color="#15803d" /> Treatment Recommendations</div>
                   {viewItem.treatments?.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {viewItem.treatments.map((t, i) => (
@@ -463,7 +483,7 @@ export default function CropDiagnosis() {
 
               {(viewItem.preventions?.length > 0 || viewItem.prevention) && (
                 <div style={{ background: "rgba(59,130,246,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(59,130,246,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#60a5fa", marginBottom: 8 }}>🛡️ Prevention Guidelines</div>
+                  <div className="modal-lbl" style={{ color: "#60a5fa", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><ShieldCheck size={14} color="#60a5fa" /> Prevention Guidelines</div>
                   {viewItem.preventions?.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       {viewItem.preventions.map((p, i) => (
@@ -496,11 +516,15 @@ export default function CropDiagnosis() {
                 <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setViewItem(null)}>← Close</button>
                 <button
                   className="btn-del"
-                  style={{ flex: 1, justifyContent: "center", padding: "12px", borderRadius: 12 }}
+                  style={{ flex: 1, justifyContent: "center", padding: "12px", borderRadius: 12, display: "inline-flex", alignItems: "center", gap: 6 }}
                   disabled={deleting === viewItem._id}
                   onClick={() => deleteDiagnosis(viewItem._id)}
                 >
-                  {deleting === viewItem._id ? "⏳ Deleting…" : "🗑️ Delete Record"}
+                  {deleting === viewItem._id ? (
+                    <><RefreshCw size={14} className="animate-spin" /> Deleting…</>
+                  ) : (
+                    <><Trash2 size={14} /> Delete Record</>
+                  )}
                 </button>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { Plus, Sprout, Search } from "lucide-react";
+import { Plus, Sprout, Search, CheckCircle2, Zap, XCircle, Package, DollarSign, MapPin, Calendar, Eye, Edit3, Trash2, AlertTriangle } from "lucide-react";
 
 export default function MyCrops() {
   const [crops, setCrops] = useState([]);
@@ -54,10 +54,10 @@ export default function MyCrops() {
   );
 
   const statusBadge = (s) => {
-    if (s === "listed")  return <span className="badge badge-green">🟢 Listed</span>;
-    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }}>⚡ Ready</span>;
-    if (s === "sold")    return <span className="badge badge-red">🔴 Sold</span>;
-    return <span className="badge badge-amber">🌱 Growing</span>;
+    if (s === "listed")  return <span className="badge badge-green" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><CheckCircle2 size={12} /> Listed</span>;
+    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)", display: "inline-flex", alignItems: "center", gap: 5 }}><Zap size={12} /> Ready</span>;
+    if (s === "sold")    return <span className="badge badge-red" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><XCircle size={12} /> Sold</span>;
+    return <span className="badge badge-amber" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Sprout size={12} /> Growing</span>;
   };
 
   return (
@@ -67,7 +67,9 @@ export default function MyCrops() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm Management</div>
-          <h1 className="pg-title">🌿 My Crops</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Sprout size={24} color="#16a34a" /> My Crops
+          </h1>
           <p className="pg-sub">Manage your crop listings and agricultural produce.</p>
         </div>
         <Link to="/farmer/crops/add" className="btn-green" id="add-crop-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add New Crop</Link>
@@ -90,14 +92,14 @@ export default function MyCrops() {
         </div>
       )}
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {/* Search bar */}
       {!loading && crops.length > 0 && (
         <div style={{ marginBottom: 24 }}>
           <input
             className="field-input"
-            placeholder="🔍  Search crops by name or category…"
+            placeholder="Search crops by name or category…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ maxWidth: 400 }}
@@ -140,7 +142,7 @@ export default function MyCrops() {
                 </div>
               ) : (
                 <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", borderBottom: "1px solid var(--border)" }}>
-                  <span style={{ fontSize: 56 }}>🌿</span>
+                  <Sprout size={56} color="#86efac" />
                 </div>
               )}
 
@@ -155,13 +157,15 @@ export default function MyCrops() {
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                   {[
-                    ["📦", "Qty", `${crop.quantity} ${crop.unit}`],
-                    ["💰", "Price", `₹${crop.price}/${crop.unit}`],
-                    ["📍", "Location", crop.location],
-                    ["📅", "Harvest", crop.harvestDate ? new Date(crop.harvestDate).toLocaleDateString("en-IN") : "—"],
-                  ].map(([icon, lbl, val]) => (
+                    { Icon: Package, lbl: "Qty", val: `${crop.quantity} ${crop.unit}` },
+                    { Icon: DollarSign, lbl: "Price", val: `₹${crop.price}/${crop.unit}` },
+                    { Icon: MapPin, lbl: "Location", val: crop.location },
+                    { Icon: Calendar, lbl: "Harvest", val: crop.harvestDate ? new Date(crop.harvestDate).toLocaleDateString("en-IN") : "—" },
+                  ].map(({ Icon, lbl, val }) => (
                     <div key={lbl} style={{ background: "var(--surface)", borderRadius: 10, padding: "10px 12px" }}>
-                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 3 }}>{icon} {lbl}</div>
+                      <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 3, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Icon size={12} color="#16a34a" /> {lbl}
+                      </div>
                       <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>{val}</div>
                     </div>
                   ))}
@@ -179,16 +183,16 @@ export default function MyCrops() {
                     <button
                       onClick={() => listForSale(crop)}
                       className="btn-green"
-                      style={{ flex: 1, justifyContent: "center", fontSize: 12 }}
+                      style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }}
                       title="Publish this crop to the buyer marketplace"
                     >
-                      🟢 List for Sale
+                      <CheckCircle2 size={13} /> List for Sale
                     </button>
                   )}
-                  <button onClick={() => navigate(`/farmer/crops/${crop._id}`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center" }}>👁 View</button>
-                  <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.2)" }}>✏️ Edit</button>
-                  <button onClick={() => handleDelete(crop)} disabled={deletingId === crop._id} className="btn-danger" style={{ flex: 1, justifyContent: "center" }}>
-                    {deletingId === crop._id ? "…" : "🗑"}
+                  <button onClick={() => navigate(`/farmer/crops/${crop._id}`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 5 }}><Eye size={13} /> View</button>
+                  <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 5, color: "#15803d", borderColor: "rgba(34,197,94,0.2)" }}><Edit3 size={13} /> Edit</button>
+                  <button onClick={() => handleDelete(crop)} disabled={deletingId === crop._id} className="btn-danger" style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    {deletingId === crop._id ? "…" : <Trash2 size={13} />}
                   </button>
                 </div>
               </div>

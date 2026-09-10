@@ -1,23 +1,28 @@
-﻿import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
 import { useLocation } from "react-router-dom";
+import {
+  Package, Inbox, Globe, Ship, Edit, Check, AlertTriangle, MessageSquare,
+  Handshake, CheckCircle2, Clock, MapPin, Trash2, Eye, ExternalLink,
+  ClipboardList, Info, Mail, Send, Award, DollarSign, Wheat, Sprout, Flame
+} from "lucide-react";
 
 /* ─── static reference data (preserved exactly) ─────────────────────── */
 const EXPORT_CROPS = [
-  { name: "Basmati Rice",         grade: "Grade A",       destination: "Middle East, EU", minQty: "10 MT", price: "₹4,500/q",  flag: "🌾" },
-  { name: "Fresh Mango (Alphonso)",grade: "Export Grade",  destination: "UK, USA, UAE",    minQty: "5 MT",  price: "₹12,000/q", flag: "🥭" },
-  { name: "Onion (Red)",           grade: "Medium / Large",destination: "Malaysia, SL",    minQty: "20 MT", price: "₹1,800/q",  flag: "🧅" },
-  { name: "Turmeric (Finger)",     grade: "4-5% Curcumin", destination: "USA, Germany",    minQty: "5 MT",  price: "₹9,000/q",  flag: "🌿" },
-  { name: "Chilli (S4 Dry)",       grade: "AGMARK",        destination: "China, Bangladesh",minQty:"10 MT", price: "₹15,000/q", flag: "🌶️" },
-  { name: "Peanuts (Bold)",        grade: "HPS 40/50",     destination: "Indonesia, EU",   minQty: "20 MT", price: "₹6,500/q",  flag: "🥜" },
+  { name: "Basmati Rice",         grade: "Grade A",       destination: "Middle East, EU", minQty: "10 MT", price: "₹4,500/q",  icon: Wheat,  iconColor: "#d97706" },
+  { name: "Fresh Mango (Alphonso)",grade: "Export Grade",  destination: "UK, USA, UAE",    minQty: "5 MT",  price: "₹12,000/q", icon: Sprout, iconColor: "#eab308" },
+  { name: "Onion (Red)",           grade: "Medium / Large",destination: "Malaysia, SL",    minQty: "20 MT", price: "₹1,800/q",  icon: Sprout, iconColor: "#b91c1c" },
+  { name: "Turmeric (Finger)",     grade: "4-5% Curcumin", destination: "USA, Germany",    minQty: "5 MT",  price: "₹9,000/q",  icon: Sprout, iconColor: "#d97706" },
+  { name: "Chilli (S4 Dry)",       grade: "AGMARK",        destination: "China, Bangladesh",minQty:"10 MT", price: "₹15,000/q", icon: Flame,  iconColor: "#dc2626" },
+  { name: "Peanuts (Bold)",        grade: "HPS 40/50",     destination: "Indonesia, EU",   minQty: "20 MT", price: "₹6,500/q",  icon: Sprout, iconColor: "#b45309" },
 ];
 const STEPS = [
-  { step: "01", icon: "📋", title: "Register with APEDA", desc: "Get Agri-Export code from Agricultural and Processed Food Products Export Development Authority." },
-  { step: "02", icon: "🧪", title: "Quality Certification", desc: "Obtain Phytosanitary Certificate from State Agriculture Dept and FSSAI license for food products." },
-  { step: "03", icon: "📦", title: "Packaging Standards", desc: "Pack in export-grade materials with proper labeling per destination country's norms." },
-  { step: "04", icon: "🚢", title: "Shipping & Logistics", desc: "Connect with CHA (Customs House Agent) and freight forwarder for sea/air shipment." },
-  { step: "05", icon: "💰", title: "Payment & Insurance", desc: "Use Letter of Credit (LC) or advance payment; insure cargo via ECGC." },
+  { step: "01", icon: ClipboardList, color: "#0369a1", title: "Register with APEDA", desc: "Get Agri-Export code from Agricultural and Processed Food Products Export Development Authority." },
+  { step: "02", icon: Award,         color: "#16a34a", title: "Quality Certification", desc: "Obtain Phytosanitary Certificate from State Agriculture Dept and FSSAI license for food products." },
+  { step: "03", icon: Package,       color: "#f59e0b", title: "Packaging Standards", desc: "Pack in export-grade materials with proper labeling per destination country's norms." },
+  { step: "04", icon: Ship,          color: "#0284c7", title: "Shipping & Logistics", desc: "Connect with CHA (Customs House Agent) and freight forwarder for sea/air shipment." },
+  { step: "05", icon: DollarSign,    color: "#10b981", title: "Payment & Insurance", desc: "Use Letter of Credit (LC) or advance payment; insure cargo via ECGC." },
 ];
 const GOVT_LINKS = [
   ["APEDA", "https://apeda.gov.in",  "Agricultural export registration"],
@@ -48,9 +53,9 @@ const SBadge = ({ status }) => {
 };
 
 /* ─── Empty state ────────────────────────────────────────────────────── */
-const Empty = ({ emoji, title, sub }) => (
+const Empty = ({ Icon, title, sub }) => (
   <div className="empty-state">
-    <div className="empty-emoji">{emoji}</div>
+    <div className="empty-emoji" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>{Icon && <Icon size={40} strokeWidth={1.5} color="#bbf7d0" />}</div>
     <div className="empty-title">{title}</div>
     {sub && <div className="empty-sub">{sub}</div>}
   </div>
@@ -101,9 +106,9 @@ function ListingModal({ editing, onClose, onSaved, farmerUser }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal-box" style={{ maxWidth: 540 }}>
-        <div className="modal-title">{isEdit ? "✏️ Edit Export Listing" : "🌍 List Produce for Export"}</div>
+        <div className="modal-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>{isEdit ? <><Edit size={18} /> Edit Export Listing</> : <><Globe size={18} /> List Produce for Export</>}</div>
         <div className="modal-sub">Fill in the details to list your produce for international buyers.</div>
-        {error && <div className="alert-error" style={{ marginBottom: 14 }}>⚠️ {error}</div>}
+        {error && <div className="alert-error" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {error}</div>}
         <form onSubmit={handleSubmit}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div style={{ gridColumn: "1/-1" }}>
@@ -154,7 +159,7 @@ function ListingModal({ editing, onClose, onSaved, farmerUser }) {
           <div style={{ display: "flex", gap: 10 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={onClose}>Cancel</button>
             <button type="submit"  className="btn-green" style={{ flex: 2, justifyContent: "center", padding: "13px" }} disabled={saving}>
-              {saving ? "⏳ Saving…" : isEdit ? "✅ Update Listing" : "🌍 List for Export"}
+              {saving ? "Saving…" : isEdit ? "Update Listing" : "List for Export"}
             </button>
           </div>
         </form>
@@ -199,7 +204,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
       <div className="modal-box" style={{ maxWidth: 500 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
           <div>
-            <div className="modal-title" style={{ fontSize: 17 }}>📩 Export Interest</div>
+            <div className="modal-title" style={{ fontSize: 17, display: "flex", alignItems: "center", gap: 6 }}><Mail size={17} /> Export Interest</div>
             <SBadge status={interest.status} />
           </div>
           <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#7a8fa6", cursor: "pointer", width: 30, height: 30, fontSize: 18 }}>×</button>
@@ -223,13 +228,13 @@ function InterestModal({ interest, onClose, onUpdated }) {
           </div>
         ))}
 
-        {err && <div className="alert-error" style={{ margin: "12px 0" }}>⚠️ {err}</div>}
+        {err && <div className="alert-error" style={{ margin: "12px 0", display: "flex", alignItems: "center", gap: 6 }}><AlertTriangle size={15} /> {err}</div>}
 
         {/* Pending: Accept or Reject only */}
         {interest.status === "pending" && !action && (
           <div style={{ marginTop: 18 }}>
-            <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10, padding: "8px 12px", borderRadius: 8, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.15)" }}>
-              ℹ️ Accept the interest first. You can counter-offer after accepting.
+            <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10, padding: "8px 12px", borderRadius: 8, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.15)", display: "flex", alignItems: "center", gap: 6 }}>
+              <Info size={14} style={{ flexShrink: 0 }} /> Accept the interest first. You can counter-offer after accepting.
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setAction("reject")}>✕ Reject</button>
@@ -240,8 +245,8 @@ function InterestModal({ interest, onClose, onUpdated }) {
 
         {["accepted","negotiating"].includes(interest.status) && !action && (
           <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-            <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("counter")}>💬 Counter Offer</button>
-            <button className="btn-green" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("confirm")}>🤝 Confirm Deal</button>
+            <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setAction("counter")}><MessageSquare size={14} /> Counter Offer</button>
+            <button className="btn-green" style={{ flex: 1, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setAction("confirm")}><Handshake size={14} /> Confirm Deal</button>
           </div>
         )}
 
@@ -251,7 +256,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
             <div style={{ marginBottom: 12, color: "#15803d", fontWeight: 600 }}>Accept this interest request?</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
-              <button className="btn-green" onClick={doAction} disabled={saving} style={{ flex: 2, justifyContent: "center" }}>{saving ? "⏳…" : "✓ Confirm Accept"}</button>
+              <button className="btn-green" onClick={doAction} disabled={saving} style={{ flex: 2, justifyContent: "center" }}>{saving ? "Saving…" : "✓ Confirm Accept"}</button>
             </div>
           </div>
         )}
@@ -260,7 +265,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
             <div style={{ marginBottom: 12, color: "#dc2626", fontWeight: 600 }}>Reject this interest request?</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
-              <button style={{ flex: 2, padding: "12px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#dc2626", fontWeight: 700, cursor: "pointer" }} onClick={doAction} disabled={saving}>{saving ? "⏳…" : "✕ Confirm Reject"}</button>
+              <button style={{ flex: 2, padding: "12px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#dc2626", fontWeight: 700, cursor: "pointer" }} onClick={doAction} disabled={saving}>{saving ? "Saving…" : "✕ Confirm Reject"}</button>
             </div>
           </div>
         )}
@@ -276,7 +281,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
-              <button className="btn-green" onClick={doAction} disabled={saving || !counter} style={{ flex: 2, justifyContent: "center" }}>{saving ? "⏳…" : "💬 Send Counter"}</button>
+              <button className="btn-green" onClick={doAction} disabled={saving || !counter} style={{ flex: 2, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 6 }}>{saving ? "Saving…" : <><Send size={14} /> Send Counter</>}</button>
             </div>
           </div>
         )}
@@ -298,7 +303,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
-              <button className="btn-green" onClick={doAction} disabled={saving} style={{ flex: 2, justifyContent: "center" }}>{saving ? "⏳…" : "🤝 Confirm Deal"}</button>
+              <button className="btn-green" onClick={doAction} disabled={saving} style={{ flex: 2, justifyContent: "center", display: "inline-flex", alignItems: "center", gap: 6 }}>{saving ? "Saving…" : <><Handshake size={14} /> Confirm Deal</>}</button>
             </div>
           </div>
         )}
@@ -388,8 +393,8 @@ export default function ExportPage() {
       setListings(prev => prev.filter(l => l._id !== id));
       setDeleteConfirmId(null);
       loadStats();
-      showToast("✅ Listing removed");
-    } catch (e) { showToast("⚠️ " + e.message); }
+      showToast("Listing removed");
+    } catch (e) { showToast(e.message); }
   };
 
   /* ── Handle saved listing (create / edit) ─────────────────────────── */
@@ -401,7 +406,7 @@ export default function ExportPage() {
     setShowCreate(false);
     setEditTarget(null);
     loadStats();
-    showToast("✅ Export listing saved");
+    showToast("Export listing saved");
     setTab("listings");
   };
 
@@ -413,9 +418,9 @@ export default function ExportPage() {
 
   /* ──────────────────────────────────────────────────────────────────── */
   const TABS = [
-    { id: "market",    label: "🌍 Market Info",       badge: null },
-    { id: "listings",  label: "📋 My Export Listings", badge: stats.listingCount || null },
-    { id: "interests", label: "📩 Interest Requests",  badge: stats.pendingInterests || null },
+    { id: "market",    label: "Market Info",        icon: Globe,         badge: null },
+    { id: "listings",  label: "My Export Listings",  icon: ClipboardList, badge: stats.listingCount || null },
+    { id: "interests", label: "Interest Requests",   icon: Mail,          badge: stats.pendingInterests || null },
   ];
 
   return (
@@ -477,11 +482,11 @@ export default function ExportPage() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Global Trade</div>
-          <h1 className="pg-title">🚢 Export Your Produce</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 8 }}><Ship size={28} color="#16a34a" /> Export Your Produce</h1>
           <p className="pg-sub">Connect with international buyers and export your agricultural produce globally.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
-          <a href="https://apeda.gov.in" target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: 13 }}>📋 APEDA</a>
+          <a href="https://apeda.gov.in" target="_blank" rel="noreferrer" className="btn-ghost" style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}><ExternalLink size={13} /> APEDA</a>
           <button className="btn-green" style={{ fontSize: 13 }} onClick={() => { setShowCreate(true); setTab("listings"); }}>
             + List Produce
           </button>
@@ -492,12 +497,12 @@ export default function ExportPage() {
       {(stats.listingCount > 0 || stats.pendingInterests > 0) && (
         <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
           {[
-            ["📋", "Export Listings",    stats.listingCount      || 0, "#4ade80"],
-            ["📩", "Pending Requests",   stats.pendingInterests  || 0, "#fbbf24"],
-            ["📬", "Unread Updates",     stats.unreadInterests   || 0, "#f87171"],
-          ].map(([e, l, v, c]) => (
+            [ClipboardList, "Export Listings",    stats.listingCount      || 0, "#4ade80"],
+            [Mail,          "Pending Requests",   stats.pendingInterests  || 0, "#fbbf24"],
+            [Inbox,         "Unread Updates",     stats.unreadInterests   || 0, "#f87171"],
+          ].map(([Icon, l, v, c]) => (
             <div key={l} style={{ padding: "10px 18px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, display: "flex", gap: 8, alignItems: "center" }}>
-              <span>{e}</span>
+              <Icon size={16} color={c} />
               <span style={{ fontSize: 12, color: "var(--text2)" }}>{l}</span>
               <span style={{ fontWeight: 800, color: c, fontSize: 16 }}>{v}</span>
             </div>
@@ -507,12 +512,16 @@ export default function ExportPage() {
 
       {/* ── Tabs ─────────────────────────────────────────────────────── */}
       <div className="exp-tabs">
-        {TABS.map(t => (
-          <button key={t.id} className={`exp-tab ${tab === t.id ? "active" : ""}`} onClick={() => setTab(t.id)}>
-            {t.label}
-            {t.badge > 0 && <span className="tab-badge">{t.badge}</span>}
-          </button>
-        ))}
+        {TABS.map(t => {
+          const TabIcon = t.icon;
+          return (
+            <button key={t.id} className={`exp-tab ${tab === t.id ? "active" : ""}`} onClick={() => setTab(t.id)}>
+              <TabIcon size={14} />
+              {t.label}
+              {t.badge > 0 && <span className="tab-badge">{t.badge}</span>}
+            </button>
+          );
+        })}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -520,11 +529,11 @@ export default function ExportPage() {
       ═══════════════════════════════════════════════════════════════ */}
       {tab === "market" && (
         <>
-          <div className="card-title" style={{ marginBottom: 16 }}>🌍 High-Demand Export Commodities</div>
+          <div className="card-title" style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}><Globe size={18} color="#0369a1" /> High-Demand Export Commodities</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 16, marginBottom: 28 }}>
             {EXPORT_CROPS.map((c) => (
               <div key={c.name} className="card" style={{ padding: "20px 22px", borderColor: "rgba(56,189,248,0.1)" }}>
-                <div style={{ fontSize: 36, marginBottom: 10 }}>{c.flag}</div>
+                <div style={{ marginBottom: 10 }}><c.icon size={36} color={c.iconColor} /></div>
                 <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 16, marginBottom: 4 }}>{c.name}</div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12 }}>Grade: {c.grade}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -541,9 +550,9 @@ export default function ExportPage() {
                     <span style={{ color: "#15803d", fontWeight: 800, fontSize: 15 }}>{c.price}</span>
                   </div>
                 </div>
-                <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", marginTop: 14, fontSize: 13 }}
+                <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", marginTop: 14, fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}
                   onClick={() => { setShowCreate(true); }}>
-                  📩 List this Produce
+                  <Package size={14} /> List this Produce
                 </button>
               </div>
             ))}
@@ -552,7 +561,7 @@ export default function ExportPage() {
           {/* Divider before farmer listings preview */}
           <div style={{ padding: "14px 20px", borderRadius: 14, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.15)", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div style={{ fontWeight: 700, color: "#15803d", marginBottom: 2 }}>🌾 Ready to Export Your Produce?</div>
+              <div style={{ fontWeight: 700, color: "#15803d", marginBottom: 2, display: "flex", alignItems: "center", gap: 6 }}><Wheat size={16} color="#15803d" /> Ready to Export Your Produce?</div>
               <div style={{ fontSize: 13, color: "var(--text2)" }}>List your produce and connect directly with international exporters.</div>
             </div>
             <button className="btn-green" style={{ fontSize: 13, whiteSpace: "nowrap" }} onClick={() => { setShowCreate(true); }}>
@@ -561,11 +570,11 @@ export default function ExportPage() {
           </div>
 
           <div className="card" style={{ marginBottom: 24 }}>
-            <div className="card-title" style={{ marginBottom: 20 }}>📋 How to Start Exporting — Step by Step</div>
+            <div className="card-title" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}><ClipboardList size={18} color="#16a34a" /> How to Start Exporting — Step by Step</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {STEPS.map((s) => (
                 <div key={s.step} style={{ display: "flex", gap: 16, padding: "16px 20px", background: "var(--surface)", borderRadius: 14, border: "1px solid var(--border)" }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{s.icon}</div>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><s.icon size={20} color={s.color} /></div>
                   <div>
                     <div style={{ fontSize: 11, color: "#0369a1", fontWeight: 700, marginBottom: 4 }}>STEP {s.step}</div>
                     <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{s.title}</div>
@@ -577,7 +586,7 @@ export default function ExportPage() {
           </div>
 
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>🔗 Useful Government Portals</div>
+            <div className="card-title" style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}><ExternalLink size={18} color="#0369a1" /> Useful Government Portals</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
               {GOVT_LINKS.map(([name, url, desc]) => (
                 <a key={name} href={url} target="_blank" rel="noreferrer"
@@ -585,7 +594,7 @@ export default function ExportPage() {
                   onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)"}
                   onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
                 >
-                  <div style={{ fontWeight: 700, color: "#0369a1", marginBottom: 4 }}>{name} ↗</div>
+                  <div style={{ fontWeight: 700, color: "#0369a1", marginBottom: 4, display: "flex", alignItems: "center", gap: 4 }}>{name} <ExternalLink size={12} /></div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{desc}</div>
                 </a>
               ))}
@@ -607,7 +616,7 @@ export default function ExportPage() {
           {loadL ? (
             <div className="loading-wrap"><div className="spinner" /><span>Loading listings…</span></div>
           ) : listings.length === 0 ? (
-            <Empty emoji="📦" title="No export listings yet" sub="Click '+ New Listing' to list your produce for international buyers." />
+            <Empty Icon={Package} title="No export listings yet" sub="Click '+ New Listing' to list your produce for international buyers." />
           ) : (
             <div className="listing-grid">
               {listings.map(l => (
@@ -616,7 +625,7 @@ export default function ExportPage() {
                     <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{l.name}</div>
                     <SBadge status={l.exportStatus || "available"} />
                   </div>
-                  <div style={{ fontSize: 12, color: "var(--text2)" }}>📍 {l.location}</div>
+                  <div style={{ fontSize: 12, color: "var(--text2)", display: "flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> {l.location}</div>
                   {[
                     ["Grade",      l.exportGrade || "—"],
                     ["Quantity",   `${l.exportQuantity} ${l.exportUnit}`],
@@ -630,12 +639,12 @@ export default function ExportPage() {
                     </div>
                   ))}
                   {(l._pendingInterests > 0) && (
-                    <div style={{ padding: "6px 12px", borderRadius: 8, background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
-                      📩 {l._pendingInterests} pending interest{l._pendingInterests > 1 ? "s" : ""}
+                    <div style={{ padding: "6px 12px", borderRadius: 8, background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                      <Mail size={13} /> {l._pendingInterests} pending interest{l._pendingInterests > 1 ? "s" : ""}
                     </div>
                   )}
                   <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                    <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => setEditTarget(l)}>✏️ Edit</button>
+                    <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4 }} onClick={() => setEditTarget(l)}><Edit size={12} /> Edit</button>
                     {deleteConfirmId === l._id ? (
                       <>
                         <button
@@ -648,7 +657,7 @@ export default function ExportPage() {
                         >Cancel</button>
                       </>
                     ) : (
-                      <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfirmId(l._id)}>🗑 Remove</button>
+                      <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, color: "#dc2626", borderColor: "rgba(239,68,68,0.2)", display: "inline-flex", alignItems: "center", gap: 4 }} onClick={() => setDeleteConfirmId(l._id)}><Trash2 size={12} /> Remove</button>
                     )}
                   </div>
                 </div>
@@ -670,7 +679,7 @@ export default function ExportPage() {
           {loadI ? (
             <div className="loading-wrap"><div className="spinner" /><span>Loading requests…</span></div>
           ) : interests.length === 0 ? (
-            <Empty emoji="📩" title="No interest requests yet" sub="When exporters express interest in your listings, they will appear here." />
+            <Empty Icon={Inbox} title="No interest requests yet" sub="When exporters express interest in your listings, they will appear here." />
           ) : (
             <div className="interest-list">
               {interests.map(i => {
@@ -681,7 +690,7 @@ export default function ExportPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                       <div>
                         <div style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{exp.name || "Exporter"}</div>
-                        <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>📍 {exp.location || exp.state || "—"}</div>
+                        <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> {exp.location || exp.state || "—"}</div>
                       </div>
                       <SBadge status={i.status} />
                     </div>
@@ -706,8 +715,8 @@ export default function ExportPage() {
                     <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 10 }}>
                       {new Date(i.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
-                    <button className="btn-green" style={{ width: "100%", justifyContent: "center", fontSize: 13 }} onClick={() => setViewInterest(i)}>
-                      {i.status === "pending" ? "📩 View & Respond" : "👁 View Details"}
+                    <button className="btn-green" style={{ width: "100%", justifyContent: "center", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setViewInterest(i)}>
+                      {i.status === "pending" ? <><Mail size={14} /> View & Respond</> : <><Eye size={14} /> View Details</>}
                     </button>
                   </div>
                 );

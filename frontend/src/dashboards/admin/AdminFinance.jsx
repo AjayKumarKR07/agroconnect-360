@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, fmtINR, relativeTime } from "./adminStyles";
-import { IndianRupee, TrendingUp, Package, Receipt } from "lucide-react";
+import { IndianRupee, TrendingUp, Package, Receipt, Gem, Clock, Ban, BarChart3, Lightbulb, RefreshCw, AlertTriangle } from "lucide-react";
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -54,8 +54,8 @@ export default function AdminFinance() {
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {lastUpdated && <span style={{ fontSize: 12, color: "#a5b4fc" }}>Updated {relativeTime(lastUpdated)}</span>}
-          <button className="btn-indigo" onClick={load} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+          <button className="btn-indigo" onClick={load} disabled={loading} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <RefreshCw size={13} />} Refresh
           </button>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function AdminFinance() {
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={36} color="#dc2626" /></div>
           <div className="error-state-msg">Unable to load finance data</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={load}>Retry</button>
@@ -80,13 +80,13 @@ export default function AdminFinance() {
           {/* KPI Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16, marginBottom: 26 }}>
             {[
-              ["💎", "Delivered GMV", fmtINR(statusTotal("delivered")), `${statusCount("delivered")} delivered orders`, "#4ade80"],
-              ["⏳", "Pending GMV", fmtINR(statusTotal("pending")), `${statusCount("pending")} pending orders`, "#fbbf24"],
-              ["🚫", "Cancelled Value", fmtINR(statusTotal("cancelled")), `${statusCount("cancelled")} cancelled`, "#f87171"],
-              ["📊", "Avg Order Value", fmtINR(data.avgOrderValue), `Across ${data.totalOrders} total orders`, "#818cf8"],
-            ].map(([emoji, label, val, sub, color]) => (
+              [Gem,      "#4ade80", "Delivered GMV", fmtINR(statusTotal("delivered")), `${statusCount("delivered")} delivered orders`],
+              [Clock,    "#fbbf24", "Pending GMV", fmtINR(statusTotal("pending")), `${statusCount("pending")} pending orders`],
+              [Ban,      "#f87171", "Cancelled Value", fmtINR(statusTotal("cancelled")), `${statusCount("cancelled")} cancelled`],
+              [BarChart3,"#818cf8", "Avg Order Value", fmtINR(data.avgOrderValue), `Across ${data.totalOrders} total orders`],
+            ].map(([Icon, color, label, val, sub]) => (
               <div key={label} className="card">
-                <div style={{ fontSize: 24, marginBottom: 8 }}>{emoji}</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: color + "18", color, marginBottom: 8 }}><Icon size={20} strokeWidth={1.75} /></div>
                 <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color }}>{val}</div>
                 <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 4 }}>{sub}</div>
@@ -96,7 +96,7 @@ export default function AdminFinance() {
 
           {/* Commission Note */}
           <div style={{ marginBottom: 20, padding: "12px 18px", background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 14, fontSize: 13, color: "#a5b4fc" }}>
-            💡 <strong style={{ color: "#c7d2fe" }}>Commission estimate:</strong> {fmtINR(data.commissionEstimated)} (2.5% of delivered GMV). {data.commissionNote}
+            <Lightbulb size={14} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 6 }} /><strong style={{ color: "#c7d2fe" }}>Commission estimate:</strong> {fmtINR(data.commissionEstimated)} (2.5% of delivered GMV). {data.commissionNote}
           </div>
 
           {/* Monthly Revenue Chart (last 6 months) */}
@@ -104,7 +104,7 @@ export default function AdminFinance() {
             <div className="card-title" style={{ marginBottom: 16 }}><TrendingUp size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Monthly Revenue (Last 6 Months — Delivered Orders)</div>
             {data.monthlyRevenue.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-state-icon">📈</div>
+                <div className="empty-state-icon"><TrendingUp size={36} color="#94a3b8" /></div>
                 <div className="empty-state-msg">No delivered orders in the last 6 months</div>
               </div>
             ) : (

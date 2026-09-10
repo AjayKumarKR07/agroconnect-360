@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { HeartPulse } from "lucide-react";
+import {
+  HeartPulse, Stethoscope, Microscope, AlertTriangle,
+  Sprout, CheckCircle, Bug, Trash2, Pill, ShieldAlert,
+  ChevronUp, ChevronDown
+} from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -54,7 +58,7 @@ export default function CropHealthHistory() {
         .chh-card { border-radius:16px; border:1px solid var(--border); background:var(--surface); padding:0; overflow:hidden; transition:border-color .2s,transform .2s; }
         .chh-card:hover { border-color:rgba(167,139,250,0.3); transform:translateY(-2px); }
         .chh-img { width:100%; height:140px; object-fit:cover; }
-        .chh-img-placeholder { width:100%; height:140px; display:flex; align-items:center; justify-content:center; background:rgba(167,139,250,0.05); border-bottom:1px solid var(--border); font-size:48px; }
+        .chh-img-placeholder { width:100%; height:140px; display:flex; align-items:center; justify-content:center; background:rgba(167,139,250,0.05); border-bottom:1px solid var(--border); }
         .chh-body { padding:16px; }
         .chh-crop { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:4px; }
         .chh-disease { font-size:13px; color:var(--text2); margin-bottom:10px; }
@@ -71,13 +75,17 @@ export default function CropHealthHistory() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AI Disease Detection</div>
-          <h1 className="pg-title">🩺 Crop Health History</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Stethoscope size={24} color="#16a34a" /> Crop Health History
+          </h1>
           <p className="pg-sub">Previous AI diagnosis results for your crops.</p>
         </div>
-        <Link to="/farmer/disease-detection" className="btn-green">🔬 New Diagnosis</Link>
+        <Link to="/farmer/disease-detection" className="btn-green" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Microscope size={15} /> New Diagnosis
+        </Link>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading ? (
         <div className="loading-wrap"><div className="spinner" /><span>Loading diagnosis history…</span></div>
@@ -86,7 +94,9 @@ export default function CropHealthHistory() {
           <div className="empty-emoji"><HeartPulse size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No diagnoses yet</div>
           <div className="empty-sub">Run your first AI crop disease detection to see results here.</div>
-          <Link to="/farmer/disease-detection" className="btn-green" style={{ marginTop: 16, display: "inline-flex" }}>🔬 Scan a Crop</Link>
+          <Link to="/farmer/disease-detection" className="btn-green" style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <Microscope size={15} /> Scan a Crop
+          </Link>
         </div>
       ) : (
         <>
@@ -111,11 +121,13 @@ export default function CropHealthHistory() {
               <div key={diag._id} className="chh-card">
                 {diag.imageUrl
                   ? <img src={diag.imageUrl} alt={diag.cropName} className="chh-img" />
-                  : <div className="chh-img-placeholder">🌿</div>
+                  : <div className="chh-img-placeholder"><Sprout size={42} color="#86efac" /></div>
                 }
                 <div className="chh-body">
                   <div className="chh-crop">{diag.cropName}</div>
-                  <div className="chh-disease">{diag.isHealthy ? "✅ Healthy" : `🦠 ${diag.disease}`}</div>
+                  <div className="chh-disease" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    {diag.isHealthy ? <><CheckCircle size={14} color="#16a34a" /> Healthy</> : <><Bug size={14} color="#dc2626" /> {diag.disease}</>}
+                  </div>
 
                   <div className="chh-meta">
                     {diag.severity && diag.severity !== "—" && (
@@ -134,18 +146,18 @@ export default function CropHealthHistory() {
                   <div className="chh-actions">
                     <button
                       className="btn-ghost"
-                      style={{ fontSize: 12, padding: "7px 14px", color: "#7c3aed", borderColor: "rgba(167,139,250,0.2)" }}
+                      style={{ fontSize: 12, padding: "7px 14px", color: "#7c3aed", borderColor: "rgba(167,139,250,0.2)", display: "inline-flex", alignItems: "center", gap: 4 }}
                       onClick={() => setSelected(selected?._id === diag._id ? null : diag)}
                     >
-                      {selected?._id === diag._id ? "▲ Hide" : "▼ View Details"}
+                      {selected?._id === diag._id ? <><ChevronUp size={14} /> Hide</> : <><ChevronDown size={14} /> View Details</>}
                     </button>
                     <button
                       className="btn-ghost"
-                      style={{ fontSize: 12, padding: "7px 14px", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }}
+                      style={{ fontSize: 12, padding: "7px 14px", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)", display: "inline-flex", alignItems: "center" }}
                       onClick={() => handleDelete(diag._id)}
                       disabled={deleting === diag._id}
                     >
-                      {deleting === diag._id ? "…" : "🗑️"}
+                      {deleting === diag._id ? "…" : <Trash2 size={14} />}
                     </button>
                   </div>
 
@@ -159,13 +171,13 @@ export default function CropHealthHistory() {
                       )}
                       {diag.treatment && (
                         <div className="chh-detail">
-                          <div className="chh-section-lbl">💊 Treatment</div>
+                          <div className="chh-section-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><Pill size={14} color="#16a34a" /> Treatment</div>
                           <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.7 }}>{diag.treatment}</p>
                         </div>
                       )}
                       {diag.prevention && (
                         <div className="chh-detail">
-                          <div className="chh-section-lbl">🛡️ Prevention</div>
+                          <div className="chh-section-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><ShieldAlert size={14} color="#16a34a" /> Prevention</div>
                           <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.7 }}>{diag.prevention}</p>
                         </div>
                       )}

@@ -1,18 +1,34 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
-import { RefreshCw, Package } from "lucide-react";
+import { 
+  RefreshCw, 
+  Package, 
+  Clock, 
+  CheckCircle2, 
+  Truck, 
+  XCircle, 
+  Ban, 
+  AlertTriangle, 
+  Wheat, 
+  IndianRupee, 
+  Calendar, 
+  MapPin, 
+  ChevronDown, 
+  ChevronUp,
+  Loader2
+} from "lucide-react";
 
 const STATUS_FILTERS = ["all", "pending", "accepted", "processing", "shipped", "delivered", "rejected", "cancelled"];
 
 const STATUS_BADGE = {
-  pending:    { bg: "rgba(251,191,36,0.1)",  color: "#b45309", label: "⏳ Pending" },
-  accepted:   { bg: "rgba(56,189,248,0.1)",  color: "#0369a1", label: "✅ Accepted" },
-  processing: { bg: "rgba(167,139,250,0.1)", color: "#7c3aed", label: "📦 Packed" },
-  shipped:    { bg: "rgba(251,146,60,0.1)",  color: "#fb923c", label: "🚚 Shipped" },
-  delivered:  { bg: "rgba(34,197,94,0.1)",   color: "#15803d", label: "🎉 Delivered" },
-  rejected:   { bg: "rgba(239,68,68,0.1)",   color: "#dc2626", label: "❌ Rejected" },
-  cancelled:  { bg: "rgba(239,68,68,0.1)",   color: "#dc2626", label: "🚫 Cancelled" },
+  pending:    { bg: "rgba(251,191,36,0.1)",  color: "#b45309", label: "Pending",   icon: Clock },
+  accepted:   { bg: "rgba(56,189,248,0.1)",  color: "#0369a1", label: "Accepted",  icon: CheckCircle2 },
+  processing: { bg: "rgba(167,139,250,0.1)", color: "#7c3aed", label: "Packed",    icon: Package },
+  shipped:    { bg: "rgba(251,146,60,0.1)",  color: "#fb923c", label: "Shipped",   icon: Truck },
+  delivered:  { bg: "rgba(34,197,94,0.1)",   color: "#15803d", label: "Delivered", icon: CheckCircle2 },
+  rejected:   { bg: "rgba(239,68,68,0.1)",   color: "#dc2626", label: "Rejected",  icon: XCircle },
+  cancelled:  { bg: "rgba(239,68,68,0.1)",   color: "#dc2626", label: "Cancelled", icon: Ban },
 };
 
 const PIPELINE = ["pending", "accepted", "processing", "shipped", "delivered"];
@@ -38,90 +54,99 @@ const relTime = (iso) => {
 };
 
 export default function SellerOrders() {
-  const [orders,    setOrders]    = useState([]);
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState(null);
-  const [filter,    setFilter]    = useState("all");
-  const [expanded,  setExpanded]  = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
+  const [orders,      setOrders]      = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [refreshing,  setRefreshing]  = useState(false);
+  const [error,       setError]       = useState(null);
+  const [filter,      setFilter]      = useState("all");
+  const [expanded,    setExpanded]    = useState(null);
+  const [cancelling,  setCancelling]  = useState(null);
   const [lastFetched, setLastFetched] = useState(null);
-  const token    = localStorage.getItem("agroconnect_token");
-  const timerRef = useRef(null);
+  const timerRef                      = useRef(null);
 
-  // ─── Fetch ──────────────────────────────────────────────────────────
   const fetchOrders = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
-    else          setLoading(true);
     setError(null);
     try {
-      const r = await fetch(`${API_URL}/api/orders/seller`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const r = await fetch(`${API_URL}/api/seller/orders`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}` },
       });
       const d = await r.json();
       if (d.success) {
         setOrders(d.orders || []);
-        setLastFetched(new Date());
+        setLastFetched(new Date().toISOString());
       } else {
-        setError(d.message || "Unable to load orders");
+        setError(d.message || "Failed to load orders");
       }
     } catch {
-      setError("Network error — could not reach the server");
+      setError("Network error — could not reach server");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [token]);
+  }, []);
 
-  // Mount + auto-refresh every 30 s
+  // Initial load + interval auto-refresh
   useEffect(() => {
-    fetchOrders(false);
-    timerRef.current = setInterval(() => fetchOrders(false), AUTO_REFRESH_MS);
+    fetchOrders();
+    timerRef.current = setInterval(() => fetchOrders(), AUTO_REFRESH_MS);
     return () => clearInterval(timerRef.current);
   }, [fetchOrders]);
 
-  // ─── Derived ────────────────────────────────────────────────────────
-  const filtered = orders.filter(o => filter === "all" || o.status === filter);
-
-  const statusBadge = (s) => {
-    const m = STATUS_BADGE[s] || { bg: "rgba(255,255,255,0.05)", color: "var(--text2)", label: s };
-    return (
-      <span style={{ padding: "4px 10px", borderRadius: 8, background: m.bg, color: m.color, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-        {m.label}
-      </span>
-    );
+  const handleCancel = async (orderId, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Cancel this order? This action cannot be undone.")) return;
+    setCancelling(orderId);
+    try {
+      const r = await fetch(`${API_URL}/api/seller/orders/${orderId}/cancel`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}` },
+      });
+      const d = await r.json();
+      if (d.success) {
+        setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: "cancelled" } : o));
+      } else {
+        alert(d.message || "Could not cancel order");
+      }
+    } catch {
+      alert("Network error — try again");
+    } finally {
+      setCancelling(null);
+    }
   };
+
+  const filtered = filter === "all" ? orders : orders.filter(o => o.status === filter);
 
   const pipelineStep = (s) => PIPELINE.indexOf(s);
 
-  // ─── Render ─────────────────────────────────────────────────────────
   return (
     <>
       <style>{DS + `
-        @keyframes spin { to { transform:rotate(360deg); } }
-        .sf-tabs   { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:24px; }
-        .sf-tab    { padding:7px 14px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; }
+        .sf-tabs    { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:22px; }
+        .sf-tab     { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; font-family:'Inter',sans-serif; }
         .sf-tab.active { background:rgba(167,139,250,0.1); color:#7c3aed; border-color:rgba(167,139,250,0.2); }
-        .pipeline  { display:flex; align-items:center; gap:0; margin:14px 0 8px; }
-        .pl-step   { display:flex; flex-direction:column; align-items:center; }
-        .pl-dot    { width:22px; height:22px; border-radius:50%; border:2px solid rgba(167,139,250,0.2); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:9px; flex-shrink:0; }
-        .pl-dot.done { background:linear-gradient(135deg,#7c3aed,#a78bfa); border-color:#7c3aed; box-shadow:0 0 8px rgba(167,139,250,0.5); }
-        .pl-dot.cur  { border-color:#7c3aed; animation:plPulse 1.5s ease infinite; }
-        @keyframes plPulse { 0%,100%{box-shadow:0 0 6px rgba(167,139,250,0.3)} 50%{box-shadow:0 0 14px rgba(167,139,250,0.7)} }
-        .pl-line   { flex:1; height:2px; background:rgba(167,139,250,0.1); min-width:16px; }
-        .pl-line.done { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
-        .pl-label  { font-size:9px; color:var(--text2); text-align:center; margin-top:4px; white-space:nowrap; }
+        .order-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; margin-bottom:12px; transition:border-color 0.2s; overflow:hidden; }
+        .order-card:hover { border-color:rgba(167,139,250,0.25); }
+        .pipeline   { display:flex; align-items:center; margin:16px 0; gap:0; }
+        .pl-step    { display:flex; flex-direction:column; align-items:center; gap:4px; }
+        .pl-dot     { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--text2); }
+        .pl-dot.done{ background:#7c3aed; border-color:#7c3aed; color:#0f172a; }
+        .pl-dot.cur { border-color:#a78bfa; color:#a78bfa; }
+        .pl-line    { flex:1; height:2px; background:var(--border); margin-top:-14px; }
+        .pl-line.done{ background:#7c3aed; }
+        .pl-label   { font-size:9px; color:var(--text2); }
         .pl-label.active { color:#7c3aed; font-weight:700; }
-        @media(max-width:540px){
-          .sf-tabs { gap:4px; }
-          .sf-tab  { padding:5px 10px; font-size:11px; }
-        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .spin { animation: spin 1s linear infinite; }
       `}</style>
 
       {/* Header */}
       <div className="pg-head">
         <div>
           <div className="eyebrow">Procurement</div>
-          <h1 className="pg-title">📦 My Orders</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Package size={24} color="#7c3aed" /> My Orders
+          </h1>
           <p className="pg-sub" style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             Track bulk orders you placed with farmers.
             {lastFetched && (
@@ -143,7 +168,7 @@ export default function SellerOrders() {
               fontFamily: "'Inter',sans-serif", transition: "all 0.2s",
             }}
           >
-            <span style={{ display: "inline-block", animation: refreshing ? "spin 1s linear infinite" : "none" }}>🔄</span>
+            <RefreshCw size={14} className={refreshing ? "spin" : ""} />
             {refreshing ? "Refreshing…" : "Refresh"}
           </button>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#7c3aed" }}>
@@ -172,7 +197,7 @@ export default function SellerOrders() {
         <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
+              <AlertTriangle size={20} color="#dc2626" />
               <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load orders — {error}</span>
             </div>
             <button onClick={() => fetchOrders(true)} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
@@ -214,27 +239,32 @@ export default function SellerOrders() {
                       <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 16, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {o.cropName || "Product"}
                       </div>
-                      <span style={{ padding: "4px 10px", borderRadius: 8, background: badge.bg, color: badge.color, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-                        {badge.label}
+                      <span style={{ padding: "4px 10px", borderRadius: 8, background: badge.bg, color: badge.color, fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                        {badge.icon && <badge.icon size={12} />}
+                        <span>{badge.label}</span>
                       </span>
                     </div>
                     <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                      <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                        🌾 <span style={{ color: "var(--text)" }}>{o.farmerName || "Farmer"}</span>
+                      <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", gap: 5 }}>
+                        <Wheat size={14} /> <span style={{ color: "var(--text)" }}>{o.farmerName || "Farmer"}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                        📦 <span style={{ color: "var(--text)" }}>{o.quantity} {o.unit || "kg"}</span>
+                      <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", gap: 5 }}>
+                        <Package size={14} /> <span style={{ color: "var(--text)" }}>{o.quantity} {o.unit || "kg"}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                        💰 <span style={{ color: "#15803d", fontWeight: 700 }}>₹{Number(o.totalPrice || o.subtotal || 0).toLocaleString("en-IN")}</span>
+                      <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", gap: 5 }}>
+                        <IndianRupee size={14} color="#15803d" /> <span style={{ color: "#15803d", fontWeight: 700 }}>₹{Number(o.totalPrice || o.subtotal || 0).toLocaleString("en-IN")}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                        📅 <span style={{ color: "var(--text)" }}>{relTime(o.createdAt)}</span>
+                      <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", gap: 5 }}>
+                        <Calendar size={14} /> <span style={{ color: "var(--text)" }}>{relTime(o.createdAt)}</span>
                       </div>
                     </div>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text2)", alignSelf: "center", flexShrink: 0 }}>
-                    {isExp ? "▲ Hide" : "▼ Details"}
+                    {isExp ? (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><ChevronUp size={14} /> Hide</span>
+                    ) : (
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><ChevronDown size={14} /> Details</span>
+                    )}
                   </div>
                 </div>
 
@@ -277,8 +307,8 @@ export default function SellerOrders() {
 
                     {/* Delivery address */}
                     {o.deliveryAddress && (
-                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.6, marginBottom: 8 }}>
-                        📍 {fmtAddr(o.deliveryAddress)}
+                      <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.6, marginBottom: 8, display: "flex", alignItems: "center", gap: 5 }}>
+                        <MapPin size={13} color="#7c3aed" /> {fmtAddr(o.deliveryAddress)}
                       </div>
                     )}
 
@@ -290,23 +320,23 @@ export default function SellerOrders() {
                     {/* Seller cannot change order status (farmer does that).
                         Seller can only cancel a pending order they placed. */}
                     {o.status === "pending" && (
-                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "#fffbeb", border: "1px solid rgba(251,191,36,0.12)", fontSize: 13, color: "#b45309" }}>
-                        ⏳ Waiting for the farmer to accept your order. You can cancel below.
+                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "#fffbeb", border: "1px solid rgba(251,191,36,0.12)", fontSize: 13, color: "#b45309", display: "flex", alignItems: "center", gap: 8 }}>
+                        <Clock size={16} color="#b45309" /> Waiting for the farmer to accept your order. You can cancel below.
                       </div>
                     )}
                     {["accepted", "processing", "shipped"].includes(o.status) && (
-                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.1)", fontSize: 13, color: "#0369a1" }}>
-                        ✅ Order is being processed by the farmer. Status updates automatically.
+                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.1)", fontSize: 13, color: "#0369a1", display: "flex", alignItems: "center", gap: 8 }}>
+                        <CheckCircle2 size={16} color="#0369a1" /> Order is being processed by the farmer. Status updates automatically.
                       </div>
                     )}
                     {o.status === "delivered" && (
-                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.15)", fontSize: 13, color: "#15803d" }}>
-                        🎉 Order delivered successfully!
+                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.15)", fontSize: 13, color: "#15803d", display: "flex", alignItems: "center", gap: 8 }}>
+                        <CheckCircle2 size={16} color="#15803d" /> Order delivered successfully!
                       </div>
                     )}
                     {["rejected", "cancelled"].includes(o.status) && (
-                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)", fontSize: 13, color: "#dc2626" }}>
-                        ❌ This order was {o.status}. No further action needed.
+                      <div style={{ marginTop: 14, padding: "10px 14px", borderRadius: 12, background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)", fontSize: 13, color: "#dc2626", display: "flex", alignItems: "center", gap: 8 }}>
+                        <XCircle size={16} color="#dc2626" /> This order was {o.status}. No further action needed.
                       </div>
                     )}
                   </div>
@@ -319,8 +349,8 @@ export default function SellerOrders() {
 
       {/* Auto-refresh notice */}
       {!loading && orders.length > 0 && (
-        <div style={{ marginTop: 20, textAlign: "center", fontSize: 11, color: "var(--text2)" }}>
-          🔄 Status auto-refreshes every 30 seconds · Use Refresh button for immediate update
+        <div style={{ marginTop: 20, textAlign: "center", fontSize: 11, color: "var(--text2)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          <RefreshCw size={12} /> Status auto-refreshes every 30 seconds · Use Refresh button for immediate update
         </div>
       )}
     </>

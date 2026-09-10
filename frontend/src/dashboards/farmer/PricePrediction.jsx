@@ -8,8 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { DS } from "../../styles/ds";
-import { Bot, BarChart3 } from "lucide-react";
+import { Bot, BarChart3, TrendingUp, TrendingDown, ArrowRight, AlertTriangle, Clock, Sparkles, Cpu } from "lucide-react";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -170,7 +169,9 @@ export default function PricePrediction() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AI & Machine Learning</div>
-          <h1 className="pg-title">📈 Real-Time Price Predictions</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <TrendingUp size={24} color="#16a34a" /> Real-Time Price Predictions
+          </h1>
           <p className="pg-sub">Random Forest AI Model trained on APMC & Kaggle mandi datasets to forecast crop prices.</p>
         </div>
       </div>
@@ -218,20 +219,22 @@ export default function PricePrediction() {
               </select>
             </div>
             <button type="submit" className="btn-green" disabled={!state || !district || loading} style={{ height: 46 }}>
-              {loading ? <span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} /> : "🚀 Run ML Forecast"}
+              {loading ? <span style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} /> : <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Cpu size={15} /> Run ML Forecast</span>}
             </button>
           </div>
         </form>
       </div>
 
-      {error && <div className="alert-error">⚠️ {error}</div>}
+      {error && <div className="alert-error" style={{ display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {error}</div>}
 
       {loading && (
         <div className="card" style={{ textAlign: "center", padding: 48 }}>
           <div className="spinner" style={{ margin: "0 auto 16px" }} />
           <div style={{ fontWeight: 700, fontSize: 16, color: "#0f172a" }}>Training Random Forest Model & Generating Forecast…</div>
           <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 6 }}>Processing historical APMC Mandi price records for {commodity || "Crop"} in {district || "District"}, {state}</div>
-          <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 8, opacity: 0.7 }}>⏱ First run may take 30–60 seconds while the model trains on Kaggle + APMC data</div>
+          <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 8, opacity: 0.7, display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            <Clock size={13} /> First run may take 30–60 seconds while the model trains on Kaggle + APMC data
+          </div>
         </div>
       )}
 
@@ -261,8 +264,8 @@ export default function PricePrediction() {
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Expected Trend</div>
               <div style={{ marginTop: 8 }}>
-                <span className={`trend-pill ${prediction.trend === "rising" ? "trend-rising" : prediction.trend === "falling" ? "trend-falling" : "trend-stable"}`}>
-                  {prediction.trend === "rising" ? "📈 Rising" : prediction.trend === "falling" ? "📉 Falling" : "➡️ Stable"} ({prediction.forecastChangePercent >= 0 ? "+" : ""}{prediction.forecastChangePercent}%)
+                <span className={`trend-pill ${prediction.trend === "rising" ? "trend-rising" : prediction.trend === "falling" ? "trend-falling" : "trend-stable"}`} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                  {prediction.trend === "rising" ? <><TrendingUp size={13} /> Rising</> : prediction.trend === "falling" ? <><TrendingDown size={13} /> Falling</> : <><ArrowRight size={13} /> Stable</>} ({prediction.forecastChangePercent >= 0 ? "+" : ""}{prediction.forecastChangePercent}%)
                 </span>
               </div>
               <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 8 }}>Based on multi-day moving average</div>
@@ -286,7 +289,7 @@ export default function PricePrediction() {
                 <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />{prediction.commodity || commodity} Price Forecast ({forecastDays} Days)</div>
                 <div className="card-sub">Predicted price progression for {prediction.district || district}, {prediction.state || state}</div>
               </div>
-              <span className="trend-pill trend-rising">✨ ML Powered</span>
+              <span className="trend-pill trend-rising" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Sparkles size={12} /> ML Powered</span>
             </div>
 
             <div style={{ width: "100%", height: 320 }}>
@@ -320,7 +323,7 @@ export default function PricePrediction() {
           {highest.length > 0 && (
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", background: "#f0fdf4", borderBottom: "1px solid rgba(34,197,94,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 20 }}>📈</span>
+                <span style={{ display: "flex", alignItems: "center" }}><TrendingUp size={20} color="#15803d" /></span>
                 <div>
                   <div style={{ fontWeight: 700, color: "#15803d", fontSize: 15 }}>Highest Price Crops</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{district}, {state}</div>
@@ -348,7 +351,7 @@ export default function PricePrediction() {
           {lowest.length > 0 && (
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", background: "#fef2f2", borderBottom: "1px solid rgba(239,68,68,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 20 }}>📉</span>
+                <span style={{ display: "flex", alignItems: "center" }}><TrendingDown size={20} color="#dc2626" /></span>
                 <div>
                   <div style={{ padding: 0, fontWeight: 700, color: "#dc2626", fontSize: 15 }}>Lowest Price Crops</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{district}, {state}</div>

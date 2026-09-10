@@ -1,6 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
-import { Ship, Package } from "lucide-react";
+import {
+  Ship,
+  Package,
+  AlertTriangle,
+  Loader2,
+  MapPin,
+  Zap,
+  ArrowRight,
+  CheckCircle2,
+  Trash2,
+} from "lucide-react";
 
 const DS_EXPORTER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -107,7 +117,9 @@ function AddShipmentModal({ onClose, onSaved }) {
       <div className="modal-box">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📦 Add Container Shipment</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+              <Package size={20} color="#d97706" /> Add Container Shipment
+            </div>
             <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Track real export container from Indian port</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
@@ -169,12 +181,25 @@ function AddShipmentModal({ onClose, onSaved }) {
             </div>
           </div>
 
-          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>⚠️ {err}</div>}
+          {err && (
+            <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+              <AlertTriangle size={14} color="#dc2626" /> {err}
+            </div>
+          )}
 
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center", padding: "12px" }} onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: "center", padding: "12px" }} disabled={saving}>
-              {saving ? "⏳ Adding…" : "🚢 Add Shipment"}
+            <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: "center", padding: "12px", display: "inline-flex", alignItems: "center", gap: 8 }} disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
+                  Adding…
+                </>
+              ) : (
+                <>
+                  <Ship size={14} /> Add Shipment
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -185,27 +210,30 @@ function AddShipmentModal({ onClose, onSaved }) {
 
 /* ─── Main Component ─────────────────────────────────────────────────── */
 export default function ExportLogistics() {
-  const [containers,     setContainers]     = useState([]);
+  const [containers, setContainers]       = useState([]);
+  const [loading, setLoading]             = useState(true);
+  const [showAdd, setShowAdd]             = useState(false);
+  const [search, setSearch]               = useState("");
   const [activeShipment, setActiveShipment] = useState(null);
-  const [search,         setSearch]         = useState("");
-  const [loading,        setLoading]        = useState(true);
-  const [showAdd,        setShowAdd]        = useState(false);
-  const [toast,          setToast]          = useState("");
-  const [deleteConfId,   setDeleteConfId]   = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [deleteConfId, setDeleteConfId]   = useState(null);
+  const [toast, setToast]                 = useState("");
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3500); };
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 3500);
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetch(`${API_URL}/api/exporter/shipments`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}` },
-      });
+      const r = await fetch(`${API_URL}/api/exporter/shipments`, { headers: authH() });
       const d = await r.json();
-      if (d.success && Array.isArray(d.shipments)) {
-        setContainers(d.shipments);
-        if (d.shipments.length > 0) setActiveShipment(d.shipments[0]);
+      if (d.success) {
+        setContainers(d.shipments || []);
+        if ((d.shipments || []).length > 0 && !activeShipment) {
+          setActiveShipment(d.shipments[0]);
+        }
       }
     } catch {}
     finally { setLoading(false); }
@@ -217,7 +245,7 @@ export default function ExportLogistics() {
     setContainers(p => [shipment, ...p]);
     setActiveShipment(shipment);
     setShowAdd(false);
-    showToast("✅ Shipment added");
+    showToast("Shipment added");
   };
 
   /* Advance / set status */
@@ -233,8 +261,8 @@ export default function ExportLogistics() {
       if (!d.success) throw new Error(d.message);
       setContainers(p => p.map(c => c._id === shipmentId ? d.shipment : c));
       setActiveShipment(d.shipment);
-      showToast(`✅ Status updated: ${STATUS_MAP[newStatus]?.label || newStatus}`);
-    } catch (e) { showToast("⚠️ " + e.message); }
+      showToast(`Status updated: ${STATUS_MAP[newStatus]?.label || newStatus}`);
+    } catch (e) { showToast(e.message); }
     finally { setStatusUpdating(false); }
   };
 
@@ -248,8 +276,8 @@ export default function ExportLogistics() {
       setContainers(remaining);
       setActiveShipment(remaining.length > 0 ? remaining[0] : null);
       setDeleteConfId(null);
-      showToast("✅ Shipment deleted");
-    } catch (e) { showToast("⚠️ " + e.message); }
+      showToast("Shipment deleted");
+    } catch (e) { showToast(e.message); }
   };
 
 
@@ -306,12 +334,16 @@ export default function ExportLogistics() {
       ) : containers.length === 0 ? (
         /* ── Empty state ─────────────────────────────────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
-          <div style={{ fontSize: 56, marginBottom: 14 }}>🚢</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+            <Ship size={56} color="#d97706" strokeWidth={1.5} />
+          </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Shipments Yet</div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export container to start tracking port & customs pipeline status.
           </div>
-          <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Package size={14} strokeWidth={2} /> Add First Shipment</button>
+          <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+            <Package size={14} strokeWidth={2} /> Add First Shipment
+          </button>
         </div>
       ) : (
         /* ── Main two-column layout ──────────────────────────────────── */
@@ -320,7 +352,7 @@ export default function ExportLogistics() {
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <input
               className="field-input"
-              placeholder="🔍 Search container, crop, port…"
+              placeholder="Search container, crop, port…"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -349,7 +381,9 @@ export default function ExportLogistics() {
                     </span>
                   </div>
                   <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 4 }}>{c.cargo} {c.quantityTons ? `(${c.quantityTons} MT)` : ""}</div>
-                  <div style={{ fontSize: 11, color: "#a38a5d" }}>📍 {c.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{c.destPort}</strong></div>
+                  <div style={{ fontSize: 11, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                    <MapPin size={12} color="#d97706" /> {c.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{c.destPort}</strong>
+                  </div>
                 </div>
               );
             })}
@@ -361,7 +395,9 @@ export default function ExportLogistics() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#b45309" }}>📦 {activeShipment.containerNo}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#b45309", display: "flex", alignItems: "center", gap: 8 }}>
+                    <Package size={20} color="#d97706" /> {activeShipment.containerNo}
+                  </div>
                   <div style={{ fontSize: 15, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>{activeShipment.cargo} {activeShipment.quantityTons ? `(${activeShipment.quantityTons} MT)` : ""}</div>
                   {activeShipment.vessel && (
                     <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Vessel: <strong style={{ color: "#0f172a" }}>{activeShipment.vessel}</strong></div>
@@ -404,7 +440,11 @@ export default function ExportLogistics() {
                           <div style={{ fontSize: 14, fontWeight: current ? 800 : done ? 600 : 400, color: current ? "#fef08a" : done ? "#fff" : "#a38a5d" }}>
                             {step}
                           </div>
-                          {current && <div style={{ fontSize: 11, color: "#b45309", marginTop: 2 }}>⚡ Currently in progress</div>}
+                          {current && (
+                            <div style={{ fontSize: 11, color: "#b45309", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                              <Zap size={12} color="#d97706" /> Currently in progress
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -448,11 +488,21 @@ export default function ExportLogistics() {
                     {nextStatus && !isDelivered && !isCancelled && (
                       <button
                         className="btn-gold"
-                        style={{ flex: 2, justifyContent: "center", opacity: statusUpdating ? 0.6 : 1 }}
+                        style={{ flex: 2, justifyContent: "center", opacity: statusUpdating ? 0.6 : 1, display: "inline-flex", alignItems: "center", gap: 8 }}
                         disabled={statusUpdating}
                         onClick={() => updateStatus(activeShipment._id, nextStatus)}
                       >
-                        {statusUpdating ? "⏳ Updating…" : `▶ Advance to: ${STATUS_MAP[nextStatus]?.label}`}
+                        {statusUpdating ? (
+                          <>
+                            <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
+                            Updating…
+                          </>
+                        ) : (
+                          <>
+                            <ArrowRight size={14} />
+                            Advance to: {STATUS_MAP[nextStatus]?.label}
+                          </>
+                        )}
                       </button>
                     )}
 
@@ -460,18 +510,18 @@ export default function ExportLogistics() {
                     {!isDelivered && !isCancelled && nextStatus !== "delivered" && (
                       <button
                         className="btn-ghost"
-                        style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.25)" }}
+                        style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.25)", display: "inline-flex", alignItems: "center", gap: 6 }}
                         disabled={statusUpdating}
                         onClick={() => updateStatus(activeShipment._id, "delivered")}
                       >
-                        ✅ Mark Delivered
+                        <CheckCircle2 size={14} /> Mark Delivered
                       </button>
                     )}
 
                     {/* Delivered badge */}
                     {isDelivered && (
-                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontWeight: 800, fontSize: 14, textAlign: "center" }}>
-                        ✅ Destination Delivered
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontWeight: 800, fontSize: 14, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                        <CheckCircle2 size={18} color="#16a34a" /> Destination Delivered
                       </div>
                     )}
 
@@ -486,8 +536,8 @@ export default function ExportLogistics() {
                         </button>
                       </>
                     ) : (
-                      <button className="btn-ghost" style={{ justifyContent: "center", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(activeShipment._id)}>
-                        🗑 Delete
+                      <button className="btn-ghost" style={{ justifyContent: "center", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)", display: "inline-flex", alignItems: "center", gap: 6 }} onClick={() => setDeleteConfId(activeShipment._id)}>
+                        <Trash2 size={13} /> Delete
                       </button>
                     )}
                   </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Globe } from "lucide-react";
+import { Globe, ArrowLeftRight, AlertTriangle, RefreshCw, Search, Info } from "lucide-react";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -178,7 +178,9 @@ export default function ExportMarkets() {
           {fxLoading ? (
             <span style={{ fontSize: 13, color: "#a38a5d" }}><span className="spinner" /> Fetching live rates…</span>
           ) : fxError ? (
-            <span style={{ fontSize: 12, color: "#dc2626" }}>⚠️ FX fetch failed</span>
+            <span style={{ fontSize: 12, color: "#dc2626", display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <AlertTriangle size={13} /> FX fetch failed
+            </span>
           ) : (
             <div>
               <div style={{ fontSize: 11, color: "#a38a5d" }}>
@@ -187,14 +189,16 @@ export default function ExportMarkets() {
               <div style={{ fontSize: 12, color: "#15803d", fontWeight: 700 }}>● LIVE</div>
             </div>
           )}
-          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 4 }}>⟳ Refresh</button>
+          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <RefreshCw size={12} /> Refresh
+          </button>
         </div>
       </div>
 
       {/* ── FX Rates ────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
-          💱 Live Forex Exchange Rates (to INR)
+          <ArrowLeftRight size={18} style={{ color: "#d97706" }} /> Live Forex Exchange Rates (to INR)
           {fxLoading && <span className="spinner" />}
         </div>
 
@@ -224,8 +228,9 @@ export default function ExportMarkets() {
         </div>
 
         {fxError && (
-          <div style={{ marginTop: 10, fontSize: 12, color: "#dc2626", padding: "10px 14px", borderRadius: 10, background: "#fef2f2", border: "1px solid rgba(239,68,68,0.15)" }}>
-            ⚠️ Could not fetch live FX rates. Showing last known values. Click ⟳ Refresh to retry.
+          <div style={{ marginTop: 10, fontSize: 12, color: "#dc2626", padding: "10px 14px", borderRadius: 10, background: "#fef2f2", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertTriangle size={15} style={{ flexShrink: 0 }} />
+            <span>Could not fetch live FX rates. Showing last known values. Click Refresh to retry.</span>
           </div>
         )}
       </div>
@@ -233,16 +238,19 @@ export default function ExportMarkets() {
       {/* ── Destination Market Index ─────────────────────────────────── */}
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a" }}>
-            🌍 Target Destination Market Index & Import Tariffs
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+            <Globe size={18} style={{ color: "#d97706" }} /> Target Destination Market Index & Import Tariffs
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <input
-              placeholder="🔍 Search country or product…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", width: 220 }}
-            />
+            <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+              <Search size={14} style={{ position: "absolute", left: 10, color: "#a38a5d", pointerEvents: "none" }} />
+              <input
+                placeholder="Search country or product…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{ padding: "8px 12px 8px 30px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", width: 220 }}
+              />
+            </div>
             <select
               value={sortBy} onChange={e => setSortBy(e.target.value)}
               style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", appearance: "none" }}
@@ -282,8 +290,9 @@ export default function ExportMarkets() {
               </div>
 
               {/* Note */}
-              <div style={{ fontSize: 12, color: "#a38a5d", paddingTop: 6, borderTop: "1px solid rgba(245,158,11,0.08)" }}>
-                ℹ️ {d.note}
+              <div style={{ fontSize: 12, color: "#a38a5d", paddingTop: 6, borderTop: "1px solid rgba(245,158,11,0.08)", display: "flex", alignItems: "flex-start", gap: 6 }}>
+                <Info size={14} style={{ color: "#d97706", flexShrink: 0, marginTop: 1 }} />
+                <span>{d.note}</span>
               </div>
             </div>
           ))}
@@ -292,8 +301,9 @@ export default function ExportMarkets() {
           )}
         </div>
 
-        <div style={{ marginTop: 16, fontSize: 11, color: "#a38a5d", padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)" }}>
-          ℹ️ Tariff rates are approximate standard MFN/FTA rates for agricultural commodities. Actual rates vary by HS code. Always verify with a licensed customs broker before shipment.
+        <div style={{ marginTop: 16, fontSize: 11, color: "#a38a5d", padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 8 }}>
+          <Info size={15} style={{ color: "#0284c7", flexShrink: 0, marginTop: 1 }} />
+          <span>Tariff rates are approximate standard MFN/FTA rates for agricultural commodities. Actual rates vary by HS code. Always verify with a licensed customs broker before shipment.</span>
         </div>
       </div>
     </>

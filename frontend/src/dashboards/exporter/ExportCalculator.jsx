@@ -1,5 +1,6 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
+import { Calculator, Settings, BarChart2, Info, Printer } from "lucide-react";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
@@ -143,7 +144,7 @@ export default function ExportCalculator() {
         .footer{margin-top:32px;font-size:11px;color:#94a3b8;}
       </style>
     </head><body>
-      <h1>🧮 CIF Export Margin Estimate</h1>
+      <h1>CIF Export Margin Estimate</h1>
       <div class="sub">${crop} → ${dest} · Generated ${new Date().toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})}</div>
       <table>
         <tr><th>Parameter</th><th>Value</th></tr>
@@ -161,7 +162,7 @@ export default function ExportCalculator() {
       <script>window.onload=()=>setTimeout(()=>window.print(),300);<\/script>
     </body></html>`);
     w.document.close();
-    showToast("📄 Opening print/PDF dialog…");
+    showToast("Opening print/PDF dialog…");
   };
 
   return (
@@ -178,7 +179,9 @@ export default function ExportCalculator() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Financial Trade Modeling</div>
-          <h1 className="pg-title">🧮 CIF Freight & Tariff Margin Calculator</h1>
+          <h1 className="pg-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Calculator size={26} color="#d97706" /> CIF Freight & Tariff Margin Calculator
+          </h1>
           <p className="pg-sub">Estimate Cost, Insurance & Freight (CIF), destination port tariffs, landed costs, and net export profits.</p>
         </div>
         {/* Live FX badge */}
@@ -197,7 +200,9 @@ export default function ExportCalculator() {
         {/* ── Left: Inputs ─────────────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div className="card">
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 16 }}>⚙️ Export Shipment Parameters</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+              <Settings size={18} color="#d97706" /> Export Shipment Parameters
+            </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
@@ -267,8 +272,8 @@ export default function ExportCalculator() {
 
         {/* ── Right: Output ────────────────────────────────────────── */}
         <div className="card" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a" }}>
-            📊 CIF Landed Cost & Profit Projection
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
+            <BarChart2 size={18} color="#d97706" /> CIF Landed Cost & Profit Projection
           </div>
 
           {/* Cost breakdown */}
@@ -310,12 +315,13 @@ export default function ExportCalculator() {
           </div>
 
           {/* Disclaimer */}
-          <div style={{ fontSize: 11, color: "#a38a5d", padding: "10px 12px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)" }}>
-            ℹ️ Estimates only. Actual freight, tariffs, and insurance vary by carrier, HS code, and trade agreement. Consult a customs broker for binding rates.
+          <div style={{ fontSize: 11, color: "#a38a5d", padding: "10px 12px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 6 }}>
+            <Info size={14} style={{ flexShrink: 0, marginTop: 1 }} color="#0284c7" />
+            <span>Estimates only. Actual freight, tariffs, and insurance vary by carrier, HS code, and trade agreement. Consult a customs broker for binding rates.</span>
           </div>
 
           <button className="btn-gold" style={{ justifyContent: "center" }} onClick={printCalc}>
-            🖨️ Print / Export as PDF
+            <Printer size={16} /> Print / Export as PDF
           </button>
         </div>
       </div>

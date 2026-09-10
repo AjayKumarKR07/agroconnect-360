@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
 import RazorpayCheckout from "../../components/RazorpayCheckout";
-import { Search } from "lucide-react";
+import {
+  Search, Sprout, FlaskConical, ShieldCheck, Truck, Droplets, Leaf,
+  Flower2, HardHat, Package, Wheat, ShoppingCart, AlertTriangle,
+  CheckCircle2, MapPin, CreditCard, Lightbulb, Send, Banknote,
+  Smartphone, Landmark, RefreshCw, Star, X
+} from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
    PRODUCT CATALOG — 10 categories, 40+ realistic products
@@ -11,7 +16,7 @@ import { Search } from "lucide-react";
 ───────────────────────────────────────────────────────────────── */
 const CATEGORIES = [
   {
-    id: "seeds", emoji: "🌱", label: "Seeds & Saplings",
+    id: "seeds", Icon: Sprout, label: "Seeds & Saplings",
     items: [
       { id: "s1",  name: "Hybrid Tomato Seeds",       brand: "Syngenta",       price: 350,  unit: "50g pkt",    rating: 4.8, stock: "in",  img: "🍅", desc: "High-yield hybrid variety. Resistant to TMV and Fusarium wilt." },
       { id: "s2",  name: "BT Cotton Seeds",           brand: "Mahyco",         price: 820,  unit: "450g pkt",   rating: 4.5, stock: "in",  img: "🌿", desc: "Bollworm-resistant transgenic cotton. Suitable for black soil regions." },
@@ -26,7 +31,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "fertilizers", emoji: "🧪", label: "Fertilizers",
+    id: "fertilizers", Icon: FlaskConical, label: "Fertilizers",
     items: [
       { id: "f1", name: "DAP (18-46-0)",               brand: "IFFCO",          price: 1350, unit: "50 kg bag",  rating: 4.9, stock: "in",  img: "🪣", desc: "Di-ammonium phosphate. Best for root development and flowering." },
       { id: "f2", name: "Urea (46% N)",                brand: "NFL",            price: 266,  unit: "45 kg bag",  rating: 4.8, stock: "in",  img: "🪣", desc: "High nitrogen fertilizer. Promotes leafy growth in all crops." },
@@ -41,7 +46,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "pesticides", emoji: "🛡️", label: "Pesticides & Fungicides",
+    id: "pesticides", Icon: ShieldCheck, label: "Pesticides & Fungicides",
     items: [
       { id: "p1", name: "Chlorpyrifos 20 EC",         brand: "Rallis",         price: 380,  unit: "500 ml",     rating: 4.4, stock: "in",  img: "🧴", desc: "Broad-spectrum insecticide for soil and foliar pests." },
       { id: "p2", name: "Mancozeb 75 WP",             brand: "Indofil",        price: 240,  unit: "500g",       rating: 4.6, stock: "in",  img: "🛡️", desc: "Protective fungicide for blight, anthracnose and downy mildew." },
@@ -54,7 +59,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "equipment", emoji: "🚜", label: "Equipment & Tools",
+    id: "equipment", Icon: Truck, label: "Equipment & Tools",
     items: [
       { id: "e1",  name: "Knapsack Sprayer 16L",      brand: "Neptune",        price: 890,  unit: "1 piece",    rating: 4.7, stock: "in",  img: "🚿", desc: "Manual back-mounted sprayer. Adjustable nozzle for fine mist." },
       { id: "e2",  name: "Battery Sprayer 16L",       brand: "Fortune",        price: 2200, unit: "1 piece",    rating: 4.8, stock: "in",  img: "🔋", desc: "Rechargeable electric sprayer. 2-hour charge for full-day operation." },
@@ -68,7 +73,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "irrigation", emoji: "💧", label: "Irrigation Supplies",
+    id: "irrigation", Icon: Droplets, label: "Irrigation Supplies",
     items: [
       { id: "i1", name: "Drip Irrigation Kit (1 Acre)",brand: "Jain",          price: 3500, unit: "per acre kit",rating: 4.8, stock: "in",  img: "💧", desc: "Complete drip system: lateral pipes, emitters, filters, connectors." },
       { id: "i2", name: "Sprinkler Set (10 heads)",   brand: "Netafim",        price: 1800, unit: "set of 10",  rating: 4.6, stock: "in",  img: "🌊", desc: "Pop-up brass sprinkler heads with 360° coverage. 4–8m radius." },
@@ -80,7 +85,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "organic", emoji: "🌿", label: "Organic & Bio Inputs",
+    id: "organic", Icon: Leaf, label: "Organic & Bio Inputs",
     items: [
       { id: "o1", name: "Vermicompost 25kg",           brand: "Organic India",  price: 450,  unit: "25 kg bag",  rating: 4.7, stock: "in",  img: "🪱", desc: "Premium worm castings. Boosts soil biology and plant immunity." },
       { id: "o2", name: "Neem Cake Powder",            brand: "PNMB",           price: 280,  unit: "10 kg bag",  rating: 4.5, stock: "in",  img: "🌿", desc: "Cold-pressed neem cake. NPK: 6-1-1. Effective soil pesticide." },
@@ -91,7 +96,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "nursery", emoji: "🪴", label: "Nursery & Planting",
+    id: "nursery", Icon: Flower2, label: "Nursery & Planting",
     items: [
       { id: "n1", name: "Seedling Trays 98-cell",      brand: "AgriSupply",     price: 85,   unit: "per tray",   rating: 4.6, stock: "in",  img: "🪴", desc: "High-impact PS trays. Reusable. Ideal for vegetable nursery." },
       { id: "n2", name: "Grow Bags 18x18 inch (10pc)", brand: "Kisaan Store",   price: 199,  unit: "10 bags",    rating: 4.5, stock: "in",  img: "🛍️", desc: "UV-stabilised HDPE grow bags for vegetables and fruit trees." },
@@ -102,7 +107,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "safety", emoji: "🧤", label: "Farm Safety & PPE",
+    id: "safety", Icon: HardHat, label: "Farm Safety & PPE",
     items: [
       { id: "sf1", name: "Agricultural Gloves (Pair)",  brand: "Karam",         price: 120,  unit: "1 pair",     rating: 4.5, stock: "in",  img: "🧤", desc: "Nitrile-coated cotton gloves. Chemical-resistant, cut-resistant." },
       { id: "sf2", name: "Anti-Dust Mask N95",          brand: "3M",            price: 95,   unit: "5 pieces",   rating: 4.8, stock: "in",  img: "😷", desc: "N95 respirator. Protects from pesticide dust and crop allergens." },
@@ -113,7 +118,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "storage", emoji: "📦", label: "Storage & Post-Harvest",
+    id: "storage", Icon: Package, label: "Storage & Post-Harvest",
     items: [
       { id: "st1", name: "HDPE Grain Storage Bag 50kg",brand: "Tara",           price: 55,   unit: "per bag",    rating: 4.7, stock: "in",  img: "🛍️", desc: "Hermetic 3-layer HDPE bag. Keeps grain pest-free for 6 months." },
       { id: "st2", name: "Plastic Produce Crates",     brand: "Cello",          price: 320,  unit: "1 piece",    rating: 4.6, stock: "in",  img: "📦", desc: "Stackable ventilated crate for fruits and vegetables. 30 kg capacity." },
@@ -124,7 +129,7 @@ const CATEGORIES = [
     ],
   },
   {
-    id: "protection", emoji: "🌾", label: "Crop Protection",
+    id: "protection", Icon: Wheat, label: "Crop Protection",
     items: [
       { id: "cp1", name: "Yellow Sticky Traps (25pc)",  brand: "Pheronine",     price: 180,  unit: "25 traps",   rating: 4.6, stock: "in",  img: "🟡", desc: "Reusable yellow sticky cards for monitoring and trapping flying insects." },
       { id: "cp2", name: "Pheromone Traps (Fruit Fly)", brand: "Pheronine",    price: 250,  unit: "5 traps",    rating: 4.7, stock: "in",  img: "🪤", desc: "Fruit fly lure + funnel trap. Certified for mango and guava orchards." },
@@ -150,12 +155,22 @@ const CROP_RECOMMENDATIONS = {
 };
 
 /* ── Stars ── */
-const Stars = ({ rating }) => (
-  <span style={{ color: "#b45309", fontSize: 12 }}>
-    {"★".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
-    <span style={{ color: "#7a8fa6", marginLeft: 4, fontSize: 11 }}>{rating}</span>
-  </span>
-);
+const Stars = ({ rating }) => {
+  const full = Math.floor(rating);
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+      {[...Array(5)].map((_, i) => (
+        <Star
+          key={i}
+          size={11}
+          fill={i < full ? "#b45309" : "none"}
+          color={i < full ? "#b45309" : "#94a3b8"}
+        />
+      ))}
+      <span style={{ color: "#7a8fa6", marginLeft: 4, fontSize: 11 }}>{rating}</span>
+    </span>
+  );
+};
 
 /* ── Stock badge ── */
 const StockBadge = ({ stock }) => {
@@ -247,8 +262,8 @@ function QuickViewModal({ item, onClose, onAdd }) {
           <div className="modal-title" style={{ fontSize: 18, marginBottom: 0 }}>{item.name}</div>
           <button
             onClick={onClose}
-            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#7a8fa6", cursor: "pointer", width: 30, height: 30, fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center" }}
-          >×</button>
+            style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#7a8fa6", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}
+          ><X size={16} /></button>
         </div>
 
         <div style={{ fontSize: 13, color: "#7a8fa6", marginBottom: 10 }}>by {item.brand}</div>
@@ -274,7 +289,7 @@ function QuickViewModal({ item, onClose, onAdd }) {
             disabled={disabled}
             onClick={() => { if (!disabled) { onAdd(item); onClose(); } }}
           >
-            {disabled ? "Out of Stock" : "🛒 Add to Cart"}
+            {disabled ? "Out of Stock" : <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><ShoppingCart size={15} /> Add to Cart</span>}
           </button>
         </div>
       </div>
@@ -331,7 +346,7 @@ export default function BuyInputs() {
       if (ex) return prev.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c);
       return [...prev, { ...item, qty: 1 }];
     });
-    setToast(`✅ ${item.name} added to cart`);
+    setToast(`${item.name} added to cart`);
     setTimeout(() => setToast(""), 2500);
   };
 
@@ -565,14 +580,16 @@ export default function BuyInputs() {
         @media(max-width:900px) { .shop-layout { grid-template-columns:1fr; } }
       `}</style>
 
-      {toast && <div className="toast">{toast}</div>}
-      {quickView && <QuickViewModal item={quickView} onClose={() => setQuickView(null)} onAdd={(item) => { addToCart(item); setToast(`✅ ${item.name} added to cart`); }} />}
+      {toast && <div className="toast" style={{ display: "flex", alignItems: "center", gap: 8 }}><CheckCircle2 size={16} color="#16a34a" /> {toast}</div>}
+      {quickView && <QuickViewModal item={quickView} onClose={() => setQuickView(null)} onAdd={(item) => { addToCart(item); setToast(`${item.name} added to cart`); }} />}
 
       {/* ── Payment error after Razorpay dismissal / failure ─────────────── */}
       {paymentError && !orderSuccess && (
         <div className="modal-overlay" onClick={() => setPaymentError("")}>
           <div className="modal-box" style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+              <AlertTriangle size={48} color="#ef4444" />
+            </div>
             <div className="modal-title" style={{ color: "#dc2626", marginBottom: 8 }}>Payment Not Completed</div>
             <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 24, lineHeight: 1.6 }}>{paymentError}</div>
             <button className="btn-green" onClick={() => setPaymentError("")}>OK</button>
@@ -603,12 +620,16 @@ export default function BuyInputs() {
       {/* ══ ORDER SUCCESS ══════════════════════════════════════════ */}
       {orderSuccess && (
         <div className="success-wrap">
-          <div className="success-icon">🎉</div>
+          <div className="success-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <CheckCircle2 size={48} color="#16a34a" />
+          </div>
           <div className="success-title">Order Placed Successfully!</div>
           <div className="success-sub">Your farm inputs are on the way.</div>
           <div className="order-id-badge">Order ID: {orderSuccess.orderId}</div>
           <div className="card" style={{ maxWidth: 420, margin: "0 auto 20px", textAlign: "left" }}>
-            <div className="card-title" style={{ marginBottom: 12 }}>📦 Order Summary</div>
+            <div className="card-title" style={{ marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+              <Package size={18} color="#16a34a" /> Order Summary
+            </div>
             {orderSuccess.items.map(item => (
               <div key={item.id} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
                 <span>{item.name} × {item.qty}</span>
@@ -621,17 +642,17 @@ export default function BuyInputs() {
             </div>
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13 }}>
-              📍 Delivery to: <strong style={{ color: "#0f172a" }}>{orderSuccess.delivery.city}</strong>
+            <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+              <MapPin size={15} color="#16a34a" /> Delivery to: <strong style={{ color: "#0f172a" }}>{orderSuccess.delivery.city}</strong>
             </div>
-            <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13 }}>
-              💳 Payment: <strong style={{ color: "#0f172a" }}>
+            <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+              <CreditCard size={15} color="#16a34a" /> Payment: <strong style={{ color: "#0f172a" }}>
                 {orderSuccess.payment === "cod" ? "Cash on Delivery" : "Paid Online (Razorpay)"}
               </strong>
             </div>
           </div>
-          <button className="btn-green" style={{ marginTop: 28, padding: "14px 32px" }} onClick={() => setOrderSuccess(null)}>
-            🛒 Continue Shopping
+          <button className="btn-green" style={{ marginTop: 28, padding: "14px 32px", display: "inline-flex", alignItems: "center", gap: 8 }} onClick={() => setOrderSuccess(null)}>
+            <ShoppingCart size={16} /> Continue Shopping
           </button>
         </div>
       )}
@@ -643,14 +664,14 @@ export default function BuyInputs() {
           <div className="pg-head">
             <div>
               <div className="eyebrow">Farmer Store</div>
-              <h1 className="pg-title">🛒 Buy Farm Inputs</h1>
+              <h1 className="pg-title"><ShoppingCart size={22} strokeWidth={2} style={{ marginRight: 8, color: "#16a34a", verticalAlign: "middle" }} />Buy Farm Inputs</h1>
               <p className="pg-sub">
                 {totalProductCount} products across {CATEGORIES.length} categories — delivered to your farm.
               </p>
             </div>
             {cart.length > 0 && (
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 13, color: "var(--text2)" }}>🛒 {totalItems} items</div>
+                <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}><ShoppingCart size={14} /> {totalItems} items</div>
                 <div style={{ fontWeight: 800, color: "#15803d", fontSize: 18 }}>₹{totalAmount.toLocaleString("en-IN")}</div>
               </div>
             )}
@@ -659,8 +680,8 @@ export default function BuyInputs() {
           {/* ── Personalised recommendation bar ── */}
           {farm && farm.previousCrop ? (
             <div className="rec-bar">
-              <span style={{ fontSize: 12, color: "#15803d", fontWeight: 700, marginRight: 4 }}>
-                🌾 Recommended for {farm.previousCrop}:
+              <span style={{ fontSize: 12, color: "#15803d", fontWeight: 700, marginRight: 4, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Sprout size={14} /> Recommended for {farm.previousCrop}:
               </span>
               {recommendedCatIds.length > 0 ? (
                 recommendedCatIds.map(cid => {
@@ -676,7 +697,7 @@ export default function BuyInputs() {
                       }}
                       onClick={() => { setActiveCategory(cid); setSearch(""); }}
                     >
-                      {cat.emoji} {cat.label}
+                      {cat.Icon && <cat.Icon size={12} strokeWidth={1.75} style={{ verticalAlign: "middle", marginRight: 4 }} />}{cat.label}
                     </button>
                   );
                 })
@@ -687,8 +708,9 @@ export default function BuyInputs() {
               )}
             </div>
           ) : !farm ? (
-            <div style={{ padding: "12px 16px", borderRadius: 12, background: "#f8fafc", border: "1px solid var(--border)", marginBottom: 20, fontSize: 13, color: "var(--text2)" }}>
-              💡 <strong style={{ color: "#0f172a" }}>Complete your Farm Profile</strong> to get personalised input recommendations for your crops.
+            <div style={{ padding: "12px 16px", borderRadius: 12, background: "#f8fafc", border: "1px solid var(--border)", marginBottom: 20, fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", gap: 8 }}>
+              <Lightbulb size={16} color="#16a34a" style={{ flexShrink: 0 }} />
+              <span><strong style={{ color: "#0f172a" }}>Complete your Farm Profile</strong> to get personalised input recommendations for your crops.</span>
             </div>
           ) : null}
 
@@ -696,12 +718,16 @@ export default function BuyInputs() {
           <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
             <input
               className="field-input"
-              placeholder="🔍 Search products, brands, categories…"
+              placeholder="Search products, brands, categories…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: 420 }}
             />
-            {search && <button className="btn-ghost" onClick={() => setSearch("")}>✕ Clear</button>}
+            {search && (
+              <button className="btn-ghost" onClick={() => setSearch("")} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <X size={14} /> Clear
+              </button>
+            )}
           </div>
 
           {/* ── Category tabs ── */}
@@ -713,7 +739,7 @@ export default function BuyInputs() {
                   className={`cat-tab ${activeCategory === c.id ? "active" : ""}`}
                   onClick={() => setActiveCategory(c.id)}
                 >
-                  {c.emoji} {c.label}
+                  {c.Icon && <c.Icon size={14} strokeWidth={1.75} style={{ verticalAlign: "middle", marginRight: 5 }} />}{c.label}
                 </button>
               ))}
             </div>
@@ -725,7 +751,7 @@ export default function BuyInputs() {
             return (
               <div style={{ marginBottom: 16 }}>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
-                  {cat?.emoji} {cat?.label}
+                  {cat?.Icon && <cat.Icon size={16} strokeWidth={1.75} style={{ verticalAlign: "middle", marginRight: 6, color: "#15803d" }} />}{cat?.label}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>
                   {cat?.items.length} products
@@ -765,7 +791,9 @@ export default function BuyInputs() {
             {/* ── Cart side panel ── */}
             {cart.length > 0 && (
               <div className="card" style={{ position: "sticky", top: 24 }}>
-                <div className="card-title" style={{ marginBottom: 14 }}>🛒 Cart ({totalItems})</div>
+                <div className="card-title" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                  <ShoppingCart size={18} color="#16a34a" /> Cart ({totalItems})
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
                   {cart.map(c => (
                     <div key={c.id} style={{ padding: "10px 12px", background: "var(--surface)", borderRadius: 10, border: "1px solid var(--border)" }}>
@@ -773,8 +801,8 @@ export default function BuyInputs() {
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#0f172a", flex: 1, lineHeight: 1.3 }}>{c.name}</div>
                         <button
                           onClick={() => removeFromCart(c.id)}
-                          style={{ background: "rgba(239,68,68,0.1)", border: "none", borderRadius: 6, padding: "2px 6px", color: "#dc2626", cursor: "pointer", fontSize: 10, marginLeft: 6 }}
-                        >✕</button>
+                          style={{ background: "rgba(239,68,68,0.1)", border: "none", borderRadius: 6, padding: "2px 4px", color: "#dc2626", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", marginLeft: 6 }}
+                        ><X size={12} /></button>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div className="qty-ctrl">
@@ -811,10 +839,10 @@ export default function BuyInputs() {
 
                 <button
                   className="btn-green"
-                  style={{ width: "100%", justifyContent: "center", padding: "13px", fontSize: 14, fontWeight: 800 }}
+                  style={{ width: "100%", justifyContent: "center", padding: "13px", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", gap: 8 }}
                   onClick={() => setShowCheckout(true)}
                 >
-                  🚀 Place Order
+                  <Send size={16} /> Place Order
                 </button>
               </div>
             )}
@@ -826,12 +854,16 @@ export default function BuyInputs() {
       {showCheckout && (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowCheckout(false)}>
           <div className="modal-box">
-            <div className="modal-title">📦 Confirm Your Order</div>
+            <div className="modal-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Package size={20} color="#16a34a" /> Confirm Your Order
+            </div>
             <div className="modal-sub">Enter delivery details to place your order.</div>
 
             {/* Mini summary */}
             <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 16px", marginBottom: 20 }}>
-              <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 8 }}>🛒 {totalItems} items</div>
+              <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <ShoppingCart size={13} /> {totalItems} items
+              </div>
               {cart.map(c => (
                 <div key={c.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 3 }}>
                   <span>{c.name} × {c.qty}</span>
@@ -844,7 +876,7 @@ export default function BuyInputs() {
               </div>
             </div>
 
-            {formError && <div className="alert-error" style={{ marginBottom: 14 }}>⚠️ {formError}</div>}
+            {formError && <div className="alert-error" style={{ marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><AlertTriangle size={16} /> {formError}</div>}
 
             <form onSubmit={handlePlaceOrder}>
               <div className="checkout-fields">
@@ -867,9 +899,13 @@ export default function BuyInputs() {
                 <div>
                   <label className="field-label">Payment Method *</label>
                   <div className="pay-opts">
-                    {[["cod","💵 Cash on Delivery"],["upi","📱 UPI"],["bank","🏦 Bank Transfer"]].map(([val, label]) => (
-                      <div key={val} className={`pay-opt ${form.payment === val ? "selected" : ""}`} onClick={() => setForm(p => ({ ...p, payment: val }))}>
-                        {label}
+                    {[
+                      { val: "cod", label: "Cash on Delivery", Icon: Banknote },
+                      { val: "upi", label: "UPI", Icon: Smartphone },
+                      { val: "bank", label: "Bank Transfer", Icon: Landmark }
+                    ].map(({ val, label, Icon }) => (
+                      <div key={val} className={`pay-opt ${form.payment === val ? "selected" : ""}`} onClick={() => setForm(p => ({ ...p, payment: val }))} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <Icon size={16} /> {label}
                       </div>
                     ))}
                   </div>
@@ -878,7 +914,7 @@ export default function BuyInputs() {
               <div style={{ display: "flex", gap: 10 }}>
                 <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setShowCheckout(false)}>← Back</button>
                 <button type="submit" className="btn-green" style={{ flex: 2, justifyContent: "center", padding: "13px" }} disabled={placing}>
-                  {placing ? "⏳ Placing…" : "✅ Confirm Order"}
+                  {placing ? <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><RefreshCw size={14} className="animate-spin" /> Placing…</span> : <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={14} /> Confirm Order</span>}
                 </button>
               </div>
             </form>

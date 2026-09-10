@@ -5,21 +5,23 @@ import { DS_ADMIN, ROLE_COLOR, fmtINR, relativeTime } from "./adminStyles";
 import {
   Users, Package, Gem, Wheat, Globe2, Scale,
   RefreshCw, ArrowRight, TrendingUp, ClipboardList, BarChart3,
-  Zap, AlertTriangle
+  Zap, AlertTriangle, ShoppingCart, Store, Shield, Handshake,
+  Ship, CheckCircle2, XCircle, Search, Bell, Ban,
+  Trash2, Anchor, Megaphone, FileText, Settings, Globe, AlertCircle
 } from "lucide-react";
 
 const ACTION_ICONS = {
-  user_suspended: "🚫",
-  user_activated: "✅",
-  crop_deleted: "🗑️",
-  order_status_changed: "📦",
-  rfq_status_changed: "🚢",
-  shipment_status_changed: "⛴️",
-  dispute_resolved: "⚖️",
-  dispute_rejected: "❌",
-  dispute_under_review: "🔍",
-  dispute_open: "📂",
-  broadcast_sent: "📢",
+  user_suspended: Ban,
+  user_activated: CheckCircle2,
+  crop_deleted: Trash2,
+  order_status_changed: Package,
+  rfq_status_changed: Ship,
+  shipment_status_changed: Anchor,
+  dispute_resolved: Scale,
+  dispute_rejected: XCircle,
+  dispute_under_review: Search,
+  dispute_open: AlertCircle,
+  broadcast_sent: Megaphone,
 };
 
 const ENTITY_ROUTES = {
@@ -161,12 +163,12 @@ export default function AdminDashboard() {
   if (data?.kpis) {
     const { kpis, exports, crops } = data;
 
-    // 🚨 URGENT
+    // [URGENT]
     if (kpis.openDisputes > 0) {
       urgentActions.push({
         level: "URGENT",
         levelColor: "#f87171",
-        emoji: "🚨",
+        icon: <AlertTriangle size={18} strokeWidth={2} />,
         title: `${kpis.openDisputes} Open Dispute${kpis.openDisputes > 1 ? "s" : ""}`,
         desc: "Mediation required between buyer/seller or farmer.",
         to: "/admin/disputes?status=open",
@@ -177,7 +179,7 @@ export default function AdminDashboard() {
       urgentActions.push({
         level: "URGENT",
         levelColor: "#f87171",
-        emoji: "🚫",
+        icon: <Ban size={18} strokeWidth={2} />,
         title: `${kpis.suspendedUsers} Suspended Account${kpis.suspendedUsers > 1 ? "s" : ""}`,
         desc: "Users locked pending administrative compliance review.",
         to: "/admin/users?status=suspended",
@@ -185,12 +187,12 @@ export default function AdminDashboard() {
       });
     }
 
-    // ⚠️ ATTENTION
+    // [ATTENTION]
     if (kpis.pendingOrders > 0) {
       attentionActions.push({
         level: "ATTENTION",
         levelColor: "#fbbf24",
-        emoji: "⚠️",
+        icon: <AlertTriangle size={18} strokeWidth={2} />,
         title: `${kpis.pendingOrders} Pending Order${kpis.pendingOrders > 1 ? "s" : ""}`,
         desc: "Marketplace orders awaiting dispatch or farmer acceptance.",
         to: "/admin/orders?status=pending",
@@ -201,7 +203,7 @@ export default function AdminDashboard() {
       attentionActions.push({
         level: "ATTENTION",
         levelColor: "#fbbf24",
-        emoji: "🚢",
+        icon: <Ship size={18} strokeWidth={2} />,
         title: `${kpis.pendingRFQs} Pending Export RFQ${kpis.pendingRFQs > 1 ? "s" : ""}`,
         desc: "International export inquiries waiting for quotation review.",
         to: "/admin/exports?status=pending",
@@ -212,7 +214,7 @@ export default function AdminDashboard() {
       attentionActions.push({
         level: "ATTENTION",
         levelColor: "#fbbf24",
-        emoji: "🌍",
+        icon: <Globe2 size={18} strokeWidth={2} />,
         title: `${exports.interestsStatuses.pending} Export Inquir${exports.interestsStatuses.pending > 1 ? "ies" : "y"}`,
         desc: "Foreign buyer interests awaiting farmer deal terms.",
         to: "/admin/exports",
@@ -220,12 +222,12 @@ export default function AdminDashboard() {
       });
     }
 
-    // 📋 NORMAL
+    // [NORMAL]
     if (crops?.statuses?.ready > 0) {
       normalActions.push({
         level: "NORMAL",
         levelColor: "#38bdf8",
-        emoji: "🌾",
+        icon: <Wheat size={18} strokeWidth={2} />,
         title: `${crops.statuses.ready} Ready Crop Listing${crops.statuses.ready > 1 ? "s" : ""}`,
         desc: "Crops harvested and ready for marketplace catalog listing.",
         to: "/admin/crops?status=ready",
@@ -468,7 +470,7 @@ export default function AdminDashboard() {
           background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)",
           color: "#b45309", fontSize: 13, fontWeight: 600,
         }}>
-          <span>⚠️ {bgError}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><AlertTriangle size={14} /> {bgError}</span>
           <button
             onClick={() => { setBgError(null); load(true); }}
             style={{ background: "none", border: "none", color: "#b45309", cursor: "pointer", fontWeight: 800, fontSize: 13 }}
@@ -590,12 +592,12 @@ export default function AdminDashboard() {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 8 }}>
               {[
-                { emoji: "🌾", label: "Crops Listed", count: data.crops.total, to: "/admin/crops", color: "#818cf8" },
-                { emoji: "📦", label: "Orders Placed", count: data.orders.total, to: "/admin/orders", color: "#7c3aed" },
-                { emoji: "✅", label: "Delivered", count: data.orders.statuses.delivered || 0, to: "/admin/orders?status=delivered", color: "#15803d" },
-                { emoji: "🌍", label: "Export Inquiries", count: data.exports.interestsCount || 0, to: "/admin/exports", color: "#b45309" },
-                { emoji: "🤝", label: "Confirmed Deals", count: data.kpis.totalExportDeals || 0, to: "/admin/exports", color: "#fb923c" },
-                { emoji: "🚢", label: "Active Shipments", count: data.exports.activeShipments || 0, to: "/admin/exports?tab=shipments", color: "#0369a1" },
+                { icon: <Wheat size={18} strokeWidth={1.75} />, label: "Crops Listed", count: data.crops.total, to: "/admin/crops", color: "#818cf8" },
+                { icon: <Package size={18} strokeWidth={1.75} />, label: "Orders Placed", count: data.orders.total, to: "/admin/orders", color: "#7c3aed" },
+                { icon: <CheckCircle2 size={18} strokeWidth={1.75} />, label: "Delivered", count: data.orders.statuses.delivered || 0, to: "/admin/orders?status=delivered", color: "#15803d" },
+                { icon: <Globe2 size={18} strokeWidth={1.75} />, label: "Export Inquiries", count: data.exports.interestsCount || 0, to: "/admin/exports", color: "#b45309" },
+                { icon: <Handshake size={18} strokeWidth={1.75} />, label: "Confirmed Deals", count: data.kpis.totalExportDeals || 0, to: "/admin/exports", color: "#fb923c" },
+                { icon: <Ship size={18} strokeWidth={1.75} />, label: "Active Shipments", count: data.exports.activeShipments || 0, to: "/admin/exports?tab=shipments", color: "#0369a1" },
               ].map((step, idx, arr) => (
                 <Link
                   key={step.label}
@@ -619,7 +621,7 @@ export default function AdminDashboard() {
                     e.currentTarget.style.borderColor = `${step.color}25`;
                   }}
                 >
-                  <div style={{ fontSize: 18, marginBottom: 2 }}>{step.emoji}</div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 2, color: step.color }}>{step.icon}</div>
                   <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: step.color }}>
                     {step.count}
                   </div>
@@ -656,7 +658,7 @@ export default function AdminDashboard() {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span className="card-title">🚨 Action Required — Operational Priority</span>
+                <span className="card-title"><AlertTriangle size={15} strokeWidth={2} style={{ marginRight: 6, color: "#dc2626", verticalAlign: "middle" }} />Action Required — Operational Priority</span>
                 {allActions.length > 0 && (
                   <span
                     style={{
@@ -687,10 +689,10 @@ export default function AdminDashboard() {
                   gap: 12,
                 }}
               >
-                <span style={{ fontSize: 22 }}>✅</span>
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 38, height: 38, borderRadius: 10, background: "rgba(34,197,94,0.2)", color: "#15803d" }}><CheckCircle2 size={20} strokeWidth={1.75} /></span>
                 <div>
-                  <div style={{ fontWeight: 800, color: "#15803d", fontSize: 14 }}>
-                    ✓ All clear
+                  <div style={{ fontWeight: 800, color: "#15803d", fontSize: 14, display: "flex", alignItems: "center", gap: 5 }}>
+                    <CheckCircle2 size={15} /> All clear
                   </div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                     No urgent administrative actions require attention. All marketplace orders, RFQs, and accounts are currently healthy.
@@ -731,7 +733,7 @@ export default function AdminDashboard() {
                   >
                     <div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <span style={{ fontSize: 18 }}>{act.emoji}</span>
+                        <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 9, background: `${act.levelColor}20`, color: act.levelColor }}>{act.icon}</span>
                         <span
                           style={{
                             fontSize: 10,
@@ -775,11 +777,11 @@ export default function AdminDashboard() {
 
           {/* 4. TWO-COLUMN GRID: USER DISTRIBUTION & MARKETPLACE HEALTH */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 20, marginBottom: 24 }}>
-            {/* Column 1: 👥 USER DISTRIBUTION */}
+            {/* Column 1: USER DISTRIBUTION */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <div>
-                  <div className="card-title">👥 User Distribution &amp; Roles</div>
+                  <div className="card-title"><Users size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#818cf8", verticalAlign: "middle" }} />User Distribution & Roles</div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                     Total Registered: <strong style={{ color: "#0f172a" }}>{totalUsers}</strong>
                     {data.users.suspended > 0 && (
@@ -797,11 +799,11 @@ export default function AdminDashboard() {
               {/* Roles Breakdown Cards */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(100px,1fr))", gap: 8, marginBottom: 16 }}>
                 {[
-                  { role: "farmer", label: "Farmers", count: userRoles.farmer || 0, color: ROLE_COLOR.farmer, emoji: "👨‍🌾" },
-                  { role: "user", label: "Buyers", count: userRoles.user || 0, color: ROLE_COLOR.user, emoji: "🛒" },
-                  { role: "seller", label: "Sellers", count: userRoles.seller || 0, color: ROLE_COLOR.seller, emoji: "🏪" },
-                  { role: "exporter", label: "Exporters", count: userRoles.exporter || 0, color: ROLE_COLOR.exporter, emoji: "🌐" },
-                  { role: "admin", label: "Admins", count: userRoles.admin || 0, color: ROLE_COLOR.admin, emoji: "🛡️" },
+                  { role: "farmer",   label: "Farmers",   count: userRoles.farmer || 0,   color: ROLE_COLOR.farmer,   icon: <Wheat          size={18} strokeWidth={1.75} /> },
+                  { role: "user",     label: "Buyers",    count: userRoles.user || 0,     color: ROLE_COLOR.user,     icon: <ShoppingCart    size={18} strokeWidth={1.75} /> },
+                  { role: "seller",   label: "Sellers",   count: userRoles.seller || 0,   color: ROLE_COLOR.seller,   icon: <Store           size={18} strokeWidth={1.75} /> },
+                  { role: "exporter", label: "Exporters", count: userRoles.exporter || 0, color: ROLE_COLOR.exporter, icon: <Globe2          size={18} strokeWidth={1.75} /> },
+                  { role: "admin",    label: "Admins",    count: userRoles.admin || 0,    color: ROLE_COLOR.admin,    icon: <Shield          size={18} strokeWidth={1.75} /> },
                 ].map((r) => (
                   <Link
                     key={r.role}
@@ -823,7 +825,7 @@ export default function AdminDashboard() {
                     }}
                     title={`Click to filter users by ${r.label}`}
                   >
-                    <div style={{ fontSize: 18, marginBottom: 2 }}>{r.emoji}</div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4, color: r.color }}>{r.icon}</div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: r.color }}>
                       {r.count}
                     </div>
@@ -911,11 +913,11 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Column 2: 📦 MARKETPLACE HEALTH (Orders & Crops Pipelines) */}
+            {/* Column 2: MARKETPLACE HEALTH (Orders & Crops Pipelines) */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
                 <div>
-                  <div className="card-title">📦 Marketplace Health &amp; Pipeline</div>
+                  <div className="card-title"><Package size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Marketplace Health & Pipeline</div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                     Real fulfillment rates across Orders and Crop listings
                   </div>
@@ -1015,11 +1017,11 @@ export default function AdminDashboard() {
 
           {/* 5. TWO-COLUMN LOWER GRID: PLATFORM GROWTH & EXPORT/DISPUTES ACTIVITY */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 20, marginBottom: 24 }}>
-            {/* Column 1: 📈 PLATFORM GROWTH WITH HOVER TOOLTIPS */}
+            {/* Column 1: Platform Growth */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div>
-                  <div className="card-title">📈 Platform Growth &amp; Trajectory</div>
+                  <div className="card-title"><TrendingUp size={16} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Platform Growth &amp; Trajectory</div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                     Real 6-month historical trends from MongoDB
                   </div>
@@ -1045,7 +1047,7 @@ export default function AdminDashboard() {
 
               {growthList.length === 0 ? (
                 <div className="empty-state" style={{ padding: "30px 0" }}>
-                  <div className="empty-state-icon">📈</div>
+                  <div className="empty-state-icon"><TrendingUp size={36} strokeWidth={1.5} color="#c7d2fe" /></div>
                   <div className="empty-state-msg" style={{ fontSize: 14 }}>Not enough historical data</div>
                   <div className="empty-state-sub">Growth charts will render once platform transactions span multiple months.</div>
                 </div>
@@ -1114,13 +1116,13 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            {/* Column 2: 🌍 EXPORT & DISPUTE HEALTH PANELS */}
+            {/* Column 2: EXPORT & DISPUTE HEALTH PANELS */}
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {/* Export Marketplace Health Card */}
               <div className="card" style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <div>
-                    <div className="card-title">🌍 Export Marketplace &amp; Trade</div>
+                    <div className="card-title"><Globe size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Export Marketplace &amp; Trade</div>
                     <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 2 }}>
                       Cross-border transactions &amp; logistics
                     </div>
@@ -1163,7 +1165,7 @@ export default function AdminDashboard() {
               <div className="card" style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                   <div>
-                    <div className="card-title">⚖️ Dispute Resolution Health</div>
+                    <div className="card-title"><Scale size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Dispute Resolution Health</div>
                     <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 2 }}>
                       {data.disputes.total || 0} Total mediation cases
                     </div>
@@ -1207,7 +1209,7 @@ export default function AdminDashboard() {
           <div className="card">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div>
-                <div className="card-title">📜 Recent Administrative Activity</div>
+                <div className="card-title"><FileText size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Recent Administrative Activity</div>
                 <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                   Real-time security and moderation audit trail from MongoDB (Click any entry to view module)
                 </div>
@@ -1219,7 +1221,7 @@ export default function AdminDashboard() {
 
             {(data.activity || []).length === 0 ? (
               <div className="empty-state">
-                <div className="empty-state-icon">📜</div>
+                <div className="empty-state-icon"><FileText size={36} color="#94a3b8" /></div>
                 <div className="empty-state-msg">No admin actions recorded yet</div>
                 <div className="empty-state-sub">Administrative actions across users, orders, and moderation will appear here automatically.</div>
               </div>
@@ -1254,9 +1256,14 @@ export default function AdminDashboard() {
                       title={`Click to open ${log.entityType || "audit"} module`}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
-                        <span style={{ fontSize: 18, flexShrink: 0 }}>
-                          {ACTION_ICONS[log.action] || "⚙️"}
-                        </span>
+                        {(() => {
+                          const ActionIcon = ACTION_ICONS[log.action] || Settings;
+                          return (
+                            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 28, borderRadius: 8, background: "rgba(99,102,241,0.08)", color: "#4f46e5", flexShrink: 0 }}>
+                              <ActionIcon size={14} strokeWidth={2} />
+                            </span>
+                          );
+                        })()}
                         <div style={{ minWidth: 0 }}>
                           <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {log.description}
