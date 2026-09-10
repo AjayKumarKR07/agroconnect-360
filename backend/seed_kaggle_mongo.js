@@ -1,7 +1,7 @@
 /**
  * seed_kaggle_mongo.js
  * ─────────────────────────────────────────────────────────────
- * Seeds ALL 204,159 Kaggle mandi price records into MongoDB
+ * Seeds ALL 203,441 cleaned Kaggle mandi price records into MongoDB
  * for high-accuracy price predictions across all Indian states.
  *
  * Usage:
@@ -191,13 +191,16 @@ async function main() {
     const row = parseCSV(line, headers);
 
     // ── Parse and validate ──────────────────────────────────
-    const state     = titleCase(row.state);
-    const district  = titleCase(row.district);
-    const market    = titleCase(row.market || district); // use district as market if market is empty
-    const commodity = titleCase(row.commodity);
+    // Preserve exact cleaned names from CSV — do NOT titleCase state/district/commodity
+    // as that would re-corrupt carefully standardised names like "Tamilnadu", "Jammu & Kashmir" etc.
+    const state     = (row.state     || "").trim();
+    const district  = (row.district  || "").trim();
+    const market    = titleCase(row.market || district); // market: titleCase is fine
+    const commodity = (row.commodity || "").trim();
     const variety   = titleCase(row.variety || "Other");
 
-    if (!state || !district || !commodity) { totalSkipped++; continue; }
+    // Skip rows with missing core fields or corrupted NaN state
+    if (!state || state.toLowerCase() === "nan" || !district || !commodity) { totalSkipped++; continue; }
 
     const modalPrice = toNum(row.modalPrice);
     const minPrice   = toNum(row.minPrice)   ?? modalPrice;

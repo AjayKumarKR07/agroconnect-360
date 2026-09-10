@@ -465,7 +465,7 @@ export default function SellerProfile() {
             <button
               className="btn-ghost"
               style={{ width: "100%", justifyContent: "center", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)", fontSize: 13 }}
-              onClick={() => navigate("/select-role")}
+              onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
             >
               🔄 Change My Role
             </button>

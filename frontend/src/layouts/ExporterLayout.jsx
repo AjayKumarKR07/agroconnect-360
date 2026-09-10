@@ -143,6 +143,27 @@ export default function ExporterLayout() {
         }
         .ul-logout:hover { background:rgba(239,68,68,0.08); color:#f87171; border-color:rgba(239,68,68,0.15); }
 
+        .ul-switch-role {
+          display:flex; align-items:center; gap:12px;
+          padding:9px 12px; border-radius:12px;
+          background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.22);
+          color:#f59e0b; font-size:13px; font-weight:600;
+          cursor:pointer; width:100%; text-align:left; font-family:'Inter',sans-serif;
+          transition:all 0.2s; white-space:nowrap; overflow:hidden;
+          margin-bottom:6px;
+        }
+        .ul-switch-role:hover { background:rgba(245,158,11,0.16); border-color:rgba(245,158,11,0.35); color:#fbbf24; }
+
+        .ul-topbar-role-btn {
+          display:inline-flex; align-items:center; gap:6px;
+          padding:6px 12px; border-radius:20px;
+          background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25);
+          color:#f59e0b; font-size:12px; font-weight:600;
+          cursor:pointer; font-family:'Inter',sans-serif;
+          transition:all 0.2s;
+        }
+        .ul-topbar-role-btn:hover { background:rgba(245,158,11,0.16); color:#fbbf24; }
+
         /* ── TOGGLE ── */
         .ul-toggle {
           position:fixed; top:22px; z-index:60;
@@ -223,6 +244,14 @@ export default function ExporterLayout() {
                 </div>
               )}
             </div>
+            <button
+              className="ul-switch-role"
+              onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+              title={collapsed ? "Switch Role" : undefined}
+            >
+              <span className="ul-emoji">🔄</span>
+              {!collapsed && "Switch Role"}
+            </button>
             <button className="ul-logout" onClick={handleLogout} title={collapsed ? "Logout" : undefined}>
               <span className="ul-emoji">🚪</span>
               {!collapsed && "Logout"}
@@ -246,6 +275,13 @@ export default function ExporterLayout() {
               <div className="ul-time-chip">
                 {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}
               </div>
+              <button
+                className="ul-topbar-role-btn"
+                onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+                title="Switch Role"
+              >
+                🔄 Switch Role
+              </button>
               <div className="ul-topbar-avatar" title={user.name} onClick={() => navigate("profile")} style={{ cursor: "pointer" }}>{initials}</div>
 
             </div>

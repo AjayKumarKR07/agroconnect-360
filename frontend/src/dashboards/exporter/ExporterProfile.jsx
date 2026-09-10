@@ -371,7 +371,7 @@ export default function ExporterProfile() {
             <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>
               Want to use AgroConnect as a different user? Switch your role here.
             </p>
-            <button className="btn-amber-ghost" onClick={() => navigate("/select-role")}>
+            <button className="btn-amber-ghost" onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
               🔄 Change My Role
             </button>
           </div>

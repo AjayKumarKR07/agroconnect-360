@@ -175,6 +175,27 @@ export default function SellerLayout() {
         }
         .sl-logout:hover { background:rgba(239,68,68,0.08); color:#f87171; border-color:rgba(239,68,68,0.15); }
 
+        .sl-switch-role {
+          display:flex; align-items:center; gap:12px;
+          padding:9px 12px; border-radius:12px;
+          background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.22);
+          color:#a78bfa; font-size:13px; font-weight:600;
+          cursor:pointer; width:100%; text-align:left; font-family:'Inter',sans-serif;
+          transition:all 0.2s; white-space:nowrap; overflow:hidden;
+          margin-bottom:6px;
+        }
+        .sl-switch-role:hover { background:rgba(167,139,250,0.16); border-color:rgba(167,139,250,0.35); color:#c4b5fd; }
+
+        .sl-topbar-role-btn {
+          display:inline-flex; align-items:center; gap:6px;
+          padding:6px 12px; border-radius:20px;
+          background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.25);
+          color:#a78bfa; font-size:12px; font-weight:600;
+          cursor:pointer; font-family:'Inter',sans-serif;
+          transition:all 0.2s;
+        }
+        .sl-topbar-role-btn:hover { background:rgba(167,139,250,0.16); color:#c4b5fd; }
+
         /* ── TOGGLE ── */
         .sl-toggle {
           position:fixed; top:22px; z-index:60;
@@ -275,6 +296,14 @@ export default function SellerLayout() {
                 </div>
               )}
             </div>
+            <button
+              className="sl-switch-role"
+              onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+              title={collapsed ? "Switch Role" : undefined}
+            >
+              <span className="sl-emoji">🔄</span>
+              {!collapsed && "Switch Role"}
+            </button>
             <button className="sl-logout" onClick={handleLogout} title={collapsed ? "Logout" : undefined}>
               <span className="sl-emoji">🚪</span>
               {!collapsed && "Logout"}
@@ -302,6 +331,13 @@ export default function SellerLayout() {
               <div className="sl-time-chip">
                 {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}
               </div>
+              <button
+                className="sl-topbar-role-btn"
+                onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+                title="Switch Role"
+              >
+                🔄 Switch Role
+              </button>
               <div className="sl-topbar-avatar" title={user.name} onClick={() => navigate("/seller/profile")} style={{ cursor: "pointer" }}>{initials}</div>
 
             </div>

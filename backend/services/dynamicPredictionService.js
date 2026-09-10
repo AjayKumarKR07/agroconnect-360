@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const { execFile } = require("child_process");
 const {
   fetchHistoricalPrices,
@@ -121,6 +122,9 @@ const runPython = (
 ) => {
   return new Promise(
     (resolve, reject) => {
+      if (!fs.existsSync(scriptPath)) {
+        return reject(new Error(`Python script not found: ${scriptPath}`));
+      }
       execFile(
         "python",
         [scriptPath, ...args],
@@ -339,13 +343,13 @@ if (
     MIN_RECORDS
   ) {
     console.log(
-      `Only ${records.length} local records found.`
+      `Only ${records.length} local records found for ${commodity} in ${district}.`
     );
   }
 
   if (historyIsStale) {
     console.log(
-      `Historical data is stale. Latest local date: ${
+      `Historical data is stale for ${commodity}. Latest local date: ${
         latestLocalDate
           ? latestLocalDate
               .toISOString()
@@ -574,7 +578,7 @@ if (
   recentlyRefreshed
 ) {
   console.log(
-    `Skipping data.gov.in refresh: ${state}/${district}/${market}/${commodity} was checked within the last 6 hours`
+    `Skipping data.gov.in refresh: ${state}/${district}/${market}/${commodity} was checked within the last 6 hours.`
   );
 }
 
@@ -634,32 +638,51 @@ if (records.length > 0) {
   // 3. BUILD UNIQUE MODEL NAME
   // ----------------------------------------
 
-  const modelName = [
+  const modelBaseName = [
     safeName(state),
     safeName(district),
     safeName(market),
     safeName(commodity),
   ].join("_");
 
+  const uniqueId = crypto.randomUUID();
   const csvPath = path.join(
     tempDirectory,
-    `${modelName}.csv`
+    `${modelBaseName}_${uniqueId}.csv`
   );
 
   const modelPath = path.join(
     modelsDirectory,
-    `${modelName}.joblib`
+    `${modelBaseName}.joblib`
   );
 
 
   const kaggleCsvPath = path.join(mlDirectory, "clean_kaggle_mandi_prices.csv");
   let targetCsvPath = csvPath;
+  let isUsingKaggle = false;
 
   if (records.length > 0) {
+    console.log(
+      `[Prediction] Writing temp CSV: ${path.basename(csvPath)} (${records.length} records)`
+    );
     createCsv(records, csvPath);
+
+    if (!fs.existsSync(csvPath) || fs.statSync(csvPath).size === 0) {
+      console.error(
+        `[Prediction] CSV creation failed: ${path.basename(csvPath)}`
+      );
+      throw new Error(
+        "Failed to prepare historical data for prediction. Please try again."
+      );
+    }
+
+    console.log(
+      `[Prediction] CSV verified: ${path.basename(csvPath)}`
+    );
   } else if (fs.existsSync(kaggleCsvPath)) {
     console.log(`Using cleaned Kaggle dataset fallback for ${commodity} in ${district}`);
     targetCsvPath = kaggleCsvPath;
+    isUsingKaggle = true;
   }
 
   try {
@@ -677,8 +700,20 @@ if (records.length > 0) {
     let trainingResult = null;
 
     if (shouldTrain) {
-      console.log(`Training model: ${modelName} using ${targetCsvPath}`);
+      console.log(`[Prediction] Training model: ${modelBaseName}`);
       const trainingScript = path.join(mlDirectory, "train_dynamic_model.py");
+
+      // Guard: ensure CSV exists before spawning training script.
+      if (!fs.existsSync(targetCsvPath)) {
+        console.error(
+          `[Prediction] Training aborted — CSV not found: ${path.basename(targetCsvPath)}`
+        );
+        throw new Error(
+          "Historical data file is unavailable for model training. Please try again."
+        );
+      }
+
+      console.log(`[Prediction] Model training started`);
 
       trainingResult = await runPython(trainingScript, [
         "--csv",
@@ -709,7 +744,7 @@ if (
   trainedR2 < MIN_MODEL_R2
 ) {
   console.log(
-    `Model quality too low: R²=${trainedR2}`
+    `Model quality too low for ${modelBaseName}: R²=${trainedR2}`
   );
 
   return {
@@ -746,7 +781,7 @@ if (
     } else {
 
       console.log(
-        `Using cached model: ${modelName}`
+        `Using cached model: ${modelBaseName}`
       );
     }
 
@@ -760,6 +795,22 @@ if (
         mlDirectory,
         "predict_dynamic.py"
       );
+
+    // Guard: verify CSV exists before spawning
+    // predict_dynamic.py. This is the primary
+    // defense against FileNotFoundError.
+    if (!fs.existsSync(targetCsvPath)) {
+      console.error(
+        `[Prediction] Prediction aborted — CSV not found: ${path.basename(targetCsvPath)}`
+      );
+      throw new Error(
+        "Historical data file is unavailable for prediction. Please try again."
+      );
+    }
+
+    console.log(
+      `[Prediction] Prediction started for ${state}/${district}/${market}/${commodity}`
+    );
 
     const prediction =
       await runPython(
@@ -795,7 +846,7 @@ if (
   predictionR2 < MIN_MODEL_R2
 ) {
   console.log(
-    `Prediction rejected: R²=${predictionR2}`
+    `Prediction rejected for ${modelBaseName}: R²=${predictionR2}`
   );
 
   return {
@@ -853,19 +904,26 @@ if (
 
     // --------------------------------------
     // 9. DELETE TEMP CSV
+    //
+    // Only remove the per-request temp file.
+    // Never delete the shared Kaggle CSV.
     // --------------------------------------
 
-    try {
-      if (
-        fs.existsSync(csvPath)
-      ) {
-        fs.unlinkSync(csvPath);
+    if (!isUsingKaggle) {
+      try {
+        if (fs.existsSync(csvPath)) {
+          fs.unlinkSync(csvPath);
+          console.log(
+            `[Prediction] Temp CSV cleaned up: ${path.basename(csvPath)}`
+          );
+        }
+      } catch (cleanupError) {
+        // Log but do not throw — cleanup failure
+        // must not hide the prediction result.
+        console.error(
+          `[Prediction] Temp CSV cleanup error: ${cleanupError.message}`
+        );
       }
-    } catch (cleanupError) {
-      console.error(
-        "Temporary CSV cleanup error:",
-        cleanupError.message
-      );
     }
   }
 };

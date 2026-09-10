@@ -524,6 +524,20 @@ const markCatalogScopeSynced = async ({
 }
   );
 };
+
+
+// ==========================================
+// ACTIVE SYNC DEDUPLICATION GUARD
+//
+// If two users request the same unsynced scope
+// at the same moment, this Map ensures only one
+// government API download runs. The second
+// caller reuses the same pending Promise.
+// The entry is removed when the sync finishes
+// (success or failure).
+// ==========================================
+
+const activeSyncs = new Map();
   // ==========================================
 // HYBRID DISTRICTS
 // MongoDB first -> Government fallback
@@ -552,7 +566,7 @@ const getHybridDistricts = async (
     localDistricts.length > 0
   ) {
     console.log(
-      `Using fully synced local districts: ${state}`
+      `[Catalog] MongoDB cache hit — districts: ${state}`
     );
 
     return {
@@ -566,7 +580,7 @@ const getHybridDistricts = async (
   // ------------------------------------------
 
   console.log(
-    `District catalog not fully synced for ${state}. Checking data.gov.in...`
+    `[Catalog] MongoDB cache miss — districts: ${state}. Syncing from data.gov.in...`
   );
 
   try {
@@ -590,13 +604,17 @@ const getHybridDistricts = async (
         data.records.length,
     });
 
+    console.log(
+      `[Catalog] Districts synced for ${state}: ${districts.length} entries`
+    );
+
     return {
       source: "data.gov.in+mongodb",
       districts,
     };
   } catch (error) {
     console.error(
-      `Government district catalog failed for ${state}:`,
+      `[Catalog] Government district sync failed for ${state}:`,
       error.message
     );
 
@@ -611,7 +629,7 @@ const getHybridDistricts = async (
       fallbackDistricts.length > 0
     ) {
       console.log(
-        `Using MongoDB fallback districts: ${state} (${fallbackDistricts.length})`
+        `[Catalog] MongoDB fallback districts: ${state} (${fallbackDistricts.length})`
       );
 
       return {
@@ -628,13 +646,25 @@ const getHybridDistricts = async (
 
 // ==========================================
 // HYBRID MARKETS
-// MongoDB first -> Government fallback
+// Returns MongoDB data immediately.
+// Triggers government sync in background
+// if the scope is not yet fully synced.
 // ==========================================
 
 const getHybridMarkets = async (
   state,
   district
 ) => {
+  // ------------------------------------------
+  // 1. QUERY MONGODB FIRST
+  // ------------------------------------------
+
+  const localMarkets =
+    await getLocalMarkets(
+      state,
+      district
+    );
+
   const synced =
     await isCatalogScopeSynced({
       type: "markets",
@@ -642,48 +672,121 @@ const getHybridMarkets = async (
       district,
     });
 
-  if (synced) {
+  // ------------------------------------------
+  // 2. RETURN IMMEDIATELY IF DATA EXISTS
+  //
+  // Even if not yet marked "fully synced",
+  // return whatever MongoDB has so the UI
+  // loads instantly. Background sync will
+  // keep the catalog growing.
+  // ------------------------------------------
+
+  if (localMarkets.length > 0) {
     console.log(
-      `Using fully synced local markets: ${state}/${district}`
+      `[Catalog] MongoDB cache hit — markets: ${state}/${district} (${localMarkets.length})`
     );
 
-    const markets =
-      await getLocalMarkets(
-        state,
-        district
-      );
+    if (!synced) {
+      // Trigger background sync — do not await.
+      const scopeKey = `markets:${state}:${district}`;
+
+      if (activeSyncs.has(scopeKey)) {
+        console.log(
+          `[Catalog] Background markets sync already running: ${state}/${district}`
+        );
+      } else {
+        console.log(
+          `[Catalog] Background markets sync started: ${state}/${district}`
+        );
+
+        const syncPromise = requestAllGovernmentData(
+          { State: state, District: district },
+          10000
+        )
+          .then(async (data) => {
+            await markCatalogScopeSynced({
+              type: "markets",
+              state,
+              district,
+              recordCount: data.records.length,
+            });
+            console.log(
+              `[Catalog] Background markets sync completed: ${state}/${district}`
+            );
+          })
+          .catch((err) => {
+            console.error(
+              `[Catalog] Background markets sync failed: ${state}/${district} —`,
+              err.message
+            );
+          })
+          .finally(() => {
+            activeSyncs.delete(scopeKey);
+          });
+
+        activeSyncs.set(scopeKey, syncPromise);
+      }
+    }
 
     return {
-      source: "mongodb",
-      markets,
+      source: synced ? "mongodb" : "mongodb-partial",
+      markets: localMarkets,
     };
   }
 
-  console.log(
-    `Market catalog not fully synced for ${state}/${district}. Checking data.gov.in...`
-  );
+  // ------------------------------------------
+  // 3. MONGODB HAS NO DATA — SYNC NOW
+  //
+  // First request for this scope; must wait
+  // for government API to populate MongoDB.
+  // Future requests will hit the cache.
+  // ------------------------------------------
 
-  const data =
-    await requestAllGovernmentData(
-      {
-        State: state,
-        District: district,
-      },
+  const scopeKey = `markets:${state}:${district}`;
+
+  // Deduplicate: reuse an existing sync promise
+  // if one is already running for this scope.
+  if (activeSyncs.has(scopeKey)) {
+    console.log(
+      `[Catalog] Reusing existing markets sync: ${state}/${district}`
+    );
+    await activeSyncs.get(scopeKey);
+  } else {
+    console.log(
+      `[Catalog] MongoDB empty — fetching markets from data.gov.in: ${state}/${district}`
+    );
+
+    const syncPromise = requestAllGovernmentData(
+      { State: state, District: district },
       10000
-    );
+    )
+      .then(async (data) => {
+        await markCatalogScopeSynced({
+          type: "markets",
+          state,
+          district,
+          recordCount: data.records.length,
+        });
+        console.log(
+          `[Catalog] Markets sync completed: ${state}/${district}`
+        );
+      })
+      .catch((err) => {
+        console.error(
+          `[Catalog] Markets sync failed: ${state}/${district} —`,
+          err.message
+        );
+        throw err;
+      })
+      .finally(() => {
+        activeSyncs.delete(scopeKey);
+      });
 
-  const markets =
-    await getLocalMarkets(
-      state,
-      district
-    );
+    activeSyncs.set(scopeKey, syncPromise);
+    await syncPromise;
+  }
 
-  await markCatalogScopeSynced({
-    type: "markets",
-    state,
-    district,
-    recordCount: data.records.length,
-  });
+  const markets = await getLocalMarkets(state, district);
 
   return {
     source: "data.gov.in+mongodb",
@@ -694,7 +797,9 @@ const getHybridMarkets = async (
 
 // ==========================================
 // HYBRID COMMODITIES
-// MongoDB first -> Government fallback
+// Returns MongoDB data immediately.
+// Triggers government sync in background
+// if the scope is not yet fully synced.
 // ==========================================
 
 const getHybridCommodities = async (
@@ -702,6 +807,17 @@ const getHybridCommodities = async (
   district,
   market
 ) => {
+  // ------------------------------------------
+  // 1. QUERY MONGODB FIRST
+  // ------------------------------------------
+
+  const localCommodities =
+    await getLocalCommodities(
+      state,
+      district,
+      market
+    );
+
   const synced =
     await isCatalogScopeSynced({
       type: "commodities",
@@ -710,52 +826,112 @@ const getHybridCommodities = async (
       market,
     });
 
-  if (synced) {
+  // ------------------------------------------
+  // 2. RETURN IMMEDIATELY IF DATA EXISTS
+  // ------------------------------------------
+
+  if (localCommodities.length > 0) {
     console.log(
-      `Using fully synced local commodities: ${state}/${district}/${market}`
+      `[Catalog] MongoDB cache hit — commodities: ${state}/${district}/${market} (${localCommodities.length})`
     );
 
-    const commodities =
-      await getLocalCommodities(
-        state,
-        district,
-        market
-      );
+    if (!synced) {
+      // Fire-and-forget background sync.
+      const scopeKey = `commodities:${state}:${district}:${market}`;
+
+      if (activeSyncs.has(scopeKey)) {
+        console.log(
+          `[Catalog] Background commodities sync already running: ${state}/${district}/${market}`
+        );
+      } else {
+        console.log(
+          `[Catalog] Background commodities sync started: ${state}/${district}/${market}`
+        );
+
+        const syncPromise = requestAllGovernmentData(
+          { State: state, District: district, Market: market },
+          10000
+        )
+          .then(async (data) => {
+            await markCatalogScopeSynced({
+              type: "commodities",
+              state,
+              district,
+              market,
+              recordCount: data.records.length,
+            });
+            console.log(
+              `[Catalog] Background commodities sync completed: ${state}/${district}/${market}`
+            );
+          })
+          .catch((err) => {
+            console.error(
+              `[Catalog] Background commodities sync failed: ${state}/${district}/${market} —`,
+              err.message
+            );
+          })
+          .finally(() => {
+            activeSyncs.delete(scopeKey);
+          });
+
+        activeSyncs.set(scopeKey, syncPromise);
+      }
+    }
 
     return {
-      source: "mongodb",
-      commodities,
+      source: synced ? "mongodb" : "mongodb-partial",
+      commodities: localCommodities,
     };
   }
 
-  console.log(
-    `Commodity catalog not fully synced for ${state}/${district}/${market}. Checking data.gov.in...`
-  );
+  // ------------------------------------------
+  // 3. MONGODB HAS NO DATA — SYNC NOW
+  // ------------------------------------------
 
-  const data =
-    await requestAllGovernmentData(
-      {
-        State: state,
-        District: district,
-        Market: market,
-      },
+  const scopeKey = `commodities:${state}:${district}:${market}`;
+
+  if (activeSyncs.has(scopeKey)) {
+    console.log(
+      `[Catalog] Reusing existing commodities sync: ${state}/${district}/${market}`
+    );
+    await activeSyncs.get(scopeKey);
+  } else {
+    console.log(
+      `[Catalog] MongoDB empty — fetching commodities from data.gov.in: ${state}/${district}/${market}`
+    );
+
+    const syncPromise = requestAllGovernmentData(
+      { State: state, District: district, Market: market },
       10000
-    );
+    )
+      .then(async (data) => {
+        await markCatalogScopeSynced({
+          type: "commodities",
+          state,
+          district,
+          market,
+          recordCount: data.records.length,
+        });
+        console.log(
+          `[Catalog] Commodities sync completed: ${state}/${district}/${market}`
+        );
+      })
+      .catch((err) => {
+        console.error(
+          `[Catalog] Commodities sync failed: ${state}/${district}/${market} —`,
+          err.message
+        );
+        throw err;
+      })
+      .finally(() => {
+        activeSyncs.delete(scopeKey);
+      });
 
-  const commodities =
-    await getLocalCommodities(
-      state,
-      district,
-      market
-    );
+    activeSyncs.set(scopeKey, syncPromise);
+    await syncPromise;
+  }
 
-  await markCatalogScopeSynced({
-    type: "commodities",
-    state,
-    district,
-    market,
-    recordCount: data.records.length,
-  });
+  const commodities = await getLocalCommodities(state, district, market);
 
   return {
     source: "data.gov.in+mongodb",

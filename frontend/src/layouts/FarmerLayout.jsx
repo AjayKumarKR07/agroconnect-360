@@ -194,6 +194,28 @@ export default function FarmerLayout() {
         }
         .fl-logout:hover { background:rgba(239,68,68,0.1); color:#f87171; }
 
+        .fl-switch-role {
+          display:flex; align-items:center; gap:10px;
+          padding:9px 12px; border-radius:10px; width:100%;
+          background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2);
+          cursor:pointer; color:#38bdf8; font-size:13px; font-weight:600;
+          font-family:'Inter',sans-serif;
+          transition:all 0.15s;
+          text-align:left; white-space:nowrap; overflow:hidden;
+          margin-bottom:6px;
+        }
+        .fl-switch-role:hover { background:rgba(56,189,248,0.16); border-color:rgba(56,189,248,0.35); color:#7dd3fc; }
+
+        .fl-topbar-role-btn {
+          display:inline-flex; align-items:center; gap:6px;
+          padding:6px 12px; border-radius:20px;
+          background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25);
+          color:#38bdf8; font-size:12px; font-weight:600;
+          cursor:pointer; font-family:'Inter',sans-serif;
+          transition:all 0.2s;
+        }
+        .fl-topbar-role-btn:hover { background:rgba(56,189,248,0.16); color:#7dd3fc; }
+
         .fl-toggle {
           position:fixed; top:20px; z-index:51;
           width:24px; height:24px; border-radius:6px;
@@ -310,6 +332,14 @@ export default function FarmerLayout() {
                 </div>
               )}
             </div>
+            <button
+              className="fl-switch-role"
+              onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+              title={collapsed ? "Switch Role" : undefined}
+            >
+              <span style={{ fontSize: 16, flexShrink: 0 }}>🔄</span>
+              {!collapsed && <span>Switch Role</span>}
+            </button>
             <button className="fl-logout" onClick={handleLogout} title={collapsed ? "Logout" : undefined}>
               <span style={{ fontSize: 18, flexShrink: 0 }}>🚪</span>
               {!collapsed && <span>Logout</span>}
@@ -332,13 +362,22 @@ export default function FarmerLayout() {
           <header className="fl-topbar">
             <div className="fl-topbar-left">
               <span className="fl-breadcrumb">
-                Farmer Portal / <span className="fl-breadcrumb-cur">{user.name || "Dashboard"}</span>
+                 Farmer Portal / <span className="fl-breadcrumb-cur">{user.name || "Dashboard"}</span>
               </span>
             </div>
             <div className="fl-topbar-right">
               <div className="fl-topbar-time">
                 {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}
               </div>
+
+              {/* Quick Switch Role */}
+              <button
+                className="fl-topbar-role-btn"
+                onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+                title="Switch Role"
+              >
+                🔄 Switch Role
+              </button>
 
               {/* Notification Bell */}
               <div

@@ -146,10 +146,13 @@ try {
     disease: aiResult.disease || "Healthy",
     confidence: Number(aiResult.confidence) || 0,
     severity: aiResult.severity || "low",
+    description: aiResult.description || "",
     cause: Array.isArray(aiResult.causes) ? aiResult.causes.join(". ") : (aiResult.causes || ""),
     treatment: Array.isArray(aiResult.treatment) ? aiResult.treatment.join(". ") : (aiResult.treatment || ""),
     prevention: Array.isArray(aiResult.prevention) ? aiResult.prevention.join(". ") : (aiResult.prevention || ""),
-    description: aiResult.description || "",
+    causes: Array.isArray(aiResult.causes) ? aiResult.causes : [],
+    treatments: Array.isArray(aiResult.treatment) ? aiResult.treatment : [],
+    preventions: Array.isArray(aiResult.prevention) ? aiResult.prevention : [],
   };
 
   return res.status(201).json({
@@ -219,6 +222,7 @@ const getMyDiagnoses = async (
       disease: d.diagnosis?.disease || "—",
       severity: d.diagnosis?.severity || "—",
       confidence: d.diagnosis?.confidence || 0,
+      description: d.diagnosis?.description || "",
       cause: Array.isArray(d.diagnosis?.causes)
         ? d.diagnosis.causes.join(". ")
         : (d.diagnosis?.causes || ""),
@@ -228,6 +232,9 @@ const getMyDiagnoses = async (
       prevention: Array.isArray(d.diagnosis?.prevention)
         ? d.diagnosis.prevention.join(". ")
         : (d.diagnosis?.prevention || ""),
+      causes: Array.isArray(d.diagnosis?.causes) ? d.diagnosis.causes : [],
+      treatments: Array.isArray(d.diagnosis?.treatment) ? d.diagnosis.treatment : [],
+      preventions: Array.isArray(d.diagnosis?.prevention) ? d.diagnosis.prevention : [],
     }));
 
     return res.status(200).json({

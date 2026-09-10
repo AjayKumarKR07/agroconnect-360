@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
 import { ALL_INDIA_STATES, getDistrictsForState } from "../../utils/indiaData";
@@ -18,6 +18,7 @@ const PRIVILEGES = [
 ];
 
 export default function AdminProfile() {
+  const navigate = useNavigate();
   const token = localStorage.getItem("agroconnect_token");
   const cachedUser = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
 
@@ -412,6 +413,25 @@ export default function AdminProfile() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Switch Role Card */}
+            <div className="card" style={{ borderColor: "rgba(99,102,241,0.2)" }}>
+              <div className="card-title" style={{ marginBottom: 10, color: "#818cf8" }}>🔄 Switch Role</div>
+              <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>
+                Need to view AgroConnect 360 as a farmer, buyer, seller, or exporter?
+              </p>
+              <button
+                className="btn-ghost"
+                style={{
+                  width: "100%", justifyContent: "center", color: "#818cf8",
+                  borderColor: "rgba(99,102,241,0.3)", padding: "12px", borderRadius: 12,
+                  fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8
+                }}
+                onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+              >
+                🔄 Change My Role
+              </button>
             </div>
           </div>
         </div>

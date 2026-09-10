@@ -59,7 +59,6 @@ export default function RoleSelection() {
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "";
-  const isNewUser = location.state?.isNewUser ?? true;
 
   // Read existing user data (for returning users)
   const savedUser = (() => {
@@ -67,7 +66,9 @@ export default function RoleSelection() {
     catch { return {}; }
   })();
 
-  const [selectedRole, setSelectedRole] = useState("");
+  const isNewUser = location.state?.isNewUser ?? (!savedUser?.name && !savedUser?.email && !savedUser?.role);
+
+  const [selectedRole, setSelectedRole] = useState(savedUser.role || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [step, setStep] = useState("role"); // "role" | "profile"
@@ -102,6 +103,11 @@ export default function RoleSelection() {
     setError("");
 
     if (!isNewUser) {
+      // If clicking the current role, simply go back to dashboard
+      if (savedUser.role === roleId) {
+        goToDashboard(roleId);
+        return;
+      }
       // Existing user — update role in backend using their saved profile data
       handleRoleSave(roleId, {
         name: savedUser.name || "User",
@@ -131,6 +137,8 @@ export default function RoleSelection() {
         body: JSON.stringify({
           name: payload.name || savedUser.name || "User",
           phone: payload.phone || savedUser.phone || "",
+          district: savedUser.district || "",
+          state: savedUser.state || "",
           location: payload.location || savedUser.location || "India",
           role,
         }),
@@ -299,37 +307,79 @@ export default function RoleSelection() {
           {/* ── STEP 1: Role Cards ── */}
           {step === "role" && (
             <>
-              <div className="rs-grid">
-                {ROLES.map(({ id, emoji, label, color, glow, border, desc, features }) => (
-                  <div
-                    key={id}
-                    id={`role-${id}`}
-                    className={`rs-card ${selectedRole === id ? "selected" : ""}`}
-                    style={{ "--color": color, "--glow": glow, "--border": border }}
-                    onClick={() => handleRoleSelect(id)}
+              {savedUser?.role && (
+                <div style={{ textAlign: "center", marginBottom: 28 }}>
+                  <button
+                    onClick={() => goToDashboard(savedUser.role)}
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.18)",
+                      borderRadius: 100,
+                      padding: "9px 22px",
+                      color: "#fff",
+                      cursor: "pointer",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      fontFamily: "'Inter',sans-serif",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
                   >
-                    <div className="rs-card-top">
-                      <span className="rs-card-emoji">{emoji}</span>
-                      <div className="rs-card-check">
-                        {selectedRole === id && <span style={{ color: "#fff", fontSize: 12, fontWeight: 900 }}>✓</span>}
+                    ← Back to {savedUser.role.charAt(0).toUpperCase() + savedUser.role.slice(1)} Dashboard
+                  </button>
+                </div>
+              )}
+
+              <div className="rs-grid">
+                {ROLES.map(({ id, emoji, label, color, glow, border, desc, features }) => {
+                  const isCurrent = savedUser.role === id;
+                  return (
+                    <div
+                      key={id}
+                      id={`role-${id}`}
+                      className={`rs-card ${selectedRole === id ? "selected" : ""}`}
+                      style={{ "--color": color, "--glow": glow, "--border": border }}
+                      onClick={() => !loading && handleRoleSelect(id)}
+                    >
+                      <div className="rs-card-top">
+                        <span className="rs-card-emoji">{emoji}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          {isCurrent && (
+                            <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 8, background: "rgba(34,197,94,0.18)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                              Active Role
+                            </span>
+                          )}
+                          <div className="rs-card-check">
+                            {selectedRole === id && <span style={{ color: "#fff", fontSize: 12, fontWeight: 900 }}>✓</span>}
+                          </div>
+                        </div>
                       </div>
+                      <div className="rs-card-label">{label}</div>
+                      <div className="rs-card-desc">{desc}</div>
+                      <div className="rs-card-features">
+                        {features.map((f) => (
+                          <div key={f} className="rs-card-feature">{f}</div>
+                        ))}
+                      </div>
+                      {!isNewUser && !isCurrent && (
+                        <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)", fontSize: 12, color: color, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+                          <span>Switch to {label} →</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="rs-card-label">{label}</div>
-                    <div className="rs-card-desc">{desc}</div>
-                    <div className="rs-card-features">
-                      {features.map((f) => (
-                        <div key={f} className="rs-card-feature">{f}</div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {error && <div className="rs-error" style={{ maxWidth: 520, margin: "0 auto 16px" }}>⚠️ {error}</div>}
 
               {loading && (
-                <div style={{ textAlign: "center", padding: "20px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-                  <div className="spinner" /> Signing you in…
+                <div style={{ textAlign: "center", padding: "20px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 15, fontWeight: 600 }}>
+                  <div className="spinner" /> Switching role and loading dashboard…
                 </div>
               )}
             </>

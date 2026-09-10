@@ -172,45 +172,148 @@ export default function CropDiagnosis() {
             )}
 
             {result && !loading && (
-              <div className="card" style={{ background: result.isHealthy ? "rgba(34,197,94,0.04)" : "rgba(239,68,68,0.04)", borderColor: result.isHealthy ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)" }}>
+              <div className="card" style={{ background: result.isHealthy ? "rgba(34,197,94,0.04)" : "rgba(239,68,68,0.04)", borderColor: result.isHealthy ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)" }}>
+                {/* Status Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <div className="card-title">{result.isHealthy ? "✅ Healthy Crop!" : "⚠️ Disease Detected"}</div>
-                  {result.severity && severityBadge(result.severity)}
+                  <div className="card-title" style={{ fontSize: 18, color: result.isHealthy ? "#4ade80" : "#f87171" }}>
+                    {result.isHealthy ? "✅ Healthy Crop!" : "⚠️ Disease Detected"}
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    {result.severity && severityBadge(result.severity)}
+                    {typeof result.confidence === "number" && result.confidence > 0 && (
+                      <span className="badge badge-blue">🎯 {result.confidence}% Match</span>
+                    )}
+                  </div>
                 </div>
+
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {/* Disease Title Box */}
                   {result.disease && (
+                    <div style={{ padding: "16px 18px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
+                        DISEASE IDENTIFIED
+                      </div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: result.isHealthy ? "#4ade80" : "#fff" }}>
+                        {result.disease}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Description & Impact */}
+                  {result.description && (
+                    <div style={{ padding: "16px 18px", background: "rgba(56,189,248,0.04)", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                        <span style={{ fontSize: 16 }}>📖</span>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                          Description & Crop Impact
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.75, whiteSpace: "pre-line" }}>
+                        {result.description}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Causes */}
+                  {(result.causes?.length > 0 || result.cause) && (
                     <div style={{ padding: "14px 16px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
-                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}>DISEASE IDENTIFIED</div>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>{result.disease}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                        <span style={{ fontSize: 16 }}>🔍</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                          Probable Causes & Triggers
+                        </span>
+                      </div>
+                      {result.causes?.length > 0 ? (
+                        <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 6 }}>
+                          {result.causes.map((c, idx) => (
+                            <li key={idx} style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6 }}>{c}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.cause}</div>
+                      )}
                     </div>
                   )}
-                  {result.cause && (
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>Cause</div>
-                      <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.cause}</div>
+
+                  {/* Treatment Recommendations */}
+                  {(result.treatments?.length > 0 || result.treatment) && (
+                    <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(34,197,94,0.22)" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 18 }}>💊</span>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                            Treatment Recommendations
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 11, background: "rgba(34,197,94,0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 8, fontWeight: 700 }}>
+                          Dosage Guide
+                        </span>
+                      </div>
+                      {result.treatments?.length > 0 ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                          {result.treatments.map((t, idx) => {
+                            const isChem = t.toLowerCase().includes("chemical");
+                            const isOrg = t.toLowerCase().includes("organic");
+                            const isCult = t.toLowerCase().includes("cultural");
+                            const icon = isChem ? "🧪" : isOrg ? "🌿" : isCult ? "✂️" : "✓";
+                            return (
+                              <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "rgba(0,0,0,0.2)", padding: "10px 12px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
+                                <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{icon}</span>
+                                <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6 }}>{t}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.treatment}</div>
+                      )}
                     </div>
                   )}
-                  {result.treatment && (
-                    <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.15)" }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>💊 Treatment Recommendation</div>
-                      <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.treatment}</div>
+
+                  {/* Prevention */}
+                  {(result.preventions?.length > 0 || result.prevention) && (
+                    <div style={{ background: "rgba(59,130,246,0.05)", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(59,130,246,0.2)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                        <span style={{ fontSize: 18 }}>🛡️</span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: "#60a5fa", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                          Prevention & Field Protection
+                        </span>
+                      </div>
+                      {result.preventions?.length > 0 ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                          {result.preventions.map((p, idx) => (
+                            <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                              <span style={{ color: "#60a5fa", fontWeight: 700, fontSize: 14 }}>•</span>
+                              <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6 }}>{p}</div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.prevention}</div>
+                      )}
                     </div>
                   )}
-                  {result.prevention && (
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>🛡️ Prevention</div>
-                      <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7 }}>{result.prevention}</div>
-                    </div>
-                  )}
+
+                  {/* Confidence Meter */}
                   {typeof result.confidence === "number" && (
-                    <div>
-                      <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>Confidence Score</div>
-                      <div style={{ height: 8, background: "var(--surface)", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ padding: "12px 16px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>
+                        <span>AI Diagnostic Confidence</span>
+                        <span style={{ color: "#4ade80", fontWeight: 700 }}>{result.confidence}%</span>
+                      </div>
+                      <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
                         <div style={{ height: "100%", width: `${result.confidence}%`, background: "linear-gradient(90deg,#16a34a,#4ade80)", borderRadius: 4, transition: "width 1s ease" }} />
                       </div>
-                      <div style={{ fontSize: 12, color: "#4ade80", marginTop: 4 }}>{result.confidence}%</div>
                     </div>
                   )}
+
+                  {/* Helpline Support Note */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "rgba(234,179,8,0.05)", borderRadius: 10, border: "1px solid rgba(234,179,8,0.15)" }}>
+                    <span style={{ fontSize: 20 }}>📞</span>
+                    <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.5 }}>
+                      <strong style={{ color: "#facc15" }}>Kisan Helpline:</strong> Call toll-free <span style={{ color: "#fff", fontWeight: 700 }}>1800-180-1551</span> or consult your nearest Krishi Vigyan Kendra (KVK) for regional chemical advice.
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -310,6 +413,13 @@ export default function CropDiagnosis() {
                 </div>
               )}
 
+              {viewItem.description && (
+                <div style={{ padding: "14px 16px", background: "rgba(56,189,248,0.05)", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)", margin: "8px 0" }}>
+                  <div className="modal-lbl" style={{ color: "#38bdf8", marginBottom: 6 }}>📖 Description & Impact</div>
+                  <div className="modal-val" style={{ whiteSpace: "pre-line" }}>{viewItem.description}</div>
+                </div>
+              )}
+
               {viewItem.symptoms && (
                 <div className="modal-row">
                   <div className="modal-lbl">📝 Reported Symptoms</div>
@@ -317,24 +427,54 @@ export default function CropDiagnosis() {
                 </div>
               )}
 
-              {viewItem.cause && (
+              {(viewItem.causes?.length > 0 || viewItem.cause) && (
                 <div className="modal-row">
-                  <div className="modal-lbl">🔍 Cause</div>
-                  <div className="modal-val">{viewItem.cause}</div>
+                  <div className="modal-lbl">🔍 Causes & Environmental Factors</div>
+                  {viewItem.causes?.length > 0 ? (
+                    <ul style={{ margin: "6px 0 0 0", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 4 }}>
+                      {viewItem.causes.map((c, i) => (
+                        <li key={i} className="modal-val" style={{ fontSize: 13 }}>{c}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="modal-val">{viewItem.cause}</div>
+                  )}
                 </div>
               )}
 
-              {viewItem.treatment && (
-                <div style={{ background: "rgba(34,197,94,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.12)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#4ade80" }}>💊 Treatment Recommendation</div>
-                  <div className="modal-val" style={{ marginTop: 6 }}>{viewItem.treatment}</div>
+              {(viewItem.treatments?.length > 0 || viewItem.treatment) && (
+                <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.18)", margin: "8px 0" }}>
+                  <div className="modal-lbl" style={{ color: "#4ade80", marginBottom: 8 }}>💊 Treatment Recommendations</div>
+                  {viewItem.treatments?.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {viewItem.treatments.map((t, i) => (
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "rgba(0,0,0,0.2)", padding: "8px 10px", borderRadius: 8 }}>
+                          <span>✓</span>
+                          <span className="modal-val" style={{ fontSize: 13 }}>{t}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="modal-val">{viewItem.treatment}</div>
+                  )}
                 </div>
               )}
 
-              {viewItem.prevention && (
-                <div className="modal-row">
-                  <div className="modal-lbl">🛡️ Prevention Tips</div>
-                  <div className="modal-val">{viewItem.prevention}</div>
+              {(viewItem.preventions?.length > 0 || viewItem.prevention) && (
+                <div style={{ background: "rgba(59,130,246,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(59,130,246,0.18)", margin: "8px 0" }}>
+                  <div className="modal-lbl" style={{ color: "#60a5fa", marginBottom: 8 }}>🛡️ Prevention Guidelines</div>
+                  {viewItem.preventions?.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {viewItem.preventions.map((p, i) => (
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                          <span style={{ color: "#60a5fa" }}>•</span>
+                          <span className="modal-val" style={{ fontSize: 13 }}>{p}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="modal-val">{viewItem.prevention}</div>
+                  )}
                 </div>
               )}
 

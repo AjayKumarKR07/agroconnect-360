@@ -275,6 +275,27 @@ export default function AdminLayout() {
         }
         .ul-logout:hover { background:rgba(239,68,68,0.08); color:#f87171; border-color:rgba(239,68,68,0.15); }
 
+        .ul-switch-role {
+          display:flex; align-items:center; gap:12px;
+          padding:9px 12px; border-radius:12px;
+          background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.22);
+          color:#a5b4fc; font-size:13px; font-weight:600;
+          cursor:pointer; width:100%; text-align:left; font-family:'Inter',sans-serif;
+          transition:all 0.2s; white-space:nowrap; overflow:hidden;
+          margin-bottom:6px;
+        }
+        .ul-switch-role:hover { background:rgba(99,102,241,0.16); border-color:rgba(99,102,241,0.35); color:#c7d2fe; }
+
+        .ul-topbar-role-btn {
+          display:inline-flex; align-items:center; gap:6px;
+          padding:6px 12px; border-radius:20px;
+          background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25);
+          color:#a5b4fc; font-size:12px; font-weight:600;
+          cursor:pointer; font-family:'Inter',sans-serif;
+          transition:all 0.2s;
+        }
+        .ul-topbar-role-btn:hover { background:rgba(99,102,241,0.16); color:#c7d2fe; }
+
         /* ── TOGGLE ── */
         .ul-toggle {
           position:fixed; top:22px; z-index:60;
@@ -482,6 +503,14 @@ export default function AdminLayout() {
                 </div>
               )}
             </div>
+            <button
+              className="ul-switch-role"
+              onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+              title={collapsed ? "Switch Role" : undefined}
+            >
+              <span className="ul-emoji">🔄</span>
+              {!collapsed && "Switch Role"}
+            </button>
             <button className="ul-logout" onClick={handleLogout} title={collapsed ? "Logout" : undefined}>
               <span className="ul-emoji">🚪</span>
               {!collapsed && "Logout"}
@@ -507,6 +536,14 @@ export default function AdminLayout() {
               <div className="ul-time-chip">
                 {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })}
               </div>
+
+              <button
+                className="ul-topbar-role-btn"
+                onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
+                title="Switch Role"
+              >
+                🔄 Switch Role
+              </button>
 
               {/* ── Notification Bell ── */}
               <div className="notif-bell-wrap" ref={notifRef}>

@@ -225,7 +225,7 @@ export default function FarmerProfile() {
           <div className="card" style={{ borderColor: "rgba(56,189,248,0.15)" }}>
             <div className="card-title" style={{ marginBottom: 10 }}>🔄 Switch Role</div>
             <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>Want to use AgroConnect as a different user? Switch your role here.</p>
-            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role")}>
+            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
               🔄 Change My Role
             </button>
           </div>
