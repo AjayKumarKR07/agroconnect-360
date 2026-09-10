@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, ROLE_COLOR, relativeTime } from "./adminStyles";
+import { Users } from "lucide-react";
 
 const ROLE_FILTERS = ["all", "farmer", "seller", "user", "exporter", "admin"];
 
@@ -16,7 +17,7 @@ function ConfirmModal({ user, onConfirm, onCancel, loading }) {
         <div className="modal-body">
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>User</div>
-            <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{user.name || user.email}</div>
+            <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{user.name || user.email}</div>
             <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 3 }}>{user.email} · <span style={{ textTransform: "capitalize" }}>{user.role}</span></div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
@@ -29,7 +30,7 @@ function ConfirmModal({ user, onConfirm, onCancel, loading }) {
               <div style={{ fontSize: 13, color: isSuspending ? "#f87171" : "#4ade80", fontWeight: 800 }}>{isSuspending ? "SUSPENDED" : "ACTIVE"}</div>
             </div>
           </div>
-          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
             ⚠️ {isSuspending
               ? "Suspending will immediately block all active sessions for this user."
               : "Restoring access will allow this user to log in and use the platform again."}
@@ -148,7 +149,7 @@ export default function AdminUsers() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Platform User Management</div>
-          <h1 className="pg-title">👥 User Directory</h1>
+          <h1 className="pg-title"><Users size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />User Directory</h1>
           <p className="pg-sub">Manage all registered users. Suspend or activate accounts. All changes are persisted.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
@@ -216,7 +217,7 @@ export default function AdminUsers() {
                   <Fragment key={u._id}>
                     <tr style={{ cursor: "pointer" }} onClick={() => setExpandedId(expandedId === u._id ? null : u._id)}>
                       <td>
-                        <div style={{ fontWeight: 700, color: "#fff" }}>{u.name || "—"}</div>
+                        <div style={{ fontWeight: 700, color: "#0f172a" }}>{u.name || "—"}</div>
                         <div style={{ fontSize: 12, color: "#a5b4fc" }}>{u.email}</div>
                         {u.phone && <div style={{ fontSize: 11, color: "#818cf8" }}>{u.phone}</div>}
                       </td>

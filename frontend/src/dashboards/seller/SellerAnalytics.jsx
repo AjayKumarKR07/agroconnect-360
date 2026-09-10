@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { CalendarDays, Tag, Trophy, ClipboardList } from "lucide-react";
 
 /* ─── Styles ──────────────────────────────────────────────────────────── */
 const STYLES = `
@@ -32,7 +33,7 @@ const STYLES = `
     transition: all 0.2s; font-family: 'Inter', sans-serif;
   }
   .sa-period-tab.active {
-    background: rgba(167,139,250,0.1); color: #a78bfa;
+    background: rgba(167,139,250,0.1); color: #7c3aed;
     border-color: rgba(167,139,250,0.2);
   }
   .sa-insight {
@@ -110,7 +111,7 @@ export default function SellerAnalytics() {
       {/* Header */}
       <div className="pg-head">
         <div>
-          <div className="eyebrow" style={{ color: "#a78bfa" }}>Seller Exclusive</div>
+          <div className="eyebrow" style={{ color: "#7c3aed" }}>Seller Exclusive</div>
           <h1 className="pg-title">📈 Sales Analytics</h1>
           <p className="pg-sub">Detailed performance insights for your seller account.</p>
         </div>
@@ -140,7 +141,7 @@ export default function SellerAnalytics() {
       {!error && !data && (
         <div className="sa-card sa-empty">
           <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
-          <div style={{ fontWeight: 700, color: "#fff", marginBottom: 8 }}>No analytics data yet</div>
+          <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>No analytics data yet</div>
           <div>Make your first sales to see analytics here.</div>
         </div>
       )}
@@ -150,9 +151,9 @@ export default function SellerAnalytics() {
           {/* KPI Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14, marginBottom: 24 }}>
             {[
-              { icon: "💰", label: "Total Revenue",   val: `₹${Number(data.totalRevenue).toLocaleString("en-IN")}`,   color: "#4ade80"  },
-              { icon: "📦", label: "Orders",           val: data.totalOrders,                                           color: "#38bdf8"  },
-              { icon: "📊", label: "Avg Order Value",  val: `₹${Number(data.avgOrderValue).toLocaleString("en-IN")}`,  color: "#a78bfa"  },
+              { icon: "💰", label: "Total Revenue",   val: `₹${Number(data.totalRevenue).toLocaleString("en-IN")}`,   color: "#15803d"  },
+              { icon: "📦", label: "Orders",           val: data.totalOrders,                                           color: "#0369a1"  },
+              { icon: "📊", label: "Avg Order Value",  val: `₹${Number(data.avgOrderValue).toLocaleString("en-IN")}`,  color: "#7c3aed"  },
               { icon: "🏆", label: "Top Product",      val: data.topProduct || "—",                                     color: "#fb923c"  },
             ].map(k => (
               <div key={k.label} className="sa-card">
@@ -173,7 +174,7 @@ export default function SellerAnalytics() {
           <div className="sa-grid-2">
             {/* Daily Revenue Chart */}
             <div className="sa-card">
-              <div className="card-title" style={{ marginBottom: 20 }}>📅 Daily Revenue</div>
+              <div className="card-title" style={{ marginBottom: 20 }}><CalendarDays size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Daily Revenue</div>
               {data.daily.length === 0 ? (
                 <div className="sa-empty" style={{ padding: "24px 0" }}>No daily data available yet.</div>
               ) : (
@@ -211,7 +212,7 @@ export default function SellerAnalytics() {
 
             {/* By Category */}
             <div className="sa-card">
-              <div className="card-title" style={{ marginBottom: 20 }}>🗂️ Revenue by Category</div>
+              <div className="card-title" style={{ marginBottom: 20 }}><Tag size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Revenue by Category</div>
               {data.byCategory.length === 0 ? (
                 <div className="sa-empty" style={{ padding: "24px 0" }}>No category data yet.</div>
               ) : (
@@ -222,9 +223,9 @@ export default function SellerAnalytics() {
                       <div key={i}>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 6 }}>
                           <span style={{ color: "var(--text)", fontWeight: 600 }}>{c.name}</span>
-                          <span style={{ color: "#a78bfa", fontWeight: 800 }}>₹{Number(c.revenue).toLocaleString("en-IN")}</span>
+                          <span style={{ color: "#7c3aed", fontWeight: 800 }}>₹{Number(c.revenue).toLocaleString("en-IN")}</span>
                         </div>
-                        <div style={{ height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden" }}>
+                        <div style={{ height: 8, background: "#f8fafc", borderRadius: 4, overflow: "hidden" }}>
                           <div style={{
                             height: "100%",
                             width: `${((c.revenue || 0) / maxCat) * 100}%`,
@@ -242,7 +243,7 @@ export default function SellerAnalytics() {
 
           {/* Top Products Table */}
           <div className="sa-card" style={{ marginBottom: 20, overflowX: "auto" }}>
-            <div className="card-title" style={{ marginBottom: 18 }}>🏆 Top Selling Products</div>
+            <div className="card-title" style={{ marginBottom: 18 }}><Trophy size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#b45309", verticalAlign: "middle" }} />Top Selling Products</div>
             {data.topProducts.length === 0 ? (
               <div className="sa-empty" style={{ padding: "24px 0" }}>No product sales data yet.</div>
             ) : (
@@ -263,8 +264,8 @@ export default function SellerAnalytics() {
                   {data.topProducts.map((p, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                       <td style={{ padding: "12px 14px", color: "var(--text2)", fontSize: 13 }}>#{i + 1}</td>
-                      <td style={{ padding: "12px 14px", fontWeight: 700, color: "#fff", fontSize: 13 }}>{p.name}</td>
-                      <td style={{ padding: "12px 14px", fontWeight: 800, color: "#4ade80", fontSize: 15 }}>
+                      <td style={{ padding: "12px 14px", fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{p.name}</td>
+                      <td style={{ padding: "12px 14px", fontWeight: 800, color: "#15803d", fontSize: 15 }}>
                         ₹{Number(p.revenue).toLocaleString("en-IN")}
                       </td>
                     </tr>
@@ -276,13 +277,13 @@ export default function SellerAnalytics() {
 
           {/* Summary insights (generated from real numbers, no hardcoded business data) */}
           <div className="sa-card">
-            <div className="card-title" style={{ marginBottom: 16 }}>📋 Period Summary</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Period Summary</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {buildInsights(data, period).map((ins, i) => (
                 <div key={i} className="sa-insight">
                   <div style={{ fontSize: 26, flexShrink: 0 }}>{ins.icon}</div>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{ins.title}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{ins.title}</div>
                     <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.6 }}>{ins.body}</div>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { Megaphone, Send, Pencil, ClipboardList, RefreshCw, AlertTriangle, Lightbulb, Globe, User, Target, Mail } from "lucide-react";
 
 const ROLE_OPTIONS = ["all", "farmer", "seller", "user", "exporter"];
 
@@ -8,7 +9,7 @@ function ConfirmBroadcast({ title, message, targetRole, count, countLoading, onC
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="broadcast-modal-title">
       <div className="modal-box">
-        <div className="modal-title" id="broadcast-modal-title">📢 Confirm Broadcast</div>
+        <div className="modal-title" id="broadcast-modal-title"><Megaphone size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: "middle" }} />Confirm Broadcast</div>
         <div className="modal-body">
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
             <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
@@ -24,19 +25,19 @@ function ConfirmBroadcast({ title, message, targetRole, count, countLoading, onC
           </div>
           <div style={{ marginBottom: 10 }}>
             <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Title</div>
-            <div style={{ fontSize: 13, color: "#fff", fontWeight: 700 }}>📢 {title}</div>
+            <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700 }}><Megaphone size={13} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} />{title}</div>
           </div>
           <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.12)", fontSize: 12, color: "#a5b4fc", marginBottom: 14, maxHeight: 80, overflow: "hidden", textOverflow: "ellipsis" }}>
             {message}
           </div>
-          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
-            ⚠️ This broadcast will be stored in the database and cannot be undone. It will be recorded in the audit log.
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
+            <AlertTriangle size={13} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} /> This broadcast will be stored in the database and cannot be undone. It will be recorded in the audit log.
           </div>
         </div>
         <div className="modal-actions">
           <button className="btn-danger" onClick={onCancel} disabled={sending}>Cancel</button>
           <button className="btn-indigo" onClick={onConfirm} disabled={sending || countLoading} aria-disabled={sending || countLoading}>
-            {sending ? <><span className="spinner" style={{ width: 14, height: 14 }} /> Sending…</> : "📤 Send Broadcast"}
+            {sending ? <><span className="spinner" style={{ width: 14, height: 14 }} /> Sending…</> : <><Send size={13} strokeWidth={2} style={{ marginRight: 5 }} />Send Broadcast</>}
           </button>
         </div>
       </div>
@@ -147,7 +148,7 @@ export default function AdminBroadcast() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Platform-Wide Communication</div>
-          <h1 className="pg-title">📢 Broadcast Notifications</h1>
+          <h1 className="pg-title"><Megaphone size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Broadcast Notifications</h1>
           <p className="pg-sub">Send persistent notifications to users by role. All broadcasts stored in the database and recorded in the audit log.</p>
         </div>
       </div>
@@ -157,7 +158,7 @@ export default function AdminBroadcast() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         {/* Compose Form */}
         <div className="card" style={{ alignSelf: "start" }}>
-          <div className="card-title" style={{ marginBottom: 20 }}>✏️ Compose Broadcast</div>
+          <div className="card-title" style={{ marginBottom: 20 }}><Pencil size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Compose Broadcast</div>
 
           <div style={{ marginBottom: 16 }}>
             <label className="field-label">Target Audience</label>
@@ -173,7 +174,7 @@ export default function AdminBroadcast() {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label className="field-label">Notification Title <span style={{ color: "#f87171" }}>*</span></label>
+            <label className="field-label">Notification Title <span style={{ color: "#dc2626" }}>*</span></label>
             <input
               className="field-input"
               placeholder="e.g. Scheduled Maintenance on Aug 20"
@@ -185,7 +186,7 @@ export default function AdminBroadcast() {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label className="field-label">Message Body <span style={{ color: "#f87171" }}>*</span></label>
+            <label className="field-label">Message Body <span style={{ color: "#dc2626" }}>*</span></label>
             <textarea
               className="field-input"
               rows={5}
@@ -198,8 +199,8 @@ export default function AdminBroadcast() {
             <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{form.message.length}/1000</div>
           </div>
 
-          <div style={{ padding: "12px 16px", background: "rgba(99,102,241,0.06)", borderRadius: 12, border: "1px solid rgba(99,102,241,0.15)", marginBottom: 20, fontSize: 13, color: "#a5b4fc" }}>
-            💡 Notifications are saved to the database. Recipients will see them on next login/refresh. No push delivery — in-app only.
+          <div style={{ padding: "12px 16px", background: "rgba(99,102,241,0.06)", borderRadius: 12, border: "1px solid #e2e8f0", marginBottom: 20, fontSize: 13, color: "#a5b4fc" }}>
+            <Lightbulb size={13} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} /> Notifications are saved to the database. Recipients will see them on next login/refresh. No push delivery — in-app only.
           </div>
 
           <button
@@ -208,15 +209,15 @@ export default function AdminBroadcast() {
             style={{ width: "100%", justifyContent: "center", opacity: !isValid ? 0.5 : 1 }}
             onClick={handlePreviewClick}
           >
-            📤 Preview &amp; Send Broadcast
+            <Send size={13} strokeWidth={2} style={{ marginRight: 5 }} /> Preview & Send Broadcast
           </button>
         </div>
 
         {/* Broadcast History */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div className="card-title">📋 Broadcast History</div>
-            <button className="tab-btn" onClick={loadHistory} disabled={histLoading}>🔄</button>
+            <div className="card-title"><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Broadcast History</div>
+            <button className="tab-btn" onClick={loadHistory} disabled={histLoading} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><RefreshCw size={13} strokeWidth={2} /></button>
           </div>
 
           {histLoading && <div className="loading-wrap"><span className="spinner" /><span>Loading…</span></div>}
@@ -230,7 +231,7 @@ export default function AdminBroadcast() {
 
           {!histLoading && !histError && history.length === 0 && (
             <div className="empty-state">
-              <div className="empty-state-icon">📢</div>
+              <div className="empty-state-icon"><Megaphone size={40} strokeWidth={1.5} color="#c7d2fe" /></div>
               <div className="empty-state-msg">No broadcasts sent yet</div>
               <div className="empty-state-sub">Your first broadcast will appear here.</div>
             </div>
@@ -240,15 +241,15 @@ export default function AdminBroadcast() {
             {history.map((entry) => {
               const meta = entry.metadata || {};
               return (
-                <div key={entry._id} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid rgba(99,102,241,0.1)" }}>
+                <div key={entry._id} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid #e2e8f0" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 8 }}>
-                    <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>📢 {meta.title || entry.description}</div>
+                    <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}><Megaphone size={13} strokeWidth={2} style={{ marginRight: 5, verticalAlign: "middle" }} />{meta.title || entry.description}</div>
                     <div style={{ fontSize: 11, color: "#a5b4fc", flexShrink: 0 }}>{relativeTime(entry.createdAt)}</div>
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 10, fontSize: 12, color: "#a5b4fc" }}>
-                    <span>👤 {entry.admin?.name || "Admin"}</span>
-                    <span>🎯 {meta.targetRole === "all" ? "All Users" : `${meta.targetRole}s`}</span>
-                    <span>✉️ {meta.recipientCount?.toLocaleString() || 0} recipients</span>
+                    <span><User size={12} strokeWidth={2} style={{ marginRight: 3, verticalAlign: "middle" }} />{entry.admin?.name || "Admin"}</span>
+                    <span><Target size={12} strokeWidth={2} style={{ marginRight: 3, verticalAlign: "middle" }} />{meta.targetRole === "all" ? "All Users" : `${meta.targetRole}s`}</span>
+                    <span><Mail size={12} strokeWidth={2} style={{ marginRight: 3, verticalAlign: "middle" }} />{meta.recipientCount?.toLocaleString() || 0} recipients</span>
                   </div>
                 </div>
               );

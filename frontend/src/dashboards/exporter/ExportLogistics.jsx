@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
+import { Ship, Package } from "lucide-react";
 
 const DS_EXPORTER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#fff;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
+  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
   .field-input:focus{border-color:rgba(245,158,11,0.4);}
   .field-input::placeholder{color:#7a8fa6;}
   .field-label{font-size:11px;font-weight:700;color:#a38a5d;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
@@ -34,13 +35,13 @@ const STEPS = [
 ];
 
 const STATUS_MAP = {
-  cfs_cold_storage:  { label: "CFS Cold Storage",       step: 1, color: "#a78bfa" },
-  customs_submitted: { label: "Customs Submitted",       step: 2, color: "#fbbf24" },
-  customs_cleared:   { label: "Customs Clearance Passed",step: 3, color: "#4ade80" },
-  onboard_vessel:    { label: "Onboard Vessel",          step: 4, color: "#38bdf8" },
-  in_transit:        { label: "In Transit",              step: 4, color: "#38bdf8" },
-  delivered:         { label: "Destination Delivered",   step: 5, color: "#4ade80" },
-  cancelled:         { label: "Cancelled",               step: 0, color: "#f87171" },
+  cfs_cold_storage:  { label: "CFS Cold Storage",       step: 1, color: "#7c3aed" },
+  customs_submitted: { label: "Customs Submitted",       step: 2, color: "#b45309" },
+  customs_cleared:   { label: "Customs Clearance Passed",step: 3, color: "#15803d" },
+  onboard_vessel:    { label: "Onboard Vessel",          step: 4, color: "#0369a1" },
+  in_transit:        { label: "In Transit",              step: 4, color: "#0369a1" },
+  delivered:         { label: "Destination Delivered",   step: 5, color: "#15803d" },
+  cancelled:         { label: "Cancelled",               step: 0, color: "#dc2626" },
 };
 
 const INDIAN_PORTS = [
@@ -106,7 +107,7 @@ function AddShipmentModal({ onClose, onSaved }) {
       <div className="modal-box">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff" }}>📦 Add Container Shipment</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📦 Add Container Shipment</div>
             <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Track real export container from Indian port</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
@@ -168,7 +169,7 @@ function AddShipmentModal({ onClose, onSaved }) {
             </div>
           </div>
 
-          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: 13 }}>⚠️ {err}</div>}
+          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>⚠️ {err}</div>}
 
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center", padding: "12px" }} onClick={onClose}>Cancel</button>
@@ -274,7 +275,7 @@ export default function ExportLogistics() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#4ade80", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#15803d", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -283,12 +284,12 @@ export default function ExportLogistics() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Container & Port Tracking</div>
-          <h1 className="pg-title">🚢 International Logistics & Port Operations</h1>
+          <h1 className="pg-title"><Ship size={22} strokeWidth={2} style={{ marginRight: 8, color: "#d97706", verticalAlign: "middle" }} />International Logistics & Port Operations</h1>
           <p className="pg-sub">Real-time status tracking for sea & air freight shipping containers from Indian ports.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           {containers.length > 0 && (
-            <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fbbf24" }}>
+            <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#b45309" }}>
               {activeShipments.length} Active Shipments
             </span>
           )}
@@ -306,11 +307,11 @@ export default function ExportLogistics() {
         /* ── Empty state ─────────────────────────────────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
           <div style={{ fontSize: 56, marginBottom: 14 }}>🚢</div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>No Shipments Yet</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Shipments Yet</div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export container to start tracking port & customs pipeline status.
           </div>
-          <button className="btn-gold" onClick={() => setShowAdd(true)}>📦 Add First Shipment</button>
+          <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Package size={14} strokeWidth={2} /> Add First Shipment</button>
         </div>
       ) : (
         /* ── Main two-column layout ──────────────────────────────────── */
@@ -342,13 +343,13 @@ export default function ExportLogistics() {
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                    <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#fbbf24", fontSize: 13 }}>{c.containerNo}</span>
+                    <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#b45309", fontSize: 13 }}>{c.containerNo}</span>
                     <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 6, background: `${getStepColor(c)}20`, color: getStepColor(c), fontWeight: 700, whiteSpace: "nowrap" }}>
                       {getStepLabel(c)}
                     </span>
                   </div>
-                  <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, marginBottom: 4 }}>{c.cargo} {c.quantityTons ? `(${c.quantityTons} MT)` : ""}</div>
-                  <div style={{ fontSize: 11, color: "#a38a5d" }}>📍 {c.portOfOrigin} → <strong style={{ color: "#fff" }}>{c.destPort}</strong></div>
+                  <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 4 }}>{c.cargo} {c.quantityTons ? `(${c.quantityTons} MT)` : ""}</div>
+                  <div style={{ fontSize: 11, color: "#a38a5d" }}>📍 {c.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{c.destPort}</strong></div>
                 </div>
               );
             })}
@@ -360,15 +361,15 @@ export default function ExportLogistics() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>📦 {activeShipment.containerNo}</div>
-                  <div style={{ fontSize: 15, color: "#fff", fontWeight: 700, marginTop: 4 }}>{activeShipment.cargo} {activeShipment.quantityTons ? `(${activeShipment.quantityTons} MT)` : ""}</div>
+                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#b45309" }}>📦 {activeShipment.containerNo}</div>
+                  <div style={{ fontSize: 15, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>{activeShipment.cargo} {activeShipment.quantityTons ? `(${activeShipment.quantityTons} MT)` : ""}</div>
                   {activeShipment.vessel && (
-                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Vessel: <strong style={{ color: "#fff" }}>{activeShipment.vessel}</strong></div>
+                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Vessel: <strong style={{ color: "#0f172a" }}>{activeShipment.vessel}</strong></div>
                   )}
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Estimated Arrival</div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#4ade80" }}>{fmtDate(activeShipment.eta)}</div>
+                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#15803d" }}>{fmtDate(activeShipment.eta)}</div>
                   <div style={{ fontSize: 11, color: "#a38a5d" }}>ETD: {fmtDate(activeShipment.etd)}</div>
                 </div>
               </div>
@@ -403,7 +404,7 @@ export default function ExportLogistics() {
                           <div style={{ fontSize: 14, fontWeight: current ? 800 : done ? 600 : 400, color: current ? "#fef08a" : done ? "#fff" : "#a38a5d" }}>
                             {step}
                           </div>
-                          {current && <div style={{ fontSize: 11, color: "#fbbf24", marginTop: 2 }}>⚡ Currently in progress</div>}
+                          {current && <div style={{ fontSize: 11, color: "#b45309", marginTop: 2 }}>⚡ Currently in progress</div>}
                         </div>
                       </div>
                     );
@@ -415,16 +416,16 @@ export default function ExportLogistics() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(0,0,0,0.25)", padding: 14, borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
                 <div>
                   <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Port of Loading (POL)</div>
-                  <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, marginTop: 2 }}>{activeShipment.portOfOrigin || "—"}</div>
+                  <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.portOfOrigin || "—"}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Port of Discharge (POD)</div>
-                  <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, marginTop: 2 }}>{activeShipment.destPort || "—"}</div>
+                  <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.destPort || "—"}</div>
                 </div>
                 {activeShipment.destinationCountry && (
                   <div>
                     <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Destination Country</div>
-                    <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, marginTop: 2 }}>{activeShipment.destinationCountry}</div>
+                    <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.destinationCountry}</div>
                   </div>
                 )}
               </div>
@@ -459,7 +460,7 @@ export default function ExportLogistics() {
                     {!isDelivered && !isCancelled && nextStatus !== "delivered" && (
                       <button
                         className="btn-ghost"
-                        style={{ flex: 1, justifyContent: "center", color: "#4ade80", borderColor: "rgba(34,197,94,0.25)" }}
+                        style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.25)" }}
                         disabled={statusUpdating}
                         onClick={() => updateStatus(activeShipment._id, "delivered")}
                       >
@@ -469,7 +470,7 @@ export default function ExportLogistics() {
 
                     {/* Delivered badge */}
                     {isDelivered && (
-                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#4ade80", fontWeight: 800, fontSize: 14, textAlign: "center" }}>
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontWeight: 800, fontSize: 14, textAlign: "center" }}>
                         ✅ Destination Delivered
                       </div>
                     )}
@@ -477,15 +478,15 @@ export default function ExportLogistics() {
                     {/* Delete */}
                     {deleteConfId === activeShipment._id ? (
                       <>
-                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)", color: "#f87171", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteShipment(activeShipment._id)}>
+                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)", color: "#dc2626", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteShipment(activeShipment._id)}>
                           Yes, Delete
                         </button>
-                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
                           Cancel
                         </button>
                       </>
                     ) : (
-                      <button className="btn-ghost" style={{ justifyContent: "center", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(activeShipment._id)}>
+                      <button className="btn-ghost" style={{ justifyContent: "center", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(activeShipment._id)}>
                         🗑 Delete
                       </button>
                     )}

@@ -1,4 +1,5 @@
 import { DS_ADMIN } from "./adminStyles";
+import { Bot, CheckCircle2, Map, Lightbulb } from "lucide-react";
 
 const AI_FEATURES = [
   {
@@ -65,27 +66,27 @@ export default function AdminAIModels() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Artificial Intelligence — Platform Integration Status</div>
-          <h1 className="pg-title">🤖 AI Models &amp; Services</h1>
+          <h1 className="pg-title"><Bot size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />AI Models & Services</h1>
           <p className="pg-sub">Overview of all AI features integrated into AgroConnect 360. No simulated model metrics — only real integrations are listed.</p>
         </div>
       </div>
 
       {/* Info Banner */}
       <div style={{ marginBottom: 24, padding: "14px 18px", background: "rgba(99,102,241,0.08)", borderRadius: 14, border: "1px solid rgba(99,102,241,0.2)", fontSize: 13, color: "#a5b4fc" }}>
-        💡 <strong style={{ color: "#c7d2fe" }}>Transparency Notice:</strong> AgroConnect 360 does not run proprietary ML models internally. AI capabilities are powered by external APIs (Google Gemini, Data.gov.in). Model performance metrics such as accuracy, loss curves, and training runs are <strong style={{ color: "#c7d2fe" }}>not available</strong> as this platform does not host or train its own models.
+        <Lightbulb size={14} strokeWidth={2} style={{ marginRight: 6, verticalAlign: "middle" }} /><strong style={{ color: "#c7d2fe" }}>Transparency Notice:</strong> AgroConnect 360 does not run proprietary ML models internally. AI capabilities are powered by external APIs (Google Gemini, Data.gov.in). Model performance metrics such as accuracy, loss curves, and training runs are <strong style={{ color: "#c7d2fe" }}>not available</strong> as this platform does not host or train its own models.
       </div>
 
       {/* Active AI Features */}
       <div className="card" style={{ marginBottom: 24 }}>
-        <div className="card-title" style={{ marginBottom: 18 }}>✅ Active AI Integrations</div>
+        <div className="card-title" style={{ marginBottom: 18 }}><CheckCircle2 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Active AI Integrations</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {AI_FEATURES.map((feat) => (
-            <div key={feat.name} style={{ display: "flex", gap: 16, alignItems: "flex-start", padding: "16px 18px", background: "rgba(34,197,94,0.04)", borderRadius: 14, border: "1px solid rgba(34,197,94,0.12)" }}>
+            <div key={feat.name} style={{ display: "flex", gap: 16, alignItems: "flex-start", padding: "16px 18px", background: "#f0fdf4", borderRadius: 14, border: "1px solid rgba(34,197,94,0.12)" }}>
               <span style={{ fontSize: 28, flexShrink: 0, marginTop: 2 }}>{feat.emoji}</span>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
-                  <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff" }}>{feat.name}</span>
-                  <span style={{ fontSize: 11, padding: "2px 9px", borderRadius: 6, background: "rgba(34,197,94,0.15)", color: "#4ade80", fontWeight: 800 }}>● ACTIVE</span>
+                  <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a" }}>{feat.name}</span>
+                  <span style={{ fontSize: 11, padding: "2px 9px", borderRadius: 6, background: "rgba(34,197,94,0.15)", color: "#15803d", fontWeight: 800 }}>● ACTIVE</span>
                   <span style={{ fontSize: 11, padding: "2px 9px", borderRadius: 6, background: "rgba(99,102,241,0.12)", color: "#c7d2fe", fontWeight: 700 }}>{feat.provider}</span>
                 </div>
                 <p style={{ fontSize: 13, color: "#a5b4fc", margin: 0, marginBottom: 8, lineHeight: 1.6 }}>{feat.description}</p>
@@ -101,15 +102,15 @@ export default function AdminAIModels() {
 
       {/* Future Features Roadmap */}
       <div className="card">
-        <div className="card-title" style={{ marginBottom: 18 }}>🗺️ Future AI Roadmap (Not Yet Implemented)</div>
+        <div className="card-title" style={{ marginBottom: 18 }}><Map size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Future AI Roadmap (Not Yet Implemented)</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {FUTURE_FEATURES.map((f) => (
-            <div key={f.name} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid rgba(99,102,241,0.1)", opacity: 0.7 }}>
+            <div key={f.name} style={{ display: "flex", gap: 14, alignItems: "flex-start", padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid #e2e8f0", opacity: 0.7 }}>
               <span style={{ fontSize: 22, flexShrink: 0, marginTop: 2 }}>{f.emoji}</span>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                   <span style={{ fontWeight: 800, color: "#a5b4fc", fontSize: 14 }}>{f.name}</span>
-                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "rgba(251,191,36,0.1)", color: "#fbbf24", fontWeight: 800 }}>PLANNED</span>
+                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 6, background: "rgba(251,191,36,0.1)", color: "#b45309", fontWeight: 800 }}>PLANNED</span>
                 </div>
                 <p style={{ fontSize: 13, color: "#818cf8", margin: 0, lineHeight: 1.5 }}>{f.description}</p>
               </div>

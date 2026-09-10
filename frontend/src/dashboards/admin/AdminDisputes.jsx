@@ -2,18 +2,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { CheckCircle2, XCircle, Search } from "lucide-react";
 
 const STATUS_COLORS = {
-  open:         { bg: "rgba(56,189,248,0.12)",  color: "#38bdf8",  label: "🔵 Open" },
-  under_review: { bg: "rgba(251,191,36,0.12)",  color: "#fbbf24",  label: "🔍 Under Review" },
-  resolved:     { bg: "rgba(34,197,94,0.12)",   color: "#4ade80",  label: "✅ Resolved" },
-  rejected:     { bg: "rgba(239,68,68,0.12)",   color: "#f87171",  label: "❌ Rejected" },
+  open:         { bg: "rgba(56,189,248,0.12)",  color: "#0369a1",  label: "🔵 Open" },
+  under_review: { bg: "rgba(251,191,36,0.12)",  color: "#b45309",  label: "🔍 Under Review" },
+  resolved:     { bg: "rgba(34,197,94,0.12)",   color: "#15803d",  label: "✅ Resolved" },
+  rejected:     { bg: "rgba(239,68,68,0.12)",   color: "#dc2626",  label: "❌ Rejected" },
 };
 
 const PRIORITY_COLORS = {
-  low:    { color: "#4ade80", label: "Low" },
-  medium: { color: "#fbbf24", label: "Medium" },
-  high:   { color: "#f87171", label: "High" },
+  low:    { color: "#15803d", label: "Low" },
+  medium: { color: "#b45309", label: "Medium" },
+  high:   { color: "#dc2626", label: "High" },
 };
 
 function ConfirmModal({ dispute, targetStatus, adminNotes, resolution, onConfirm, onCancel, updating }) {
@@ -26,7 +27,7 @@ function ConfirmModal({ dispute, targetStatus, adminNotes, resolution, onConfirm
         <div className="modal-body">
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Dispute</div>
-            <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>"{dispute.subject}"</div>
+            <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>"{dispute.subject}"</div>
             <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 3 }}>
               Raised by: {dispute.raisedBy?.name || "Unknown"} · {dispute.raisedBy?.role || "user"}
             </div>
@@ -42,11 +43,11 @@ function ConfirmModal({ dispute, targetStatus, adminNotes, resolution, onConfirm
             </div>
           </div>
           {resolution && (
-            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.15)", fontSize: 12, color: "#a5b4fc", marginBottom: 14 }}>
-              <strong style={{ color: "#4ade80" }}>Resolution:</strong> {resolution}
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.15)", fontSize: 12, color: "#a5b4fc", marginBottom: 14 }}>
+              <strong style={{ color: "#15803d" }}>Resolution:</strong> {resolution}
             </div>
           )}
-          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+          <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
             ⚠️ The original submitter will see this updated dispute status in their account.
           </div>
         </div>
@@ -108,7 +109,7 @@ function DisputeCard({ dispute, onAction, updating }) {
       >
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
-            <span style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{dispute.subject}</span>
+            <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{dispute.subject}</span>
             <span style={{ padding: "2px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 11, fontWeight: 700 }}>{sc.label}</span>
             <span style={{ padding: "2px 9px", borderRadius: 7, background: `${pc.color}15`, color: pc.color, fontSize: 11, fontWeight: 700 }}>{pc.label} Priority</span>
           </div>
@@ -130,9 +131,9 @@ function DisputeCard({ dispute, onAction, updating }) {
           </div>
 
           {dispute.resolution && (
-            <div style={{ marginBottom: 14, padding: "10px 14px", background: "rgba(34,197,94,0.06)", borderRadius: 12, border: "1px solid rgba(34,197,94,0.15)" }}>
+            <div style={{ marginBottom: 14, padding: "10px 14px", background: "#f0fdf4", borderRadius: 12, border: "1px solid rgba(34,197,94,0.15)" }}>
               <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", marginBottom: 4 }}>Admin Resolution</div>
-              <div style={{ fontSize: 14, color: "#4ade80" }}>{dispute.resolution}</div>
+              <div style={{ fontSize: 14, color: "#15803d" }}>{dispute.resolution}</div>
               {dispute.resolvedBy && (
                 <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>
                   Resolved by {dispute.resolvedBy.name} · {relativeTime(dispute.resolvedAt)}
@@ -155,7 +156,7 @@ function DisputeCard({ dispute, onAction, updating }) {
                 />
               </div>
               <div>
-                <label className="field-label">Resolution (required to resolve / reject) <span style={{ color: "#f87171" }}>*</span></label>
+                <label className="field-label">Resolution (required to resolve / reject) <span style={{ color: "#dc2626" }}>*</span></label>
                 <textarea
                   className="field-input"
                   rows={2}
@@ -171,19 +172,19 @@ function DisputeCard({ dispute, onAction, updating }) {
                   }}
                 />
                 {valError && (
-                  <div style={{ color: "#f87171", fontSize: 12, marginTop: 4, fontWeight: 600 }}>
+                  <div style={{ color: "#dc2626", fontSize: 12, marginTop: 4, fontWeight: 600 }}>
                     ⚠️ {valError}
                   </div>
                 )}
               </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {dispute.status === "open" && (
-                  <button className="tab-btn" onClick={() => onAction(dispute._id, "under_review", adminNotes, resolution)}>
-                    🔍 Mark Under Review
+                  <button className="tab-btn" onClick={() => onAction(dispute._id, "under_review", adminNotes, resolution)} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    <Search size={13} strokeWidth={2} /> Mark Under Review
                   </button>
                 )}
-                <button className="btn-success" onClick={() => handleDecisionClick("resolved")}>✅ Resolve</button>
-                <button className="btn-danger" onClick={() => handleDecisionClick("rejected")}>❌ Reject</button>
+                <button className="btn-success" onClick={() => handleDecisionClick("resolved")} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><CheckCircle2 size={13} strokeWidth={2} /> Resolve</button>
+                <button className="btn-danger" onClick={() => handleDecisionClick("rejected")} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><XCircle size={13} strokeWidth={2} /> Reject</button>
               </div>
             </div>
           )}

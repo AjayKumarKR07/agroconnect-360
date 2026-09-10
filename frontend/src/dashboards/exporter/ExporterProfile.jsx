@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
@@ -17,7 +17,7 @@ const EXTRA_STYLES = `
     width: 88px; height: 88px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 32px; font-weight: 800; color: #fff; flex-shrink: 0;
+    font-size: 32px; font-weight: 800; color: #0f172a; flex-shrink: 0;
   }
 
   .pf-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -70,7 +70,7 @@ const EXTRA_STYLES = `
     display: inline-flex; align-items: center; gap: 8px;
     padding: 13px 28px; border-radius: 14px; border: none; cursor: pointer;
     font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
-    color: #fff;
+    color: #0f172a;
     background: linear-gradient(135deg, ${AMBER_DARK}, ${AMBER});
     box-shadow: 0 6px 20px rgba(245,158,11,0.35);
     transition: all 0.2s;
@@ -207,7 +207,7 @@ export default function ExporterProfile() {
       <div className="pg-head">
         <div>
           <div className="eyebrow" style={{ color: AMBER }}>Account Settings</div>
-          <h1 className="pg-title" style={{ color: "#fff" }}>👤 My Profile</h1>
+          <h1 className="pg-title" style={{ color: "#0f172a" }}>👤 My Profile</h1>
           <p className="pg-sub">Manage your personal information and export account preferences.</p>
         </div>
       </div>
@@ -235,7 +235,7 @@ export default function ExporterProfile() {
               {initials}
             </div>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>
                 {user.name || "Exporter"}
               </div>
               <div style={{ fontSize: 14, color: "var(--text2)", marginTop: 4 }}>{user.email}</div>
@@ -378,13 +378,13 @@ export default function ExporterProfile() {
 
           {/* Danger zone */}
           <div className="card" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-            <div style={{ fontWeight: 700, color: "#f87171", marginBottom: 10 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10 }}>⚠️ Danger Zone</div>
             <button
               onClick={handleLogout}
               style={{
                 width: "100%", justifyContent: "center", padding: "12px",
                 borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)",
-                background: "rgba(239,68,68,0.06)", color: "#f87171",
+                background: "#fef2f2", color: "#dc2626",
                 cursor: "pointer", fontWeight: 700, fontSize: 14,
                 fontFamily: "'Inter',sans-serif", transition: "background 0.2s",
                 display: "flex", alignItems: "center", gap: 8,

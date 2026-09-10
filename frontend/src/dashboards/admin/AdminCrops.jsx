@@ -2,30 +2,32 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { Wheat } from "lucide-react";
+import { Trash2, Globe, RefreshCw, AlertTriangle, Tag, Package, User, Calendar, IndianRupee, Globe2 } from "lucide-react";
 
 const CROP_STATUSES = ["all", "growing", "ready", "listed", "sold"];
 
 const STATUS_STYLE = {
-  growing:  { bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
-  ready:    { bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
+  growing:  { bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  ready:    { bg: "rgba(251,191,36,0.12)", color: "#b45309" },
   listed:   { bg: "rgba(99,102,241,0.15)", color: "#818cf8" },
-  sold:     { bg: "rgba(56,189,248,0.12)", color: "#38bdf8" },
+  sold:     { bg: "rgba(56,189,248,0.12)", color: "#0369a1" },
 };
 
 function ConfirmDelete({ crop, onConfirm, onCancel, loading }) {
   return (
     <div className="modal-overlay">
       <div className="modal-box">
-        <div className="modal-title">🗑️ Delete Crop Listing?</div>
+        <div className="modal-title"><Trash2 size={16} strokeWidth={2} style={{ marginRight: 6, verticalAlign: "middle" }} />Delete Crop Listing?</div>
         <div className="modal-body">
-          Permanently delete <strong style={{ color: "#fff" }}>"{crop.name}"</strong> listed by{" "}
+          Permanently delete <strong style={{ color: "#0f172a" }}>"{crop.name}"</strong> listed by{" "}
           <strong style={{ color: "#c7d2fe" }}>{crop.farmerName}</strong>?<br /><br />
-          <span style={{ color: "#f87171" }}>This action cannot be undone.</span> The deletion will be recorded in the audit log.
+          <span style={{ color: "#dc2626" }}>This action cannot be undone.</span> The deletion will be recorded in the audit log.
         </div>
         <div className="modal-actions">
           <button className="tab-btn" onClick={onCancel} disabled={loading}>Cancel</button>
           <button className="btn-danger" onClick={onConfirm} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🗑️ Delete Permanently"}
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <><Trash2 size={13} strokeWidth={2} style={{ marginRight: 4 }} />Delete Permanently</>}
           </button>
         </div>
       </div>
@@ -130,7 +132,7 @@ export default function AdminCrops() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Crop Listing Moderation</div>
-          <h1 className="pg-title">🌾 Crop Management</h1>
+          <h1 className="pg-title"><Wheat size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Crop Management</h1>
           <p className="pg-sub">Review and moderate crop listings across all farmers. Deletion is audit-logged.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
@@ -144,14 +146,14 @@ export default function AdminCrops() {
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {CROP_STATUSES.map((s) => (
             <button key={s} className={`tab-btn ${statusFilter === s ? "active" : ""}`} onClick={() => setStatusFilter(s)}>
-              {s === "all" ? "🌐 All" : s}
+              {s === "all" ? <><Globe size={12} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} />All</> : s}
             </button>
           ))}
         </div>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-          <input className="field-input" style={{ maxWidth: 220 }} placeholder="🔍 Search crop, category, location…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="field-input" style={{ maxWidth: 220 }} placeholder="Search crop, category, location…" value={search} onChange={(e) => setSearch(e.target.value)} />
           <button type="submit" className="btn-indigo" style={{ padding: "10px 14px" }}>Go</button>
-          <button type="button" className="tab-btn" onClick={() => load(page)}>🔄</button>
+          <button type="button" className="tab-btn" onClick={() => load(page)} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><RefreshCw size={13} strokeWidth={2} /></button>
         </form>
       </div>
 
@@ -163,7 +165,7 @@ export default function AdminCrops() {
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={40} strokeWidth={1.5} color="#ef4444" /></div>
           <div className="error-state-msg">Unable to load crops</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
@@ -172,7 +174,7 @@ export default function AdminCrops() {
 
       {!loading && !error && crops.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-state-icon">🌾</div>
+          <div className="empty-state-icon"><Wheat size={40} strokeWidth={1.5} color="#c7d2fe" /></div>
           <div className="empty-state-msg">No crops found</div>
           <div className="empty-state-sub">{statusFilter !== "all" ? `No ${statusFilter} crops.` : "No crops listed yet."}</div>
         </div>
@@ -190,26 +192,26 @@ export default function AdminCrops() {
                   <div style={{ height: 120, background: imgUrl ? "transparent" : "rgba(99,102,241,0.08)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
                     {imgUrl
                       ? <img src={imgUrl} alt={c.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : <span style={{ fontSize: 42 }}>🌾</span>
+                      : <Wheat size={42} strokeWidth={1.5} color="#c7d2fe" />
                     }
                   </div>
 
                   <div style={{ padding: "14px 16px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                      <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{c.name}</div>
+                      <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{c.name}</div>
                       <span style={{ padding: "3px 9px", borderRadius: 7, background: sc.bg, color: sc.color, fontSize: 11, fontWeight: 800 }}>{c.status}</span>
                     </div>
 
                     <div style={{ fontSize: 12, color: "#a5b4fc", marginBottom: 10 }}>
-                      <div>🏷️ {c.category} · 📦 {c.quantity} {c.unit}</div>
-                      <div>💰 ₹{c.price}/{c.unit}</div>
-                      <div style={{ marginTop: 4 }}>👨‍🌾 {c.farmerName || "—"} — {c.farmerLocation || c.location || "—"}</div>
-                      <div>📅 Listed {relativeTime(c.createdAt)}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Tag size={11} strokeWidth={2} />{c.category} <Package size={11} strokeWidth={2} style={{ marginLeft: 4 }} />{c.quantity} {c.unit}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}><IndianRupee size={11} strokeWidth={2} />₹{c.price}/{c.unit}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}><User size={11} strokeWidth={2} />{c.farmerName || "—"} — {c.farmerLocation || c.location || "—"}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}><Calendar size={11} strokeWidth={2} />Listed {relativeTime(c.createdAt)}</div>
                     </div>
 
                     {c.isExportListing && (
-                      <div style={{ marginBottom: 10, padding: "4px 10px", background: "rgba(251,191,36,0.1)", borderRadius: 8, border: "1px solid rgba(251,191,36,0.2)", fontSize: 11, color: "#fbbf24", fontWeight: 700 }}>
-                        🌍 Export Grade: {c.exportGrade || "—"}
+                      <div style={{ marginBottom: 10, padding: "4px 10px", background: "rgba(251,191,36,0.1)", borderRadius: 8, border: "1px solid rgba(251,191,36,0.2)", fontSize: 11, color: "#b45309", fontWeight: 700 }}>
+                        <Globe2 size={11} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} />Export Grade: {c.exportGrade || "—"}
                       </div>
                     )}
 
@@ -219,7 +221,7 @@ export default function AdminCrops() {
                       disabled={deletingId === c._id}
                       onClick={() => setConfirm(c)}
                     >
-                      {deletingId === c._id ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🗑️ Remove Listing"}
+                      {deletingId === c._id ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <><Trash2 size={13} strokeWidth={2} style={{ marginRight: 4 }} />Remove Listing</>}
                     </button>
                   </div>
                 </div>

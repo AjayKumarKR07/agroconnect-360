@@ -171,7 +171,7 @@ Return ONLY valid JSON matching this schema:
 
     const res = await callWithRetry(() =>
       groq.chat.completions.create({
-        model: "openai/gpt-oss-120b",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: "You are an expert agricultural plant pathologist for Indian farming. Always respond with valid JSON only." },
           { role: "user", content: prompt }
@@ -340,7 +340,7 @@ Return a JSON object with:
 - treatment: Array of 4 treatment recommendations with specific Indian chemical fungicides/pesticides with dosages (g/L or ml/L), organic neem oil, and cultural pruning
 - prevention: Array of 4 actionable prevention tips for farmers (irrigation, spacing, hygiene, preventative sprays)`;
 
-  const geminiModels = ["gemini-3.6-flash"];
+  const geminiModels = ["gemini-2.5-flash", "gemini-1.5-flash"];
 
   for (const modelName of geminiModels) {
     try {
@@ -366,14 +366,19 @@ Return a JSON object with:
       );
 
       const text =
-        response?.candidates?.[0]?.content?.parts?.[0]?.text || response?.text;
+        response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        response?.text ||
+        "";
 
-      if (text) {
-        console.log(`[Gemini] ✅ Success with model: ${modelName}`);
-        const parsed = parseJsonResponse(text);
-        if (parsed.disease && parsed.treatment) {
-          return parsed;
-        }
+      if (!text || text.trim().length === 0) {
+        console.warn(`[Gemini] ${modelName} returned empty output, skipping.`);
+        continue;
+      }
+
+      console.log(`[Gemini] ✅ Success with model: ${modelName}`);
+      const parsed = parseJsonResponse(text);
+      if (parsed.disease && parsed.treatment) {
+        return parsed;
       }
     } catch (err) {
       console.warn(`[Gemini] ${modelName} error: ${err.message?.slice(0, 140)}`);
@@ -422,7 +427,7 @@ Return ONLY valid JSON matching this schema:
   ]
 }`;
 
-  const groqModels = ["openai/gpt-oss-120b", "openai/gpt-oss-20b"];
+  const groqModels = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
 
   for (const model of groqModels) {
     try {

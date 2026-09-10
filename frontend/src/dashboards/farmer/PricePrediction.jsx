@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DS } from "../../styles/ds";
+import { Bot, BarChart3 } from "lucide-react";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -161,8 +162,8 @@ export default function PricePrediction() {
         .price-table tr:last-child td{border-bottom:none;}
         .price-table tbody tr:hover{background:var(--surface);}
         .trend-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;}
-        .trend-rising{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
-        .trend-falling{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
+        .trend-rising{background:rgba(34,197,94,0.15);color:#15803d;border:1px solid rgba(34,197,94,0.3);}
+        .trend-falling{background:rgba(239,68,68,0.15);color:#dc2626;border:1px solid rgba(239,68,68,0.3);}
         .trend-stable{background:rgba(148,163,184,0.15);color:#cbd5e1;border:1px solid rgba(148,163,184,0.3);}
       `}</style>
 
@@ -176,7 +177,7 @@ export default function PricePrediction() {
 
       {/* Filter Card */}
       <div className="card" style={{ marginBottom: 24 }}>
-        <div className="card-title" style={{ marginBottom: 4 }}>🤖 Configure Prediction Model</div>
+        <div className="card-title" style={{ marginBottom: 4 }}><Bot size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Configure Prediction Model</div>
         <div className="card-sub" style={{ marginBottom: 20 }}>Select State, District, Market & Commodity to run real-time price forecasting.</div>
         <form onSubmit={handlePredict}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 14, alignItems: "flex-end" }}>
@@ -228,7 +229,7 @@ export default function PricePrediction() {
       {loading && (
         <div className="card" style={{ textAlign: "center", padding: 48 }}>
           <div className="spinner" style={{ margin: "0 auto 16px" }} />
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#fff" }}>Training Random Forest Model & Generating Forecast…</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "#0f172a" }}>Training Random Forest Model & Generating Forecast…</div>
           <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 6 }}>Processing historical APMC Mandi price records for {commodity || "Crop"} in {district || "District"}, {state}</div>
           <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 8, opacity: 0.7 }}>⏱ First run may take 30–60 seconds while the model trains on Kaggle + APMC data</div>
         </div>
@@ -241,7 +242,7 @@ export default function PricePrediction() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Current Price</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginTop: 4 }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", marginTop: 4 }}>
                 ₹{Number(prediction.lastHistoricalPrice || prediction.forecast?.[0]?.predictedPrice || 0).toLocaleString("en-IN")}
                 <span style={{ fontSize: 13, color: "var(--text2)", fontWeight: 500 }}> / quintal</span>
               </div>
@@ -250,7 +251,7 @@ export default function PricePrediction() {
 
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Predicted Price ({forecastDays} Days)</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#4ade80", marginTop: 4 }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#15803d", marginTop: 4 }}>
                 ₹{Number(prediction.forecast?.[prediction.forecast.length - 1]?.predictedPrice || 0).toLocaleString("en-IN")}
                 <span style={{ fontSize: 13, color: "var(--text2)", fontWeight: 500 }}> / quintal</span>
               </div>
@@ -269,7 +270,7 @@ export default function PricePrediction() {
 
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Model Accuracy</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#38bdf8", marginTop: 4 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#0369a1", marginTop: 4 }}>
                 {prediction.model?.algorithm || "Random Forest"}
               </div>
               <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>
@@ -282,7 +283,7 @@ export default function PricePrediction() {
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div>
-                <div className="card-title">📊 {prediction.commodity || commodity} Price Forecast ({forecastDays} Days)</div>
+                <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />{prediction.commodity || commodity} Price Forecast ({forecastDays} Days)</div>
                 <div className="card-sub">Predicted price progression for {prediction.district || district}, {prediction.state || state}</div>
               </div>
               <span className="trend-pill trend-rising">✨ ML Powered</span>
@@ -301,7 +302,7 @@ export default function PricePrediction() {
                   <XAxis dataKey="date" stroke="var(--text2)" fontSize={12} tickLine={false} />
                   <YAxis stroke="var(--text2)" fontSize={12} tickLine={false} unit=" ₹" />
                   <Tooltip
-                    contentStyle={{ background: "#0b131b", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, color: "#fff" }}
+                    contentStyle={{ background: "#0b131b", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, color: "#0f172a" }}
                     formatter={(val) => [`₹${Number(val).toLocaleString("en-IN")}`, "Predicted Price"]}
                   />
                   <Area type="monotone" dataKey="predictedPrice" stroke="#22c55e" strokeWidth={3} fillOpacity={1} fill="url(#priceGradient)" />
@@ -318,10 +319,10 @@ export default function PricePrediction() {
           {/* Highest */}
           {highest.length > 0 && (
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", background: "rgba(34,197,94,0.06)", borderBottom: "1px solid rgba(34,197,94,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ padding: "16px 20px", background: "#f0fdf4", borderBottom: "1px solid rgba(34,197,94,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 20 }}>📈</span>
                 <div>
-                  <div style={{ fontWeight: 700, color: "#4ade80", fontSize: 15 }}>Highest Price Crops</div>
+                  <div style={{ fontWeight: 700, color: "#15803d", fontSize: 15 }}>Highest Price Crops</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{district}, {state}</div>
                 </div>
               </div>
@@ -334,7 +335,7 @@ export default function PricePrediction() {
                         <td style={{ fontWeight: 600 }}>{c.commodity}</td>
                         <td style={{ color: "var(--text2)" }}>{c.variety || "—"}</td>
                         <td style={{ color: "var(--text2)" }}>{c.market}</td>
-                        <td style={{ textAlign: "right", fontWeight: 800, color: "#4ade80" }}>₹{Number(c.maxPrice).toLocaleString("en-IN")}</td>
+                        <td style={{ textAlign: "right", fontWeight: 800, color: "#15803d" }}>₹{Number(c.maxPrice).toLocaleString("en-IN")}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -346,10 +347,10 @@ export default function PricePrediction() {
           {/* Lowest */}
           {lowest.length > 0 && (
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", background: "rgba(239,68,68,0.06)", borderBottom: "1px solid rgba(239,68,68,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ padding: "16px 20px", background: "#fef2f2", borderBottom: "1px solid rgba(239,68,68,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 20 }}>📉</span>
                 <div>
-                  <div style={{ padding: 0, fontWeight: 700, color: "#f87171", fontSize: 15 }}>Lowest Price Crops</div>
+                  <div style={{ padding: 0, fontWeight: 700, color: "#dc2626", fontSize: 15 }}>Lowest Price Crops</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{district}, {state}</div>
                 </div>
               </div>
@@ -362,7 +363,7 @@ export default function PricePrediction() {
                         <td style={{ fontWeight: 600 }}>{c.commodity}</td>
                         <td style={{ color: "var(--text2)" }}>{c.variety || "—"}</td>
                         <td style={{ color: "var(--text2)" }}>{c.market}</td>
-                        <td style={{ textAlign: "right", fontWeight: 800, color: "#f87171" }}>₹{Number(c.minPrice).toLocaleString("en-IN")}</td>
+                        <td style={{ textAlign: "right", fontWeight: 800, color: "#dc2626" }}>₹{Number(c.minPrice).toLocaleString("en-IN")}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Plus, RefreshCw, ShoppingBag } from "lucide-react";
 
 const Skel = () => (
   <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 18, overflow: "hidden" }}>
@@ -56,9 +57,9 @@ export default function SellerProducts() {
         .prod-img { width: 100%; height: 180px; object-fit: cover; }
         .prod-img-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(167,139,250,0.05)); display: flex; align-items: center; justify-content: center; font-size: 52px; }
         .prod-body { padding: 16px 18px; }
-        .prod-name { font-weight: 800; font-size: 16px; color: #fff; margin-bottom: 4px; }
+        .prod-name { font-weight: 800; font-size: 16px; color: #0f172a; margin-bottom: 4px; }
         .prod-cat { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
-        .prod-price { font-family: 'Space Grotesk',sans-serif; font-size: 22px; font-weight: 800; color: #a78bfa; }
+        .prod-price { font-family: 'Space Grotesk',sans-serif; font-size: 22px; font-weight: 800; color: #7c3aed; }
         .prod-unit { font-size: 11px; color: var(--text2); }
         .prod-actions { display: flex; gap: 8px; margin-top: 14px; }
       `}</style>
@@ -69,7 +70,7 @@ export default function SellerProducts() {
           <h1 className="pg-title">🛍️ My Products</h1>
           <p className="pg-sub">Manage your listed products and inventory.</p>
         </div>
-        <Link to="/seller/products/add" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", boxShadow: "0 4px 14px rgba(167,139,250,0.3)" }}>➕ Add Product</Link>
+        <Link to="/seller/products/add" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", boxShadow: "0 4px 14px rgba(167,139,250,0.3)", display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add Product</Link>
       </div>
 
       {/* Search + count */}
@@ -86,23 +87,23 @@ export default function SellerProducts() {
       )}
 
       {error && !loading && (
-        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
-              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load products — {error}</span>
+              <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load products — {error}</span>
             </div>
-            <button onClick={fetchProducts} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+            <button onClick={fetchProducts} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
           </div>
         </div>
       )}
 
       {!loading && filtered.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-emoji">🛍️</div>
+          <div className="empty-emoji"><ShoppingBag size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
           <div className="empty-title">{search ? `No results for "${search}"` : "No products listed yet"}</div>
           <div className="empty-sub">Add your first product to start selling.</div>
-          {!search && <Link to="/seller/products/add" className="btn-green">➕ Add First Product</Link>}
+          {!search && <Link to="/seller/products/add" className="btn-green" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add First Product</Link>}
         </div>
       )}
 
@@ -124,11 +125,11 @@ export default function SellerProducts() {
                   </div>
                   <span style={{
                     fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 700,
-                    ...(p.status === "listed"  ? { background: "rgba(34,197,94,0.1)",   color: "#4ade80" } :
-                        p.status === "ready"   ? { background: "rgba(56,189,248,0.1)",  color: "#38bdf8" } :
-                        p.status === "growing" ? { background: "rgba(251,191,36,0.1)",  color: "#fbbf24" } :
+                    ...(p.status === "listed"  ? { background: "rgba(34,197,94,0.1)",   color: "#15803d" } :
+                        p.status === "ready"   ? { background: "rgba(56,189,248,0.1)",  color: "#0369a1" } :
+                        p.status === "growing" ? { background: "rgba(251,191,36,0.1)",  color: "#b45309" } :
                         p.status === "sold"    ? { background: "rgba(148,163,184,0.1)", color: "#94a3b8" } :
-                                                 { background: "rgba(167,139,250,0.1)", color: "#a78bfa" }),
+                                                 { background: "rgba(167,139,250,0.1)", color: "#7c3aed" }),
                   }}>
                     {p.status === "listed"  ? "✅ Listed"  :
                      p.status === "ready"   ? "🔵 Ready"   :
@@ -139,7 +140,7 @@ export default function SellerProducts() {
                 </div>
                 <div className="prod-actions">
                   <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12 }} onClick={() => navigate(`/seller/products/${p._id}/edit`)}>✏️ Edit</button>
-                  <button className="btn-del" disabled={deleting === p._id} style={{ flex: 1, justifyContent: "center", fontSize: 12, padding: "8px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.06)", color: "#f87171", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 700 }} onClick={() => deleteProduct(p._id)}>
+                  <button className="btn-del" disabled={deleting === p._id} style={{ flex: 1, justifyContent: "center", fontSize: 12, padding: "8px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 700 }} onClick={() => deleteProduct(p._id)}>
                     {deleting === p._id ? "⏳" : "🗑️ Delete"}
                   </button>
                 </div>

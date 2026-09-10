@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { RefreshCw, Bell } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -9,13 +10,13 @@ const authHeaders = () => ({
 });
 
 const TYPE_STYLE = {
-  order:     { icon: "📦", color: "#38bdf8",  bg: "rgba(56,189,248,0.08)"  },
+  order:     { icon: "📦", color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
   weather:   { icon: "🌧️", color: "#60a5fa",  bg: "rgba(96,165,250,0.08)"  },
-  market:    { icon: "📈", color: "#fbbf24",  bg: "rgba(251,191,36,0.08)"  },
-  harvest:   { icon: "🌱", color: "#4ade80",  bg: "rgba(34,197,94,0.08)"   },
-  diagnosis: { icon: "🩺", color: "#a78bfa",  bg: "rgba(167,139,250,0.08)" },
-  plan:      { icon: "🌾", color: "#22c55e",  bg: "rgba(34,197,94,0.08)"   },
-  export:    { icon: "🌍", color: "#38bdf8",  bg: "rgba(56,189,248,0.08)"  },
+  market:    { icon: "📈", color: "#b45309",  bg: "rgba(251,191,36,0.08)"  },
+  harvest:   { icon: "🌱", color: "#15803d",  bg: "rgba(34,197,94,0.08)"   },
+  diagnosis: { icon: "🩺", color: "#7c3aed",  bg: "rgba(167,139,250,0.08)" },
+  plan:      { icon: "🌾", color: "#16a34a",  bg: "rgba(34,197,94,0.08)"   },
+  export:    { icon: "🌍", color: "#0369a1",  bg: "rgba(56,189,248,0.08)"  },
   system:    { icon: "🔔", color: "#94a3b8",  bg: "rgba(148,163,184,0.06)" },
 };
 
@@ -84,7 +85,7 @@ export default function FarmerNotifications() {
         .notif-item.unread { border-color:rgba(34,197,94,0.2); background:rgba(34,197,94,0.03); }
         .notif-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
         .notif-body { flex:1; min-width:0; }
-        .notif-title { font-size:14px; font-weight:700; color:#fff; margin-bottom:3px; }
+        .notif-title { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:3px; }
         .notif-msg { font-size:12px; color:var(--text2); line-height:1.6; }
         .notif-footer { display:flex; align-items:center; justify-content:space-between; margin-top:6px; }
         .notif-time { font-size:11px; color:var(--text2); }
@@ -103,7 +104,7 @@ export default function FarmerNotifications() {
               {markingAll ? "…" : "✅ Mark All Read"}
             </button>
           )}
-          <button className="btn-ghost" onClick={load}>🔄 Refresh</button>
+          <button className="btn-ghost" onClick={load} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Refresh</button>
         </div>
       </div>
 
@@ -119,7 +120,7 @@ export default function FarmerNotifications() {
         <div className="loading-wrap"><div className="spinner" /><span>Loading notifications…</span></div>
       ) : notifs.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-emoji">🔔</div>
+          <div className="empty-emoji"><Bell size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No notifications yet</div>
           <div className="empty-sub">Notifications appear when you save plans, receive orders, or crops approach harvest.</div>
         </div>

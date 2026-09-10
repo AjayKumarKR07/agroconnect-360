@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Thermometer, CloudRain, CalendarDays, Bot, Sprout } from "lucide-react";
 
 /* ─── helpers ─────────────────────────────────────────────── */
 const owmIcon = (code) =>
@@ -55,7 +56,7 @@ const WCSS = `
   background:var(--surface); color:var(--text2); font-size:13px; font-weight:600;
   cursor:pointer; transition:all .2s; white-space:nowrap;
 }
-.w-tab.active { background:var(--green); color:#fff; border-color:var(--green); }
+.w-tab.active { background:var(--green); color:#0f172a; border-color:var(--green); }
 .w-tab:hover:not(.active) { background:var(--surface2); color:var(--text); }
 .w-hero {
   background:linear-gradient(135deg,rgba(56,189,248,.12) 0%,rgba(34,197,94,.07) 100%);
@@ -124,7 +125,7 @@ function SunBar({ sunrise, sunset }) {
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, padding: "20px 24px", marginBottom: 20 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-        <div style={{ fontWeight: 700, color: "#fbbf24", fontSize: 14 }}>🌅 Sunrise / Sunset</div>
+        <div style={{ fontWeight: 700, color: "#b45309", fontSize: 14 }}>🌅 Sunrise / Sunset</div>
         <div style={{ fontSize: 11, color: "var(--text2)" }}>Daylight: {Math.round(total / 3600)}h {Math.round((total % 3600) / 60)}m</div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>
@@ -154,8 +155,8 @@ function HourlyStrip({ hourly }) {
             <div key={h.time} className="h-card">
               <div style={{ fontSize: 10, color: "var(--text2)", marginBottom: 4 }}>{label}</div>
               <img src={owmIcon(h.icon)} alt={h.description} style={{ width: 40, height: 40 }} />
-              <div style={{ fontWeight: 800, fontSize: 16, color: "#fff", margin: "2px 0" }}>{h.temp}°</div>
-              <div style={{ fontSize: 10, color: "#38bdf8" }}>💧{h.rainProb}%</div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: "#0f172a", margin: "2px 0" }}>{h.temp}°</div>
+              <div style={{ fontSize: 10, color: "#0369a1" }}>💧{h.rainProb}%</div>
               <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 2 }}>💨{h.windSpeed}m/s</div>
             </div>
           );
@@ -177,7 +178,7 @@ function FcStrip({ days, selected, onSelect, is15 }) {
           <div key={d.date} className={`fc-day${selected === i ? " sel" : ""}${d.extrapolated ? " ext" : ""}`} onClick={() => onSelect(i)}>
             <div style={{ fontSize: 10, fontWeight: 700, color: selected === i ? "var(--green)" : "var(--text2)", marginBottom: 4 }}>{fmtDay(d.date, true)}</div>
             <img src={owmIcon(d.icon)} alt={d.description} style={{ width: 44, height: 44 }} />
-            <div style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{d.maxTemp}°</div>
+            <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{d.maxTemp}°</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>{d.minTemp}°</div>
             <div style={{ fontSize: 10, color: rainColor(d.rainProb), marginTop: 4 }}>💧{d.rainProb}%</div>
             <div className="rbar" style={{ background: rainColor(d.rainProb), opacity: 0.5 + d.rainProb / 200 }} />
@@ -195,12 +196,12 @@ function DayDetail({ day }) {
       <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
         <div>
           <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 4 }}>
-            {fmtDate(day.date)}{day.extrapolated && <span style={{ marginLeft: 8, fontSize: 10, color: "#fbbf24" }}>~ estimate</span>}
+            {fmtDate(day.date)}{day.extrapolated && <span style={{ marginLeft: 8, fontSize: 10, color: "#b45309" }}>~ estimate</span>}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <img src={owmIcon(day.icon)} alt={day.description} style={{ width: 64, height: 64 }} />
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 48, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{day.maxTemp}°C</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 48, fontWeight: 900, color: "#0f172a", lineHeight: 1 }}>{day.maxTemp}°C</div>
               <div style={{ fontSize: 13, color: "var(--text2)", textTransform: "capitalize" }}>{day.description}</div>
               <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>Low: {day.minTemp}°C</div>
             </div>
@@ -211,7 +212,7 @@ function DayDetail({ day }) {
             <div key={lbl} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"12px 14px" }}>
               <div style={{ fontSize:16, marginBottom:4 }}>{ic}</div>
               <div style={{ fontSize:10, color:"var(--text2)" }}>{lbl}</div>
-              <div style={{ fontSize:15, fontWeight:700, color:"#fff", marginTop:2 }}>{val}</div>
+              <div style={{ fontSize:15, fontWeight:700, color: "#0f172a", marginTop:2 }}>{val}</div>
             </div>
           ))}
         </div>
@@ -223,7 +224,7 @@ function DayDetail({ day }) {
       </div>
       {day.advisories?.length > 0 && (
         <>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginTop: 20, marginBottom: 8 }}>🌾 Farming Impact for This Day</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginTop: 20, marginBottom: 8 }}>🌾 Farming Impact for This Day</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {day.advisories.map((a, i) => (
               <div key={i} className="adv-item"><span style={{ fontSize: 16, flexShrink: 0 }}>💡</span><span>{a}</span></div>
@@ -241,7 +242,7 @@ function TempChart({ days, selected, onSelect }) {
   const range = allMax - allMin || 1;
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card-title" style={{ marginBottom: 16 }}>🌡️ Temperature Trend</div>
+      <div className="card-title" style={{ marginBottom: 16 }}><Thermometer size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Temperature Trend</div>
       <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 110 }}>
         {days.map((d, i) => {
           const barH = Math.max(8, ((d.maxTemp - allMin) / range) * 72 + 12);
@@ -263,7 +264,7 @@ function TempChart({ days, selected, onSelect }) {
 function RainBars({ days, onSelect }) {
   return (
     <div className="card">
-      <div className="card-title" style={{ marginBottom: 14 }}>🌧️ Rain Probability Overview</div>
+      <div className="card-title" style={{ marginBottom: 14 }}><CloudRain size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Rain Probability Overview</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {days.map((d, i) => (
           <div key={d.date} className="rpm-row" style={{ cursor: "pointer" }} onClick={() => onSelect(i)}>
@@ -280,16 +281,16 @@ function RainBars({ days, onSelect }) {
 
 function WeatherCalendar({ days }) {
   const badge = (d) => {
-    if (d.rainProb >= 70) return { label: "Heavy Rain", color: "#38bdf8" };
+    if (d.rainProb >= 70) return { label: "Heavy Rain", color: "#0369a1" };
     if (d.rainProb >= 40) return { label: "Rain Risk", color: "#7dd3fc" };
     if (d.maxTemp >= 38) return { label: "Very Hot", color: "#ef4444" };
     if (d.maxTemp >= 33) return { label: "Hot", color: "#fb923c" };
-    return { label: "Good", color: "#4ade80" };
+    return { label: "Good", color: "#15803d" };
   };
   const cellClass = (d) => d.rainProb >= 50 ? "cal-cell cal-rain" : d.maxTemp >= 35 ? "cal-cell cal-hot" : "cal-cell cal-good";
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card-title" style={{ marginBottom: 16 }}>📅 15-Day Farming Calendar</div>
+      <div className="card-title" style={{ marginBottom: 16 }}><CalendarDays size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />15-Day Farming Calendar</div>
       <div className="cal-grid">
         {days.map((d) => {
           const b = badge(d);
@@ -302,7 +303,7 @@ function WeatherCalendar({ days }) {
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <img src={owmIcon(d.icon)} alt={d.description} style={{ width: 32, height: 32 }} />
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{d.maxTemp}°/{d.minTemp}°</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#0f172a" }}>{d.maxTemp}°/{d.minTemp}°</div>
                   <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "capitalize" }}>{d.description}</div>
                 </div>
               </div>
@@ -427,7 +428,7 @@ export default function Weather() {
                   <div key={lbl} className="w-stat">
                     <div style={{ fontSize:20, marginBottom:4 }}>{ic}</div>
                     <div style={{ fontSize:10, color:"var(--text2)" }}>{lbl}</div>
-                    <div style={{ fontSize:16, fontWeight:700, color:"#fff", marginTop:2 }}>{val}</div>
+                    <div style={{ fontSize:16, fontWeight:700, color: "#0f172a", marginTop:2 }}>{val}</div>
                   </div>
                 ))}
               </div>
@@ -439,7 +440,7 @@ export default function Weather() {
 
           {advisories.length > 0 && (
             <div className="card" style={{ marginBottom: 20 }}>
-              <div className="card-title" style={{ marginBottom: 14 }}>🤖 AI Farming Advisories</div>
+              <div className="card-title" style={{ marginBottom: 14 }}><Bot size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />AI Farming Advisories</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {advisories.map((a, i) => (
                   <div key={i} className="adv-item"><span style={{ fontSize: 18, flexShrink: 0 }}>💡</span><span style={{ fontSize: 13, lineHeight: 1.6 }}>{a}</span></div>
@@ -449,12 +450,12 @@ export default function Weather() {
           )}
 
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>🌾 Farming Best Practices</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Sprout size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Farming Best Practices</div>
             <div className="tips-grid">
               {FARM_TIPS.map(({ e, title, tip }) => (
                 <div key={title} className="tip-card">
                   <div style={{ fontSize: 28, marginBottom: 10 }}>{e}</div>
-                  <div style={{ fontWeight: 700, color: "#fff", marginBottom: 6, fontSize: 13 }}>{title}</div>
+                  <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 6, fontSize: 13 }}>{title}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.7 }}>{tip}</div>
                 </div>
               ))}
@@ -490,7 +491,7 @@ export default function Weather() {
           {!fcLoading && forecast?.forecast15 && (
             <>
               <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-                {[{ color: "#4ade80", label: "Good conditions" },{ color: "#38bdf8", label: "Rain risk" },{ color: "#fb923c", label: "High heat" }].map(({ color, label }) => (
+                {[{ color: "#15803d", label: "Good conditions" },{ color: "#0369a1", label: "Rain risk" },{ color: "#fb923c", label: "High heat" }].map(({ color, label }) => (
                   <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text2)" }}>
                     <div style={{ width: 10, height: 10, borderRadius: "50%", background: color }} />{label}
                   </div>

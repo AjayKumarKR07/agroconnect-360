@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import RazorpayCheckout from "../../components/RazorpayCheckout";
@@ -168,12 +168,12 @@ export default function UserCart() {
   const S = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
     .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-    .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;margin-bottom:20px;}
+    .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;margin-bottom:20px;}
     .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:20px 22px;}
     .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-    .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
+    .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
     .field-input:focus{border-color:rgba(14,165,233,0.4);}
-    .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;font-weight:700;font-size:15px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:opacity 0.2s;justify-content:center;}
+    .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:15px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:opacity 0.2s;justify-content:center;}
     .btn-cyan:hover{opacity:0.88;}
     .btn-cyan:disabled{opacity:0.5;cursor:not-allowed;}
     .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:transparent;color:#7dd3fc;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
@@ -182,10 +182,10 @@ export default function UserCart() {
     .step-bar{display:flex;gap:0;margin-bottom:28px;}
     .step{display:flex;align-items:center;flex:1;}
     .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--text2);flex-shrink:0;}
-    .step-dot.done{background:linear-gradient(135deg,#0284c7,#38bdf8);border-color:#38bdf8;color:#fff;}
+    .step-dot.done{background:linear-gradient(135deg,#0284c7,#38bdf8);border-color:#0369a1;color:#0f172a;}
     .step-dot.active{border-color:#0ea5e9;color:#0ea5e9;background:rgba(14,165,233,0.1);}
     .step-label{font-size:11px;color:var(--text2);margin-left:8px;white-space:nowrap;}
-    .step-label.active{color:#38bdf8;font-weight:700;}
+    .step-label.active{color:#0369a1;font-weight:700;}
     .step-line{flex:1;height:2px;background:rgba(14,165,233,0.12);margin:0 8px;}
     .step-line.done{background:linear-gradient(90deg,#0284c7,#38bdf8);}
   `;
@@ -211,18 +211,18 @@ export default function UserCart() {
   /* ─────────────── ORDER SUMMARY SIDEBAR ─────────────── */
   const Summary = () => (
     <div className="card" style={{ position: "sticky", top: 80, flexShrink: 0, width: 280 }}>
-      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 16 }}>🧾 Order Summary</div>
+      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 16 }}>🧾 Order Summary</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
         {cart.map(c => (
           <div key={c._id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
             <span style={{ color: "var(--text2)" }}>{c.name} × {c.qty || 1}</span>
-            <span style={{ color: "#fff", fontWeight: 600 }}>₹{((c.price || 0) * (c.qty || 1)).toLocaleString("en-IN")}</span>
+            <span style={{ color: "#0f172a", fontWeight: 600 }}>₹{((c.price || 0) * (c.qty || 1)).toLocaleString("en-IN")}</span>
           </div>
         ))}
       </div>
       <div style={{ borderTop: "1px solid rgba(14,165,233,0.1)", paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text2)" }}>
-          <span>Subtotal</span><span style={{ color: "#fff" }}>₹{total.toLocaleString("en-IN")}</span>
+          <span>Subtotal</span><span style={{ color: "#0f172a" }}>₹{total.toLocaleString("en-IN")}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text2)" }}>
           <span>Delivery</span>
@@ -230,7 +230,7 @@ export default function UserCart() {
         </div>
         {deliveryFee > 0 && <div style={{ fontSize: 11, color: "var(--text2)" }}>Add ₹{500 - total} more for free delivery</div>}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 800, marginTop: 6, paddingTop: 10, borderTop: "1px solid rgba(14,165,233,0.1)" }}>
-          <span style={{ color: "#fff" }}>Total</span>
+          <span style={{ color: "#0f172a" }}>Total</span>
           <span style={{ color: "#0ea5e9", fontFamily: "'Space Grotesk',sans-serif" }}>₹{grandTotal.toLocaleString("en-IN")}</span>
         </div>
       </div>
@@ -248,7 +248,7 @@ export default function UserCart() {
       {cart.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <div style={{ fontSize: 60 }}>🛒</div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", margin: "16px 0 8px" }}>Cart is empty</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", margin: "16px 0 8px" }}>Cart is empty</div>
           <div style={{ color: "var(--text2)", marginBottom: 20 }}>Add products from the Browse page.</div>
           <Link to="/user/browse" className="btn-cyan">🛒 Browse Products</Link>
         </div>
@@ -262,23 +262,23 @@ export default function UserCart() {
                     {c.image?.url ? <img src={c.image.url} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 12 }} alt={c.name} /> : catEmoji(c.category)}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{c.name}</div>
+                    <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{c.name}</div>
                     <div style={{ fontSize: 12, color: "var(--text2)" }}>₹{c.price}/{c.unit} · {c.location}</div>
                   </div>
                   {/* Qty control */}
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <button onClick={() => updateQty(c._id, -1)} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(14,165,233,0.2)", background: "rgba(14,165,233,0.06)", color: "#38bdf8", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
-                    <span style={{ color: "#fff", fontWeight: 800, fontSize: 15, minWidth: 24, textAlign: "center" }}>{c.qty || 1}</span>
-                    <button onClick={() => updateQty(c._id, 1)} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(14,165,233,0.2)", background: "rgba(14,165,233,0.06)", color: "#38bdf8", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+                    <button onClick={() => updateQty(c._id, -1)} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(14,165,233,0.2)", background: "rgba(14,165,233,0.06)", color: "#0369a1", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                    <span style={{ color: "#0f172a", fontWeight: 800, fontSize: 15, minWidth: 24, textAlign: "center" }}>{c.qty || 1}</span>
+                    <button onClick={() => updateQty(c._id, 1)} style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(14,165,233,0.2)", background: "rgba(14,165,233,0.06)", color: "#0369a1", fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
                   </div>
                   <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#0ea5e9", fontSize: 16, minWidth: 80, textAlign: "right" }}>₹{((c.price || 0) * (c.qty || 1)).toLocaleString("en-IN")}</div>
-                  <button onClick={() => removeItem(c._id)} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "6px 10px", color: "#f87171", cursor: "pointer", fontSize: 14, flexShrink: 0 }}>🗑</button>
+                  <button onClick={() => removeItem(c._id)} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "6px 10px", color: "#dc2626", cursor: "pointer", fontSize: 14, flexShrink: 0 }}>🗑</button>
                 </div>
               ))}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
               <Link to="/user/browse" className="btn-ghost">← Continue Shopping</Link>
-              <button onClick={clearCart} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)", color: "#f87171", fontWeight: 600, fontSize: 14, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>🗑 Clear Cart</button>
+              <button onClick={clearCart} style={{ padding: "10px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 600, fontSize: 14, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>🗑 Clear Cart</button>
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, width: 280, flexShrink: 0 }}>
@@ -328,7 +328,7 @@ export default function UserCart() {
                       : {}}
                   />
                   {f.key === "phone" && addr.phone.length > 0 && addr.phone.length !== 10 && (
-                    <div style={{ fontSize: 11, color: "#f87171", marginTop: 4 }}>⚠️ Enter exactly 10 digits ({addr.phone.length}/10)</div>
+                    <div style={{ fontSize: 11, color: "#dc2626", marginTop: 4 }}>⚠️ Enter exactly 10 digits ({addr.phone.length}/10)</div>
                   )}
                 </div>
               ))}
@@ -363,11 +363,11 @@ export default function UserCart() {
         <div className="eyebrow">Buyer Portal</div>
         <div className="pg-title">💳 Payment</div>
         <Steps />
-        {error && <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#f87171", fontWeight: 600, fontSize: 14 }}>⚠️ {error}</div>}
+        {error && <div style={{ marginBottom: 16, padding: "12px 16px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", fontWeight: 600, fontSize: 14 }}>⚠️ {error}</div>}
         <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="card" style={{ marginBottom: 16 }}>
-              <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 14 }}>Select Payment Method</div>
+              <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 14 }}>Select Payment Method</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {METHODS.map(m => (
                   <div key={m.key} className={`pay-opt ${payment === m.key ? "sel" : ""}`} onClick={() => { setPayment(m.key); setPendingOrderId(null); setError(""); }}>
@@ -375,7 +375,7 @@ export default function UserCart() {
                       {payment === m.key && <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#0ea5e9" }} />}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{m.label}</div>
+                      <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{m.label}</div>
                       <div style={{ fontSize: 12, color: "var(--text2)" }}>{m.sub}</div>
                     </div>
                   </div>
@@ -385,12 +385,12 @@ export default function UserCart() {
 
             {/* Delivery summary */}
             <div className="card" style={{ marginBottom: 16 }}>
-              <div style={{ fontWeight: 800, color: "#fff", fontSize: 14, marginBottom: 10 }}>📍 Delivering to</div>
+              <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 14, marginBottom: 10 }}>📍 Delivering to</div>
               <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                <div style={{ color: "#fff", fontWeight: 600, marginBottom: 2 }}>{addr.name} · {addr.phone}</div>
+                <div style={{ color: "#0f172a", fontWeight: 600, marginBottom: 2 }}>{addr.name} · {addr.phone}</div>
                 {addr.address}, {addr.city}, {addr.state} – {addr.pincode}
               </div>
-              <button onClick={() => setStep(2)} style={{ marginTop: 10, fontSize: 12, color: "#38bdf8", background: "none", border: "none", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}>✏️ Change</button>
+              <button onClick={() => setStep(2)} style={{ marginTop: 10, fontSize: 12, color: "#0369a1", background: "none", border: "none", cursor: "pointer", fontFamily: "'Inter',sans-serif", fontWeight: 600 }}>✏️ Change</button>
             </div>
 
             <div style={{ display: "flex", gap: 10 }}>
@@ -437,11 +437,11 @@ export default function UserCart() {
       <style>{S}</style>
       <div style={{ textAlign: "center", padding: "48px 24px", maxWidth: 480, margin: "0 auto" }}>
         <div style={{ fontSize: 72, marginBottom: 16, animation: "bounce 0.6s ease" }}>🎉</div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Order Placed!</div>
+        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>Order Placed!</div>
         <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 24 }}>
-          Your order has been confirmed and will be delivered to <strong style={{ color: "#fff" }}>{addr.city}, {addr.state}</strong>.
+          Your order has been confirmed and will be delivered to <strong style={{ color: "#0f172a" }}>{addr.city}, {addr.state}</strong>.
         </div>
-        {orderId && <div style={{ fontSize: 12, color: "#0ea5e9", marginBottom: 24, fontFamily: "monospace", background: "rgba(14,165,233,0.06)", padding: "8px 16px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.15)", display: "inline-block" }}>Order ID: {orderId}</div>}
+        {orderId && <div style={{ fontSize: 12, color: "#0ea5e9", marginBottom: 24, fontFamily: "monospace", background: "rgba(14,165,233,0.06)", padding: "8px 16px", borderRadius: 10, border: "1px solid #e2e8f0", display: "inline-block" }}>Order ID: {orderId}</div>}
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <Link to="/user/orders" className="btn-cyan">📦 Track My Order</Link>
           <Link to="/user/browse" className="btn-ghost">🛒 Shop More</Link>

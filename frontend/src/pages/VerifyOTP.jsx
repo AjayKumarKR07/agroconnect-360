@@ -122,234 +122,192 @@ export default function VerifyOTP() {
 
         .auth-page {
           min-height: 100vh;
-          background: #050a0e;
+          background: #f8fafc;
           display: grid;
           grid-template-columns: 1fr 1fr;
           font-family: 'Inter', sans-serif;
-          color: #f0f6ff;
-          overflow: hidden;
+          color: #0f172a;
         }
 
         /* LEFT */
         .auth-left {
-          position: relative;
           display: flex; flex-direction: column;
           justify-content: center; padding: 64px 56px;
-          background: linear-gradient(150deg, #071a0e 0%, #050d18 60%, #08051a 100%);
-          overflow: hidden;
+          background: linear-gradient(145deg, #f0fdf4 0%, #f8fafc 100%);
+          border-right: 1px solid #e2e8f0;
         }
-        .auth-left-canvas {
-          position: absolute; inset: 0; pointer-events: none;
-          background:
-            radial-gradient(ellipse 70% 60% at 30% 30%, rgba(34,197,94,0.12) 0%, transparent 60%),
-            radial-gradient(ellipse 50% 50% at 70% 70%, rgba(56,189,248,0.07) 0%, transparent 60%);
-        }
-        .auth-left-grid {
-          position: absolute; inset: 0; pointer-events: none;
-          background-image:
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 50px 50px;
-        }
-        .auth-orb {
-          position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none;
-        }
-
-        .auth-left-inner { position: relative; z-index: 1; }
-
         .auth-brand {
           display: inline-flex; align-items: center; gap: 12px;
-          text-decoration: none; margin-bottom: 56px;
+          text-decoration: none; margin-bottom: 48px;
         }
         .auth-brand-logo {
-          width: 44px; height: 44px; border-radius: 12px;
-          background: linear-gradient(135deg, #16a34a, #059669);
+          width: 42px; height: 42px; border-radius: 12px;
+          background: #16a34a;
           display: flex; align-items: center; justify-content: center;
-          font-size: 22px; box-shadow: 0 6px 20px rgba(34,197,94,0.4);
+          font-size: 20px; color: #ffffff;
         }
         .auth-brand-name {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 20px; font-weight: 800; color: #fff;
+          font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;
         }
-        .auth-brand-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .auth-brand-sub { font-size: 12px; color: #64748b; }
 
         .verify-illustration {
-          font-size: 80px; line-height: 1; margin-bottom: 36px;
-          animation: float 4s ease-in-out infinite;
+          font-size: 64px; line-height: 1; margin-bottom: 24px;
         }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
 
         .auth-left-title {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 38px; font-weight: 800; color: #fff;
-          line-height: 1.15; letter-spacing: -0.03em; margin-bottom: 16px;
+          font-size: 36px; font-weight: 800; color: #0f172a;
+          line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 12px;
         }
-        .auth-left-title .hl {
-          background: linear-gradient(135deg, #4ade80, #22d3ee);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .auth-left-desc { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.7; max-width: 360px; }
+        .auth-left-title .hl { color: #16a34a; }
+        .auth-left-desc { font-size: 15px; color: #64748b; line-height: 1.65; max-width: 400px; }
 
         .email-chip {
           display: inline-flex; align-items: center; gap: 8px;
-          margin-top: 28px; padding: 10px 18px; border-radius: 10px;
-          background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);
-          font-size: 14px; font-weight: 600; color: #4ade80;
+          margin-top: 24px; padding: 10px 16px; border-radius: 10px;
+          background: #f0fdf4; border: 1px solid #bbf7d0;
+          font-size: 14px; font-weight: 600; color: #166534;
         }
 
-        .steps-list { margin-top: 48px; display: flex; flex-direction: column; gap: 16px; }
-        .step-row { display: flex; align-items: center; gap: 14px; }
+        .steps-list { margin-top: 40px; display: flex; flex-direction: column; gap: 14px; }
+        .step-row { display: flex; align-items: center; gap: 12px; }
         .step-bubble {
-          width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+          width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+          background: #f1f5f9; border: 1px solid #cbd5e1;
           display: flex; align-items: center; justify-content: center;
-          font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.5);
+          font-size: 12px; font-weight: 700; color: #64748b;
         }
-        .step-bubble.done { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.3); color: #4ade80; }
-        .step-bubble.active { background: rgba(34,197,94,0.2); border-color: rgba(34,197,94,0.5); color: #4ade80; box-shadow: 0 0 12px rgba(34,197,94,0.2); }
+        .step-bubble.done { background: #dcfce7; border-color: #bbf7d0; color: #15803d; }
+        .step-bubble.active { background: #16a34a; border-color: #16a34a; color: #ffffff; }
         .step-text { font-size: 14px; }
-        .step-text.done { color: rgba(255,255,255,0.4); text-decoration: line-through; }
-        .step-text.active { color: #fff; font-weight: 600; }
-        .step-text.pending { color: rgba(255,255,255,0.3); }
+        .step-text.done { color: #94a3b8; text-decoration: line-through; }
+        .step-text.active { color: #0f172a; font-weight: 600; }
+        .step-text.pending { color: #94a3b8; }
 
         /* RIGHT */
         .auth-right {
           display: flex; align-items: center; justify-content: center;
-          padding: 48px 56px; background: #080c10;
-          border-left: 1px solid rgba(255,255,255,0.06);
+          padding: 48px 40px; background: #f8fafc;
         }
-        .auth-card { width: 100%; max-width: 440px; }
+        .auth-card {
+          width: 100%; max-width: 420px;
+          background: #ffffff; border: 1px solid #e2e8f0;
+          border-radius: 20px; padding: 36px 32px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
 
         .auth-back {
           display: inline-flex; align-items: center; gap: 6px;
-          font-size: 13px; color: rgba(255,255,255,0.4);
-          text-decoration: none; margin-bottom: 48px; transition: color 0.2s;
+          font-size: 13px; font-weight: 500; color: #64748b;
+          text-decoration: none; margin-bottom: 24px; transition: color 0.15s ease;
         }
-        .auth-back:hover { color: rgba(255,255,255,0.75); }
-
-        .auth-icon-ring {
-          width: 72px; height: 72px; border-radius: 20px; margin-bottom: 28px;
-          background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
-          display: flex; align-items: center; justify-content: center; font-size: 32px;
-          box-shadow: 0 0 40px rgba(34,197,94,0.08);
-        }
+        .auth-back:hover { color: #0f172a; }
 
         .auth-title {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 30px; font-weight: 800; color: #fff;
-          letter-spacing: -0.03em; margin-bottom: 8px;
+          font-size: 26px; font-weight: 800; color: #0f172a;
+          letter-spacing: -0.02em; margin-bottom: 6px;
         }
-        .auth-sub { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; }
-        .auth-sub strong { color: rgba(255,255,255,0.75); }
+        .auth-sub { font-size: 14px; color: #64748b; line-height: 1.6; }
+        .auth-sub strong { color: #0f172a; }
 
         /* OTP BOXES */
-        .otp-form { margin-top: 36px; }
+        .otp-form { margin-top: 28px; }
         .otp-label {
-          font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6);
-          text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
+          font-size: 12px; font-weight: 700; color: #475569;
+          text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px;
         }
         .otp-boxes {
-          display: flex; gap: 8px; margin-bottom: 24px;
+          display: flex; gap: 8px; margin-bottom: 20px; justify-content: flex-start;
         }
         .otp-box {
-          flex: 1; width: 52px; height: 60px; border-radius: 12px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #fff; font-size: 22px; font-weight: 800;
+          width: 40px; height: 40px; flex-shrink: 0;
+          border-radius: 8px;
+          background: #ffffff;
+          border: 1.5px solid #cbd5e1;
+          color: #0f172a; font-size: 16px; font-weight: 700;
           font-family: 'Space Grotesk', sans-serif;
-          text-align: center; outline: none;
-          transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.1s;
-          caret-color: transparent;
+          text-align: center; outline: none; padding: 0;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
         .otp-box:focus {
-          border-color: rgba(34,197,94,0.6);
-          background: rgba(34,197,94,0.06);
-          box-shadow: 0 0 0 4px rgba(34,197,94,0.1), 0 0 20px rgba(34,197,94,0.08);
-          transform: scale(1.05);
+          border-color: #16a34a;
+          box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
         }
-        .otp-box.filled { border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.05); }
-        .otp-box.error { border-color: rgba(239,68,68,0.5); }
+        .otp-box.filled { border-color: #16a34a; background: #f0fdf4; }
+        .otp-box.error { border-color: #ef4444; }
 
         .auth-alert {
-          display: flex; align-items: center; gap: 10px;
-          padding: 14px 16px; border-radius: 12px; font-size: 14px;
-          margin-bottom: 20px;
+          display: flex; align-items: center; gap: 8px;
+          padding: 12px 14px; border-radius: 10px; font-size: 13px;
+          margin-bottom: 16px;
         }
         .auth-alert.error {
-          background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
-          color: #fca5a5;
+          background: #fef2f2; border: 1px solid #fecaca;
+          color: #991b1b;
         }
         .auth-alert.success {
-          background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
-          color: #86efac;
+          background: #f0fdf4; border: 1px solid #bbf7d0;
+          color: #166534;
         }
 
         .auth-submit {
-          width: 100%; padding: 17px; border-radius: 14px;
-          background: linear-gradient(135deg, #16a34a, #059669);
-          color: #fff; font-size: 16px; font-weight: 700;
+          width: 100%; padding: 13px; border-radius: 10px;
+          background: #16a34a;
+          color: #ffffff; font-size: 15px; font-weight: 600;
           font-family: 'Inter', sans-serif; border: none; cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          box-shadow: 0 8px 32px rgba(34,197,94,0.25);
-          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-          position: relative; overflow: hidden;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+          transition: background 0.15s, transform 0.15s;
         }
-        .auth-submit::before {
-          content: ''; position: absolute; inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
-          opacity: 0; transition: opacity 0.2s;
+        .auth-submit:hover:not(:disabled) {
+          background: #15803d;
+          transform: translateY(-1px);
         }
-        .auth-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(34,197,94,0.35); }
-        .auth-submit:hover::before { opacity: 1; }
-        .auth-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-        .auth-submit.incomplete { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); box-shadow: none; color: rgba(255,255,255,0.4); }
+        .auth-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+        .auth-submit.incomplete {
+          background: #f1f5f9; border: 1px solid #cbd5e1; box-shadow: none; color: #94a3b8;
+        }
 
         .auth-spinner {
-          width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #fff; border-radius: 50%;
+          width: 18px; height: 18px; border: 2px solid #ffffff;
+          border-top-color: transparent; border-radius: 50%;
           animation: spin 0.7s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .otp-footer {
-          margin-top: 28px; padding-top: 24px;
-          border-top: 1px solid rgba(255,255,255,0.06);
+          margin-top: 24px; padding-top: 20px;
+          border-top: 1px solid #e2e8f0;
           display: flex; align-items: center; justify-content: space-between;
           flex-wrap: wrap; gap: 10px;
         }
-        .resend-text { font-size: 13px; color: rgba(255,255,255,0.4); }
+        .resend-text { font-size: 13px; color: #64748b; }
         .resend-btn {
           background: none; border: none; cursor: pointer;
-          font-size: 13px; font-weight: 700; color: #4ade80;
+          font-size: 13px; font-weight: 700; color: #16a34a;
           font-family: 'Inter', sans-serif;
-          padding: 6px 14px; border-radius: 8px;
-          transition: background 0.2s;
+          padding: 4px 8px; border-radius: 6px;
         }
-        .resend-btn:hover { background: rgba(34,197,94,0.1); }
-        .resend-btn:disabled { color: rgba(255,255,255,0.25); cursor: not-allowed; }
+        .resend-btn:hover { text-decoration: underline; }
+        .resend-btn:disabled { color: #94a3b8; cursor: not-allowed; text-decoration: none; }
         .resend-countdown {
-          font-size: 13px; color: rgba(255,255,255,0.3);
-          padding: 6px 14px; border-radius: 8px;
-          background: rgba(255,255,255,0.03);
+          font-size: 13px; color: #64748b; font-weight: 600;
         }
 
         @media (max-width: 900px) {
           .auth-page { grid-template-columns: 1fr; }
           .auth-left { display: none; }
-          .auth-right { padding: 32px 24px; }
+          .auth-right { padding: 32px 20px; }
         }
       `}</style>
 
       <div className="auth-page">
-        {/* ── LEFT ───────────────────────────────────────────────────── */}
+        {/* ── LEFT ── */}
         <div className="auth-left">
-          <div className="auth-left-canvas" />
-          <div className="auth-left-grid" />
-          <div className="auth-orb" style={{ width: 300, height: 300, background: "rgba(34,197,94,0.1)", top: "-80px", left: "-80px" }} />
-          <div className="auth-orb" style={{ width: 200, height: 200, background: "rgba(56,189,248,0.08)", bottom: "80px", right: "-40px" }} />
-
-          <div className="auth-left-inner">
+          <div>
             <Link to="/" className="auth-brand">
               <div className="auth-brand-logo">🌱</div>
               <div>
@@ -361,10 +319,10 @@ export default function VerifyOTP() {
             <div className="verify-illustration">📬</div>
 
             <h2 className="auth-left-title">
-              One code away<br />from your <span className="hl">smart farm</span>
+              One Code Away from Your <span className="hl">Agri Hub</span>
             </h2>
             <p className="auth-left-desc">
-              We sent a 6-digit code to your inbox. It expires in 10 minutes for your security.
+              We sent a 6-digit verification code to your email. Enter it below to access your tailored dashboard.
             </p>
 
             {email && (
@@ -380,35 +338,32 @@ export default function VerifyOTP() {
               </div>
               <div className="step-row">
                 <div className="step-bubble active">2</div>
-                <span className="step-text active">Verify your 6-digit OTP</span>
+                <span className="step-text active">Verify 6-digit code</span>
               </div>
               <div className="step-row">
-                <div className="step-bubble" style={{ color: "rgba(255,255,255,0.25)" }}>3</div>
-                <span className="step-text pending">Complete your profile</span>
+                <div className="step-bubble">3</div>
+                <span className="step-text pending">Select your role</span>
               </div>
               <div className="step-row">
-                <div className="step-bubble" style={{ color: "rgba(255,255,255,0.25)" }}>4</div>
-                <span className="step-text pending">Access your dashboard</span>
+                <div className="step-bubble">4</div>
+                <span className="step-text pending">Access smart tools</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT ──────────────────────────────────────────────────── */}
+        {/* ── RIGHT ── */}
         <div className="auth-right">
           <div className="auth-card">
             <Link to="/login" className="auth-back">← Use a different email</Link>
 
-            <div className="auth-icon-ring">🔐</div>
-            <h1 className="auth-title">Enter your code</h1>
+            <h1 className="auth-title">Enter Verification Code</h1>
             <p className="auth-sub">
-              6-digit code sent to&nbsp;
-              <strong>{email || "your email"}</strong>.<br />
-              Check your spam folder if needed.
+              Enter the 6-digit code sent to <strong>{email || "your email"}</strong>. Check spam if not received.
             </p>
 
             <form className="otp-form" onSubmit={handleSubmit}>
-              <div className="otp-label">Verification Code</div>
+              <div className="otp-label">6-Digit Code</div>
 
               <div className="otp-boxes" onPaste={handlePaste}>
                 {otp.map((digit, i) => (
@@ -443,14 +398,14 @@ export default function VerifyOTP() {
                 {loading ? (
                   <><div className="auth-spinner" /> Verifying…</>
                 ) : isComplete ? (
-                  <>🔓 Verify & Enter Dashboard</>
+                  <>🔓 Verify & Continue</>
                 ) : (
                   <>Enter all 6 digits to continue</>
                 )}
               </button>
 
               <div className="otp-footer">
-                <span className="resend-text">Didn't get the code?</span>
+                <span className="resend-text">Didn't receive the code?</span>
                 {countdown > 0 ? (
                   <span className="resend-countdown">Resend in {countdown}s</span>
                 ) : (

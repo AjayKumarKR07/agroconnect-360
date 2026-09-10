@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Plus, Sprout, Search } from "lucide-react";
 
 export default function MyCrops() {
   const [crops, setCrops] = useState([]);
@@ -54,7 +55,7 @@ export default function MyCrops() {
 
   const statusBadge = (s) => {
     if (s === "listed")  return <span className="badge badge-green">🟢 Listed</span>;
-    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}>⚡ Ready</span>;
+    if (s === "ready")   return <span className="badge badge-cyan" style={{ background: "rgba(56,189,248,0.12)", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }}>⚡ Ready</span>;
     if (s === "sold")    return <span className="badge badge-red">🔴 Sold</span>;
     return <span className="badge badge-amber">🌱 Growing</span>;
   };
@@ -69,18 +70,18 @@ export default function MyCrops() {
           <h1 className="pg-title">🌿 My Crops</h1>
           <p className="pg-sub">Manage your crop listings and agricultural produce.</p>
         </div>
-        <Link to="/farmer/crops/add" className="btn-green" id="add-crop-btn">➕ Add New Crop</Link>
+        <Link to="/farmer/crops/add" className="btn-green" id="add-crop-btn" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add New Crop</Link>
       </div>
 
       {/* Summary row */}
       {!loading && crops.length > 0 && (
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
           {[
-            { label: "Total", count: crops.length, color: "#38bdf8" },
-            { label: "Listed", count: crops.filter(c => c.status === "listed").length, color: "#4ade80" },
-            { label: "Ready (unlisted)", count: crops.filter(c => c.status === "ready").length, color: "#38bdf8" },
-            { label: "Growing", count: crops.filter(c => c.status === "growing").length, color: "#fbbf24" },
-            { label: "Sold", count: crops.filter(c => c.status === "sold").length, color: "#f87171" },
+            { label: "Total", count: crops.length, color: "#0369a1" },
+            { label: "Listed", count: crops.filter(c => c.status === "listed").length, color: "#15803d" },
+            { label: "Ready (unlisted)", count: crops.filter(c => c.status === "ready").length, color: "#0369a1" },
+            { label: "Growing", count: crops.filter(c => c.status === "growing").length, color: "#b45309" },
+            { label: "Sold", count: crops.filter(c => c.status === "sold").length, color: "#dc2626" },
           ].filter(x => x.count > 0).map(({ label, count, color }) => (
             <div key={label} style={{ padding: "6px 14px", borderRadius: 10, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 12, fontWeight: 700, color }}>
               {count} {label}
@@ -110,16 +111,16 @@ export default function MyCrops() {
 
       {!loading && crops.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-emoji">🌱</div>
+          <div className="empty-emoji"><Sprout size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No crops listed yet</div>
           <div className="empty-sub">Start by adding your first crop to reach buyers directly.</div>
-          <Link to="/farmer/crops/add" className="btn-green">➕ Add Your First Crop</Link>
+          <Link to="/farmer/crops/add" className="btn-green" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> Add Your First Crop</Link>
         </div>
       )}
 
       {!loading && filtered.length === 0 && crops.length > 0 && (
         <div className="card empty-state">
-          <div className="empty-emoji">🔍</div>
+          <div className="empty-emoji"><Search size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No crops match "{search}"</div>
           <div className="empty-sub">Try a different search term.</div>
         </div>
@@ -129,7 +130,7 @@ export default function MyCrops() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
           {filtered.map((crop) => (
             <div key={crop._id} className="card" style={{ padding: 0, overflow: "hidden", transition: "transform 0.2s, box-shadow 0.2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(0,0,0,0.5)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.1)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
             >
               {/* Image */}
@@ -138,7 +139,7 @@ export default function MyCrops() {
                   <img src={crop.image.url} alt={crop.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
               ) : (
-                <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(34,197,94,0.05)", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", borderBottom: "1px solid var(--border)" }}>
                   <span style={{ fontSize: 56 }}>🌿</span>
                 </div>
               )}
@@ -146,7 +147,7 @@ export default function MyCrops() {
               <div style={{ padding: 20 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", fontFamily: "'Space Grotesk',sans-serif" }}>{crop.name}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", fontFamily: "'Space Grotesk',sans-serif" }}>{crop.name}</div>
                     <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>{crop.category}</div>
                   </div>
                   {statusBadge(crop.status)}
@@ -161,7 +162,7 @@ export default function MyCrops() {
                   ].map(([icon, lbl, val]) => (
                     <div key={lbl} style={{ background: "var(--surface)", borderRadius: 10, padding: "10px 12px" }}>
                       <div style={{ fontSize: 11, color: "var(--text2)", marginBottom: 3 }}>{icon} {lbl}</div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{val}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>{val}</div>
                     </div>
                   ))}
                 </div>
@@ -185,7 +186,7 @@ export default function MyCrops() {
                     </button>
                   )}
                   <button onClick={() => navigate(`/farmer/crops/${crop._id}`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center" }}>👁 View</button>
-                  <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#4ade80", borderColor: "rgba(34,197,94,0.2)" }}>✏️ Edit</button>
+                  <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.2)" }}>✏️ Edit</button>
                   <button onClick={() => handleDelete(crop)} disabled={deletingId === crop._id} className="btn-danger" style={{ flex: 1, justifyContent: "center" }}>
                     {deletingId === crop._id ? "…" : "🗑"}
                   </button>

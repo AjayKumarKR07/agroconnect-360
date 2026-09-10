@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { RefreshCw, Truck } from "lucide-react";
 
 /* ── Real status config — derived from sellerController getSellerShipments ── */
 const STATUS_CONFIG = {
-  pending:    { label: "⏳ Pending",    bg: "rgba(251,191,36,0.1)",  color: "#fbbf24", step: 0 },
-  dispatched: { label: "🚚 Dispatched", bg: "rgba(167,139,250,0.1)", color: "#a78bfa", step: 1 },
-  in_transit: { label: "📍 In Transit", bg: "rgba(56,189,248,0.1)",  color: "#38bdf8", step: 2 },
-  delivered:  { label: "✅ Delivered",  bg: "rgba(34,197,94,0.1)",   color: "#4ade80", step: 3 },
+  pending:    { label: "⏳ Pending",    bg: "rgba(251,191,36,0.1)",  color: "#b45309", step: 0 },
+  dispatched: { label: "🚚 Dispatched", bg: "rgba(167,139,250,0.1)", color: "#7c3aed", step: 1 },
+  in_transit: { label: "📍 In Transit", bg: "rgba(56,189,248,0.1)",  color: "#0369a1", step: 2 },
+  delivered:  { label: "✅ Delivered",  bg: "rgba(34,197,94,0.1)",   color: "#15803d", step: 3 },
 };
 
 const STEPS = ["Order Placed", "Dispatched", "In Transit", "Delivered"];
@@ -80,19 +81,19 @@ export default function SellerLogistics() {
         @keyframes sklShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
         .log-tabs  { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:22px; }
         .log-tab   { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; font-family:'Inter',sans-serif; }
-        .log-tab.active { background:rgba(167,139,250,0.1); color:#a78bfa; border-color:rgba(167,139,250,0.2); }
+        .log-tab.active { background:rgba(167,139,250,0.1); color:#7c3aed; border-color:rgba(167,139,250,0.2); }
         .ship-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 20px; cursor:pointer; transition:all 0.2s; }
         .ship-card:hover { border-color:rgba(167,139,250,0.2); background:rgba(167,139,250,0.04); }
         .ship-card.sel  { border-color:rgba(167,139,250,0.35); background:rgba(167,139,250,0.06); }
         .tracker   { display:flex; align-items:center; gap:0; margin:20px 0; }
         .tr-dot    { width:28px; height:28px; border-radius:50%; border:2px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:13px; transition:all 0.3s; flex-shrink:0; }
-        .tr-dot.done { background:linear-gradient(135deg,#7c3aed,#a78bfa); border-color:#a78bfa; box-shadow:0 0 14px rgba(167,139,250,0.5); }
-        .tr-dot.cur  { background:rgba(167,139,250,0.15); border-color:#a78bfa; animation:trPulse 1.5s ease infinite; }
+        .tr-dot.done { background:linear-gradient(135deg,#7c3aed,#a78bfa); border-color:#7c3aed; box-shadow:0 0 14px rgba(167,139,250,0.5); }
+        .tr-dot.cur  { background:rgba(167,139,250,0.15); border-color:#7c3aed; animation:trPulse 1.5s ease infinite; }
         @keyframes trPulse { 0%,100%{box-shadow:0 0 8px rgba(167,139,250,0.4)} 50%{box-shadow:0 0 16px rgba(167,139,250,0.8)} }
         .tr-line   { flex:1; height:2px; background:var(--border); transition:background 0.3s; margin-top:-22px; }
         .tr-line.done { background:linear-gradient(90deg,#7c3aed,#a78bfa); }
         .tr-label  { font-size:10px; color:var(--text2); text-align:center; white-space:nowrap; }
-        .tr-label.done,.tr-label.cur { color:#a78bfa; font-weight:700; }
+        .tr-label.done,.tr-label.cur { color:#7c3aed; font-weight:700; }
       `}</style>
 
       {/* Header */}
@@ -104,7 +105,7 @@ export default function SellerLogistics() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#a78bfa" }}>{counts.in_transit}</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#7c3aed" }}>{counts.in_transit}</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>In Transit</div>
           </div>
         </div>
@@ -130,13 +131,13 @@ export default function SellerLogistics() {
 
       {/* Error state */}
       {error && !loading && (
-        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
-              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load shipments — {error}</span>
+              <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load shipments — {error}</span>
             </div>
-            <button onClick={fetchShipments} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+            <button onClick={fetchShipments} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
           </div>
         </div>
       )}
@@ -173,7 +174,7 @@ export default function SellerLogistics() {
             {/* Empty state */}
             {filtered.length === 0 && (
               <div className="card empty-state">
-                <div className="empty-emoji">🚚</div>
+                <div className="empty-emoji"><Truck size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                 <div className="empty-title">
                   {shipments.length === 0 ? "No shipments yet" : "No shipments match your filter"}
                 </div>
@@ -198,7 +199,7 @@ export default function SellerLogistics() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                          <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{s.product || "Product"}</div>
+                          <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{s.product || "Product"}</div>
                           <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: st.bg, color: st.color, whiteSpace: "nowrap" }}>{st.label}</span>
                         </div>
                         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
@@ -210,7 +211,7 @@ export default function SellerLogistics() {
                         </div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 700, fontFamily: "monospace" }}>
+                        <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 700, fontFamily: "monospace" }}>
                           {s.trackingNo || "No tracking"}
                         </div>
                         <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 4 }}>
@@ -270,7 +271,7 @@ export default function SellerLogistics() {
                   ].filter(([, val]) => val !== "—").map(([label, val]) => (
                     <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, paddingBottom: 10, borderBottom: "1px solid var(--border)" }}>
                       <span style={{ color: "var(--text2)" }}>{label}</span>
-                      <span style={{ color: "#fff", fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{val}</span>
+                      <span style={{ color: "#0f172a", fontWeight: 600, textAlign: "right", maxWidth: "60%" }}>{val}</span>
                     </div>
                   ))}
                 </div>

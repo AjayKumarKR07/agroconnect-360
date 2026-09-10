@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect } from "react";
+import { Plus } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,28px);font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,28px);font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:24px;}
-  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s,transform 0.2s;box-shadow:0 4px 15px rgba(14,165,233,0.3);}
+  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s,transform 0.2s;box-shadow:0 4px 15px rgba(14,165,233,0.3);}
   .btn-cyan:hover{opacity:0.9;transform:translateY(-1px);}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#7dd3fc;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
   .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
   .field-input:focus{border-color:rgba(14,165,233,0.4);}
   .typing-dot{width:7px;height:7px;border-radius:50%;background:#7dd3fc;animation:typingBounce 1.2s ease infinite;}
   .typing-dot:nth-child(2){animation-delay:0.2s;}
@@ -20,9 +21,9 @@ const DS_USER = `
   .inq-item{padding:12px 14px;border-radius:14px;cursor:pointer;transition:all 0.2s;}
   .inq-item:hover{background:rgba(14,165,233,0.06);}
   .inq-item.active{background:rgba(14,165,233,0.12);border:1px solid rgba(14,165,233,0.3);}
-  .msg-input{flex:1;padding:12px 16px;border-radius:12px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;resize:none;line-height:1.5;}
+  .msg-input{flex:1;padding:12px 16px;border-radius:12px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;resize:none;line-height:1.5;}
   .msg-input:focus{border-color:rgba(14,165,233,0.4);background:rgba(14,165,233,0.08);}
-  .msg-input::placeholder{color:rgba(255,255,255,0.3);}
+  .msg-input::placeholder{color:#94a3b8;}
 `;
 
 /* ── Contextual auto-reply bank ───────────────────────────────── */
@@ -224,7 +225,7 @@ export default function UserInquiries() {
           <h1 className="pg-title">💬 Farmer Inquiries & Bulk Requests</h1>
           <p className="pg-sub">Negotiate bulk prices, ask about farming practices, or request custom harvests.</p>
         </div>
-        <button className="btn-cyan" onClick={() => setShowModal(true)}>➕ New Bulk Inquiry</button>
+        <button className="btn-cyan" onClick={() => setShowModal(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><Plus size={14} strokeWidth={2.5} /> New Bulk Inquiry</button>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "320px 1fr", gap: 16, minHeight: 500 }}>
@@ -241,12 +242,12 @@ export default function UserInquiries() {
               onClick={() => setActiveInq(i)}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{i.farmerName}</span>
+                <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{i.farmerName}</span>
                 <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 6, background: `${i.statusColor}20`, color: i.statusColor, fontWeight: 700, border: `1px solid ${i.statusColor}40` }}>
                   {i.status}
                 </span>
               </div>
-              <div style={{ fontSize: 12, color: "#38bdf8", fontWeight: 600, marginBottom: 3 }}>🌾 {i.crop} ({i.qty})</div>
+              <div style={{ fontSize: 12, color: "#0369a1", fontWeight: 600, marginBottom: 3 }}>🌾 {i.crop} ({i.qty})</div>
               <div style={{ fontSize: 11, color: "var(--text2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {i.lastMsg}
               </div>
@@ -261,16 +262,16 @@ export default function UserInquiries() {
             {/* Chat header */}
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(14,165,233,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#fff" }}>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a" }}>
                   👨‍🌾 {activeInq.farmerName}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>
-                  📍 {activeInq.location} · Product: <strong style={{ color: "#38bdf8" }}>{activeInq.crop}</strong> ({activeInq.qty})
+                  📍 {activeInq.location} · Product: <strong style={{ color: "#0369a1" }}>{activeInq.crop}</strong> ({activeInq.qty})
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {isTyping && (
-                  <span style={{ fontSize: 11, color: "#38bdf8", fontStyle: "italic", fontFamily: "'Inter',sans-serif" }}>
+                  <span style={{ fontSize: 11, color: "#0369a1", fontStyle: "italic", fontFamily: "'Inter',sans-serif" }}>
                     Farmer is typing…
                   </span>
                 )}
@@ -291,7 +292,7 @@ export default function UserInquiries() {
                     maxWidth: "76%", padding: "11px 16px", borderRadius: m.sender === "Buyer" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
                     fontSize: 13.5, lineHeight: 1.55,
                     background: m.sender === "Buyer" ? "linear-gradient(135deg,#0284c7,#0ea5e9)" : "rgba(14,165,233,0.1)",
-                    color: "#fff",
+                    color: "#0f172a",
                     border: m.sender === "Buyer" ? "none" : "1px solid rgba(14,165,233,0.18)",
                     boxShadow: m.sender === "Buyer" ? "0 4px 16px rgba(14,165,233,0.25)" : "none",
                   }}>
@@ -351,9 +352,9 @@ export default function UserInquiries() {
       {/* ── New Inquiry Modal ──────────────────────────────────── */}
       {showModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.78)", backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div className="card" style={{ maxWidth: 480, width: "100%", background: "#041a1f", border: "1px solid rgba(14,165,233,0.3)", boxShadow: "0 24px 60px rgba(0,0,0,0.8)" }}>
+          <div className="card" style={{ maxWidth: 480, width: "100%", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 20px 40px rgba(0,0,0,0.12)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                 📩 Start New Farmer Inquiry
               </div>
               <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 22, cursor: "pointer" }}>✕</button>
@@ -378,7 +379,7 @@ export default function UserInquiries() {
                 <label className="field-label">Your Opening Message</label>
                 <textarea className="field-input" rows={3} style={{ resize: "none" }} value={newForm.message} onChange={e => setNewForm({ ...newForm, message: e.target.value })} />
               </div>
-              <div style={{ fontSize: 12, color: "var(--text2)", background: "rgba(14,165,233,0.06)", padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.12)" }}>
+              <div style={{ fontSize: 12, color: "var(--text2)", background: "rgba(14,165,233,0.06)", padding: "8px 12px", borderRadius: 10, border: "1px solid #e2e8f0" }}>
                 💡 The farmer will be notified and typically responds within a few minutes.
               </div>
             </div>

@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { Heart } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;}
+  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;}
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;gap:12px;}
-  .empty-emoji{font-size:56px;} .empty-title{font-size:18px;font-weight:700;color:#fff;} .empty-sub{font-size:14px;color:var(--text2);}
+  .empty-emoji{font-size:56px;} .empty-title{font-size:18px;font-weight:700;color:#0f172a;} .empty-sub{font-size:14px;color:var(--text2);}
   .wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
   .wl-card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;overflow:hidden;transition:all 0.2s;}
   .wl-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
@@ -76,19 +77,19 @@ export default function UserWishlist() {
           <p className="pg-sub">Products you've saved for later.</p>
         </div>
         {items.length > 0 && (
-          <button onClick={clearWishlist} style={{ padding: "9px 16px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.06)", color: "#f87171", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
+          <button onClick={clearWishlist} style={{ padding: "9px 16px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
             🗑️ Clear All
           </button>
         )}
       </div>
 
       {cartMsg && (
-        <div style={{ marginBottom: 16, padding: "10px 16px", background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: 12, color: "#38bdf8", fontWeight: 600, fontSize: 14 }}>{cartMsg}</div>
+        <div style={{ marginBottom: 16, padding: "10px 16px", background: "rgba(14,165,233,0.1)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: 12, color: "#0369a1", fontWeight: 600, fontSize: 14 }}>{cartMsg}</div>
       )}
 
       {wishlistIds.length === 0 || items.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-emoji">❤️</div>
+          <div className="empty-emoji"><Heart size={40} strokeWidth={1.5} color="#bae6fd" /></div>
           <div className="empty-title">Your wishlist is empty</div>
           <div className="empty-sub">Click the ❤️ button on any product to save it here.</div>
           <Link to="/user/browse" className="btn-cyan">🛒 Browse Products</Link>
@@ -105,15 +106,15 @@ export default function UserWishlist() {
                     : <div className="wl-ph">{catEmoji(c.category)}</div>
                   }
                   <button onClick={() => removeFromWishlist(c._id)}
-                    style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", background: "rgba(239,68,68,0.8)", border: "none", cursor: "pointer", fontSize: 14, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}
+                    style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", background: "rgba(239,68,68,0.8)", border: "none", cursor: "pointer", fontSize: 14, color: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center" }}
                     title="Remove from wishlist">✕</button>
                 </div>
                 <div style={{ padding: "14px 16px" }}>
-                  <div style={{ fontWeight: 800, color: "#fff", fontSize: 14, marginBottom: 4 }}>{c.name}</div>
+                  <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 14, marginBottom: 4 }}>{c.name}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>📍 {c.location} · {c.quantity} {c.unit} avail.</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>₹{c.price}<span style={{ fontSize: 11, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span></div>
-                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.1)", color: "#4ade80", fontWeight: 700 }}>🌿 Fresh</span>
+                    <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}>🌿 Fresh</span>
                   </div>
                   <button onClick={() => addToCart(c)} className="btn-cyan" style={{ width: "100%", justifyContent: "center", fontSize: 13 }}>🛒 Add to Cart</button>
                 </div>

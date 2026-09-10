@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
+import { Globe } from "lucide-react";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
@@ -170,20 +171,20 @@ export default function ExportMarkets() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Foreign Exchange & International Tariffs</div>
-          <h1 className="pg-title">💱 Global FX & Export Market Insights</h1>
+          <h1 className="pg-title"><Globe size={22} strokeWidth={2} style={{ marginRight: 8, color: "#d97706", verticalAlign: "middle" }} />Global FX & Export Market Insights</h1>
           <p className="pg-sub">Live foreign exchange rates and destination import tariff reference for Indian agricultural exporters.</p>
         </div>
         <div style={{ textAlign: "right" }}>
           {fxLoading ? (
             <span style={{ fontSize: 13, color: "#a38a5d" }}><span className="spinner" /> Fetching live rates…</span>
           ) : fxError ? (
-            <span style={{ fontSize: 12, color: "#f87171" }}>⚠️ FX fetch failed</span>
+            <span style={{ fontSize: 12, color: "#dc2626" }}>⚠️ FX fetch failed</span>
           ) : (
             <div>
               <div style={{ fontSize: 11, color: "#a38a5d" }}>
                 Updated {fxUpdated?.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
               </div>
-              <div style={{ fontSize: 12, color: "#4ade80", fontWeight: 700 }}>● LIVE</div>
+              <div style={{ fontSize: 12, color: "#15803d", fontWeight: 700 }}>● LIVE</div>
             </div>
           )}
           <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 4 }}>⟳ Refresh</button>
@@ -192,7 +193,7 @@ export default function ExportMarkets() {
 
       {/* ── FX Rates ────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 32 }}>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#fff", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a", marginBottom: 14, display: "flex", alignItems: "center", gap: 10 }}>
           💱 Live Forex Exchange Rates (to INR)
           {fxLoading && <span className="spinner" />}
         </div>
@@ -205,15 +206,15 @@ export default function ExportMarkets() {
             return (
               <div key={c.code} className={`card ${fxLoading && !rates[c.code] ? "pulse" : ""}`} style={{ minHeight: 90 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: "#fbbf24" }}>{c.flag} {c.code} / INR</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "#b45309" }}>{c.flag} {c.code} / INR</span>
                   {chg !== null && (
                     <span style={{ fontSize: 10, color: up ? "#4ade80" : "#f87171", fontWeight: 700, background: up ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", padding: "2px 6px", borderRadius: 5 }}>
                       {up ? "▲" : "▼"} {Math.abs(chg).toFixed(3)}%
                     </span>
                   )}
-                  {chg === null && !fxLoading && <span style={{ fontSize: 9, color: "#4ade80", fontWeight: 700, background: "rgba(34,197,94,0.1)", padding: "2px 6px", borderRadius: 5 }}>LIVE</span>}
+                  {chg === null && !fxLoading && <span style={{ fontSize: 9, color: "#15803d", fontWeight: 700, background: "rgba(34,197,94,0.1)", padding: "2px 6px", borderRadius: 5 }}>LIVE</span>}
                 </div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff" }}>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>
                   {rateStr === "—" ? <span className="pulse" style={{ color: "#a38a5d" }}>Loading…</span> : `₹${rateStr}`}
                 </div>
                 <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 4 }}>1 {c.code} = ₹{rateStr} INR</div>
@@ -223,7 +224,7 @@ export default function ExportMarkets() {
         </div>
 
         {fxError && (
-          <div style={{ marginTop: 10, fontSize: 12, color: "#f87171", padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)" }}>
+          <div style={{ marginTop: 10, fontSize: 12, color: "#dc2626", padding: "10px 14px", borderRadius: 10, background: "#fef2f2", border: "1px solid rgba(239,68,68,0.15)" }}>
             ⚠️ Could not fetch live FX rates. Showing last known values. Click ⟳ Refresh to retry.
           </div>
         )}
@@ -232,7 +233,7 @@ export default function ExportMarkets() {
       {/* ── Destination Market Index ─────────────────────────────────── */}
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#fff" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 17, fontWeight: 800, color: "#0f172a" }}>
             🌍 Target Destination Market Index & Import Tariffs
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -240,11 +241,11 @@ export default function ExportMarkets() {
               placeholder="🔍 Search country or product…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#fff", fontSize: 13, outline: "none", width: 220 }}
+              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", width: 220 }}
             />
             <select
               value={sortBy} onChange={e => setSortBy(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#fff", fontSize: 13, outline: "none", appearance: "none" }}
+              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", appearance: "none" }}
             >
               <option value="demand">Sort: Demand</option>
               <option value="country">Sort: Country</option>
@@ -259,7 +260,7 @@ export default function ExportMarkets() {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 18 }}>{d.flag}</span>
-                    <span style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>{d.country}</span>
+                    <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{d.country}</span>
                   </div>
                   <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 4 }}>
                     Top Imports: <strong style={{ color: "#fef08a" }}>{d.topImport}</strong>
@@ -269,7 +270,7 @@ export default function ExportMarkets() {
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Import Tariff</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{d.tariff}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{d.tariff}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Demand</div>
@@ -291,7 +292,7 @@ export default function ExportMarkets() {
           )}
         </div>
 
-        <div style={{ marginTop: 16, fontSize: 11, color: "#a38a5d", padding: "10px 14px", borderRadius: 10, background: "rgba(56,189,248,0.05)", border: "1px solid rgba(56,189,248,0.12)" }}>
+        <div style={{ marginTop: 16, fontSize: 11, color: "#a38a5d", padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)" }}>
           ℹ️ Tariff rates are approximate standard MFN/FTA rates for agricultural commodities. Actual rates vary by HS code. Always verify with a licensed customs broker before shipment.
         </div>
       </div>

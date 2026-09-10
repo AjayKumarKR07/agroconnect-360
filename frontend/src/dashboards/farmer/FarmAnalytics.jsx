@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Sprout, CircleDot, Package, CheckCircle2, IndianRupee, Stethoscope } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -38,7 +39,7 @@ function StatusRing({ items }) {
           <div style={{ flex: 1, height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
             <div style={{ width: `${(value / total) * 100}%`, height: "100%", background: color, borderRadius: 3, transition: "width 0.6s ease" }} />
           </div>
-          <span style={{ fontSize: 11, color: "var(--text2)", minWidth: 60, textAlign: "right" }}>{label}: <strong style={{ color: "#fff" }}>{value}</strong></span>
+          <span style={{ fontSize: 11, color: "var(--text2)", minWidth: 60, textAlign: "right" }}>{label}: <strong style={{ color: "#0f172a" }}>{value}</strong></span>
         </div>
       ))}
     </div>
@@ -67,13 +68,13 @@ export default function FarmAnalytics() {
     <>
       <style>{DS + `
         .fa-section { margin-bottom:28px; }
-        .fa-section-title { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:#fff; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+        .fa-section-title { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:#0f172a; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
         .fa-grid { display:grid; gap:16px; }
         .fa-grid-2 { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
         .fa-grid-3 { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
         .fa-chart-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
         .fa-chart-title { font-size:13px; font-weight:700; color:var(--text2); margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em; }
-        .fa-note { padding:14px 16px; background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15); border-radius:12px; font-size:13px; color:#fde68a; line-height:1.7; margin-top:16px; }
+        .fa-note { padding:14px 16px; background:#fffbeb; border:1px solid rgba(251,191,36,0.15); border-radius:12px; font-size:13px; color:#fde68a; line-height:1.7; margin-top:16px; }
       `}</style>
 
       <div className="pg-head">
@@ -94,16 +95,16 @@ export default function FarmAnalytics() {
           {/* ── Top Stats ── */}
           <div className="stat-grid" style={{ marginBottom: 28 }}>
             {[
-              { emoji: "🌿", label: "Total Crops",    value: data.crops.total,     color: "#22c55e", glow: "#22c55e" },
-              { emoji: "🟢", label: "Active Crops",   value: data.crops.active,    color: "#4ade80", glow: "#22c55e" },
-              { emoji: "📦", label: "Total Orders",   value: data.orders.total,    color: "#38bdf8", glow: "#38bdf8" },
-              { emoji: "✅", label: "Delivered",      value: data.orders.delivered, color: "#a78bfa", glow: "#a78bfa" },
-              { emoji: "💰", label: "Total Income",   value: fmt(data.income.total), color: "#fbbf24", glow: "#fbbf24" },
-              { emoji: "🩺", label: "Health Scans",  value: data.diagnoses.total,  color: "#fb923c", glow: "#fb923c" },
-            ].map(({ emoji, label, value, color, glow }) => (
+              { Icon: Sprout,       label: "Total Crops",    value: data.crops.total,     color: "#16a34a", glow: "#22c55e" },
+              { Icon: CircleDot,    label: "Active Crops",   value: data.crops.active,    color: "#15803d", glow: "#22c55e" },
+              { Icon: Package,      label: "Total Orders",   value: data.orders.total,    color: "#0369a1", glow: "#38bdf8" },
+              { Icon: CheckCircle2, label: "Delivered",      value: data.orders.delivered, color: "#7c3aed", glow: "#a78bfa" },
+              { Icon: IndianRupee,  label: "Total Income",   value: fmt(data.income.total), color: "#b45309", glow: "#fbbf24" },
+              { Icon: Stethoscope,  label: "Health Scans",  value: data.diagnoses.total,  color: "#fb923c", glow: "#fb923c" },
+            ].map(({ Icon, label, value, color, glow }) => (
               <div key={label} className="stat-card">
                 <div className="stat-glow" style={{ background: glow }} />
-                <div className="stat-emoji">{emoji}</div>
+                <div className="stat-icon" style={{ color }}><Icon size={20} strokeWidth={1.75} /></div>
                 <div className="stat-val" style={{ fontSize: 22, color }}>{value}</div>
                 <div className="stat-lbl">{label}</div>
               </div>
@@ -138,10 +139,10 @@ export default function FarmAnalytics() {
                 <p style={{ color: "var(--text2)", fontSize: 13 }}>No crops added yet.</p>
               ) : (
                 <StatusRing items={[
-                  { label: "Growing",  value: data.crops.growing, color: "#22c55e" },
-                  { label: "Ready",    value: data.crops.ready,   color: "#fbbf24" },
-                  { label: "Listed",   value: data.crops.listed,  color: "#38bdf8" },
-                  { label: "Sold",     value: data.crops.sold,    color: "#a78bfa" },
+                  { label: "Growing",  value: data.crops.growing, color: "#16a34a" },
+                  { label: "Ready",    value: data.crops.ready,   color: "#b45309" },
+                  { label: "Listed",   value: data.crops.listed,  color: "#0369a1" },
+                  { label: "Sold",     value: data.crops.sold,    color: "#7c3aed" },
                 ]} />
               )}
             </div>
@@ -153,10 +154,10 @@ export default function FarmAnalytics() {
                 <p style={{ color: "var(--text2)", fontSize: 13 }}>No orders received yet.</p>
               ) : (
                 <StatusRing items={[
-                  { label: "Pending",   value: data.orders.pending,   color: "#fbbf24" },
-                  { label: "Accepted",  value: data.orders.accepted,  color: "#22c55e" },
-                  { label: "Delivered", value: data.orders.delivered, color: "#38bdf8" },
-                  { label: "Cancelled", value: data.orders.cancelled, color: "#f87171" },
+                  { label: "Pending",   value: data.orders.pending,   color: "#b45309" },
+                  { label: "Accepted",  value: data.orders.accepted,  color: "#16a34a" },
+                  { label: "Delivered", value: data.orders.delivered, color: "#0369a1" },
+                  { label: "Cancelled", value: data.orders.cancelled, color: "#dc2626" },
                 ]} />
               )}
             </div>
@@ -216,7 +217,7 @@ export default function FarmAnalytics() {
                     {data.cropInventory.map((c, i) => (
                       <tr key={i}>
                         <td>{c.name}</td>
-                        <td style={{ fontWeight: 700, color: "#fff" }}>{c.quantity}</td>
+                        <td style={{ fontWeight: 700, color: "#0f172a" }}>{c.quantity}</td>
                         <td style={{ color: "var(--text2)" }}>{c.unit}</td>
                         <td>
                           <span className={`badge ${c.status === "sold" ? "badge-red" : c.status === "ready" ? "badge-amber" : "badge-green"}`}>

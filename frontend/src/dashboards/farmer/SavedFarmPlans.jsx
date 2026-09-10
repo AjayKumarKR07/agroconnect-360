@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { ClipboardList } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -109,7 +110,7 @@ export default function SavedFarmPlans() {
         .sp-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; transition:border-color .2s,transform .2s; }
         .sp-card:hover { border-color:rgba(34,197,94,0.25); transform:translateY(-2px); }
         .sp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
-        .sp-crop { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#fff; margin-bottom:6px; }
+        .sp-crop { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px; }
         .sp-meta { font-size:12px; color:var(--text2); margin-bottom:14px; line-height:1.8; }
         .sp-actions { display:flex; gap:8px; flex-wrap:wrap; }
         .sp-detail-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:24px; }
@@ -117,7 +118,7 @@ export default function SavedFarmPlans() {
         .sp-section-title { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
         .sp-rec-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
         .sp-rank { font-size:20px; width:28px; flex-shrink:0; }
-        .sp-rec-crop { font-weight:700; color:#fff; font-size:14px; }
+        .sp-rec-crop { font-weight:700; color:#0f172a; font-size:14px; }
         .sp-rec-meta { font-size:11px; color:var(--text2); margin-top:2px; }
       `}</style>
 
@@ -136,7 +137,7 @@ export default function SavedFarmPlans() {
         <div className="loading-wrap"><div className="spinner" /><span>Loading saved plans…</span></div>
       ) : plans.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-emoji">📋</div>
+          <div className="empty-emoji"><ClipboardList size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No saved plans yet</div>
           <div className="empty-sub">Generate a Smart Farm Plan and click "Save Farm Plan" to keep it for later.</div>
           <Link to="/farmer/smart-farm-planner" className="btn-green" style={{ marginTop: 16, display: "inline-flex" }}>🌾 Generate a Plan</Link>
@@ -163,7 +164,7 @@ export default function SavedFarmPlans() {
                 <div className="sp-actions">
                   <button
                     className="btn-ghost"
-                    style={{ fontSize: 12, padding: "7px 14px", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}
+                    style={{ fontSize: 12, padding: "7px 14px", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }}
                     onClick={() => handleViewFull(plan)}
                     disabled={loadingFull}
                   >
@@ -171,7 +172,7 @@ export default function SavedFarmPlans() {
                   </button>
                   <button
                     className="btn-ghost"
-                    style={{ fontSize: 12, padding: "7px 14px", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }}
+                    style={{ fontSize: 12, padding: "7px 14px", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }}
                     onClick={() => handleDelete(plan._id)}
                     disabled={deleting === plan._id}
                   >
@@ -187,7 +188,7 @@ export default function SavedFarmPlans() {
             <div className="sp-detail-wrap">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                 <div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff" }}>{selected.title}</div>
+                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>{selected.title}</div>
                   <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 4 }}>
                     {selected.location} · {selected.farmArea} · {new Date(selected.createdAt).toLocaleDateString("en-IN")}
                   </div>
@@ -221,7 +222,7 @@ export default function SavedFarmPlans() {
 
               {/* AI Explanation */}
               {selected.aiExplanation && (
-                <div className="sp-section" style={{ padding: "16px 20px", background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 14 }}>
+                <div className="sp-section" style={{ padding: "16px 20px", background: "#faf5ff", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 14 }}>
                   <div className="sp-section-title">🤖 AI Explanation</div>
                   <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.8, whiteSpace: "pre-wrap", margin: 0 }}>{selected.aiExplanation}</p>
                 </div>
@@ -235,7 +236,7 @@ export default function SavedFarmPlans() {
                     v != null && v !== "" ? (
                       <div key={k} style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 10, padding: "10px 14px" }}>
                         <div style={{ fontSize: 10, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase", marginBottom: 4 }}>{k}</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{String(v)}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{String(v)}</div>
                       </div>
                     ) : null
                   ))}

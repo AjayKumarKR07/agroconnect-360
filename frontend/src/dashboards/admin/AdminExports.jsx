@@ -2,15 +2,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { Ship } from "lucide-react";
 
 const RFQ_STATUSES = ["all", "pending", "accepted", "quoted", "rejected"];
 const SHIPMENT_STATUSES = ["farm_packed", "cfs_cold_storage", "port_gate_in", "customs_cleared", "onboard_vessel", "delivered", "cancelled"];
 
 const RFQ_STYLE = {
-  pending:  { bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
-  accepted: { bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
-  quoted:   { bg: "rgba(56,189,248,0.12)", color: "#38bdf8" },
-  rejected: { bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
+  pending:  { bg: "rgba(251,191,36,0.12)", color: "#b45309" },
+  accepted: { bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  quoted:   { bg: "rgba(56,189,248,0.12)", color: "#0369a1" },
+  rejected: { bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
 };
 
 const SHIPMENT_STEP_LABEL = {
@@ -41,7 +42,7 @@ function ConfirmModal({ message, detail, warning, onConfirm, onCancel, loading }
             </div>
           )}
           {warning && (
-            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+            <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
               ⚠️ {warning}
             </div>
           )}
@@ -194,7 +195,7 @@ export default function AdminExports() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">International Trade Management</div>
-          <h1 className="pg-title">🚢 Export Hub</h1>
+          <h1 className="pg-title"><Ship size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Export Hub</h1>
           <p className="pg-sub">Manage export RFQs and shipment tracking. Status changes are recorded in the audit log.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -272,15 +273,15 @@ export default function AdminExports() {
                       const sc = RFQ_STYLE[rfq.status] || RFQ_STYLE.pending;
                       return (
                         <tr key={rfq._id}>
-                          <td style={{ fontWeight: 700, color: "#fff" }}>{rfq.cropName}</td>
+                          <td style={{ fontWeight: 700, color: "#0f172a" }}>{rfq.cropName}</td>
                           <td>
-                            <div style={{ fontSize: 13, color: "#fff" }}>{rfq.exporter?.name || "—"}</div>
+                            <div style={{ fontSize: 13, color: "#0f172a" }}>{rfq.exporter?.name || "—"}</div>
                             <div style={{ fontSize: 11, color: "#a5b4fc" }}>{rfq.exporter?.email}</div>
                           </td>
                           <td style={{ fontSize: 13, color: "#a5b4fc" }}>{rfq.destinationCountry}</td>
                           <td style={{ fontSize: 12, color: "#a5b4fc" }}>{rfq.containerSize}</td>
-                          <td style={{ fontWeight: 700, color: "#fff" }}>{rfq.quantityTons}</td>
-                          <td style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#4ade80" }}>
+                          <td style={{ fontWeight: 700, color: "#0f172a" }}>{rfq.quantityTons}</td>
+                          <td style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, color: "#15803d" }}>
                             {rfq.targetPriceUsd ? `$${rfq.targetPriceUsd}` : "—"}
                           </td>
                           <td style={{ fontSize: 12, color: "#a5b4fc", whiteSpace: "nowrap" }}>{relativeTime(rfq.createdAt)}</td>
@@ -363,7 +364,7 @@ export default function AdminExports() {
                   <div key={s._id} className="card">
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 14 }}>
                       <div>
-                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
+                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
                           {stepInfo.emoji} {s.cargo} · {s.containerNo}
                         </div>
                         <div style={{ fontSize: 13, color: "#a5b4fc" }}>
@@ -386,7 +387,7 @@ export default function AdminExports() {
                             message: `Update shipment ${s.containerNo} (${s.cargo})`,
                             detail: [
                               { label: "Current Status", value: prev.label, color: "#a5b4fc" },
-                              { label: "New Status",     value: next.label, color: "#4ade80" },
+                              { label: "New Status",     value: next.label, color: "#15803d" },
                               { label: "Container",      value: s.containerNo },
                               { label: "Exporter",       value: s.exporter?.name || "—" },
                             ],

@@ -18,235 +18,137 @@ const STYLES = `
     flex-direction: column;
     height: calc(100vh - 140px);
     min-height: 560px;
-    border-radius: 24px;
+    border-radius: 16px;
     overflow: hidden;
-    position: relative;
-    background: linear-gradient(160deg, rgba(2,8,18,0.95) 0%, rgba(1,10,20,0.97) 100%);
-    border: 1px solid rgba(14,165,233,0.15);
-    box-shadow: 0 0 0 1px rgba(14,165,233,0.05), 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-
-  /* animated bg grid */
-  .ai-wrap::before {
-    content:'';
-    position:absolute;
-    inset:0;
-    background-image: linear-gradient(rgba(14,165,233,0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(14,165,233,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events:none;
-    z-index:0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 
   .ai-header {
-    position: relative;
-    z-index: 2;
-    padding: 18px 24px;
-    border-bottom: 1px solid rgba(14,165,233,0.1);
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(20px);
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
   }
 
-  .ai-avatar-ring {
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #0284c7, #0ea5e9, #0d9488);
-    padding: 2px;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .ai-avatar-ring::after {
-    content:'';
-    position:absolute;
-    inset:-3px;
-    border-radius:50%;
-    border:2px solid rgba(14,165,233,0.4);
-    animation: pulseRing 2s ease infinite;
-  }
-  @keyframes pulseRing{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.08);opacity:1}}
-  .ai-avatar-inner {
-    width:100%;height:100%;border-radius:50%;
-    background:rgba(0,0,0,0.6);
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;
+  .ai-avatar-wrap {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
   }
 
   .ai-status-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #38bdf8;
-    box-shadow: 0 0 8px #38bdf8;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #16a34a;
     animation: blink 1.8s ease infinite;
   }
   @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
 
   .ai-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 24px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    position: relative;
-    z-index: 1;
+    flex: 1; overflow-y: auto;
+    padding: 20px 20px 12px;
+    display: flex; flex-direction: column; gap: 16px;
+    background: #f8fafc;
   }
-  .ai-body::-webkit-scrollbar { width: 3px; }
-  .ai-body::-webkit-scrollbar-track { background: transparent; }
-  .ai-body::-webkit-scrollbar-thumb { background: rgba(14,165,233,0.2); border-radius: 2px; }
+  .ai-body::-webkit-scrollbar { width: 4px; }
+  .ai-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
 
-  .msg-row { display: flex; gap: 12px; align-items: flex-start; }
+  .msg-row { display: flex; gap: 10px; align-items: flex-start; }
   .msg-row.user { flex-direction: row-reverse; }
 
   .msg-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; flex-shrink: 0; margin-top: 2px;
   }
-  .msg-avatar.ai  { background: linear-gradient(135deg,#0284c730,#0ea5e920); border: 1px solid rgba(14,165,233,0.2); }
-  .msg-avatar.user{ background: linear-gradient(135deg,rgba(14,165,233,0.15),rgba(56,189,248,0.15)); border: 1px solid rgba(56,189,248,0.15); }
+  .msg-avatar.ai   { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .msg-avatar.user { background: #eff6ff; border: 1px solid #bfdbfe; }
 
   .bubble-wrap { max-width: 74%; display: flex; flex-direction: column; }
   .msg-row.user .bubble-wrap { align-items: flex-end; }
 
-  .bubble {
-    padding: 13px 18px;
-    font-size: 14px;
-    line-height: 1.75;
-    word-break: break-word;
-    font-family: 'Inter', sans-serif;
-  }
+  .bubble { padding: 12px 16px; font-size: 14px; line-height: 1.75; word-break: break-word; font-family: 'Inter', sans-serif; }
   .bubble.ai {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(14,165,233,0.12);
-    border-radius: 4px 18px 18px 18px;
-    color: #e2fef0;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    background: #ffffff; border: 1px solid #e2e8f0;
+    border-radius: 4px 14px 14px 14px; color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
   .bubble.user {
-    background: linear-gradient(135deg,#0284c7,#0ea5e9);
-    border-radius: 18px 4px 18px 18px;
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(14,165,233,0.35);
+    background: #16a34a; border-radius: 14px 4px 14px 14px;
+    color: #ffffff; box-shadow: 0 2px 8px rgba(22,163,74,0.25);
   }
 
-  .msg-meta {
-    font-size: 10px;
-    color: rgba(255,255,255,0.25);
-    margin-top: 5px;
-    padding: 0 4px;
-    font-family: 'Inter',sans-serif;
-  }
+  .msg-meta { font-size: 10px; color: #94a3b8; margin-top: 4px; padding: 0 4px; font-family: 'Inter', sans-serif; }
 
-  /* Typing animation */
   .typing-pill {
-    padding: 12px 18px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(14,165,233,0.12);
-    border-radius: 4px 18px 18px 18px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    backdrop-filter: blur(10px);
+    padding: 12px 16px; background: #ffffff; border: 1px solid #e2e8f0;
+    border-radius: 4px 14px 14px 14px;
+    display: inline-flex; align-items: center; gap: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
-  .td { width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; animation: td 1.2s infinite; }
+  .td { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: td 1.2s infinite; }
   .td:nth-child(2){ animation-delay:.2s; }
   .td:nth-child(3){ animation-delay:.4s; }
   @keyframes td{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-7px);opacity:1}}
 
-  /* Footer */
   .ai-footer {
-    padding: 16px 20px;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(14,165,233,0.08);
-    position: relative; z-index: 2;
-    flex-shrink: 0;
+    padding: 14px 18px; background: #ffffff;
+    border-top: 1px solid #e2e8f0; flex-shrink: 0;
   }
 
-  .quick-row {
-    display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 13px;
-  }
+  .quick-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
   .quick-chip {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 6px 13px;
-    background: rgba(14,165,233,0.06);
-    border: 1px solid rgba(14,165,233,0.15);
-    color: #7dd3fc;
-    border-radius: 20px; font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all 0.18s;
-    font-family: 'Inter', sans-serif;
-    white-space: nowrap;
+    padding: 5px 12px; background: #f0fdf4; border: 1px solid #bbf7d0;
+    color: #15803d; border-radius: 20px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; white-space: nowrap;
   }
-  .quick-chip:hover {
-    background: rgba(14,165,233,0.14);
-    border-color: rgba(14,165,233,0.35);
-    color: #38bdf8;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(14,165,233,0.15);
-  }
+  .quick-chip:hover { background: #dcfce7; border-color: #86efac; color: #14532d; transform: translateY(-1px); }
+  .quick-chip:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
   .input-row {
     display: flex; gap: 10px; align-items: flex-end;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(14,165,233,0.18);
-    border-radius: 16px;
-    padding: 8px 8px 8px 16px;
+    background: #f8fafc; border: 1px solid #cbd5e1;
+    border-radius: 12px; padding: 8px 8px 8px 14px;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .input-row:focus-within {
-    border-color: rgba(14,165,233,0.45);
-    box-shadow: 0 0 0 4px rgba(14,165,233,0.07);
-  }
+  .input-row:focus-within { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.1); }
   .ai-input {
     flex: 1; background: transparent; border: none; outline: none;
-    color: #fff; font-size: 14.5px; font-family: 'Inter',sans-serif;
+    color: #0f172a; font-size: 14px; font-family: 'Inter', sans-serif;
     resize: none; line-height: 1.5; padding: 4px 0; max-height: 110px; overflow: auto;
   }
-  .ai-input::placeholder { color: rgba(255,255,255,0.22); }
+  .ai-input::placeholder { color: #94a3b8; }
 
   .send-btn {
-    width: 42px; height: 42px; border-radius: 12px; border: none; cursor: pointer;
-    background: linear-gradient(135deg,#0284c7,#0ea5e9);
-    color: #fff; font-size: 17px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(14,165,233,0.4);
+    width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+    background: #16a34a; color: #ffffff; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s;
   }
-  .send-btn:hover:not(:disabled){ transform: scale(1.06); box-shadow: 0 6px 20px rgba(14,165,233,0.55); }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .send-btn:hover:not(:disabled){ background: #15803d; transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
   .clear-btn {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    border: 1px solid rgba(239,68,68,0.2);
-    background: rgba(239,68,68,0.06);
-    color: #f87171; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: 'Inter',sans-serif;
-    transition: all 0.2s;
+    padding: 7px 14px; border-radius: 8px;
+    border: 1px solid #fecaca; background: #fef2f2;
+    color: #dc2626; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
   }
-  .clear-btn:hover{ background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); }
+  .clear-btn:hover { background: #fee2e2; border-color: #fca5a5; }
 
-  /* Gemini badge */
-  .gemini-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: linear-gradient(90deg,#8b5cf6,#06b6d4,#38bdf8);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Markdown-like code blocks inside bubble */
-  .bubble code {
-    background: rgba(0,0,0,0.3);
-    padding: 2px 6px; border-radius: 5px;
-    font-family: monospace; font-size: 12.5px; color: #7dd3fc;
-  }
+  .bubble.ai strong { color: #15803d; }
+  .bubble.user strong { color: #ffffff; font-weight: 700; }
+  .bubble code { background: #f1f5f9; padding: 2px 6px; border-radius: 5px; font-family: monospace; font-size: 12.5px; color: #0369a1; border: 1px solid #e2e8f0; }
+  .bubble.user code { background: rgba(255,255,255,0.25); color: #ffffff; border-color: rgba(255,255,255,0.3); }
 `;
 
 const INIT_MSG = { role: "assistant", text: "👋 Hello! I'm your AgroConnect AI assistant powered by Gemini. Ask me anything about farming — crop care, weather, pest control, market prices, government schemes, and more!", time: new Date() };
@@ -293,10 +195,9 @@ export default function AIAssistant() {
     setInput("");
   };
 
-  // Render markdown-lite: **bold**, `code`
   const renderText = (text) => {
     return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#7dd3fc">$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\n/g, "<br/>");
   };
@@ -308,12 +209,13 @@ export default function AIAssistant() {
       {/* Page header — outside the card */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
         <div>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
-            <span className="gemini-badge">✦ Powered by Gemini AI</span>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#16a34a", marginBottom: 4 }}>
+            ✦ Powered by Gemini AI
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#fff", margin: 0 }}>
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
             🤖 AI Farming Assistant
           </h1>
+          <p style={{ fontSize: 14, color: "#64748b", marginTop: 4, marginBottom: 0 }}>Ask anything about crops, weather, prices, pests, and government schemes.</p>
         </div>
         <button className="clear-btn" onClick={clearChat}>🗑 Clear Chat</button>
       </div>
@@ -323,22 +225,18 @@ export default function AIAssistant() {
 
         {/* Header bar inside card */}
         <div className="ai-header">
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div className="ai-avatar-ring">
-              <div className="ai-avatar-inner">🤖</div>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="ai-avatar-wrap">🤖</div>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#fff" }}>AgroConnect AI</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 700, color: "#0f172a" }}>AgroConnect AI</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
                 <div className="ai-status-dot" />
-                <span style={{ fontSize: 11, color: "#38bdf8", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Gemini Pro</span>
+                <span style={{ fontSize: 11, color: "#16a34a", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Gemini Pro</span>
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
-            </div>
+          <div style={{ fontSize: 12, color: "#64748b", fontFamily: "'Inter',sans-serif", background: "#f1f5f9", padding: "4px 10px", borderRadius: 8, border: "1px solid #e2e8f0" }}>
+            {messages.length - 1} message{messages.length !== 2 ? "s" : ""}
           </div>
         </div>
 
@@ -413,7 +311,7 @@ export default function AIAssistant() {
             </button>
           </form>
 
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", marginTop: 8, textAlign: "center", fontFamily: "'Inter',sans-serif" }}>
+          <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 8, textAlign: "center", fontFamily: "'Inter',sans-serif" }}>
             Press Enter to send · Shift+Enter for new line · AI can make mistakes — verify important info
           </div>
         </div>

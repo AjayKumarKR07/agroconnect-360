@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
 import { useLocation } from "react-router-dom";
@@ -219,7 +219,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
         ].map(([k, v]) => (
           <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
             <span style={{ color: "var(--text2)" }}>{k}</span>
-            <span style={{ color: "#fff", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
+            <span style={{ color: "#0f172a", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
           </div>
         ))}
 
@@ -232,7 +232,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
               ℹ️ Accept the interest first. You can counter-offer after accepting.
             </div>
             <div style={{ display: "flex", gap: 10 }}>
-              <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setAction("reject")}>✕ Reject</button>
+              <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setAction("reject")}>✕ Reject</button>
               <button className="btn-green" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("accept")}>✓ Accept</button>
             </div>
           </div>
@@ -248,7 +248,7 @@ function InterestModal({ interest, onClose, onUpdated }) {
         {/* Confirm/reject sub-form */}
         {action === "accept" && (
           <div style={{ marginTop: 16 }}>
-            <div style={{ marginBottom: 12, color: "#4ade80", fontWeight: 600 }}>Accept this interest request?</div>
+            <div style={{ marginBottom: 12, color: "#15803d", fontWeight: 600 }}>Accept this interest request?</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
               <button className="btn-green" onClick={doAction} disabled={saving} style={{ flex: 2, justifyContent: "center" }}>{saving ? "⏳…" : "✓ Confirm Accept"}</button>
@@ -257,10 +257,10 @@ function InterestModal({ interest, onClose, onUpdated }) {
         )}
         {action === "reject" && (
           <div style={{ marginTop: 16 }}>
-            <div style={{ marginBottom: 12, color: "#f87171", fontWeight: 600 }}>Reject this interest request?</div>
+            <div style={{ marginBottom: 12, color: "#dc2626", fontWeight: 600 }}>Reject this interest request?</div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" onClick={() => setAction(null)} style={{ flex: 1, justifyContent: "center" }}>Back</button>
-              <button style={{ flex: 2, padding: "12px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", fontWeight: 700, cursor: "pointer" }} onClick={doAction} disabled={saving}>{saving ? "⏳…" : "✕ Confirm Reject"}</button>
+              <button style={{ flex: 2, padding: "12px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#dc2626", fontWeight: 700, cursor: "pointer" }} onClick={doAction} disabled={saving}>{saving ? "⏳…" : "✕ Confirm Reject"}</button>
             </div>
           </div>
         )}
@@ -428,7 +428,7 @@ export default function ExportPage() {
           background:var(--surface); color:var(--text2); transition:all 0.18s;
           display:flex; align-items:center; gap:8px; position:relative;
         }
-        .exp-tab.active { background:var(--green-dim); color:#4ade80; border-color:rgba(34,197,94,0.2); }
+        .exp-tab.active { background:var(--green-dim); color:#15803d; border-color:rgba(34,197,94,0.2); }
         .exp-tab:hover:not(.active) { border-color:var(--border2); color:var(--text); }
         .tab-badge {
           min-width:18px; height:18px; border-radius:9px; font-size:10px; font-weight:800;
@@ -436,18 +436,18 @@ export default function ExportPage() {
         }
 
         .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; }
-        .badge-green  { background:rgba(34,197,94,0.12);  color:#4ade80; border:1px solid rgba(34,197,94,0.2);  }
-        .badge-amber  { background:rgba(251,191,36,0.12); color:#fbbf24; border:1px solid rgba(251,191,36,0.2); }
-        .badge-red    { background:rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.2);  }
-        .badge-blue   { background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.2); }
+        .badge-green  { background:rgba(34,197,94,0.12);  color:#15803d; border:1px solid rgba(34,197,94,0.2);  }
+        .badge-amber  { background:rgba(251,191,36,0.12); color:#b45309; border:1px solid rgba(251,191,36,0.2); }
+        .badge-red    { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2);  }
+        .badge-blue   { background:rgba(56,189,248,0.12); color:#0369a1; border:1px solid rgba(56,189,248,0.2); }
 
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(6px); }
         .modal-box { background:#080d12; border:1px solid rgba(255,255,255,0.10); border-radius:24px; padding:28px; width:100%; max-height:90vh; overflow-y:auto; animation:fadeIn 0.2s ease; }
         @keyframes fadeIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-        .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#fff; margin-bottom:4px; }
+        .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin-bottom:4px; }
         .modal-sub { font-size:13px; color:var(--text2); margin-bottom:20px; }
 
-        .toast { position:fixed; bottom:28px; right:28px; background:rgba(34,197,94,0.14); border:1px solid rgba(34,197,94,0.3); color:#4ade80; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:99999; backdrop-filter:blur(12px); animation:slideUp 0.3s ease; }
+        .toast { position:fixed; bottom:28px; right:28px; background:rgba(34,197,94,0.14); border:1px solid rgba(34,197,94,0.3); color:#15803d; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:99999; backdrop-filter:blur(12px); animation:slideUp 0.3s ease; }
         @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
 
         .listing-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
@@ -525,20 +525,20 @@ export default function ExportPage() {
             {EXPORT_CROPS.map((c) => (
               <div key={c.name} className="card" style={{ padding: "20px 22px", borderColor: "rgba(56,189,248,0.1)" }}>
                 <div style={{ fontSize: 36, marginBottom: 10 }}>{c.flag}</div>
-                <div style={{ fontWeight: 800, color: "#fff", fontSize: 16, marginBottom: 4 }}>{c.name}</div>
+                <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 16, marginBottom: 4 }}>{c.name}</div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12 }}>Grade: {c.grade}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                     <span style={{ color: "var(--text2)" }}>Destinations</span>
-                    <span style={{ color: "#38bdf8", fontWeight: 600 }}>{c.destination}</span>
+                    <span style={{ color: "#0369a1", fontWeight: 600 }}>{c.destination}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                     <span style={{ color: "var(--text2)" }}>Min Quantity</span>
-                    <span style={{ color: "#fff", fontWeight: 600 }}>{c.minQty}</span>
+                    <span style={{ color: "#0f172a", fontWeight: 600 }}>{c.minQty}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                     <span style={{ color: "var(--text2)" }}>Export Price</span>
-                    <span style={{ color: "#4ade80", fontWeight: 800, fontSize: 15 }}>{c.price}</span>
+                    <span style={{ color: "#15803d", fontWeight: 800, fontSize: 15 }}>{c.price}</span>
                   </div>
                 </div>
                 <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", marginTop: 14, fontSize: 13 }}
@@ -550,9 +550,9 @@ export default function ExportPage() {
           </div>
 
           {/* Divider before farmer listings preview */}
-          <div style={{ padding: "14px 20px", borderRadius: 14, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.15)", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ padding: "14px 20px", borderRadius: 14, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.15)", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div style={{ fontWeight: 700, color: "#4ade80", marginBottom: 2 }}>🌾 Ready to Export Your Produce?</div>
+              <div style={{ fontWeight: 700, color: "#15803d", marginBottom: 2 }}>🌾 Ready to Export Your Produce?</div>
               <div style={{ fontSize: 13, color: "var(--text2)" }}>List your produce and connect directly with international exporters.</div>
             </div>
             <button className="btn-green" style={{ fontSize: 13, whiteSpace: "nowrap" }} onClick={() => { setShowCreate(true); }}>
@@ -567,8 +567,8 @@ export default function ExportPage() {
                 <div key={s.step} style={{ display: "flex", gap: 16, padding: "16px 20px", background: "var(--surface)", borderRadius: 14, border: "1px solid var(--border)" }}>
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{s.icon}</div>
                   <div>
-                    <div style={{ fontSize: 11, color: "#38bdf8", fontWeight: 700, marginBottom: 4 }}>STEP {s.step}</div>
-                    <div style={{ fontWeight: 700, color: "#fff", marginBottom: 4 }}>{s.title}</div>
+                    <div style={{ fontSize: 11, color: "#0369a1", fontWeight: 700, marginBottom: 4 }}>STEP {s.step}</div>
+                    <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 4 }}>{s.title}</div>
                     <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.6 }}>{s.desc}</div>
                   </div>
                 </div>
@@ -585,7 +585,7 @@ export default function ExportPage() {
                   onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(56,189,248,0.3)"}
                   onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
                 >
-                  <div style={{ fontWeight: 700, color: "#38bdf8", marginBottom: 4 }}>{name} ↗</div>
+                  <div style={{ fontWeight: 700, color: "#0369a1", marginBottom: 4 }}>{name} ↗</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{desc}</div>
                 </a>
               ))}
@@ -613,7 +613,7 @@ export default function ExportPage() {
               {listings.map(l => (
                 <div key={l._id} className="card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <div style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{l.name}</div>
+                    <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{l.name}</div>
                     <SBadge status={l.exportStatus || "available"} />
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>📍 {l.location}</div>
@@ -626,11 +626,11 @@ export default function ExportPage() {
                   ].map(([k,v]) => (
                     <div key={k} style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
                       <span style={{ color: "var(--text2)" }}>{k}</span>
-                      <span style={{ color: "#fff", fontWeight: 600 }}>{v}</span>
+                      <span style={{ color: "#0f172a", fontWeight: 600 }}>{v}</span>
                     </div>
                   ))}
                   {(l._pendingInterests > 0) && (
-                    <div style={{ padding: "6px 12px", borderRadius: 8, background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+                    <div style={{ padding: "6px 12px", borderRadius: 8, background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
                       📩 {l._pendingInterests} pending interest{l._pendingInterests > 1 ? "s" : ""}
                     </div>
                   )}
@@ -639,7 +639,7 @@ export default function ExportPage() {
                     {deleteConfirmId === l._id ? (
                       <>
                         <button
-                          style={{ flex: 1, padding: "8px", borderRadius: 10, background: "rgba(239,68,68,0.18)", border: "1px solid rgba(239,68,68,0.35)", color: "#f87171", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
+                          style={{ flex: 1, padding: "8px", borderRadius: 10, background: "rgba(239,68,68,0.18)", border: "1px solid rgba(239,68,68,0.35)", color: "#dc2626", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
                           onClick={() => deleteListing(l._id)}
                         >Yes, Remove</button>
                         <button
@@ -648,7 +648,7 @@ export default function ExportPage() {
                         >Cancel</button>
                       </>
                     ) : (
-                      <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfirmId(l._id)}>🗑 Remove</button>
+                      <button className="btn-ghost" style={{ flex: 1, justifyContent: "center", fontSize: 12, color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfirmId(l._id)}>🗑 Remove</button>
                     )}
                   </div>
                 </div>
@@ -680,7 +680,7 @@ export default function ExportPage() {
                   <div key={i._id} className="icard">
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: 15, color: "#fff" }}>{exp.name || "Exporter"}</div>
+                        <div style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{exp.name || "Exporter"}</div>
                         <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>📍 {exp.location || exp.state || "—"}</div>
                       </div>
                       <SBadge status={i.status} />
@@ -692,14 +692,14 @@ export default function ExportPage() {
                         ["Offered",     fmt(i.offeredPrice) + `/${i.requestedUnit || "MT"}`],
                         ["Destination", i.destination || "—"],
                       ].map(([k, v]) => (
-                        <div key={k} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px" }}>
+                        <div key={k} style={{ background: "#f8fafc", borderRadius: 8, padding: "8px 12px" }}>
                           <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{v}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{v}</div>
                         </div>
                       ))}
                     </div>
                     {i.message && (
-                      <div style={{ fontSize: 12, color: "var(--text2)", fontStyle: "italic", marginBottom: 12, padding: "8px 12px", background: "rgba(255,255,255,0.03)", borderRadius: 8 }}>
+                      <div style={{ fontSize: 12, color: "var(--text2)", fontStyle: "italic", marginBottom: 12, padding: "8px 12px", background: "#f8fafc", borderRadius: 8 }}>
                         "{i.message}"
                       </div>
                     )}

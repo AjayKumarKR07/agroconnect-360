@@ -4,11 +4,11 @@ import { DS } from "../styles/ds";
 const API_URL = "http://localhost:5000/api";
 
 const SECTIONS = [
-  { key: "highest",   label: "📈 Top Highest Prices",    color: "#4ade80", accent: "rgba(34,197,94,0.08)",   border: "rgba(34,197,94,0.15)"  },
-  { key: "lowest",    label: "📉 Top Lowest Prices",     color: "#f87171", accent: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.15)"  },
-  { key: "avg",       label: "💰 Avg by Commodity",      color: "#38bdf8", accent: "rgba(56,189,248,0.08)",  border: "rgba(56,189,248,0.15)" },
-  { key: "markets",   label: "🏪 Most Active Markets",   color: "#fbbf24", accent: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.15)" },
-  { key: "districts", label: "📍 District Statistics",   color: "#a78bfa", accent: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)"},
+  { key: "highest",   label: "📈 Top Highest Prices",    color: "#15803d", accent: "rgba(34,197,94,0.08)",   border: "rgba(34,197,94,0.15)"  },
+  { key: "lowest",    label: "📉 Top Lowest Prices",     color: "#dc2626", accent: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.15)"  },
+  { key: "avg",       label: "💰 Avg by Commodity",      color: "#0369a1", accent: "rgba(56,189,248,0.08)",  border: "rgba(56,189,248,0.15)" },
+  { key: "markets",   label: "🏪 Most Active Markets",   color: "#b45309", accent: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.15)" },
+  { key: "districts", label: "📍 District Statistics",   color: "#7c3aed", accent: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)"},
   { key: "latest",    label: "⏱️ Latest Market Prices",  color: "#94a3b8", accent: "rgba(148,163,184,0.08)", border: "rgba(148,163,184,0.15)"},
 ];
 
@@ -79,14 +79,14 @@ export default function MarketTrends() {
         .mt-filter-bar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:24px; }
         .mt-filter-label { font-size:12px; color:var(--text2); font-weight:600; letter-spacing:0.04em; white-space:nowrap; }
         .mt-filter-select { flex:1; min-width:160px; max-width:260px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 14px; font-family:'Inter',sans-serif; font-size:13px; cursor:pointer; outline:none; transition:border-color 0.2s; }
-        .mt-filter-select:focus { border-color:#4ade80; }
+        .mt-filter-select:focus { border-color:#15803d; }
         .mt-filter-select option { background:#1a2332; }
-        .filter-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px 4px 12px; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:20px; font-size:12px; font-weight:600; color:#4ade80; }
+        .filter-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px 4px 12px; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.2); border-radius:20px; font-size:12px; font-weight:600; color:#15803d; }
         .chip-x { cursor:pointer; opacity:.7; font-size:14px; }
         .chip-x:hover { opacity:1; }
         .mt-tabs { display:flex; gap:0; flex-wrap:wrap; background:var(--surface); border-radius:14px; padding:5px; border:1px solid var(--border); margin-bottom:24px; }
         .mt-tab { padding:9px 18px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:none; color:var(--text2); font-family:'Inter',sans-serif; transition:all 0.2s; white-space:nowrap; }
-        .mt-tab.active { color:#fff; }
+        .mt-tab.active { color:#0f172a; }
         .mt-table { width:100%; border-collapse:collapse; }
         .mt-table th { text-align:left; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; padding:11px 16px; border-bottom:1px solid var(--border); }
         .mt-table th:last-child { text-align:right; }
@@ -128,7 +128,7 @@ export default function MarketTrends() {
           </span>
         )}
         {selDistrict && (
-          <span className="filter-chip" style={{ background:"rgba(167,139,250,0.08)", borderColor:"rgba(167,139,250,0.2)", color:"#a78bfa" }}>
+          <span className="filter-chip" style={{ background:"rgba(167,139,250,0.08)", borderColor:"rgba(167,139,250,0.2)", color: "#7c3aed" }}>
             {selDistrict}
             <span className="chip-x" onClick={() => setSelDistrict("")}>✕</span>
           </span>
@@ -193,11 +193,11 @@ export default function MarketTrends() {
                     {topHighest.map((item, i) => (
                       <tr key={i}>
                         <td><span className="mt-rank" style={{ background:i<3?"rgba(34,197,94,0.12)":"rgba(255,255,255,0.05)", color:i<3?"#4ade80":"var(--text2)" }}>{i+1}</span></td>
-                        <td style={{ fontWeight:700, color:"#fff" }}>{item.commodity}</td>
+                        <td style={{ fontWeight:700, color: "#0f172a" }}>{item.commodity}</td>
                         <td style={{ color:"var(--text2)" }}>{item.variety || "—"}</td>
                         <td>{item.market}</td>
                         <td style={{ color:"var(--text2)" }}>{item.district || "—"}</td>
-                        <td><span style={{ fontWeight:800, color:"#4ade80", fontSize:15 }}>Rs.{Number(item.maxPrice).toLocaleString("en-IN")}</span></td>
+                        <td><span style={{ fontWeight:800, color: "#15803d", fontSize:15 }}>Rs.{Number(item.maxPrice).toLocaleString("en-IN")}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -209,12 +209,12 @@ export default function MarketTrends() {
                   <tbody>
                     {topLowest.map((item, i) => (
                       <tr key={i}>
-                        <td><span className="mt-rank" style={{ background:"rgba(239,68,68,0.12)", color:"#f87171" }}>{i+1}</span></td>
-                        <td style={{ fontWeight:700, color:"#fff" }}>{item.commodity}</td>
+                        <td><span className="mt-rank" style={{ background:"rgba(239,68,68,0.12)", color: "#dc2626" }}>{i+1}</span></td>
+                        <td style={{ fontWeight:700, color: "#0f172a" }}>{item.commodity}</td>
                         <td style={{ color:"var(--text2)" }}>{item.variety || "—"}</td>
                         <td>{item.market}</td>
                         <td style={{ color:"var(--text2)" }}>{item.district || "—"}</td>
-                        <td><span style={{ fontWeight:800, color:"#f87171", fontSize:15 }}>Rs.{Number(item.minPrice).toLocaleString("en-IN")}</span></td>
+                        <td><span style={{ fontWeight:800, color: "#dc2626", fontSize:15 }}>Rs.{Number(item.minPrice).toLocaleString("en-IN")}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -228,11 +228,11 @@ export default function MarketTrends() {
                       const maxAvg = Math.max(...commodityAverage.map(c => c.averagePrice || 0));
                       return commodityAverage.map((item, i) => (
                         <tr key={i}>
-                          <td><span className="mt-rank" style={{ background:"rgba(56,189,248,0.1)", color:"#38bdf8" }}>{i+1}</span></td>
-                          <td style={{ fontWeight:700, color:"#fff" }}>{item._id}</td>
+                          <td><span className="mt-rank" style={{ background:"rgba(56,189,248,0.1)", color: "#0369a1" }}>{i+1}</span></td>
+                          <td style={{ fontWeight:700, color: "#0f172a" }}>{item._id}</td>
                           <td>
                             <div className="bar-wrap">
-                              <span style={{ fontWeight:700, color:"#38bdf8", width:80, flexShrink:0 }}>Rs.{Math.round(item.averagePrice).toLocaleString("en-IN")}</span>
+                              <span style={{ fontWeight:700, color: "#0369a1", width:80, flexShrink:0 }}>Rs.{Math.round(item.averagePrice).toLocaleString("en-IN")}</span>
                               <div className="bar-track"><div className="bar-fill" style={{ width:`${(item.averagePrice/maxAvg)*100}%`, background:"linear-gradient(90deg,#0ea5e9,#38bdf8)" }} /></div>
                             </div>
                           </td>
@@ -251,11 +251,11 @@ export default function MarketTrends() {
                       const maxRec = Math.max(...marketStats.map(m => m.records || 0));
                       return marketStats.map((item, i) => (
                         <tr key={i}>
-                          <td><span className="mt-rank" style={{ background:"rgba(251,191,36,0.1)", color:"#fbbf24" }}>{i+1}</span></td>
-                          <td style={{ fontWeight:700, color:"#fff" }}>🏪 {item._id}</td>
+                          <td><span className="mt-rank" style={{ background:"rgba(251,191,36,0.1)", color: "#b45309" }}>{i+1}</span></td>
+                          <td style={{ fontWeight:700, color: "#0f172a" }}>🏪 {item._id}</td>
                           <td>
                             <div className="bar-wrap">
-                              <span style={{ fontWeight:700, color:"#fbbf24", width:60, flexShrink:0 }}>{item.records}</span>
+                              <span style={{ fontWeight:700, color: "#b45309", width:60, flexShrink:0 }}>{item.records}</span>
                               <div className="bar-track"><div className="bar-fill" style={{ width:`${(item.records/maxRec)*100}%`, background:"linear-gradient(90deg,#d97706,#fbbf24)" }} /></div>
                             </div>
                           </td>
@@ -271,11 +271,11 @@ export default function MarketTrends() {
                   <tbody>
                     {districtStats.map((item, i) => (
                       <tr key={i}>
-                        <td><span className="mt-rank" style={{ background:"rgba(167,139,250,0.1)", color:"#a78bfa" }}>{i+1}</span></td>
-                        <td style={{ fontWeight:700, color:"#fff" }}>📍 {item.district}</td>
+                        <td><span className="mt-rank" style={{ background:"rgba(167,139,250,0.1)", color: "#7c3aed" }}>{i+1}</span></td>
+                        <td style={{ fontWeight:700, color: "#0f172a" }}>📍 {item.district}</td>
                         <td style={{ color:"var(--text2)" }}>{item.cropCount}</td>
                         <td style={{ color:"var(--text2)" }}>{item.marketCount}</td>
-                        <td><span style={{ fontWeight:700, color:"#a78bfa" }}>Rs.{Math.round(item.avgPrice).toLocaleString("en-IN")}</span></td>
+                        <td><span style={{ fontWeight:700, color: "#7c3aed" }}>Rs.{Math.round(item.avgPrice).toLocaleString("en-IN")}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -288,12 +288,12 @@ export default function MarketTrends() {
                     {latestPrices.map((item, i) => (
                       <tr key={i}>
                         <td><span className="mt-rank" style={{ background:"rgba(148,163,184,0.1)", color:"#94a3b8" }}>{i+1}</span></td>
-                        <td style={{ fontWeight:700, color:"#fff" }}>{item.commodity}</td>
+                        <td style={{ fontWeight:700, color: "#0f172a" }}>{item.commodity}</td>
                         <td style={{ color:"var(--text2)" }}>{item.market}</td>
                         <td style={{ color:"var(--text2)" }}>{item.district || "—"}</td>
-                        <td style={{ color:"#f87171", fontWeight:600 }}>Rs.{Number(item.minPrice||0).toLocaleString("en-IN")}</td>
-                        <td style={{ color:"#4ade80", fontWeight:600 }}>Rs.{Number(item.maxPrice||0).toLocaleString("en-IN")}</td>
-                        <td><span style={{ fontWeight:800, color:"#fff", fontSize:15 }}>Rs.{Number(item.modalPrice||0).toLocaleString("en-IN")}</span></td>
+                        <td style={{ color: "#dc2626", fontWeight:600 }}>Rs.{Number(item.minPrice||0).toLocaleString("en-IN")}</td>
+                        <td style={{ color: "#15803d", fontWeight:600 }}>Rs.{Number(item.maxPrice||0).toLocaleString("en-IN")}</td>
+                        <td><span style={{ fontWeight:800, color: "#0f172a", fontSize:15 }}>Rs.{Number(item.modalPrice||0).toLocaleString("en-IN")}</span></td>
                       </tr>
                     ))}
                   </tbody>

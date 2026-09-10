@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { ClipboardList, RefreshCw } from "lucide-react";
 
 const token = () => localStorage.getItem("agroconnect_token");
 const authH = () => ({ Authorization: `Bearer ${token()}`, "Content-Type": "application/json" });
@@ -93,7 +94,7 @@ export default function FarmerProfile() {
   return (
     <>
       <style>{DS + `
-        .pf-avatar { width:88px; height:88px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:800; color:#fff; flex-shrink:0; }
+        .pf-avatar { width:88px; height:88px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:800; color:#0f172a; flex-shrink:0; }
         .pf-grid   { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
         .pf-group  { display:flex; flex-direction:column; gap:6px; }
         .pf-group.full { grid-column:1/-1; }
@@ -120,7 +121,7 @@ export default function FarmerProfile() {
               {initials}
             </div>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff" }}>{user.name || "Farmer"}</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{user.name || "Farmer"}</div>
               <div style={{ fontSize: 14, color: "var(--text2)", marginTop: 4 }}>{user.email}</div>
               <span className="badge" style={{ marginTop: 8, display: "inline-flex", background: `${roleColor}15`, color: roleColor, borderColor: `${roleColor}30` }}>
                 ● {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || "Farmer"}
@@ -130,7 +131,7 @@ export default function FarmerProfile() {
 
           <div className="card-title" style={{ marginBottom: 18 }}>✏️ Edit Information</div>
 
-          {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#4ade80", fontSize: 14, marginBottom: 16 }}>{success}</div>}
+          {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16 }}>{success}</div>}
           {error   && <div className="alert-error">{error}</div>}
 
           <form onSubmit={handleSubmit}>
@@ -150,7 +151,7 @@ export default function FarmerProfile() {
               {/* State — dynamic from APMC catalog */}
               <div className="pf-group">
                 <label className="field-label">
-                  State <span style={{ color: "#4ade80" }}>*</span>
+                  State <span style={{ color: "#15803d" }}>*</span>
                   {loadingS && <span style={{ color: "var(--text2)", fontWeight: 400, marginLeft: 6 }}>loading…</span>}
                 </label>
                 <select
@@ -168,7 +169,7 @@ export default function FarmerProfile() {
               {/* District — dynamic based on selected state */}
               <div className="pf-group">
                 <label className="field-label">
-                  District <span style={{ color: "#4ade80" }}>*</span>
+                  District <span style={{ color: "#15803d" }}>*</span>
                   {loadingD && <span style={{ color: "var(--text2)", fontWeight: 400, marginLeft: 6 }}>loading…</span>}
                 </label>
                 {districts.length > 0 ? (
@@ -205,7 +206,7 @@ export default function FarmerProfile() {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Account info */}
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>📋 Account Info</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Account Info</div>
             {[
               ["🆔", "User ID",  user.id || user._id || "—"],
               ["📧", "Email",    user.email    || "—"],
@@ -216,26 +217,26 @@ export default function FarmerProfile() {
             ].map(([icon, label, val]) => (
               <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
                 <span style={{ color: "var(--text2)" }}>{icon} {label}</span>
-                <span style={{ fontWeight: 600, color: "#fff", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", textAlign: "right" }}>{val}</span>
+                <span style={{ fontWeight: 600, color: "#0f172a", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", textAlign: "right" }}>{val}</span>
               </div>
             ))}
           </div>
 
           {/* Change role */}
           <div className="card" style={{ borderColor: "rgba(56,189,248,0.15)" }}>
-            <div className="card-title" style={{ marginBottom: 10 }}>🔄 Switch Role</div>
+            <div className="card-title" style={{ marginBottom: 10 }}><RefreshCw size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Switch Role</div>
             <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>Want to use AgroConnect as a different user? Switch your role here.</p>
-            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
+            <button className="btn-ghost" style={{ width: "100%", justifyContent: "center", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }} onClick={() => navigate("/select-role", { state: { isNewUser: false } })}>
               🔄 Change My Role
             </button>
           </div>
 
           {/* Danger zone */}
           <div className="card" style={{ borderColor: "rgba(239,68,68,0.15)" }}>
-            <div style={{ fontWeight: 700, color: "#f87171", marginBottom: 10 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10 }}>⚠️ Danger Zone</div>
             <button
               onClick={handleLogout}
-              style={{ width: "100%", justifyContent: "center", padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.06)", color: "#f87171", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s" }}
+              style={{ width: "100%", justifyContent: "center", padding: "12px", borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2", color: "#dc2626", cursor: "pointer", fontWeight: 700, fontSize: 14, fontFamily: "'Inter',sans-serif", transition: "background 0.2s" }}
               onMouseEnter={e => e.currentTarget.style.background = "rgba(239,68,68,0.12)"}
               onMouseLeave={e => e.currentTarget.style.background = "rgba(239,68,68,0.06)"}
             >

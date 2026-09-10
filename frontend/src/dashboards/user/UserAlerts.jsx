@@ -1,16 +1,16 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:22px;}
-  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#7dd3fc;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
   .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
 `;
 
 const INITIAL_ALERTS = [
@@ -80,18 +80,18 @@ export default function UserAlerts() {
         {/* Left column: Price Trackers */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
               📉 Active Price Trackers ({alerts.length})
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {alerts.map(a => (
-              <div key={a.id} style={{ padding: "14px 16px", borderRadius: 14, background: "rgba(14,165,233,0.03)", border: "1px solid rgba(14,165,233,0.1)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div key={a.id} style={{ padding: "14px 16px", borderRadius: 14, background: "rgba(14,165,233,0.03)", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 2 }}>{a.crop}</div>
+                  <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 2 }}>{a.crop}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>
-                    Target: <strong style={{ color: "#38bdf8" }}>₹{a.targetPrice}/{a.unit}</strong> (Current: ₹{a.currentPrice})
+                    Target: <strong style={{ color: "#0369a1" }}>₹{a.targetPrice}/{a.unit}</strong> (Current: ₹{a.currentPrice})
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -99,7 +99,7 @@ export default function UserAlerts() {
                     style={{ padding: "5px 12px", borderRadius: 8, border: `1px solid ${a.active ? "rgba(34,197,94,0.3)" : "rgba(148,163,184,0.3)"}`, background: a.active ? "rgba(34,197,94,0.12)" : "rgba(148,163,184,0.1)", color: a.active ? "#4ade80" : "#94a3b8", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
                     {a.active ? "ON" : "OFF"}
                   </button>
-                  <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", fontSize: 14 }}>
+                  <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: "#dc2626", cursor: "pointer", fontSize: 14 }}>
                     🗑️
                   </button>
                 </div>
@@ -111,7 +111,7 @@ export default function UserAlerts() {
         {/* Right column: Recent Activity Feed */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
               📣 Market Feed & Activity
             </div>
             <button className="btn-ghost" onClick={markAllRead}>Mark All Read</button>
@@ -123,7 +123,7 @@ export default function UserAlerts() {
                 <span style={{ fontSize: 24, flexShrink: 0 }}>{n.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
-                    <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{n.title}</span>
+                    <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{n.title}</span>
                     <span style={{ fontSize: 11, color: "var(--text2)" }}>{n.time}</span>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>{n.text}</div>
@@ -139,7 +139,7 @@ export default function UserAlerts() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="card" style={{ maxWidth: 420, width: "100%", background: "#041a1f", border: "1px solid rgba(14,165,233,0.3)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                 🔔 Create Price Alert
               </div>
               <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", fontSize: 20, cursor: "pointer" }}>✕</button>

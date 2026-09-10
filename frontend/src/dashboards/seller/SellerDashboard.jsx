@@ -2,6 +2,10 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import {
+  IndianRupee, Package, CheckCircle2, Clock,
+  AlertTriangle, RefreshCw, Plus, TrendingUp, Zap, Wheat
+} from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════
    CONSTANTS & HELPERS
@@ -151,15 +155,15 @@ function OrderDetailsModal({ order, onClose }) {
       }}
     >
       <div style={{
-        background: "#0b0a1f", border: "1px solid rgba(167,139,250,0.2)",
-        borderRadius: 24, padding: 28, width: "100%", maxWidth: 520,
+        background: "#ffffff", border: "1px solid #e2e8f0",
+        borderRadius: 20, padding: 28, width: "100%", maxWidth: 520,
         maxHeight: "90vh", overflowY: "auto",
-        animation: "fadeIn 0.25s ease",
+        boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
       }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fff" }}>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
               📋 Order Details
             </div>
             <div style={{ fontSize: 11, color: "var(--text2)", fontFamily: "monospace", marginTop: 4 }}>
@@ -167,8 +171,8 @@ function OrderDetailsModal({ order, onClose }) {
             </div>
           </div>
           <button onClick={onClose} style={{
-            background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8,
-            padding: "6px 10px", color: "var(--text2)", cursor: "pointer", fontSize: 16,
+            background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8,
+            padding: "6px 10px", color: "#475569", cursor: "pointer", fontSize: 16,
           }}>✕</button>
         </div>
 
@@ -197,7 +201,7 @@ function OrderDetailsModal({ order, onClose }) {
                       : "var(--surface)",
                     border: idx <= curStep ? "none" : "2px solid rgba(167,139,250,0.15)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 10, color: "#fff", fontWeight: 700,
+                    fontSize: 10, color: "#0f172a", fontWeight: 700,
                     boxShadow: idx === curStep ? "0 0 10px rgba(167,139,250,0.5)" : "none",
                   }}>
                     {idx < curStep ? "✓" : ""}
@@ -223,7 +227,7 @@ function OrderDetailsModal({ order, onClose }) {
           <div style={{
             padding: "12px 16px", borderRadius: 12,
             background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)",
-            color: "#f87171", fontSize: 13, fontWeight: 600, marginBottom: 20,
+            color: "#dc2626", fontSize: 13, fontWeight: 600, marginBottom: 20,
           }}>
             ❌ Order {status} — no further action needed.
           </div>
@@ -246,7 +250,7 @@ function OrderDetailsModal({ order, onClose }) {
               border: "1px solid var(--border)",
             }}>
               <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{r.label}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginTop: 3, wordBreak: "break-word" }}>{r.value}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginTop: 3, wordBreak: "break-word" }}>{r.value}</div>
             </div>
           ))}
         </div>
@@ -254,13 +258,13 @@ function OrderDetailsModal({ order, onClose }) {
         {/* Delivery address */}
         <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "12px 14px", marginBottom: 10 }}>
           <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>📍 Delivery Address</div>
-          <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.6 }}>{fmtAddr(order.deliveryAddress)}</div>
+          <div style={{ fontSize: 13, color: "#0f172a", lineHeight: 1.6 }}>{fmtAddr(order.deliveryAddress)}</div>
         </div>
 
         <button onClick={onClose} style={{
           width: "100%", marginTop: 14, padding: "12px",
           background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)",
-          borderRadius: 12, color: "#a78bfa", fontWeight: 700, fontSize: 14,
+          borderRadius: 12, color: "#7c3aed", fontWeight: 700, fontSize: 14,
           cursor: "pointer", fontFamily: "'Inter',sans-serif",
         }}>Close</button>
       </div>
@@ -293,7 +297,7 @@ const EXTRA = `
 
   .sd-act-row  { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-radius:13px; background:var(--surface); border:1px solid var(--border); flex-wrap:wrap; gap:8px; transition:border-color 0.2s; animation:fadeIn 0.35s ease; }
   .sd-act-row:hover { border-color:rgba(167,139,250,0.2); }
-  .sd-act-link { font-size:12px; color:#a78bfa; font-weight:700; text-decoration:none; white-space:nowrap; flex-shrink:0; }
+  .sd-act-link { font-size:12px; color:#7c3aed; font-weight:700; text-decoration:none; white-space:nowrap; flex-shrink:0; }
   .sd-act-link:hover { text-decoration:underline; }
 
   .sd-order-row { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; background:var(--surface); border-radius:12px; border:1px solid var(--border); cursor:pointer; transition:border-color 0.2s, background 0.2s; flex-wrap:wrap; gap:8px; }
@@ -306,7 +310,7 @@ const EXTRA = `
   .sd-stock-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:11px; gap:8px; flex-wrap:wrap; }
   .sd-stock-out      { background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.15); }
   .sd-stock-critical { background:rgba(251,146,60,0.07); border:1px solid rgba(251,146,60,0.15); }
-  .sd-stock-low      { background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.12); }
+  .sd-stock-low      { background:#fffbeb; border:1px solid rgba(251,191,36,0.12); }
 
   .sd-supplier-table { width:100%; border-collapse:collapse; }
   .sd-supplier-table th { text-align:left; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; padding:0 12px 10px; border-bottom:1px solid var(--border); }
@@ -631,32 +635,32 @@ export default function SellerDashboard() {
               display: "flex", alignItems: "center", gap: 6,
               padding: "10px 18px", borderRadius: 12,
               border: "1px solid rgba(167,139,250,0.2)",
-              background: "rgba(167,139,250,0.06)",
+              background: "#faf5ff",
               color: refreshing ? "var(--text2)" : "#a78bfa",
               fontWeight: 700, fontSize: 13,
               cursor: refreshing ? "not-allowed" : "pointer",
               fontFamily: "'Inter',sans-serif", transition: "all 0.2s",
             }}
           >
-            <span style={{ display: "inline-block", animation: refreshing ? "spin 1s linear infinite" : "none" }}>🔄</span>
+            <span style={{ display: "inline-flex", alignItems: "center", animation: refreshing ? "spin 1s linear infinite" : "none" }}><RefreshCw size={14} strokeWidth={2} /></span>
             {refreshing ? "Refreshing…" : "Refresh"}
           </button>
-          <Link to="/seller/products/add" className="btn-green" id="seller-add-product"
-            style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", boxShadow: "0 4px 14px rgba(167,139,250,0.3)" }}>
-            ➕ Add Product
-          </Link>
+            <Link to="/seller/products/add" className="btn-green" id="seller-add-product"
+            style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", boxShadow: "0 4px 14px rgba(167,139,250,0.3)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Plus size={14} strokeWidth={2.5} /> Add Product
+            </Link>
         </div>
       </div>
 
       {/* ── Global error ─────────────────────────────────── */}
       {errors.dash && !loading && (
-        <div className="card" style={{ marginBottom: 24, borderColor: "rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+        <div className="card" style={{ marginBottom: 24, borderColor: "rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
-              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>{errors.dash}</span>
+              <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>{errors.dash}</span>
             </div>
-            <button onClick={() => load(false)} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+            <button onClick={() => load(false)} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}><RefreshCw size={13} strokeWidth={2} style={{ marginRight: 5 }} />Retry</button>
           </div>
         </div>
       )}
@@ -690,33 +694,31 @@ export default function SellerDashboard() {
           {/* ── KPI Cards ─────────────────────────────────── */}
           <div className="sd-grid4">
             {[
-              {
-                emoji: "💰", label: "Total Procurement", sub: "accepted + shipped + delivered",
-                value: fmtINR(totalRevDisplay), color: "#4ade80",
+              { Icon: IndianRupee,   label: "Total Procurement", sub: "accepted + shipped + delivered",
+                value: fmtINR(totalRevDisplay), color: "#15803d",
                 link: "/seller/revenue", small: true,
               },
-              {
-                emoji: "📦", label: "Total Orders", sub: "→ View all orders",
+              { Icon: Package,       label: "Total Orders", sub: "→ View all orders",
                 value: stats?.totalOrders ?? allOrders.length,
-                color: "#38bdf8", link: "/seller/orders",
+                color: "#0369a1", link: "/seller/orders",
               },
-              {
-                emoji: "🎉", label: "Delivered", sub: "completed orders",
+              { Icon: CheckCircle2,  label: "Delivered", sub: "completed orders",
                 value: deliveredCount,
-                color: "#4ade80", link: "/seller/orders",
+                color: "#15803d", link: "/seller/orders",
               },
-              {
-                emoji: "⏳", label: "Pending", sub: "awaiting farmer",
+              { Icon: Clock,         label: "Pending", sub: "awaiting farmer",
                 value: pipeline.pending,
-                color: "#fbbf24", link: "/seller/orders",
+                color: "#b45309", link: "/seller/orders",
               },
             ].map(s => (
               <Link key={s.label} to={s.link} style={{ textDecoration: "none" }}>
                 <div className="sd-kpi"
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.boxShadow = `0 8px 24px rgba(0,0,0,0.3)`; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = `${s.color}30`; e.currentTarget.style.boxShadow = `0 4px 16px rgba(0,0,0,0.08)`; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <div style={{ fontSize: 24 }}>{s.emoji}</div>
+                  <div style={{ color: s.color, display: "flex", alignItems: "center" }}>
+                    {(() => { const Icon = s.Icon; return <Icon size={22} strokeWidth={1.75} />; })()}
+                  </div>
                   <div className="sd-kpi-lbl" style={{ marginTop: 10 }}>{s.label}</div>
                   <div className="sd-kpi-val" style={{ color: s.color, fontSize: s.small ? 20 : 26, wordBreak: "break-word" }}>{s.value}</div>
                   <div className="sd-kpi-sub">{s.sub}</div>
@@ -728,15 +730,15 @@ export default function SellerDashboard() {
           {/* ── Action Required ─────────────────────────── */}
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-              <div className="card-title">⚠️ Action Required</div>
+              <div className="card-title"><AlertTriangle size={16} strokeWidth={2} style={{ marginRight: 6, color: "#d97706", verticalAlign: "middle" }} />Action Required</div>
               {actionItems.length > 0 && (
-                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(239,68,68,0.1)", color: "#f87171", fontWeight: 700, border: "1px solid rgba(239,68,68,0.2)" }}>
+                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(239,68,68,0.1)", color: "#dc2626", fontWeight: 700, border: "1px solid rgba(239,68,68,0.2)" }}>
                   {actionItems.length} item{actionItems.length !== 1 ? "s" : ""}
                 </span>
               )}
             </div>
             {actionItems.length === 0 ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#4ade80", fontSize: 14, padding: "8px 0" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#15803d", fontSize: 14, padding: "8px 0" }}>
                 <span style={{ fontSize: 20 }}>✓</span>
                 <span>No urgent actions — everything looks good!</span>
               </div>
@@ -759,19 +761,19 @@ export default function SellerDashboard() {
           {/* ── Order Pipeline ────────────────────────────── */}
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
-              <div className="card-title">📦 Order Pipeline</div>
-              <Link to="/seller/orders" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>View All Orders →</Link>
+              <div className="card-title"><Package size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#0369a1", verticalAlign: "middle" }} />Order Pipeline</div>
+              <Link to="/seller/orders" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>View All Orders →</Link>
             </div>
 
             {pipelineTotal > 0 ? (
               <>
                 <div className="sd-pipe-bar">
                   {[
-                    { key: "pending",    color: "#fbbf24" },
-                    { key: "accepted",   color: "#38bdf8" },
-                    { key: "processing", color: "#a78bfa" },
+                    { key: "pending",    color: "#b45309" },
+                    { key: "accepted",   color: "#0369a1" },
+                    { key: "processing", color: "#7c3aed" },
                     { key: "shipped",    color: "#fb923c" },
-                    { key: "delivered",  color: "#4ade80" },
+                    { key: "delivered",  color: "#15803d" },
                   ].filter(s => pipeline[s.key] > 0).map(s => (
                     <div key={s.key} className="sd-pipe-seg"
                       style={{ flex: pipeline[s.key], background: s.color, opacity: 0.8 }}
@@ -781,11 +783,11 @@ export default function SellerDashboard() {
                 </div>
                 <div className="sd-pipe-stages">
                   {[
-                    { key: "pending",    emoji: "⏳", label: "Pending",    color: "#fbbf24" },
-                    { key: "accepted",   emoji: "✅", label: "Accepted",   color: "#38bdf8" },
-                    { key: "processing", emoji: "📦", label: "Processing", color: "#a78bfa" },
+                    { key: "pending",    emoji: "⏳", label: "Pending",    color: "#b45309" },
+                    { key: "accepted",   emoji: "✅", label: "Accepted",   color: "#0369a1" },
+                    { key: "processing", emoji: "📦", label: "Processing", color: "#7c3aed" },
                     { key: "shipped",    emoji: "🚚", label: "Shipped",    color: "#fb923c" },
-                    { key: "delivered",  emoji: "🎉", label: "Delivered",  color: "#4ade80" },
+                    { key: "delivered",  emoji: "🎉", label: "Delivered",  color: "#15803d" },
                   ].map(s => (
                     <Link key={s.key} to="/seller/orders" className="sd-pipe-stage"
                       onMouseEnter={e => { e.currentTarget.style.borderColor = `${s.color}40`; }}
@@ -801,12 +803,12 @@ export default function SellerDashboard() {
                 {(pipeline.rejected > 0 || pipeline.cancelled > 0) && (
                   <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
                     {pipeline.rejected > 0 && (
-                      <span style={{ fontSize: 12, color: "#f87171", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
+                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
                         ❌ {pipeline.rejected} Rejected
                       </span>
                     )}
                     {pipeline.cancelled > 0 && (
-                      <span style={{ fontSize: 12, color: "#f87171", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
+                      <span style={{ fontSize: 12, color: "#dc2626", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", padding: "4px 10px", borderRadius: 8, fontWeight: 700 }}>
                         🚫 {pipeline.cancelled} Cancelled
                       </span>
                     )}
@@ -815,7 +817,7 @@ export default function SellerDashboard() {
               </>
             ) : (
               <div className="empty-state" style={{ padding: "20px" }}>
-                <div className="empty-emoji">📦</div>
+                <div className="empty-emoji"><Package size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                 <div className="empty-title">No orders yet</div>
                 <div className="empty-sub">Your order pipeline will appear here as you place procurement orders.</div>
                 <Link to="/seller/procurement" className="btn-green" style={{ background: "linear-gradient(135deg,#7c3aed,#a78bfa)", marginTop: 12, display: "inline-flex" }}>
@@ -830,17 +832,17 @@ export default function SellerDashboard() {
             {/* 🌾 Supplier Overview */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">🌾 Supplier Overview</div>
-                <Link to="/seller/procurement" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Browse Produce →</Link>
+                <div className="card-title"><Wheat size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Supplier Overview</div>
+                <Link to="/seller/procurement" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>Browse Produce →</Link>
               </div>
 
               {errors.orders && (
-                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load order data.</div>
+                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load order data.</div>
               )}
 
               {!errors.orders && allOrders.length === 0 && (
                 <div className="empty-state" style={{ padding: "24px" }}>
-                  <div className="empty-emoji">🌾</div>
+                  <div className="empty-emoji"><Wheat size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                   <div className="empty-title">No suppliers yet</div>
                   <div className="empty-sub">Farmer suppliers will appear once you place procurement orders.</div>
                 </div>
@@ -850,11 +852,11 @@ export default function SellerDashboard() {
                 <>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
                     {[
-                      { label: "Farmers Sourced", value: farmersSourcedFrom, color: "#a78bfa" },
-                      { label: "Active Suppliers", value: activeSuppliers,   color: "#38bdf8" },
-                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#4ade80", small: true },
+                      { label: "Farmers Sourced", value: farmersSourcedFrom, color: "#7c3aed" },
+                      { label: "Active Suppliers", value: activeSuppliers,   color: "#0369a1" },
+                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#15803d", small: true },
                     ].map(m => (
-                      <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
+                      <div key={m.label} style={{ background: "#faf5ff", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
                         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: m.small ? 14 : 20, fontWeight: 800, color: m.color, marginTop: 4, wordBreak: "break-word" }}>{m.value}</div>
                       </div>
@@ -865,13 +867,13 @@ export default function SellerDashboard() {
                   {topSuppliers.slice(0, 4).map((s, i) => (
                     <div key={s.name + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < 3 ? "1px solid var(--border)" : "none", gap: 8, flexWrap: "wrap" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-                        <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,rgba(124,58,237,0.2),rgba(167,139,250,0.1))", border: "1px solid rgba(167,139,250,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#a78bfa", fontWeight: 800, flexShrink: 0 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg,rgba(124,58,237,0.2),rgba(167,139,250,0.1))", border: "1px solid rgba(167,139,250,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#7c3aed", fontWeight: 800, flexShrink: 0 }}>
                           {i + 1}
                         </div>
-                        <div style={{ fontSize: 13, color: "#fff", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</div>
+                        <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: "#4ade80" }}>{fmtINR(s.value)}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#15803d" }}>{fmtINR(s.value)}</div>
                         <div style={{ fontSize: 10, color: "var(--text2)" }}>{s.orders} order{s.orders !== 1 ? "s" : ""}</div>
                       </div>
                     </div>
@@ -883,8 +885,8 @@ export default function SellerDashboard() {
             {/* 📊 Procurement Analytics */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">📊 Procurement Analytics</div>
-                <Link to="/seller/analytics" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Full Analytics →</Link>
+                <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Procurement Analytics</div>
+                <Link to="/seller/analytics" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>Full Analytics →</Link>
               </div>
 
               {allOrders.length === 0 && (
@@ -897,12 +899,12 @@ export default function SellerDashboard() {
                 <>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
                     {[
-                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#4ade80" },
-                      { label: "Total Orders",     value: allOrders.length,         color: "#38bdf8" },
-                      { label: "Avg Order Value",  value: avgOrderVal ? fmtINR(avgOrderVal) : "—", color: "#a78bfa" },
+                      { label: "Total Spend",      value: fmtINR(totalProcurement), color: "#15803d" },
+                      { label: "Total Orders",     value: allOrders.length,         color: "#0369a1" },
+                      { label: "Avg Order Value",  value: avgOrderVal ? fmtINR(avgOrderVal) : "—", color: "#7c3aed" },
                       { label: "Top Crop",         value: topCropByValue?.display || "—",     color: "#fb923c" },
                     ].map(m => (
-                      <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
+                      <div key={m.label} style={{ background: "#faf5ff", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
                         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: m.color, marginTop: 4, wordBreak: "break-word" }}>{m.value}</div>
                       </div>
@@ -915,8 +917,8 @@ export default function SellerDashboard() {
                     return (
                       <div key={c.display + i} style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{c.display}</span>
-                          <span style={{ fontSize: 11, color: "#4ade80", fontWeight: 700 }}>{fmtINR(c.value)}</span>
+                          <span style={{ fontSize: 12, color: "#0f172a", fontWeight: 600 }}>{c.display}</span>
+                          <span style={{ fontSize: 11, color: "#15803d", fontWeight: 700 }}>{fmtINR(c.value)}</span>
                         </div>
                         <div style={{ height: 5, borderRadius: 4, background: "rgba(167,139,250,0.1)", overflow: "hidden" }}>
                           <div style={{ height: "100%", width: `${Math.min(pct, 100)}%`, background: "linear-gradient(90deg,#7c3aed,#a78bfa)", borderRadius: 4, transition: "width 0.6s ease" }} />
@@ -935,14 +937,14 @@ export default function SellerDashboard() {
             {/* 📈 Sales Performance */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">📈 Sales Performance</div>
-                <Link to="/seller/revenue" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Full Report →</Link>
+                <div className="card-title"><TrendingUp size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Sales Performance</div>
+                <Link to="/seller/revenue" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>Full Report →</Link>
               </div>
 
               {errors.revenue && (
-                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
+                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0", display: "flex", gap: 8, alignItems: "center" }}>
                   <span>⚠️</span> Unable to load revenue data.
-                  <button onClick={() => load(false)} style={{ color: "#a78bfa", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Retry</button>
+                  <button onClick={() => load(false)} style={{ color: "#7c3aed", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>Retry</button>
                 </div>
               )}
 
@@ -950,11 +952,11 @@ export default function SellerDashboard() {
                 <>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
                     {[
-                      { label: "Revenue",   value: fmtINR(revenue.totalRevenue), color: "#4ade80" },
-                      { label: "Orders",    value: revenue.totalOrders,           color: "#38bdf8" },
-                      { label: "Avg Order", value: revenue.avgOrderValue ? fmtINR(revenue.avgOrderValue) : "—", color: "#a78bfa" },
+                      { label: "Revenue",   value: fmtINR(revenue.totalRevenue), color: "#15803d" },
+                      { label: "Orders",    value: revenue.totalOrders,           color: "#0369a1" },
+                      { label: "Avg Order", value: revenue.avgOrderValue ? fmtINR(revenue.avgOrderValue) : "—", color: "#7c3aed" },
                     ].map(m => (
-                      <div key={m.label} style={{ background: "rgba(167,139,250,0.04)", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
+                      <div key={m.label} style={{ background: "#faf5ff", border: "1px solid var(--border)", borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{m.label}</div>
                         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: m.color, marginTop: 4, wordBreak: "break-word" }}>{m.value}</div>
                       </div>
@@ -977,13 +979,13 @@ export default function SellerDashboard() {
             {/* 🕐 Recent Orders */}
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">🕐 Recent Orders</div>
-                <Link to="/seller/orders" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>View All →</Link>
+                <div className="card-title"><Clock size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Recent Orders</div>
+                <Link to="/seller/orders" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>View All →</Link>
               </div>
 
               {allOrders.length === 0 ? (
                 <div className="empty-state" style={{ padding: "24px" }}>
-                  <div className="empty-emoji">📦</div>
+                  <div className="empty-emoji"><Package size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                   <div className="empty-title">No orders yet</div>
                   <div className="empty-sub">Place a bulk order from the Procurement page.</div>
                 </div>
@@ -998,7 +1000,7 @@ export default function SellerDashboard() {
                         onClick={() => setModalOrder(o)}
                       >
                         <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {o.cropName || "Product"}
                           </div>
                           <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
@@ -1006,7 +1008,7 @@ export default function SellerDashboard() {
                           </div>
                         </div>
                         <div style={{ textAlign: "right", flexShrink: 0 }}>
-                          <div style={{ fontWeight: 800, color: "#4ade80", fontSize: 13 }}>{fmtINR(o.totalPrice)}</div>
+                          <div style={{ fontWeight: 800, color: "#15803d", fontSize: 13 }}>{fmtINR(o.totalPrice)}</div>
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: `${stColor}15`, color: stColor, fontWeight: 700, whiteSpace: "nowrap" }}>
                             {o.status || "pending"}
                           </span>
@@ -1026,7 +1028,7 @@ export default function SellerDashboard() {
           {topSuppliers.length > 0 && (
             <div className="card" style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">🏆 Top Farmer Suppliers</div>
+                <div className="card-title"><Users size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Top Farmer Suppliers</div>
                 <span style={{ fontSize: 11, color: "var(--text2)" }}>Sorted by procurement value</span>
               </div>
               <div style={{ overflowX: "auto" }}>
@@ -1046,13 +1048,13 @@ export default function SellerDashboard() {
                       <tr key={s.name + i}>
                         <td style={{ color: "var(--text2)", width: 28 }}>{i + 1}</td>
                         <td>
-                          <div style={{ fontWeight: 700, color: "#fff" }}>{s.name}</div>
+                          <div style={{ fontWeight: 700, color: "#0f172a" }}>{s.name}</div>
                         </td>
                         <td>
-                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#38bdf8" }}>{s.orders}</span>
+                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#0369a1" }}>{s.orders}</span>
                         </td>
                         <td>
-                          <span style={{ color: "#4ade80", fontWeight: 700 }}>{s.delivered}</span>
+                          <span style={{ color: "#15803d", fontWeight: 700 }}>{s.delivered}</span>
                         </td>
                         <td>
                           <span style={{ color: s.pending > 0 ? "#fbbf24" : "var(--text2)", fontWeight: s.pending > 0 ? 700 : 400 }}>
@@ -1060,7 +1062,7 @@ export default function SellerDashboard() {
                           </span>
                         </td>
                         <td>
-                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#4ade80" }}>{fmtINR(s.value)}</span>
+                          <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#15803d" }}>{fmtINR(s.value)}</span>
                         </td>
                       </tr>
                     ))}
@@ -1073,8 +1075,8 @@ export default function SellerDashboard() {
           {/* ── Market Price Comparison ─────────────────────── */}
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
-              <div className="card-title">📊 Procurement vs Market Price</div>
-              <Link to="/seller/market-trends" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>Market Trends →</Link>
+              <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Procurement vs Market Price</div>
+              <Link to="/seller/market-trends" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>Market Trends →</Link>
             </div>
 
             {marketComparisons.length === 0 && (
@@ -1088,16 +1090,16 @@ export default function SellerDashboard() {
                 {marketComparisons.map((c, i) => (
                   <div key={c.crop + i} className="mkt-row">
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{c.crop}</div>
+                      <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{c.crop}</div>
                       <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>
-                        Avg purchase: <span style={{ color: "#fff", fontWeight: 600 }}>{fmtINR(Math.round(c.avgPurchase))}/unit</span>
+                        Avg purchase: <span style={{ color: "#0f172a", fontWeight: 600 }}>{fmtINR(Math.round(c.avgPurchase))}/unit</span>
                       </div>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>
                       {c.marketPrice != null ? (
                         <>
                           <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                            Market: <span style={{ color: "#fff", fontWeight: 700 }}>{fmtINR(Math.round(c.marketPrice))}</span>
+                            Market: <span style={{ color: "#0f172a", fontWeight: 700 }}>{fmtINR(Math.round(c.marketPrice))}</span>
                           </div>
                           <div style={{
                             fontSize: 12, fontWeight: 800, marginTop: 2,
@@ -1122,15 +1124,15 @@ export default function SellerDashboard() {
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="card-title">⚠️ Stock Alerts</div>
-                <Link to="/seller/products" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>All Products →</Link>
+                <Link to="/seller/products" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>All Products →</Link>
               </div>
 
               {errors.products && (
-                <div style={{ color: "#f87171", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load product data.</div>
+                <div style={{ color: "#dc2626", fontSize: 13, padding: "8px 0" }}>⚠️ Unable to load product data.</div>
               )}
 
               {!errors.products && outOfStock.length === 0 && criticalStock.length === 0 && lowStock.length === 0 && (
-                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#4ade80", fontSize: 13, padding: "8px 0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#15803d", fontSize: 13, padding: "8px 0" }}>
                   <span style={{ fontSize: 18 }}>✓</span>
                   {products.length === 0
                     ? "No products listed yet."
@@ -1144,39 +1146,39 @@ export default function SellerDashboard() {
                   {outOfStock.slice(0, 3).map(p => (
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-out" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                        <span style={{ fontSize: 10, color: "#f87171", fontWeight: 800 }}>🔴 OUT OF STOCK</span>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <span style={{ fontSize: 10, color: "#dc2626", fontWeight: 800 }}>🔴 OUT OF STOCK</span>
                       </div>
-                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Restock →</div>
+                      <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Restock →</div>
                     </Link>
                   ))}
                   {/* Critical Stock */}
                   {criticalStock.slice(0, 3).map(p => (
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-critical" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
                         <div style={{ fontSize: 11, color: "#fb923c" }}>
                           🟠 Critical: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
                         </div>
                       </div>
-                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Update →</div>
+                      <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Update →</div>
                     </Link>
                   ))}
                   {/* Low Stock */}
                   {lowStock.slice(0, 3).map(p => (
                     <Link key={p._id} to={`/seller/products/${p._id}/edit`} className="sd-stock-row sd-stock-low" style={{ textDecoration: "none" }}>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                        <div style={{ fontSize: 11, color: "#fbbf24" }}>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
+                        <div style={{ fontSize: 11, color: "#b45309" }}>
                           🟡 Low: {p.stock} {p.unit} ({toKg(p.stock, p.unit)} kg)
                         </div>
                       </div>
-                      <div style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>Update →</div>
+                      <div style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600 }}>Update →</div>
                     </Link>
                   ))}
 
                   {(outOfStock.length + criticalStock.length + lowStock.length) > 9 && (
-                    <Link to="/seller/products" style={{ fontSize: 12, color: "#a78bfa", textAlign: "center", textDecoration: "none", paddingTop: 4, fontWeight: 700 }}>
+                    <Link to="/seller/products" style={{ fontSize: 12, color: "#7c3aed", textAlign: "center", textDecoration: "none", paddingTop: 4, fontWeight: 700 }}>
                       View all alerts →
                     </Link>
                   )}
@@ -1186,10 +1188,10 @@ export default function SellerDashboard() {
 
             {/* 🕐 Recent Procurement Activity */}
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 16 }}>🕐 Recent Procurement Activity</div>
+              <div className="card-title" style={{ marginBottom: 16 }}><Clock size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#64748b", verticalAlign: "middle" }} />Recent Procurement Activity</div>
               {activities.length === 0 ? (
                 <div className="empty-state" style={{ padding: "24px" }}>
-                  <div className="empty-emoji">🕐</div>
+                  <div className="empty-emoji"><Clock size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
                   <div className="empty-title">No recent activity</div>
                   <div className="empty-sub">Activity will appear as you place and track procurement orders.</div>
                 </div>
@@ -1226,13 +1228,13 @@ export default function SellerDashboard() {
             <div className="card-title" style={{ marginBottom: 16 }}>⚡ Quick Actions</div>
             <div className="sd-quick-grid">
               {[
-                { emoji: "🛒", label: "Procure Produce",  to: "/seller/procurement",   color: "#4ade80" },
-                { emoji: "📦", label: "Manage Orders",    to: "/seller/orders",        color: "#38bdf8" },
-                { emoji: "🛍️", label: "My Products",     to: "/seller/products",      color: "#a78bfa" },
+                { emoji: "🛒", label: "Procure Produce",  to: "/seller/procurement",   color: "#15803d" },
+                { emoji: "📦", label: "Manage Orders",    to: "/seller/orders",        color: "#0369a1" },
+                { emoji: "🛍️", label: "My Products",     to: "/seller/products",      color: "#7c3aed" },
                 { emoji: "➕", label: "Add Product",      to: "/seller/products/add",  color: "#c4b5fd" },
                 { emoji: "💰", label: "Revenue Report",   to: "/seller/revenue",       color: "#fb923c" },
                 { emoji: "📈", label: "Analytics",        to: "/seller/analytics",     color: "#f472b6" },
-                { emoji: "🚚", label: "Logistics",        to: "/seller/logistics",     color: "#fbbf24" },
+                { emoji: "🚚", label: "Logistics",        to: "/seller/logistics",     color: "#b45309" },
                 { emoji: "📊", label: "Market Trends",    to: "/seller/market-trends", color: "#94a3b8" },
               ].map(q => (
                 <Link key={q.label} to={q.to} className="sd-quick-link"
@@ -1240,7 +1242,7 @@ export default function SellerDashboard() {
                   onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}
                 >
                   <span style={{ fontSize: 18 }}>{q.emoji}</span>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{q.label}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#0f172a" }}>{q.label}</span>
                 </Link>
               ))}
             </div>

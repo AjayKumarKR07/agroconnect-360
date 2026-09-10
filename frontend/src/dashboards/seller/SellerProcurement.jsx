@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { RefreshCw, Inbox } from "lucide-react";
 
 /* ── Skeleton card ─────────────────────────────────────────────────── */
 const SkCard = () => (
@@ -153,7 +154,7 @@ export default function SellerProcurement() {
         .proc-body { padding:14px 16px; }
         .cat-pills { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
         .cat-pill  { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; }
-        .cat-pill.active { background:rgba(167,139,250,0.1); color:#a78bfa; border-color:rgba(167,139,250,0.2); }
+        .cat-pill.active { background:rgba(167,139,250,0.1); color:#7c3aed; border-color:rgba(167,139,250,0.2); }
       `}</style>
 
       {/* Header */}
@@ -164,7 +165,7 @@ export default function SellerProcurement() {
           <p className="pg-sub">Browse and buy crops directly from farmers for resale.</p>
         </div>
         <div style={{ fontSize: 13, color: "var(--text2)", textAlign: "right" }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#a78bfa" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#7c3aed" }}>
             {loading ? "—" : filtered.length}
           </div>
           listings available
@@ -173,20 +174,20 @@ export default function SellerProcurement() {
 
       {/* Success banner */}
       {success && (
-        <div className="alert-success" style={{ marginBottom: 16, padding: "14px 18px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#4ade80", fontWeight: 600, fontSize: 14 }}>
+        <div className="alert-success" style={{ marginBottom: 16, padding: "14px 18px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontWeight: 600, fontSize: 14 }}>
           {success}
         </div>
       )}
 
       {/* Error state */}
       {error && !loading && (
-        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.05)" }}>
+        <div className="card" style={{ marginBottom: 24, border: "1px solid rgba(239,68,68,0.2)", background: "#fef2f2" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 20 }}>⚠️</span>
-              <span style={{ color: "#f87171", fontWeight: 600, fontSize: 14 }}>Unable to load farmer produce — {error}</span>
+              <span style={{ color: "#dc2626", fontWeight: 600, fontSize: 14 }}>Unable to load farmer produce — {error}</span>
             </div>
-            <button onClick={fetchCrops} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px" }}>🔄 Retry</button>
+            <button onClick={fetchCrops} className="btn-ghost" style={{ fontSize: 13, padding: "8px 16px", display: "inline-flex", alignItems: "center", gap: 5 }}><RefreshCw size={13} strokeWidth={2} />Retry</button>
           </div>
         </div>
       )}
@@ -226,7 +227,7 @@ export default function SellerProcurement() {
       {/* Empty state */}
       {!loading && !error && filtered.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-emoji">📥</div>
+          <div className="empty-emoji"><Inbox size={40} strokeWidth={1.5} color="#ddd6fe" /></div>
           <div className="empty-title">
             {crops.length === 0 ? "No farmer produce available" : `No results for "${search}"`}
           </div>
@@ -248,20 +249,20 @@ export default function SellerProcurement() {
                 : <div className="proc-ph">{catEmoji(c.category)}</div>
               }
               <div className="proc-body">
-                <div style={{ fontWeight: 800, color: "#fff", fontSize: 15, marginBottom: 4 }}>{c.name}</div>
+                <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 4 }}>{c.name}</div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 10 }}>
                   {c.category && <span>{c.category} · </span>}
                   {c.location && <span>{c.location} · </span>}
-                  <span style={{ color: "#a78bfa" }}>
+                  <span style={{ color: "#7c3aed" }}>
                     {c.farmerName || c.farmer?.name || "Farmer"}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
                   <div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#4ade80" }}>₹{Number(c.price).toLocaleString("en-IN")}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#15803d" }}>₹{Number(c.price).toLocaleString("en-IN")}</div>
                     <div style={{ fontSize: 11, color: "var(--text2)" }}>per {c.unit} · {c.quantity} {c.unit} avail.</div>
                   </div>
-                  <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 8, background: "rgba(34,197,94,0.1)", color: "#4ade80", fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 8, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}>
                     {c.status === "ready" ? "🔵 Ready" : "✅ Listed"}
                   </span>
                 </div>
@@ -291,11 +292,11 @@ export default function SellerProcurement() {
           <div style={{ background: "#0b0a1f", border: "1px solid rgba(167,139,250,0.2)", borderRadius: 24, padding: 28, width: "100%", maxWidth: 440 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff" }}>📥 Bulk Order</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📥 Bulk Order</div>
                 <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>
                   {orderModal.name} · ₹{Number(orderModal.price).toLocaleString("en-IN")}/{orderModal.unit}
                 </div>
-                <div style={{ fontSize: 12, color: "#a78bfa", marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: "#7c3aed", marginTop: 2 }}>
                   From: {orderModal.farmerName || orderModal.farmer?.name || "Farmer"}
                 </div>
               </div>
@@ -307,7 +308,7 @@ export default function SellerProcurement() {
 
             {/* Real backend error */}
             {orderError && (
-              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, marginBottom: 16, lineHeight: 1.5 }}>
                 ⚠️ {orderError}
               </div>
             )}
@@ -325,7 +326,7 @@ export default function SellerProcurement() {
                     style={{
                       background: "rgba(167,139,250,0.12)",
                       border: "1px solid rgba(167,139,250,0.3)",
-                      color: "#a78bfa",
+                      color: "#7c3aed",
                       borderRadius: 6,
                       padding: "2px 8px",
                       fontSize: 11,
@@ -371,18 +372,18 @@ export default function SellerProcurement() {
               {orderForm.quantity && Number(orderForm.quantity) > 0 && (
                 Number(orderForm.quantity) > Number(orderModal.quantity) ? (
                   <div style={{ padding: "12px 16px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12 }}>
-                    <div style={{ fontSize: 13, color: "#f87171", fontWeight: 600 }}>
+                    <div style={{ fontSize: 13, color: "#dc2626", fontWeight: 600 }}>
                       ⚠️ Quantity exceeds available stock of {orderModal.quantity} {orderModal.unit}.
                     </div>
                   </div>
                 ) : (
-                  <div style={{ padding: "12px 16px", background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ padding: "12px 16px", background: "#faf5ff", border: "1px solid rgba(167,139,250,0.15)", borderRadius: 12, overflow: "hidden" }}>
                     <div style={{ fontSize: 12, color: "var(--text2)" }}>Order Total (at current price)</div>
                     <div style={{
                       fontFamily: "'Space Grotesk',sans-serif",
                       fontSize: 22,
                       fontWeight: 800,
-                      color: "#4ade80",
+                      color: "#15803d",
                       wordBreak: "break-word",
                       overflowWrap: "anywhere",
                       marginTop: 4,

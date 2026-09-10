@@ -3,16 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../config/api";
 
 const FEATURES = [
-  { emoji: "📊", label: "Live APMC Market Prices" },
-  { emoji: "🧠", label: "AI Crop Disease Detection" },
+  { emoji: "📊", label: "Live APMC Mandi Prices" },
+  { emoji: "🩺", label: "Crop Disease AI Diagnosis" },
   { emoji: "📈", label: "ML Price Predictions" },
-  { emoji: "🌦️", label: "Weather Advisory" },
+  { emoji: "🌦️", label: "Hyperlocal Weather Advisories" },
 ];
 
 const STATS = [
   { value: "12,800+", label: "Active Farmers" },
-  { value: "340+", label: "APMC Markets" },
-  { value: "₹48Cr+", label: "Revenue Facilitated" },
+  { value: "340+", label: "APMC Mandis" },
+  { value: "₹48Cr+", label: "Trade Facilitated" },
 ];
 
 export default function Login() {
@@ -20,7 +20,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
-  const [focused, setFocused] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,240 +50,298 @@ export default function Login() {
 
         .auth-page {
           min-height: 100vh;
-          background: #050a0e;
+          background: #f8fafc;
           display: grid;
           grid-template-columns: 1fr 1fr;
           font-family: 'Inter', sans-serif;
-          color: #f0f6ff;
-          overflow: hidden;
-          position: relative;
+          color: #0f172a;
         }
 
-        /* ── LEFT PANEL ──────────────────────────────────────────── */
+        /* ── LEFT PANEL ── */
         .auth-left {
-          position: relative;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           padding: 48px;
-          background: linear-gradient(150deg, #071a0e 0%, #050d18 50%, #08051a 100%);
-          overflow: hidden;
+          background: linear-gradient(145deg, #f0fdf4 0%, #f8fafc 100%);
+          border-right: 1px solid #e2e8f0;
         }
-
-        .auth-left-canvas {
-          position: absolute; inset: 0; pointer-events: none;
-          background:
-            radial-gradient(ellipse 70% 60% at 20% 20%, rgba(34,197,94,0.12) 0%, transparent 60%),
-            radial-gradient(ellipse 50% 50% at 80% 80%, rgba(56,189,248,0.07) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 40% at 50% 50%, rgba(167,139,250,0.05) 0%, transparent 60%);
-        }
-        .auth-left-grid {
-          position: absolute; inset: 0; pointer-events: none;
-          background-image:
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 50px 50px;
-        }
-        .auth-left-orb {
-          position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none;
-        }
-
-        .auth-left-content { position: relative; z-index: 1; }
 
         .auth-brand {
-          display: inline-flex; align-items: center; gap: 12px;
-          text-decoration: none; margin-bottom: 64px;
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+          margin-bottom: 48px;
         }
         .auth-brand-logo {
-          width: 44px; height: 44px; border-radius: 12px;
-          background: linear-gradient(135deg, #16a34a, #059669);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 22px; box-shadow: 0 6px 20px rgba(34,197,94,0.4);
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          background: #16a34a;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          color: #ffffff;
         }
         .auth-brand-name {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 20px; font-weight: 800; color: #fff;
+          font-size: 20px;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.02em;
         }
-        .auth-brand-tag { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .auth-brand-tag {
+          font-size: 12px;
+          color: #64748b;
+          font-weight: 500;
+        }
 
         .auth-left-heading {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: clamp(32px, 3.5vw, 48px);
-          font-weight: 800; line-height: 1.1;
-          letter-spacing: -0.03em; color: #fff;
-          margin-bottom: 16px;
+          font-size: clamp(30px, 3vw, 42px);
+          font-weight: 800;
+          line-height: 1.2;
+          letter-spacing: -0.02em;
+          color: #0f172a;
+          margin-bottom: 14px;
         }
         .auth-left-heading .hl {
-          background: linear-gradient(135deg, #4ade80, #22d3ee);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #16a34a;
         }
         .auth-left-sub {
-          font-size: 16px; color: rgba(255,255,255,0.55); line-height: 1.7;
-          max-width: 380px; margin-bottom: 48px;
+          font-size: 15px;
+          color: #64748b;
+          line-height: 1.65;
+          max-width: 420px;
+          margin-bottom: 36px;
         }
 
-        .auth-feature-list { display: flex; flex-direction: column; gap: 14px; }
-        .auth-feature-item {
-          display: flex; align-items: center; gap: 14px;
-          padding: 14px 18px; border-radius: 14px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.06);
-          font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8);
-          transition: background 0.2s, border-color 0.2s;
+        .auth-feature-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
         }
-        .auth-feature-item:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); }
-        .auth-feature-emoji { font-size: 20px; }
+        .auth-feature-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 16px;
+          border-radius: 12px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          font-size: 14px;
+          font-weight: 500;
+          color: #1e293b;
+        }
         .auth-feature-check {
-          margin-left: auto; width: 20px; height: 20px; border-radius: 6px;
-          background: rgba(34,197,94,0.15); display: flex; align-items: center;
-          justify-content: center; font-size: 11px; color: #4ade80;
+          margin-left: auto;
+          width: 20px;
+          height: 20px;
+          border-radius: 6px;
+          background: #dcfce7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 700;
+          color: #15803d;
         }
 
         .auth-stats {
-          display: flex; gap: 32px; padding-top: 40px;
-          border-top: 1px solid rgba(255,255,255,0.07);
+          display: flex;
+          gap: 32px;
+          padding-top: 36px;
+          border-top: 1px solid #e2e8f0;
         }
         .auth-stat-val {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 22px; font-weight: 800; color: #fff;
+          font-size: 22px;
+          font-weight: 800;
+          color: #0f172a;
         }
-        .auth-stat-lbl { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+        .auth-stat-lbl {
+          font-size: 12px;
+          color: #64748b;
+          margin-top: 2px;
+        }
 
-        /* ── RIGHT PANEL ─────────────────────────────────────────── */
+        /* ── RIGHT PANEL ── */
         .auth-right {
-          display: flex; align-items: center; justify-content: center;
-          padding: 48px 56px;
-          background: #080c10;
-          border-left: 1px solid rgba(255,255,255,0.06);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 48px 40px;
+          background: #f8fafc;
         }
         .auth-card {
-          width: 100%; max-width: 440px;
+          width: 100%;
+          max-width: 420px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 20px;
+          padding: 36px 32px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         }
 
         .auth-back {
-          display: inline-flex; align-items: center; gap: 6px;
-          font-size: 13px; color: rgba(255,255,255,0.45);
-          text-decoration: none; margin-bottom: 48px;
-          transition: color 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          color: #64748b;
+          text-decoration: none;
+          margin-bottom: 24px;
+          transition: color 0.15s ease;
         }
-        .auth-back:hover { color: rgba(255,255,255,0.8); }
-
-        .auth-card-icon {
-          width: 64px; height: 64px; border-radius: 18px;
-          background: rgba(34,197,94,0.12);
-          border: 1px solid rgba(34,197,94,0.2);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 28px; margin-bottom: 28px;
-          box-shadow: 0 0 40px rgba(34,197,94,0.1);
-        }
+        .auth-back:hover { color: #0f172a; }
 
         .auth-card-title {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 32px; font-weight: 800;
-          color: #fff; letter-spacing: -0.03em; line-height: 1.15;
-          margin-bottom: 10px;
+          font-size: 28px;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.02em;
+          margin-bottom: 8px;
         }
-        .auth-card-sub { font-size: 15px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+        .auth-card-sub {
+          font-size: 14px;
+          color: #64748b;
+          line-height: 1.6;
+        }
 
-        .auth-form { margin-top: 36px; display: flex; flex-direction: column; gap: 20px; }
+        .auth-form {
+          margin-top: 28px;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
 
         .auth-label {
-          font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7);
-          letter-spacing: 0.03em; text-transform: uppercase;
-          display: block; margin-bottom: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #475569;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 6px;
         }
 
         .auth-input-wrap { position: relative; }
         .auth-input-icon {
-          position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-          font-size: 18px; pointer-events: none;
-          transition: opacity 0.2s;
+          position: absolute;
+          left: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 16px;
+          pointer-events: none;
         }
         .auth-input {
-          width: 100%; background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 14px; padding: 16px 16px 16px 46px;
-          color: #fff; font-size: 15px; font-family: 'Inter', sans-serif;
-          outline: none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+          width: 100%;
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          border-radius: 10px;
+          padding: 12px 14px 12px 42px;
+          color: #0f172a;
+          font-size: 14px;
+          font-family: 'Inter', sans-serif;
+          outline: none;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .auth-input::placeholder { color: rgba(255,255,255,0.25); }
+        .auth-input::placeholder { color: #94a3b8; }
         .auth-input:focus {
-          border-color: rgba(34,197,94,0.5);
-          background: rgba(34,197,94,0.04);
-          box-shadow: 0 0 0 4px rgba(34,197,94,0.08), 0 0 20px rgba(34,197,94,0.05);
+          border-color: #16a34a;
+          box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
         }
-        .auth-input.has-error { border-color: rgba(248,113,113,0.5); }
+        .auth-input.has-error { border-color: #ef4444; }
 
         .auth-error {
-          display: flex; align-items: center; gap: 10px;
-          padding: 14px 16px; border-radius: 12px;
-          background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
-          font-size: 14px; color: #fca5a5;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 14px;
+          border-radius: 10px;
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          font-size: 13px;
+          color: #991b1b;
         }
 
         .auth-submit {
-          width: 100%; padding: 17px; border-radius: 14px;
-          background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
-          color: #fff; font-size: 16px; font-weight: 700;
-          font-family: 'Inter', sans-serif; border: none; cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          box-shadow: 0 8px 32px rgba(34,197,94,0.3);
-          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-          position: relative; overflow: hidden;
-        }
-        .auth-submit::before {
-          content: ''; position: absolute; inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
-          opacity: 0; transition: opacity 0.2s;
+          width: 100%;
+          padding: 13px;
+          border-radius: 10px;
+          background: #16a34a;
+          color: #ffffff;
+          font-size: 15px;
+          font-weight: 600;
+          font-family: 'Inter', sans-serif;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+          transition: background 0.15s, transform 0.15s;
         }
         .auth-submit:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 16px 48px rgba(34,197,94,0.4);
+          background: #15803d;
+          transform: translateY(-1px);
         }
-        .auth-submit:hover::before { opacity: 1; }
-        .auth-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+        .auth-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
 
         .auth-spinner {
-          width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
-          border-top-color: #fff; border-radius: 50%;
+          width: 18px;
+          height: 18px;
+          border: 2px solid #ffffff;
+          border-top-color: transparent;
+          border-radius: 50%;
           animation: spin 0.7s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .auth-note {
-          display: flex; align-items: flex-start; gap: 12px;
-          padding: 16px; border-radius: 14px;
-          background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.12);
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 12px 14px;
+          border-radius: 10px;
+          background: #f0fdf4;
+          border: 1px solid #bbf7d0;
         }
-        .auth-note-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-        .auth-note-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
-        .auth-note-text strong { color: rgba(255,255,255,0.8); }
+        .auth-note-text {
+          font-size: 12.5px;
+          color: #166534;
+          line-height: 1.55;
+        }
+        .auth-note-text strong {
+          color: #14532d;
+        }
 
         .auth-divider {
-          display: flex; align-items: center; gap: 12px;
-          color: rgba(255,255,255,0.2); font-size: 12px;
-        }
-        .auth-divider::before, .auth-divider::after {
-          content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+          text-align: center;
+          font-size: 12px;
+          color: #94a3b8;
+          padding-top: 6px;
         }
 
         @media (max-width: 900px) {
           .auth-page { grid-template-columns: 1fr; }
           .auth-left { display: none; }
-          .auth-right { padding: 32px 24px; }
+          .auth-right { padding: 32px 20px; }
         }
       `}</style>
 
       <div className="auth-page">
-        {/* ── LEFT PANEL ───────────────────────────────────────────── */}
+        {/* ── LEFT PANEL ── */}
         <div className="auth-left">
-          <div className="auth-left-canvas" />
-          <div className="auth-left-grid" />
-          <div className="auth-left-orb" style={{ width: 300, height: 300, background: "rgba(34,197,94,0.1)", top: "-80px", left: "-80px" }} />
-          <div className="auth-left-orb" style={{ width: 200, height: 200, background: "rgba(56,189,248,0.08)", bottom: "100px", right: "-40px" }} />
-
-          <div className="auth-left-content">
+          <div>
             <Link to="/" className="auth-brand">
               <div className="auth-brand-logo">🌱</div>
               <div>
@@ -294,18 +351,16 @@ export default function Login() {
             </Link>
 
             <h2 className="auth-left-heading">
-              Your farm's<br />
-              <span className="hl">smartest partner</span><br />
-              awaits
+              Smart Agriculture for <span className="hl">Every Stakeholder</span>
             </h2>
             <p className="auth-left-sub">
-              Join 12,800+ farmers already using AI-powered tools to predict prices, detect diseases, and sell directly to buyers.
+              Access live APMC mandi rates, AI crop leaf disease analysis, and accurate price forecasts to maximize your agricultural revenue.
             </p>
 
             <div className="auth-feature-list">
               {FEATURES.map((f) => (
                 <div className="auth-feature-item" key={f.label}>
-                  <span className="auth-feature-emoji">{f.emoji}</span>
+                  <span>{f.emoji}</span>
                   <span>{f.label}</span>
                   <div className="auth-feature-check">✓</div>
                 </div>
@@ -323,17 +378,16 @@ export default function Login() {
           </div>
         </div>
 
-        {/* ── RIGHT PANEL ──────────────────────────────────────────── */}
+        {/* ── RIGHT PANEL ── */}
         <div className="auth-right">
           <div className="auth-card">
             <Link to="/" className="auth-back">
               ← Back to Home
             </Link>
 
-            <div className="auth-card-icon">📧</div>
-            <h1 className="auth-card-title">Welcome back</h1>
+            <h1 className="auth-card-title">Welcome to AgroConnect</h1>
             <p className="auth-card-sub">
-              Enter your email and we'll send a one-time verification code — no password needed.
+              Enter your email address to receive an instant verification code. No password needed.
             </p>
 
             <form className="auth-form" onSubmit={handleSubmit}>
@@ -347,9 +401,7 @@ export default function Login() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
-                    placeholder="you@example.com"
+                    placeholder="farmer@example.com"
                     className={`auth-input ${error ? "has-error" : ""}`}
                     autoComplete="email"
                     autoFocus
@@ -382,13 +434,13 @@ export default function Login() {
               </button>
 
               <div className="auth-note">
-                <span className="auth-note-icon">🔒</span>
+                <span style={{ fontSize: 16 }}>🔒</span>
                 <p className="auth-note-text">
-                  <strong>No password required.</strong> We'll send a 6-digit code to your inbox. New users are automatically registered on first login.
+                  <strong>Secure & Passwordless:</strong> A 6-digit code will be sent to your email. First-time users are automatically registered.
                 </p>
               </div>
 
-              <div className="auth-divider">New here? Your account is created automatically</div>
+              <div className="auth-divider">First time? Your account is created instantly upon verification</div>
             </form>
           </div>
         </div>

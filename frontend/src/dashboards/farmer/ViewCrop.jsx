@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
 
 const LIFECYCLE_STAGES = [
-  { key: "sowing",        label: "Sowing",        icon: "🌱", color: "#22c55e"  },
+  { key: "sowing",        label: "Sowing",        icon: "🌱", color: "#16a34a"  },
   { key: "growing",       label: "Growing",        icon: "🌿", color: "#16a34a"  },
-  { key: "flowering",     label: "Flowering",      icon: "🌸", color: "#a78bfa"  },
-  { key: "harvest_ready", label: "Harvest Ready",  icon: "🌾", color: "#fbbf24"  },
+  { key: "flowering",     label: "Flowering",      icon: "🌸", color: "#7c3aed"  },
+  { key: "harvest_ready", label: "Harvest Ready",  icon: "🌾", color: "#b45309"  },
   { key: "harvested",     label: "Harvested",      icon: "🏆", color: "#fb923c"  },
-  { key: "listed",        label: "Listed",         icon: "🛒", color: "#38bdf8"  },
-  { key: "sold",          label: "Sold",           icon: "✅", color: "#4ade80"  },
+  { key: "listed",        label: "Listed",         icon: "🛒", color: "#0369a1"  },
+  { key: "sold",          label: "Sold",           icon: "✅", color: "#15803d"  },
 ];
 
 // Map existing status → lifecycle stage (backward compat)
@@ -118,8 +118,8 @@ export default function ViewCrop() {
     <>
       <style>{DS + `
         .stage-btn { padding:8px 14px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; font-size:12px; font-weight:600; transition:all .2s; }
-        .stage-btn:hover { border-color:rgba(34,197,94,0.3); color:#4ade80; }
-        .stage-btn.active-stage { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.4); color:#4ade80; }
+        .stage-btn:hover { border-color:rgba(34,197,94,0.3); color:#15803d; }
+        .stage-btn.active-stage { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.4); color:#15803d; }
       `}</style>
 
       <button onClick={() => navigate("/farmer/crops")} className="btn-ghost" style={{ marginBottom: 24, fontSize: 13 }}>← Back to My Crops</button>
@@ -136,7 +136,7 @@ export default function ViewCrop() {
                 <img src={crop.image.url} alt={crop.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             ) : (
-              <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(34,197,94,0.05)", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", borderBottom: "1px solid var(--border)" }}>
                 <span style={{ fontSize: 80 }}>🌿</span>
               </div>
             )}
@@ -145,7 +145,7 @@ export default function ViewCrop() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
                 <div>
                   {statusBadge(crop.status)}
-                  <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 36, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", marginTop: 10 }}>{crop.name}</h1>
+                  <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 36, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.02em", marginTop: 10 }}>{crop.name}</h1>
                   <div style={{ color: "var(--text2)", marginTop: 4 }}>{crop.category}</div>
                 </div>
                 <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-green">✏️ Edit Crop</button>
@@ -163,7 +163,7 @@ export default function ViewCrop() {
                   <div key={label} style={{ background: "var(--surface)", borderRadius: 14, padding: "16px 18px", border: "1px solid var(--border)" }}>
                     <div style={{ fontSize: 18, marginBottom: 6 }}>{icon}</div>
                     <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginTop: 3 }}>{val}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#0f172a", marginTop: 3 }}>{val}</div>
                   </div>
                 ))}
               </div>
@@ -186,7 +186,7 @@ export default function ViewCrop() {
                     </button>
                   ))}
                 </div>
-                {stageSuccess && <div style={{ fontSize: 13, color: "#4ade80", marginTop: 10 }}>{stageSuccess}</div>}
+                {stageSuccess && <div style={{ fontSize: 13, color: "#15803d", marginTop: 10 }}>{stageSuccess}</div>}
               </div>
 
               {crop.description && (
@@ -203,9 +203,9 @@ export default function ViewCrop() {
             <div className="card-title" style={{ marginBottom: 16 }}>⚡ Quick Actions</div>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button onClick={() => navigate(`/farmer/crops/${crop._id}/edit`)} className="btn-green">✏️ Edit Listing</button>
-              <button onClick={() => navigate("/farmer/disease-detection")} className="btn-ghost" style={{ color: "#a78bfa", borderColor: "rgba(167,139,250,0.2)" }}>🔬 Diagnose Disease</button>
-              <button onClick={() => navigate("/farmer/price-prediction")} className="btn-ghost" style={{ color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}>📈 Check Prices</button>
-              <button onClick={() => navigate("/farmer/smart-farm-planner")} className="btn-ghost" style={{ color: "#22c55e", borderColor: "rgba(34,197,94,0.2)" }}>🌾 Smart Planner</button>
+              <button onClick={() => navigate("/farmer/disease-detection")} className="btn-ghost" style={{ color: "#7c3aed", borderColor: "rgba(167,139,250,0.2)" }}>🔬 Diagnose Disease</button>
+              <button onClick={() => navigate("/farmer/price-prediction")} className="btn-ghost" style={{ color: "#0369a1", borderColor: "rgba(56,189,248,0.2)" }}>📈 Check Prices</button>
+              <button onClick={() => navigate("/farmer/smart-farm-planner")} className="btn-ghost" style={{ color: "#16a34a", borderColor: "rgba(34,197,94,0.2)" }}>🌾 Smart Planner</button>
             </div>
           </div>
         </div>

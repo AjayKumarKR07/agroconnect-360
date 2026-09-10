@@ -18,67 +18,39 @@ const STYLES = `
     flex-direction: column;
     height: calc(100vh - 140px);
     min-height: 560px;
-    border-radius: 24px;
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
-    background: linear-gradient(160deg, rgba(2,8,18,0.95) 0%, rgba(1,10,20,0.97) 100%);
+    background: #ffffff;
     border: 1px solid rgba(245,158,11,0.15);
-    box-shadow: 0 0 0 1px rgba(245,158,11,0.05), 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 
-  /* animated bg grid */
-  .ai-wrap::before {
-    content:'';
-    position:absolute;
-    inset:0;
-    background-image: linear-gradient(rgba(245,158,11,0.03) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(245,158,11,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events:none;
-    z-index:0;
-  }
+  /* No grid overlay for light theme */
 
   .ai-header {
     position: relative;
     z-index: 2;
     padding: 18px 24px;
-    border-bottom: 1px solid rgba(245,158,11,0.1);
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
   }
 
-  .ai-avatar-ring {
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #b45309, #f59e0b, #d97706);
-    padding: 2px;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .ai-avatar-ring::after {
-    content:'';
-    position:absolute;
-    inset:-3px;
-    border-radius:50%;
-    border:2px solid rgba(245,158,11,0.4);
-    animation: pulseRing 2s ease infinite;
-  }
-  @keyframes pulseRing{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.08);opacity:1}}
-  .ai-avatar-inner {
-    width:100%;height:100%;border-radius:50%;
-    background:rgba(0,0,0,0.6);
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;
+  .ai-avatar-wrap {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
   }
 
   .ai-status-dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: #fbbf24;
-    box-shadow: 0 0 8px #fbbf24;
+    background: #d97706;
     animation: blink 1.8s ease infinite;
   }
   @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -95,7 +67,7 @@ const STYLES = `
   }
   .ai-body::-webkit-scrollbar { width: 3px; }
   .ai-body::-webkit-scrollbar-track { background: transparent; }
-  .ai-body::-webkit-scrollbar-thumb { background: rgba(245,158,11,0.2); border-radius: 2px; }
+  .ai-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
 
   .msg-row { display: flex; gap: 12px; align-items: flex-start; }
   .msg-row.user { flex-direction: row-reverse; }
@@ -105,8 +77,8 @@ const STYLES = `
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; flex-shrink: 0; margin-top: 2px;
   }
-  .msg-avatar.ai  { background: linear-gradient(135deg,#b4530930,#f59e0b20); border: 1px solid rgba(245,158,11,0.2); }
-  .msg-avatar.user{ background: linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.15)); border: 1px solid rgba(251,191,36,0.15); }
+  .msg-avatar.ai  { background: #fef3c7; border: 1px solid #fde68a; }
+  .msg-avatar.user{ background: #fff7ed; border: 1px solid #fed7aa; }
 
   .bubble-wrap { max-width: 74%; display: flex; flex-direction: column; }
   .msg-row.user .bubble-wrap { align-items: flex-end; }
@@ -119,23 +91,22 @@ const STYLES = `
     font-family: 'Inter', sans-serif;
   }
   .bubble.ai {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(245,158,11,0.12);
-    border-radius: 4px 18px 18px 18px;
-    color: #fef9e7;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px 14px 14px 14px;
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
   .bubble.user {
     background: linear-gradient(135deg,#b45309,#f59e0b);
-    border-radius: 18px 4px 18px 18px;
-    color: #fff;
+    border-radius: 14px 4px 14px 14px;
+    color: #0f172a;
     box-shadow: 0 4px 20px rgba(245,158,11,0.35);
   }
 
   .msg-meta {
     font-size: 10px;
-    color: rgba(255,255,255,0.25);
+    color: #94a3b8;
     margin-top: 5px;
     padding: 0 4px;
     font-family: 'Inter',sans-serif;
@@ -143,16 +114,15 @@ const STYLES = `
 
   /* Typing animation */
   .typing-pill {
-    padding: 12px 18px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(245,158,11,0.12);
-    border-radius: 4px 18px 18px 18px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px 14px 14px 14px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    backdrop-filter: blur(10px);
   }
-  .td { width: 7px; height: 7px; border-radius: 50%; background: #fbbf24; animation: td 1.2s infinite; }
+  .td { width: 7px; height: 7px; border-radius: 50%; background: #d97706; animation: td 1.2s infinite; }
   .td:nth-child(2){ animation-delay:.2s; }
   .td:nth-child(3){ animation-delay:.4s; }
   @keyframes td{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-7px);opacity:1}}
@@ -160,9 +130,8 @@ const STYLES = `
   /* Footer */
   .ai-footer {
     padding: 16px 20px;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(245,158,11,0.08);
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
     position: relative; z-index: 2;
     flex-shrink: 0;
   }
@@ -173,63 +142,61 @@ const STYLES = `
   .quick-chip {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 6px 13px;
-    background: rgba(245,158,11,0.06);
-    border: 1px solid rgba(245,158,11,0.15);
-    color: #fde68a;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #b45309;
     border-radius: 20px; font-size: 12px; font-weight: 600;
     cursor: pointer; transition: all 0.18s;
     font-family: 'Inter', sans-serif;
     white-space: nowrap;
   }
   .quick-chip:hover {
-    background: rgba(245,158,11,0.14);
-    border-color: rgba(245,158,11,0.35);
-    color: #fbbf24;
+    background: #fef3c7;
+    border-color: #fcd34d;
+    color: #92400e;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(245,158,11,0.15);
   }
 
   .input-row {
     display: flex; gap: 10px; align-items: flex-end;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(245,158,11,0.18);
-    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
     padding: 8px 8px 8px 16px;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .input-row:focus-within {
-    border-color: rgba(245,158,11,0.45);
-    box-shadow: 0 0 0 4px rgba(245,158,11,0.07);
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(217,119,6,0.1);
   }
   .ai-input {
     flex: 1; background: transparent; border: none; outline: none;
-    color: #fff; font-size: 14.5px; font-family: 'Inter',sans-serif;
+    color: #0f172a; font-size: 14.5px; font-family: 'Inter',sans-serif;
     resize: none; line-height: 1.5; padding: 4px 0; max-height: 110px; overflow: auto;
   }
-  .ai-input::placeholder { color: rgba(255,255,255,0.22); }
+  .ai-input::placeholder { color: #94a3b8; }
 
   .send-btn {
-    width: 42px; height: 42px; border-radius: 12px; border: none; cursor: pointer;
-    background: linear-gradient(135deg,#b45309,#f59e0b);
-    color: #fff; font-size: 17px;
+    width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer;
+    background: #d97706;
+    color: #ffffff; font-size: 17px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(245,158,11,0.4);
   }
-  .send-btn:hover:not(:disabled){ transform: scale(1.06); box-shadow: 0 6px 20px rgba(245,158,11,0.55); }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .send-btn:hover:not(:disabled){ background:#b45309; transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; ; }
 
   .clear-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 14px; border-radius: 10px;
-    border: 1px solid rgba(239,68,68,0.2);
-    background: rgba(239,68,68,0.06);
-    color: #f87171; font-size: 12px; font-weight: 700;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #dc2626; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: 'Inter',sans-serif;
     transition: all 0.2s;
   }
-  .clear-btn:hover{ background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); }
+  .clear-btn:hover{ background:#fee2e2; border-color:#fca5a5; }
 
   /* Gemini badge */
   .gemini-badge {
@@ -243,7 +210,7 @@ const STYLES = `
 
   /* Markdown-like code blocks inside bubble */
   .bubble code {
-    background: rgba(0,0,0,0.3);
+    background: #f8fafc;
     padding: 2px 6px; border-radius: 5px;
     font-family: monospace; font-size: 12.5px; color: #fde68a;
   }
@@ -313,9 +280,9 @@ export default function ExporterAIAssistant() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
         <div>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
-            <span className="gemini-badge">✦ Powered by Gemini AI</span>
+            <span style={{ color: "#16a34a" }}>✦ Powered by Gemini AI</span>
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#fff", margin: 0 }}>
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(22px,3vw,28px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
             🌍 Export Trade AI Assistant
           </h1>
         </div>
@@ -328,20 +295,20 @@ export default function ExporterAIAssistant() {
         {/* Header bar inside card */}
         <div className="ai-header">
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div className="ai-avatar-ring">
+            <div className="ai-avatar-wrap">
               <div className="ai-avatar-inner">🌍</div>
             </div>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#fff" }}>AgroConnect Export AI</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 800, color: "#0f172a" }}>AgroConnect Export AI</div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
                 <div className="ai-status-dot" />
-                <span style={{ fontSize: 11, color: "#fbbf24", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Gemini Pro</span>
+                <span style={{ fontSize: 11, color: "#b45309", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Gemini Pro</span>
               </div>
             </div>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
+              <div style={{ fontSize: 11, color: "#64748b", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
             </div>
           </div>
         </div>
@@ -417,7 +384,7 @@ export default function ExporterAIAssistant() {
             </button>
           </form>
 
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", marginTop: 8, textAlign: "center", fontFamily: "'Inter',sans-serif" }}>
+          <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 8, textAlign: "center", fontFamily: "'Inter',sans-serif" }}>
             Press Enter to send · Shift+Enter for new line · AI can make mistakes — verify important info
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
@@ -145,7 +145,7 @@ export default function EditCrop() {
                 {imagePreview ? (
                   <div style={{ position: "relative" }}>
                     <img src={imagePreview} alt="Preview" style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 10, border: "1px solid var(--border)" }} />
-                    <button type="button" onClick={() => { setImage(null); setImagePreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕</button>
+                    <button type="button" onClick={() => { setImage(null); setImagePreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕</button>
                   </div>
                 ) : (
                   <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "24px 12px", borderRadius: 10, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer" }}>

@@ -1,29 +1,30 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { ScrollText, RefreshCw, AlertTriangle, Globe, Search } from "lucide-react";
 
 const ENTITY_TYPES = ["all", "user", "order", "crop", "rfq", "shipment", "dispute", "broadcast", "system"];
 
 const ACTION_ICONS = {
-  user_suspended:       { emoji: "🚫", color: "#f87171" },
-  user_activated:       { emoji: "✅", color: "#4ade80" },
-  crop_deleted:         { emoji: "🗑️", color: "#f87171" },
+  user_suspended:       { emoji: "🚫", color: "#dc2626" },
+  user_activated:       { emoji: "✅", color: "#15803d" },
+  crop_deleted:         { emoji: "🗑️", color: "#dc2626" },
   order_status_changed: { emoji: "📦", color: "#818cf8" },
-  rfq_status_changed:   { emoji: "🚢", color: "#fbbf24" },
-  shipment_status_changed: { emoji: "⛴️", color: "#38bdf8" },
-  dispute_resolved:     { emoji: "✅", color: "#4ade80" },
-  dispute_rejected:     { emoji: "❌", color: "#f87171" },
-  dispute_under_review: { emoji: "🔍", color: "#fbbf24" },
-  dispute_open:         { emoji: "📂", color: "#38bdf8" },
-  broadcast_sent:       { emoji: "📢", color: "#a78bfa" },
+  rfq_status_changed:   { emoji: "🚢", color: "#b45309" },
+  shipment_status_changed: { emoji: "⛴️", color: "#0369a1" },
+  dispute_resolved:     { emoji: "✅", color: "#15803d" },
+  dispute_rejected:     { emoji: "❌", color: "#dc2626" },
+  dispute_under_review: { emoji: "🔍", color: "#b45309" },
+  dispute_open:         { emoji: "📂", color: "#0369a1" },
+  broadcast_sent:       { emoji: "📢", color: "#7c3aed" },
 };
 
 const LEVEL_STYLE = (action) => {
   if (action.includes("delete") || action.includes("suspend") || action.includes("reject")) {
-    return { bg: "rgba(239,68,68,0.12)", color: "#f87171", label: "DESTRUCTIVE" };
+    return { bg: "rgba(239,68,68,0.12)", color: "#dc2626", label: "DESTRUCTIVE" };
   }
   if (action.includes("broadcast")) {
-    return { bg: "rgba(167,139,250,0.12)", color: "#a78bfa", label: "BROADCAST" };
+    return { bg: "rgba(167,139,250,0.12)", color: "#7c3aed", label: "BROADCAST" };
   }
   return { bg: "rgba(99,102,241,0.12)", color: "#c7d2fe", label: "INFO" };
 };
@@ -76,13 +77,13 @@ export default function AdminAuditLogs() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Security &amp; System Activity Stream</div>
-          <h1 className="pg-title">📜 Audit Logs &amp; Admin Activity</h1>
+          <h1 className="pg-title"><ScrollText size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Audit Logs & Admin Activity</h1>
           <p className="pg-sub">Persistent, real-time record of all administrative actions across the platform.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {lastUpdated && <span style={{ fontSize: 12, color: "#a5b4fc" }}>Updated {relativeTime(lastUpdated)}</span>}
           <button className="btn-indigo" onClick={() => load(page)} disabled={loading}>
-            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+            {loading ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <RefreshCw size={13} strokeWidth={2} />} Refresh
           </button>
         </div>
       </div>
@@ -92,7 +93,7 @@ export default function AdminAuditLogs() {
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {ENTITY_TYPES.map((et) => (
             <button key={et} className={`tab-btn ${entityFilter === et ? "active" : ""}`} onClick={() => setEntityFilter(et)}>
-              {et === "all" ? "🌐 All Types" : et}
+              {et === "all" ? <><Globe size={12} strokeWidth={2} style={{ marginRight: 4, verticalAlign: "middle" }} />All Types</> : et}
             </button>
           ))}
         </div>
@@ -100,7 +101,7 @@ export default function AdminAuditLogs() {
           <input
             className="field-input"
             style={{ maxWidth: 200 }}
-            placeholder="🔍 Search action…"
+            placeholder="Search action…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -111,7 +112,7 @@ export default function AdminAuditLogs() {
       {/* Stats bar */}
       {pagination.total !== undefined && (
         <div style={{ marginBottom: 16, fontSize: 13, color: "#a5b4fc" }}>
-          Showing {logs.length} of <strong style={{ color: "#fff" }}>{pagination.total}</strong> audit events
+          Showing {logs.length} of <strong style={{ color: "#0f172a" }}>{pagination.total}</strong> audit events
         </div>
       )}
 
@@ -123,7 +124,7 @@ export default function AdminAuditLogs() {
 
       {!loading && error && (
         <div className="card error-state">
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={40} strokeWidth={1.5} color="#ef4444" /></div>
           <div className="error-state-msg">Unable to load audit logs</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(page)}>Retry</button>
@@ -132,7 +133,7 @@ export default function AdminAuditLogs() {
 
       {!loading && !error && logs.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-state-icon">📜</div>
+          <div className="empty-state-icon"><ScrollText size={40} strokeWidth={1.5} color="#c7d2fe" /></div>
           <div className="empty-state-msg">No audit logs found</div>
           <div className="empty-state-sub">Admin actions will appear here as they happen.</div>
         </div>
@@ -155,7 +156,7 @@ export default function AdminAuditLogs() {
                       <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{icon.emoji}</span>
                       <div>
                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                          <span style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{log.description}</span>
+                          <span style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{log.description}</span>
                           <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: level.bg, color: level.color, fontWeight: 800 }}>
                             {level.label}
                           </span>
@@ -164,7 +165,7 @@ export default function AdminAuditLogs() {
                           </span>
                         </div>
                         <div style={{ fontSize: 12, color: "#a5b4fc" }}>
-                          By: <strong style={{ color: "#fff" }}>{log.admin?.name || "Admin"}</strong>
+                          By: <strong style={{ color: "#0f172a" }}>{log.admin?.name || "Admin"}</strong>
                           {log.entityId && <> · ID: <span style={{ fontFamily: "monospace", color: "#818cf8" }}>{log.entityId.slice(-8)}</span></>}
                         </div>
                       </div>

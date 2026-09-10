@@ -68,84 +68,64 @@ const STYLES = `
 
   .sai-topic-card {
     padding: 14px 16px;
-    background: rgba(167,139,250,0.04);
-    border: 1px solid rgba(167,139,250,0.1);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
     cursor: default;
     transition: border-color 0.2s, background 0.2s;
   }
-  .sai-topic-card:hover { background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.2); }
+  .sai-topic-card:hover { background: #f8fafc; border-color: #cbd5e1; }
 
   .sai-topic-icon { font-size: 20px; margin-bottom: 6px; }
-  .sai-topic-title { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
-  .sai-topic-desc { font-size: 11px; color: rgba(167,139,250,0.7); margin-bottom: 10px; }
+  .sai-topic-title { font-family: 'Space Grotesk',sans-serif; font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 2px; }
+  .sai-topic-desc { font-size: 11px; color: #64748b; margin-bottom: 10px; }
   .sai-topic-prompt {
     display: block; width: 100%;
     text-align: left; background: none; border: none;
-    color: rgba(255,255,255,0.55); font-size: 11.5px;
+    color: #64748b; font-size: 11.5px;
     font-family: 'Inter',sans-serif; font-weight: 500;
     padding: 5px 0; cursor: pointer; border-radius: 5px;
     transition: color 0.15s;
   }
-  .sai-topic-prompt:hover { color: #a78bfa; }
+  .sai-topic-prompt:hover { color: #7c3aed; }
   .sai-topic-prompt::before { content: '› '; color: rgba(167,139,250,0.4); }
 
   /* ── Chat pane ── */
   .sai-chat {
     display: flex;
     flex-direction: column;
-    border-radius: 22px;
+    border-radius: 18px;
     overflow: hidden;
-    background: linear-gradient(160deg, rgba(8,6,22,0.97) 0%, rgba(6,5,18,0.98) 100%);
-    border: 1px solid rgba(167,139,250,0.15);
-    box-shadow: 0 0 0 1px rgba(167,139,250,0.04), 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     position: relative;
   }
 
-  /* Animated bg grid */
-  .sai-chat::before {
-    content:'';
-    position:absolute; inset:0;
-    background-image:
-      linear-gradient(rgba(167,139,250,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(167,139,250,0.025) 1px, transparent 1px);
-    background-size:40px 40px;
-    pointer-events:none; z-index:0;
-  }
+  /* No grid overlay needed for light theme */
 
   /* ── Header ── */
   .sai-header {
     position: relative; z-index: 2;
     padding: 16px 22px;
-    border-bottom: 1px solid rgba(167,139,250,0.1);
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
     display: flex; align-items: center; justify-content: space-between;
     flex-shrink: 0;
   }
-  .sai-avatar-ring {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: linear-gradient(135deg, #7c3aed, #a78bfa, #6d28d9);
-    padding: 2px; position: relative; flex-shrink: 0;
-  }
-  .sai-avatar-ring::after {
-    content:''; position:absolute; inset:-3px; border-radius:50%;
-    border:2px solid rgba(167,139,250,0.4);
-    animation: saiPulse 2s ease infinite;
-  }
-  @keyframes saiPulse { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.08);opacity:1} }
-  .sai-avatar-inner {
-    width:100%; height:100%; border-radius:50%;
-    background: rgba(0,0,0,0.55);
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px;
+  .sai-avatar-wrap {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: #f3e8ff;
+    border: 1px solid #e9d5ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
   }
   .sai-status-dot {
-    width:8px; height:8px; border-radius:50%;
-    background:#a78bfa; box-shadow:0 0 8px #a78bfa;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #7c3aed;
     animation: saiDot 1.8s ease infinite;
   }
-  @keyframes saiDot { 0%,100%{opacity:1} 50%{opacity:0.35} }
+  @keyframes saiDot { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   /* ── Body ── */
   .sai-body {
@@ -155,7 +135,7 @@ const STYLES = `
   }
   .sai-body::-webkit-scrollbar { width:3px; }
   .sai-body::-webkit-scrollbar-track { background:transparent; }
-  .sai-body::-webkit-scrollbar-thumb { background:rgba(167,139,250,0.2); border-radius:2px; }
+  .sai-body::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:2px; }
 
   .sai-msg-row { display:flex; gap:10px; align-items:flex-start; }
   .sai-msg-row.user { flex-direction:row-reverse; }
@@ -165,8 +145,8 @@ const STYLES = `
     display:flex; align-items:center; justify-content:center;
     font-size:14px; flex-shrink:0; margin-top:2px;
   }
-  .sai-msg-avatar.ai   { background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(167,139,250,0.15)); border:1px solid rgba(167,139,250,0.2); }
-  .sai-msg-avatar.user { background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(124,58,237,0.1)); border:1px solid rgba(167,139,250,0.15); }
+  .sai-msg-avatar.ai   { background:#f3e8ff; border:1px solid #e9d5ff; }
+  .sai-msg-avatar.user { background:#ede9fe; border:1px solid #ddd6fe; }
 
   .sai-bubble-wrap { max-width:76%; display:flex; flex-direction:column; }
   .sai-msg-row.user .sai-bubble-wrap { align-items:flex-end; }
@@ -176,22 +156,21 @@ const STYLES = `
     word-break:break-word; font-family:'Inter',sans-serif;
   }
   .sai-bubble.ai {
-    background:rgba(255,255,255,0.04);
-    border:1px solid rgba(167,139,250,0.12);
-    border-radius:4px 18px 18px 18px;
-    color:#ede9fe;
-    backdrop-filter:blur(10px);
-    box-shadow:0 4px 20px rgba(0,0,0,0.2);
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:4px 14px 14px 14px;
+    color:#0f172a;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
   }
   .sai-bubble.user {
     background:linear-gradient(135deg,#7c3aed,#9333ea);
-    border-radius:18px 4px 18px 18px;
-    color:#fff;
-    box-shadow:0 4px 20px rgba(124,58,237,0.4);
+    border-radius:14px 4px 14px 14px;
+    color:#ffffff;
+    box-shadow:0 2px 8px rgba(124,58,237,0.3);
   }
 
   .sai-msg-meta {
-    font-size:10px; color:rgba(255,255,255,0.2);
+    font-size:10px; color:#94a3b8;
     margin-top:4px; padding:0 4px;
     font-family:'Inter',sans-serif;
   }
@@ -199,12 +178,11 @@ const STYLES = `
   /* Typing */
   .sai-typing-pill {
     padding:12px 16px;
-    background:rgba(255,255,255,0.04); border:1px solid rgba(167,139,250,0.12);
-    border-radius:4px 18px 18px 18px;
+    background:#ffffff; border:1px solid #e2e8f0;
+    border-radius:4px 14px 14px 14px;
     display:inline-flex; align-items:center; gap:5px;
-    backdrop-filter:blur(10px);
   }
-  .sai-td { width:7px; height:7px; border-radius:50%; background:#a78bfa; animation:saiTd 1.2s infinite; }
+  .sai-td { width:7px; height:7px; border-radius:50%; background:#7c3aed; animation:saiTd 1.2s infinite; }
   .sai-td:nth-child(2){ animation-delay:.2s; }
   .sai-td:nth-child(3){ animation-delay:.4s; }
   @keyframes saiTd{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-7px);opacity:1}}
@@ -212,65 +190,64 @@ const STYLES = `
   /* ── Footer ── */
   .sai-footer {
     padding:14px 18px;
-    background:rgba(0,0,0,0.4); backdrop-filter:blur(20px);
-    border-top:1px solid rgba(167,139,250,0.07);
+    background:#ffffff;
+    border-top:1px solid #e2e8f0;
     position:relative; z-index:2; flex-shrink:0;
   }
   .sai-quick-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:11px; }
   .sai-quick-chip {
     display:inline-flex; align-items:center; gap:5px;
     padding:5px 12px;
-    background:rgba(167,139,250,0.06);
-    border:1px solid rgba(167,139,250,0.15);
-    color:#c4b5fd; border-radius:20px;
+    background:#faf5ff;
+    border:1px solid #e9d5ff;
+    color:#7c3aed; border-radius:20px;
     font-size:11.5px; font-weight:600;
     cursor:pointer; transition:all 0.18s;
     font-family:'Inter',sans-serif; white-space:nowrap;
   }
   .sai-quick-chip:hover {
-    background:rgba(167,139,250,0.14); border-color:rgba(167,139,250,0.35);
-    color:#a78bfa; transform:translateY(-1px);
-    box-shadow:0 4px 12px rgba(124,58,237,0.2);
+    background:#f3e8ff; border-color:#ddd6fe;
+    color:#6d28d9; transform:translateY(-1px);
   }
 
   .sai-input-row {
     display:flex; gap:8px; align-items:flex-end;
-    background:rgba(255,255,255,0.03);
-    border:1px solid rgba(167,139,250,0.18);
-    border-radius:14px; padding:7px 7px 7px 15px;
+    background:#f8fafc;
+    border:1px solid #cbd5e1;
+    border-radius:12px; padding:7px 7px 7px 15px;
     transition:border-color 0.2s, box-shadow 0.2s;
   }
   .sai-input-row:focus-within {
-    border-color:rgba(167,139,250,0.45);
-    box-shadow:0 0 0 4px rgba(124,58,237,0.07);
+    border-color:#7c3aed;
+    box-shadow:0 0 0 3px rgba(124,58,237,0.1);
   }
   .sai-input {
     flex:1; background:transparent; border:none; outline:none;
-    color:#fff; font-size:14px; font-family:'Inter',sans-serif;
+    color:#0f172a; font-size:14px; font-family:'Inter',sans-serif;
     resize:none; line-height:1.5; padding:4px 0; max-height:110px; overflow:auto;
   }
-  .sai-input::placeholder { color:rgba(255,255,255,0.2); }
+  .sai-input::placeholder { color:#94a3b8; }
 
   .sai-send-btn {
-    width:40px; height:40px; border-radius:11px; border:none; cursor:pointer;
-    background:linear-gradient(135deg,#7c3aed,#a78bfa);
-    color:#fff; font-size:16px;
+    width:38px; height:38px; border-radius:10px; border:none; cursor:pointer;
+    background:#7c3aed;
+    color:#ffffff; font-size:16px;
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    transition:all 0.2s; box-shadow:0 4px 14px rgba(124,58,237,0.45);
+    transition:all 0.2s;
   }
-  .sai-send-btn:hover:not(:disabled){ transform:scale(1.06); box-shadow:0 6px 20px rgba(124,58,237,0.6); }
+  .sai-send-btn:hover:not(:disabled){ background:#6d28d9; transform:scale(1.05); }
   .sai-send-btn:disabled { opacity:0.35; cursor:not-allowed; transform:none; box-shadow:none; }
 
   .sai-clear-btn {
     display:inline-flex; align-items:center; gap:6px;
     padding:7px 13px; border-radius:9px;
-    border:1px solid rgba(239,68,68,0.2);
-    background:rgba(239,68,68,0.06);
-    color:#f87171; font-size:12px; font-weight:700;
+    border:1px solid #fecaca;
+    background:#fef2f2;
+    color:#dc2626; font-size:12px; font-weight:700;
     cursor:pointer; font-family:'Inter',sans-serif;
     transition:all 0.2s;
   }
-  .sai-clear-btn:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.35); }
+  .sai-clear-btn:hover { background:#fee2e2; border-color:#fca5a5; }
 
   .sai-gemini-badge {
     display:inline-flex; align-items:center; gap:5px;
@@ -280,10 +257,12 @@ const STYLES = `
   }
 
   .sai-bubble code {
-    background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:5px;
-    font-family:monospace; font-size:12px; color:#c4b5fd;
+    background:#f3e8ff; padding:2px 6px; border-radius:5px;
+    font-family:monospace; font-size:12px; color:#7c3aed; border:1px solid #e9d5ff;
   }
-  .sai-bubble strong { color:#c4b5fd; }
+  .sai-bubble strong { color:#6d28d9; }
+  .sai-bubble.user strong { color:#ffffff; }
+  .sai-bubble.user code { background:rgba(255,255,255,0.2); color:#ffffff; border-color:rgba(255,255,255,0.3); }
 
   /* Responsive */
   @media(max-width:860px) {
@@ -379,7 +358,7 @@ export default function SellerAIAssistant() {
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>
             <span className="sai-gemini-badge">✦ Powered by Groq AI</span>
           </div>
-          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(20px,3vw,26px)", fontWeight: 800, color: "#fff", margin: 0 }}>
+          <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "clamp(20px,3vw,26px)", fontWeight: 800, color: "#0f172a", margin: 0 }}>
             🛍️ Seller Business AI
           </h1>
           <p style={{ fontSize: 12, color: "rgba(167,139,250,0.7)", marginTop: 4 }}>
@@ -388,11 +367,11 @@ export default function SellerAIAssistant() {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <Link to="/seller/market-trends"
-            style={{ fontSize: 12, color: "#a78bfa", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
+            style={{ fontSize: 12, color: "#7c3aed", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
             📊 Market Trends
           </Link>
           <Link to="/seller/procurement"
-            style={{ fontSize: 12, color: "#4ade80", background: "rgba(74,222,128,0.07)", border: "1px solid rgba(74,222,128,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
+            style={{ fontSize: 12, color: "#15803d", background: "rgba(74,222,128,0.07)", border: "1px solid rgba(74,222,128,0.15)", padding: "7px 14px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}>
             🛒 Procurement
           </Link>
           <button className="sai-clear-btn" onClick={clearChat}>🗑 Clear</button>
@@ -417,7 +396,7 @@ export default function SellerAIAssistant() {
           ))}
 
           {/* Quick nav */}
-          <div style={{ padding: "12px 14px", background: "rgba(167,139,250,0.04)", border: "1px solid rgba(167,139,250,0.1)", borderRadius: 14 }}>
+          <div style={{ padding: "12px 14px", background: "#faf5ff", border: "1px solid rgba(167,139,250,0.1)", borderRadius: 14 }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(167,139,250,0.7)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>Quick Nav</div>
             {[
               { emoji: "📦", label: "Orders",      to: "/seller/orders" },
@@ -427,7 +406,7 @@ export default function SellerAIAssistant() {
               { emoji: "🏠", label: "Dashboard",   to: "/seller/dashboard" },
             ].map(nav => (
               <Link key={nav.label} to={nav.to}
-                style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", textDecoration: "none", color: "rgba(255,255,255,0.5)", fontSize: 12, fontWeight: 600, transition: "color 0.15s" }}
+                style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 0", textDecoration: "none", color: "#475569", fontSize: 12, fontWeight: 600, transition: "color 0.15s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "#a78bfa"}
                 onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.5)"}
               >
@@ -446,15 +425,15 @@ export default function SellerAIAssistant() {
                 <div className="sai-avatar-inner">🛍️</div>
               </div>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#fff" }}>AgroConnect Seller AI</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 14, fontWeight: 800, color: "#0f172a" }}>AgroConnect Seller AI</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
                   <div className="sai-status-dot" />
-                  <span style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Groq LLaMA</span>
+                  <span style={{ fontSize: 11, color: "#7c3aed", fontWeight: 600, fontFamily: "'Inter',sans-serif" }}>Online · Groq LLaMA</span>
                 </div>
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
+              <div style={{ fontSize: 11, color: "#64748b", fontFamily: "'Inter',sans-serif" }}>{messages.length - 1} messages</div>
               <div style={{ fontSize: 10, color: "rgba(167,139,250,0.4)", marginTop: 2 }}>Business specialist</div>
             </div>
           </div>

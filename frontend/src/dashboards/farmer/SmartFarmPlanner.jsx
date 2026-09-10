@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Ruler, MapPin, Thermometer, Sprout, BarChart3, Trophy } from "lucide-react";
 
 // ============================================================
 // HELPERS
@@ -22,9 +23,9 @@ const scoreBg = (s) =>
 
 const RANKS = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
 const SIGNAL_STYLES = {
-  favorable: { bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.25)", color: "#4ade80", icon: "🟢" },
+  favorable: { bg: "rgba(34,197,94,0.1)", border: "rgba(34,197,94,0.25)", color: "#15803d", icon: "🟢" },
   neutral:   { bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)", color: "#fde68a", icon: "🟡" },
-  unfavorable: { bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)", color: "#f87171", icon: "🔴" },
+  unfavorable: { bg: "rgba(239,68,68,0.08)", border: "rgba(239,68,68,0.2)", color: "#dc2626", icon: "🔴" },
 };
 
 const SUITABILITY_ICON = { Suitable: "✅", Moderate: "⚠️", Unfavorable: "❌" };
@@ -38,7 +39,7 @@ const SFP_CSS = `
   .sfp-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
   .sfp-section-title {
     font-family:'Space Grotesk',sans-serif;
-    font-size:17px; font-weight:700; color:#fff; margin-bottom:16px;
+    font-size:17px; font-weight:700; color:#0f172a; margin-bottom:16px;
     display:flex; align-items:center; gap:8px;
   }
   .sfp-score-bar-wrap { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
@@ -69,10 +70,10 @@ const SFP_CSS = `
     background:var(--surface);
   }
   .sfp-weather-metric { text-align:center; padding:16px 12px; border-radius:14px; background:var(--surface); }
-  .sfp-weather-val { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; color:#fff; }
+  .sfp-weather-val { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; color:#0f172a; }
   .sfp-weather-lbl { font-size:12px; color:var(--text2); margin-top:4px; }
   .sfp-profit-card { padding:20px; border-radius:16px; background:var(--surface); border:1px solid var(--border); text-align:center; }
-  .sfp-profit-val { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:#fff; }
+  .sfp-profit-val { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:#0f172a; }
   .sfp-profit-lbl { font-size:12px; color:var(--text2); margin-top:4px; }
   .sfp-ai-text { font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; }
   .sfp-req-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
@@ -85,7 +86,7 @@ const SFP_CSS = `
     font-family:'Inter',sans-serif; width:100%;
   }
   .sfp-crop-btn:hover { background:var(--surface2); border-color:var(--border2); }
-  .sfp-crop-btn.active { background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#4ade80; }
+  .sfp-crop-btn.active { background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#15803d; }
   .sfp-unavailable { font-size:13px; color:var(--text2); font-style:italic; }
   .sfp-skeleton {
     background:linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
@@ -186,12 +187,12 @@ function MarketPanel({ market, district }) {
       <div className="sfp-grid2" style={{ marginBottom: 20 }}>
         {/* Highest Price */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#4ade80", marginBottom: 12 }}>🔥 Top Value Crops</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#15803d", marginBottom: 12 }}>🔥 Top Value Crops</div>
           {market.highest?.slice(0, 5).map((m, i) => (
             <div key={i} className="sfp-market-row">
               <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600 }}>{m.commodity}</span>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#4ade80" }}>₹{fmt(m.maxPrice)}/q</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#15803d" }}>₹{fmt(m.maxPrice)}/q</div>
                 <div style={{ fontSize: 11, color: "var(--text2)" }}>{m.market}</div>
               </div>
             </div>
@@ -199,12 +200,12 @@ function MarketPanel({ market, district }) {
         </div>
         {/* Lowest Price */}
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#f87171", marginBottom: 12 }}>⚠️ Low Trend Crops</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#dc2626", marginBottom: 12 }}>⚠️ Low Trend Crops</div>
           {market.lowest?.slice(0, 5).map((m, i) => (
             <div key={i} className="sfp-market-row">
               <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 600 }}>{m.commodity}</span>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#f87171" }}>₹{fmt(m.minPrice)}/q</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#dc2626" }}>₹{fmt(m.minPrice)}/q</div>
                 <div style={{ fontSize: 11, color: "var(--text2)" }}>{m.market}</div>
               </div>
             </div>
@@ -246,7 +247,7 @@ function RecommendationsTable({ recommendations, selectedCrop, onSelect }) {
         >
           <span style={{ fontSize: 18 }}>{RANKS[r.rank - 1]}</span>
           <div>
-            <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>{r.crop}</div>
+            <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>{r.crop}</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>{r.duration}</div>
           </div>
           <div
@@ -327,7 +328,7 @@ function CropDetailPanel({ rec }) {
             <div className="sfp-profit-lbl">Market Price ({fin.marketPriceSource})</div>
           </div>
           <div className="sfp-profit-card">
-            <div className="sfp-profit-val" style={{ color: "#fbbf24" }}>
+            <div className="sfp-profit-val" style={{ color: "#b45309" }}>
               ₹{fmt(fin.estimatedCost)}
             </div>
             <div className="sfp-profit-lbl">Estimated Investment</div>
@@ -350,7 +351,7 @@ function CropDetailPanel({ rec }) {
         {fin.breakEvenPrice && (
           <div style={{ padding: "10px 14px", borderRadius: 10, background: "var(--surface)", fontSize: 13 }}>
             <span style={{ color: "var(--text2)" }}>Break-even Price: </span>
-            <strong style={{ color: "#fbbf24" }}>₹{fmt(fin.breakEvenPrice)}/quintal</strong>
+            <strong style={{ color: "#b45309" }}>₹{fmt(fin.breakEvenPrice)}/quintal</strong>
           </div>
         )}
         {!fin.marketPrice && (
@@ -867,7 +868,7 @@ export default function SmartFarmPlanner() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AI-Powered Decision Support</div>
-          <h1 className="pg-title">🌾 Smart Farm Planner</h1>
+          <h1 className="pg-title"><Sprout size={22} strokeWidth={2} style={{ marginRight: 8, color: "#16a34a", verticalAlign: "middle" }} />Smart Farm Planner</h1>
           <p className="pg-sub">
             Plan your crop using farm conditions, real-time weather, APMC market intelligence and AI.
           </p>
@@ -875,7 +876,7 @@ export default function SmartFarmPlanner() {
         {plan ? (
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {planSaved ? (
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 30, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", color: "#4ade80", fontSize: 13, fontWeight: 700 }}>✅ Plan Saved</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 30, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontSize: 13, fontWeight: 700 }}>✅ Plan Saved</span>
             ) : (
               <button className="btn-green" onClick={handleSavePlan} disabled={planSaving} id="sfp-save-plan-btn">
                 {planSaving ? "💾 Saving…" : "💾 Save Farm Plan"}
@@ -897,7 +898,7 @@ export default function SmartFarmPlanner() {
             </button>
           </div>
         ) : (
-          <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} id="sfp-use-my-farm-btn" style={{ color: "#4ade80", borderColor: "rgba(34,197,94,0.3)" }}>
+          <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} id="sfp-use-my-farm-btn" style={{ color: "#15803d", borderColor: "rgba(34,197,94,0.3)" }}>
             {farmLoading ? "⏳ Loading…" : farmLoaded ? "✅ Farm Details Loaded" : "🌾 Use My Farm Details"}
           </button>
         )}
@@ -908,16 +909,16 @@ export default function SmartFarmPlanner() {
       {plan && topRec && (
         <div className="stat-grid" style={{ marginBottom: 24 }}>
           {[
-            { emoji: "📐", label: "Farm Area",       value: `${plan.farmDetails.farmArea} ${plan.farmDetails.areaUnit}`, color: "#38bdf8" },
-            { emoji: "📍", label: "Location",        value: `${plan.farmDetails.district}, ${plan.farmDetails.state}`, color: "#a78bfa" },
-            { emoji: "🌡️", label: "Weather Score",   value: plan.weather?.unavailable ? "N/A" : `${plan.weather?.suitabilityScore}%`, color: plan.weather?.suitabilityScore >= 75 ? "#22c55e" : "#fbbf24" },
-            { emoji: "🥇", label: "Top Crop",        value: topRec.crop, color: "#22c55e" },
-            { emoji: "📊", label: "Recommendation",  value: `${topRec.totalScore}/100`, color: scoreColor(topRec.totalScore) },
-            { emoji: "🏆", label: "Best Market",     value: plan.bestMarket?.market || "See below", color: "#fbbf24" },
-          ].map(({ emoji, label, value, color }) => (
+            { Icon: Ruler,       label: "Farm Area",       value: `${plan.farmDetails.farmArea} ${plan.farmDetails.areaUnit}`, color: "#0369a1" },
+            { Icon: MapPin,      label: "Location",        value: `${plan.farmDetails.district}, ${plan.farmDetails.state}`, color: "#7c3aed" },
+            { Icon: Thermometer, label: "Weather Score",   value: plan.weather?.unavailable ? "N/A" : `${plan.weather?.suitabilityScore}%`, color: plan.weather?.suitabilityScore >= 75 ? "#22c55e" : "#fbbf24" },
+            { Icon: Sprout,      label: "Top Crop",        value: topRec.crop, color: "#16a34a" },
+            { Icon: BarChart3,   label: "Recommendation",  value: `${topRec.totalScore}/100`, color: scoreColor(topRec.totalScore) },
+            { Icon: Trophy,      label: "Best Market",     value: plan.bestMarket?.market || "See below", color: "#b45309" },
+          ].map(({ Icon, label, value, color }) => (
             <div key={label} className="stat-card">
               <div className="stat-glow" style={{ background: color }} />
-              <div className="stat-emoji">{emoji}</div>
+              <div className="stat-icon" style={{ color }}><Icon size={20} strokeWidth={1.75} /></div>
               <div className="stat-val" style={{ fontSize: 18 }}>{value}</div>
               <div className="stat-lbl">{label}</div>
             </div>
@@ -930,11 +931,11 @@ export default function SmartFarmPlanner() {
         <div className="card" style={{ marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 10 }}>
             <div className="sfp-section-title" style={{ marginBottom: 0 }}>🗂️ Farm Planning Details</div>
-            <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} style={{ fontSize: 12, padding: "7px 14px", color: "#4ade80", borderColor: "rgba(34,197,94,0.3)" }}>
+            <button className="btn-ghost" onClick={loadMyFarm} disabled={farmLoading} style={{ fontSize: 12, padding: "7px 14px", color: "#15803d", borderColor: "rgba(34,197,94,0.3)" }}>
               {farmLoading ? "⏳ Loading…" : farmLoaded ? "✅ Farm Loaded" : "🌾 Use My Farm Details"}
             </button>
           </div>
-          {farmLoaded && <div style={{ fontSize: 12, color: "#4ade80", marginBottom: 12 }}>✅ Farm details auto-filled from My Farm profile. You can adjust any field below.</div>}
+          {farmLoaded && <div style={{ fontSize: 12, color: "#15803d", marginBottom: 12 }}>✅ Farm details auto-filled from My Farm profile. You can adjust any field below.</div>}
           <p className="card-sub" style={{ marginBottom: 24 }}>
             Enter your farm details to generate a personalised crop recommendation.
           </p>
@@ -1080,8 +1081,8 @@ export default function SmartFarmPlanner() {
             </div>
 
             {/* Example hint */}
-            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.12)", fontSize: 13, color: "var(--text2)", marginBottom: 24 }}>
-              💡 <strong style={{ color: "#4ade80" }}>Example:</strong> State: Karnataka · District: Kolar · Area: 1 Acre · Soil: Loamy · Irrigation: Available · Season: Current Season
+            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.12)", fontSize: 13, color: "var(--text2)", marginBottom: 24 }}>
+              💡 <strong style={{ color: "#15803d" }}>Example:</strong> State: Karnataka · District: Kolar · Area: 1 Acre · Soil: Loamy · Irrigation: Available · Season: Current Season
             </div>
 
             <button
@@ -1150,7 +1151,7 @@ export default function SmartFarmPlanner() {
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "16px 20px", borderRadius: 14, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", flexWrap: "wrap" }}>
                 <span style={{ fontSize: 32 }}>🏆</span>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", fontFamily: "'Space Grotesk',sans-serif" }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a", fontFamily: "'Space Grotesk',sans-serif" }}>
                     {plan.bestMarket.market}
                   </div>
                   <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>
@@ -1158,7 +1159,7 @@ export default function SmartFarmPlanner() {
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: "#4ade80", fontFamily: "'Space Grotesk',sans-serif" }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: "#15803d", fontFamily: "'Space Grotesk',sans-serif" }}>
                     ₹{fmt(plan.bestMarket.price)}/quintal
                   </div>
                   {plan.bestMarket.minPrice > 0 && (
@@ -1180,7 +1181,7 @@ export default function SmartFarmPlanner() {
               <div className="sfp-section-title" style={{ color: selStyle.color }}>
                 {selStyle.icon} Smart Selling Recommendation
               </div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 10 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 10 }}>
                 {plan.sellingRecommendation.headline}
               </div>
               <div style={{ fontSize: 14, color: "var(--text)", lineHeight: 1.7, marginBottom: 12 }}>

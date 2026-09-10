@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
@@ -57,7 +57,7 @@ export default function AddSellerProduct() {
               {preview
                 ? <div style={{ position: "relative" }}>
                     <img src={preview} alt="preview" style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
-                    <button type="button" onClick={() => { setImage(null); setPreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.85)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕ Remove</button>
+                    <button type="button" onClick={() => { setImage(null); setPreview(""); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.85)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕ Remove</button>
                   </div>
                 : <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "28px 16px", borderRadius: 12, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer" }}>
                     <span style={{ fontSize: 40 }}>📸</span>

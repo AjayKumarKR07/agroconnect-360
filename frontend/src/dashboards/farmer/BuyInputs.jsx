@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { DS } from "../../styles/ds";
 import { API_URL } from "../../config/api";
 import RazorpayCheckout from "../../components/RazorpayCheckout";
+import { Search } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
    PRODUCT CATALOG — 10 categories, 40+ realistic products
@@ -150,7 +151,7 @@ const CROP_RECOMMENDATIONS = {
 
 /* ── Stars ── */
 const Stars = ({ rating }) => (
-  <span style={{ color: "#fbbf24", fontSize: 12 }}>
+  <span style={{ color: "#b45309", fontSize: 12 }}>
     {"★".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
     <span style={{ color: "#7a8fa6", marginLeft: 4, fontSize: 11 }}>{rating}</span>
   </span>
@@ -174,8 +175,8 @@ function ProductCard({ item, onAdd, onQuickView }) {
       {/* Image area */}
       <div style={{
         height: 90, borderRadius: 10,
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.06)",
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontSize: 44, lineHeight: 1, position: "relative",
         overflow: "hidden", flexShrink: 0,
@@ -186,7 +187,7 @@ function ProductCard({ item, onAdd, onQuickView }) {
             position: "absolute", inset: 0,
             background: "rgba(0,0,0,0.55)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 11, fontWeight: 700, color: "#f87171",
+            fontSize: 11, fontWeight: 700, color: "#dc2626",
           }}>OUT OF STOCK</div>
         )}
       </div>
@@ -237,7 +238,7 @@ function QuickViewModal({ item, onClose, onAdd }) {
         {/* image */}
         <div style={{
           height: 120, borderRadius: 12, marginBottom: 20,
-          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+          background: "#f8fafc", border: "1px solid #e2e8f0",
           display: "flex", alignItems: "center", justifyContent: "center", fontSize: 56,
         }}>{item.img}</div>
 
@@ -260,7 +261,7 @@ function QuickViewModal({ item, onClose, onAdd }) {
 
         <div style={{ fontSize: 13, color: "#b0c4d8", lineHeight: 1.6, marginBottom: 16 }}>{item.desc}</div>
 
-        <div style={{ fontSize: 24, fontWeight: 800, color: "#4ade80", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 16 }}>
+        <div style={{ fontSize: 24, fontWeight: 800, color: "#15803d", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 16 }}>
           ₹{item.price.toLocaleString("en-IN")}
           <span style={{ fontSize: 13, color: "#7a8fa6", fontWeight: 400, marginLeft: 6 }}>per {item.unit}</span>
         </div>
@@ -468,7 +469,7 @@ export default function BuyInputs() {
           background:var(--surface); color:var(--text2);
           transition:all 0.18s; white-space:nowrap;
         }
-        .cat-tab.active  { background:var(--green-dim); color:#4ade80; border-color:rgba(34,197,94,0.2); }
+        .cat-tab.active  { background:var(--green-dim); color:#15803d; border-color:rgba(34,197,94,0.2); }
         .cat-tab:hover:not(.active) { border-color:var(--border2); color:var(--text); }
 
         /* ── Product grid ── */
@@ -496,22 +497,22 @@ export default function BuyInputs() {
           transform:translateY(-2px);
           box-shadow:0 10px 32px rgba(0,0,0,0.45);
         }
-        .item-name  { font-size:13px; font-weight:700; color:#fff; line-height:1.3; }
+        .item-name  { font-size:13px; font-weight:700; color:#0f172a; line-height:1.3; }
         .item-brand { font-size:11px; color:var(--text2); }
-        .item-price { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#4ade80; }
+        .item-price { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#15803d; }
         .item-unit  { font-size:10px; color:var(--text2); }
 
         /* ── Badge ── */
         .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:600; }
-        .badge-green  { background:rgba(34,197,94,0.12);  color:#4ade80; border:1px solid rgba(34,197,94,0.2);  }
+        .badge-green  { background:rgba(34,197,94,0.12);  color:#15803d; border:1px solid rgba(34,197,94,0.2);  }
         .badge-amber  { background:rgba(251,191,36,0.12); color:#fde68a; border:1px solid rgba(251,191,36,0.2); }
-        .badge-red    { background:rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.2);  }
+        .badge-red    { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2);  }
 
         /* ── Toast ── */
         .toast {
           position:fixed; bottom:28px; right:28px;
           background:rgba(34,197,94,0.14); border:1px solid rgba(34,197,94,0.3);
-          color:#4ade80; padding:12px 20px; border-radius:12px;
+          color:#15803d; padding:12px 20px; border-radius:12px;
           font-size:14px; font-weight:600; z-index:9998;
           backdrop-filter:blur(12px); animation:slideUp 0.3s ease;
         }
@@ -529,33 +530,33 @@ export default function BuyInputs() {
           max-height:90vh; overflow-y:auto; animation:fadeIn 0.2s ease;
         }
         @keyframes fadeIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-        .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#fff; margin-bottom:4px; }
+        .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin-bottom:4px; }
         .modal-sub { font-size:13px; color:var(--text2); margin-bottom:20px; }
 
         /* Checkout form */
         .checkout-fields { display:flex; flex-direction:column; gap:14px; margin-bottom:20px; }
         .pay-opts { display:flex; gap:10px; flex-wrap:wrap; }
         .pay-opt { flex:1; min-width:100px; padding:11px; border-radius:12px; border:1px solid var(--border); background:var(--surface); cursor:pointer; text-align:center; font-size:12px; font-weight:600; color:var(--text2); transition:all 0.2s; }
-        .pay-opt.selected { border-color:rgba(34,197,94,0.3); background:var(--green-dim); color:#4ade80; }
+        .pay-opt.selected { border-color:rgba(34,197,94,0.3); background:var(--green-dim); color:#15803d; }
 
         /* Success */
         .success-wrap { text-align:center; padding:40px 20px; }
         .success-icon { font-size:64px; margin-bottom:16px; animation:pop 0.4s ease; }
         @keyframes pop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
-        .success-title { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; color:#4ade80; margin-bottom:8px; }
+        .success-title { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; color:#15803d; margin-bottom:8px; }
         .success-sub { font-size:14px; color:var(--text2); margin-bottom:24px; }
-        .order-id-badge { display:inline-block; padding:8px 20px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:100px; font-size:13px; color:#4ade80; font-weight:700; margin-bottom:20px; }
+        .order-id-badge { display:inline-block; padding:8px 20px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:100px; font-size:13px; color:#15803d; font-weight:700; margin-bottom:20px; }
 
         /* Cart qty */
         .qty-ctrl { display:flex; align-items:center; gap:8px; }
-        .qty-btn { width:24px; height:24px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:#fff; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
+        .qty-btn { width:24px; height:24px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:#0f172a; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
         .qty-btn:hover { background:var(--surface2); }
 
         /* Recommendation bar */
         .rec-bar {
           display:flex; gap:8px; flex-wrap:wrap;
           padding:14px 18px; border-radius:14px;
-          background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.14);
+          background:#f0fdf4; border:1px solid rgba(34,197,94,0.14);
           margin-bottom:20px; align-items:center;
         }
 
@@ -572,7 +573,7 @@ export default function BuyInputs() {
         <div className="modal-overlay" onClick={() => setPaymentError("")}>
           <div className="modal-box" style={{ textAlign: "center" }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
-            <div className="modal-title" style={{ color: "#f87171", marginBottom: 8 }}>Payment Not Completed</div>
+            <div className="modal-title" style={{ color: "#dc2626", marginBottom: 8 }}>Payment Not Completed</div>
             <div style={{ fontSize: 14, color: "var(--text2)", marginBottom: 24, lineHeight: 1.6 }}>{paymentError}</div>
             <button className="btn-green" onClick={() => setPaymentError("")}>OK</button>
           </div>
@@ -611,20 +612,20 @@ export default function BuyInputs() {
             {orderSuccess.items.map(item => (
               <div key={item.id} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}>
                 <span>{item.name} × {item.qty}</span>
-                <span style={{ color: "#4ade80", fontWeight: 700 }}>₹{(item.price * item.qty).toLocaleString("en-IN")}</span>
+                <span style={{ color: "#15803d", fontWeight: 700 }}>₹{(item.price * item.qty).toLocaleString("en-IN")}</span>
               </div>
             ))}
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontWeight: 800, fontSize: 16 }}>
               <span>Total (incl. delivery)</span>
-              <span style={{ color: "#4ade80" }}>₹{orderSuccess.totalAmount.toLocaleString("en-IN")}</span>
+              <span style={{ color: "#15803d" }}>₹{orderSuccess.totalAmount.toLocaleString("en-IN")}</span>
             </div>
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13 }}>
-              📍 Delivery to: <strong style={{ color: "#fff" }}>{orderSuccess.delivery.city}</strong>
+              📍 Delivery to: <strong style={{ color: "#0f172a" }}>{orderSuccess.delivery.city}</strong>
             </div>
             <div style={{ padding: "12px 20px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)", fontSize: 13 }}>
-              💳 Payment: <strong style={{ color: "#fff" }}>
+              💳 Payment: <strong style={{ color: "#0f172a" }}>
                 {orderSuccess.payment === "cod" ? "Cash on Delivery" : "Paid Online (Razorpay)"}
               </strong>
             </div>
@@ -650,7 +651,7 @@ export default function BuyInputs() {
             {cart.length > 0 && (
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: 13, color: "var(--text2)" }}>🛒 {totalItems} items</div>
-                <div style={{ fontWeight: 800, color: "#4ade80", fontSize: 18 }}>₹{totalAmount.toLocaleString("en-IN")}</div>
+                <div style={{ fontWeight: 800, color: "#15803d", fontSize: 18 }}>₹{totalAmount.toLocaleString("en-IN")}</div>
               </div>
             )}
           </div>
@@ -658,7 +659,7 @@ export default function BuyInputs() {
           {/* ── Personalised recommendation bar ── */}
           {farm && farm.previousCrop ? (
             <div className="rec-bar">
-              <span style={{ fontSize: 12, color: "#4ade80", fontWeight: 700, marginRight: 4 }}>
+              <span style={{ fontSize: 12, color: "#15803d", fontWeight: 700, marginRight: 4 }}>
                 🌾 Recommended for {farm.previousCrop}:
               </span>
               {recommendedCatIds.length > 0 ? (
@@ -671,7 +672,7 @@ export default function BuyInputs() {
                       style={{
                         padding: "4px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer",
                         background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.2)",
-                        color: "#4ade80", transition: "all 0.15s",
+                        color: "#15803d", transition: "all 0.15s",
                       }}
                       onClick={() => { setActiveCategory(cid); setSearch(""); }}
                     >
@@ -686,8 +687,8 @@ export default function BuyInputs() {
               )}
             </div>
           ) : !farm ? (
-            <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", marginBottom: 20, fontSize: 13, color: "var(--text2)" }}>
-              💡 <strong style={{ color: "#fff" }}>Complete your Farm Profile</strong> to get personalised input recommendations for your crops.
+            <div style={{ padding: "12px 16px", borderRadius: 12, background: "#f8fafc", border: "1px solid var(--border)", marginBottom: 20, fontSize: 13, color: "var(--text2)" }}>
+              💡 <strong style={{ color: "#0f172a" }}>Complete your Farm Profile</strong> to get personalised input recommendations for your crops.
             </div>
           ) : null}
 
@@ -723,7 +724,7 @@ export default function BuyInputs() {
             const cat = CATEGORIES.find(c => c.id === activeCategory);
             return (
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
                   {cat?.emoji} {cat?.label}
                 </div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>
@@ -736,7 +737,7 @@ export default function BuyInputs() {
           {/* ── Search heading ── */}
           {search && (
             <div style={{ marginBottom: 16, fontSize: 14, color: "var(--text2)" }}>
-              {activeItems.length} result{activeItems.length !== 1 ? "s" : ""} for "<strong style={{ color: "#fff" }}>{search}</strong>"
+              {activeItems.length} result{activeItems.length !== 1 ? "s" : ""} for "<strong style={{ color: "#0f172a" }}>{search}</strong>"
             </div>
           )}
 
@@ -754,7 +755,7 @@ export default function BuyInputs() {
               ))}
               {activeItems.length === 0 && (
                 <div style={{ gridColumn: "1/-1" }} className="card empty-state">
-                  <div className="empty-emoji">🔍</div>
+                  <div className="empty-emoji"><Search size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
                   <div className="empty-title">No results for "{search}"</div>
                   <div className="empty-sub">Try: tomato, fertilizer, sprayer, drip, gloves…</div>
                 </div>
@@ -769,19 +770,19 @@ export default function BuyInputs() {
                   {cart.map(c => (
                     <div key={c.id} style={{ padding: "10px 12px", background: "var(--surface)", borderRadius: 10, border: "1px solid var(--border)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", flex: 1, lineHeight: 1.3 }}>{c.name}</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#0f172a", flex: 1, lineHeight: 1.3 }}>{c.name}</div>
                         <button
                           onClick={() => removeFromCart(c.id)}
-                          style={{ background: "rgba(239,68,68,0.1)", border: "none", borderRadius: 6, padding: "2px 6px", color: "#f87171", cursor: "pointer", fontSize: 10, marginLeft: 6 }}
+                          style={{ background: "rgba(239,68,68,0.1)", border: "none", borderRadius: 6, padding: "2px 6px", color: "#dc2626", cursor: "pointer", fontSize: 10, marginLeft: 6 }}
                         >✕</button>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div className="qty-ctrl">
                           <button className="qty-btn" onClick={() => updateQty(c.id, -1)}>−</button>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", minWidth: 18, textAlign: "center" }}>{c.qty}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", minWidth: 18, textAlign: "center" }}>{c.qty}</span>
                           <button className="qty-btn" onClick={() => updateQty(c.id, 1)}>+</button>
                         </div>
-                        <span style={{ fontWeight: 800, color: "#4ade80", fontSize: 13 }}>₹{(c.qty * c.price).toLocaleString("en-IN")}</span>
+                        <span style={{ fontWeight: 800, color: "#15803d", fontSize: 13 }}>₹{(c.qty * c.price).toLocaleString("en-IN")}</span>
                       </div>
                     </div>
                   ))}
@@ -799,7 +800,7 @@ export default function BuyInputs() {
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: 15 }}>
                     <span>Total</span>
-                    <span style={{ color: "#4ade80" }}>₹{(totalAmount + deliveryFee).toLocaleString("en-IN")}</span>
+                    <span style={{ color: "#15803d" }}>₹{(totalAmount + deliveryFee).toLocaleString("en-IN")}</span>
                   </div>
                   {deliveryFee > 0 && (
                     <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 6, textAlign: "center" }}>
@@ -834,12 +835,12 @@ export default function BuyInputs() {
               {cart.map(c => (
                 <div key={c.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 3 }}>
                   <span>{c.name} × {c.qty}</span>
-                  <span style={{ color: "#4ade80" }}>₹{(c.price * c.qty).toLocaleString("en-IN")}</span>
+                  <span style={{ color: "#15803d" }}>₹{(c.price * c.qty).toLocaleString("en-IN")}</span>
                 </div>
               ))}
               <div style={{ borderTop: "1px solid var(--border)", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: 14 }}>
                 <span>Total (incl. delivery)</span>
-                <span style={{ color: "#4ade80" }}>₹{(totalAmount + deliveryFee).toLocaleString("en-IN")}</span>
+                <span style={{ color: "#15803d" }}>₹{(totalAmount + deliveryFee).toLocaleString("en-IN")}</span>
               </div>
             </div>
 

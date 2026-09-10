@@ -2,6 +2,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, ROLE_COLOR, fmtINR, relativeTime } from "./adminStyles";
+import {
+  Users, Package, Gem, Wheat, Globe2, Scale,
+  RefreshCw, ArrowRight, TrendingUp, ClipboardList, BarChart3,
+  Zap, AlertTriangle
+} from "lucide-react";
 
 const ACTION_ICONS = {
   user_suspended: "🚫",
@@ -305,7 +310,7 @@ export default function AdminDashboard() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AgroConnect 360 — Platform Control Center V3</div>
-          <h1 className="pg-title">⚡ Executive Command &amp; Operations</h1>
+          <h1 className="pg-title"><Zap size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Executive Command & Operations</h1>
           <p className="pg-sub">
             Real-time platform telemetry across domestic marketplace, global exports, user lifecycle, and revenue.
           </p>
@@ -335,9 +340,9 @@ export default function AdminDashboard() {
             >
               <span style={{ fontSize: 10 }}>●</span>
               <span>{data.system.api === "operational" ? "API OPERATIONAL" : "API DEGRADED"}</span>
-              <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
+              <span style={{ color: "#94a3b8" }}>|</span>
               <span>{data.system.database === "connected" ? "DB CONNECTED" : "DB UNAVAILABLE"}</span>
-              <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
+              <span style={{ color: "#94a3b8" }}>|</span>
               <span style={{ color: "#a5b4fc" }}>{data.system.responseTimeMs} ms</span>
             </Link>
           ) : (
@@ -357,7 +362,7 @@ export default function AdminDashboard() {
             disabled={loading || refreshing}
             style={{ opacity: loading || refreshing ? 0.7 : 1 }}
           >
-            {loading || refreshing ? <span className="spinner" style={{ width: 14, height: 14 }} /> : "🔄"} Refresh
+            {loading || refreshing ? <span className="spinner" style={{ width: 14, height: 14 }} /> : <RefreshCw size={14} strokeWidth={2} />} Refresh
           </button>
         </div>
       </div>
@@ -381,11 +386,11 @@ export default function AdminDashboard() {
               value={searchTarget}
               onChange={(e) => setSearchTarget(e.target.value)}
             >
-              <option value="users">👤 Users</option>
-              <option value="orders">📦 Orders</option>
-              <option value="crops">🌾 Crops</option>
-              <option value="disputes">⚖️ Disputes</option>
-              <option value="exports">🚢 Exports</option>
+              <option value="users">Users</option>
+              <option value="orders">Orders</option>
+              <option value="crops">Crops</option>
+              <option value="disputes">Disputes</option>
+              <option value="exports">Exports</option>
             </select>
             <input
               type="text"
@@ -403,16 +408,16 @@ export default function AdminDashboard() {
           {/* Quick Navigation Pills */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
             {[
-              { label: "Users", to: "/admin/users", emoji: "👥" },
-              { label: "Crops", to: "/admin/crops", emoji: "🌾" },
-              { label: "Orders", to: "/admin/orders", emoji: "📦" },
-              { label: "Exports", to: "/admin/exports", emoji: "🚢" },
-              { label: "Finance", to: "/admin/finance", emoji: "💰" },
-              { label: "Disputes", to: "/admin/disputes", emoji: "⚖️" },
-              { label: "Broadcast", to: "/admin/broadcast", emoji: "📢" },
-              { label: "Audit", to: "/admin/audit-logs", emoji: "📜" },
-              { label: "System", to: "/admin/system", emoji: "⚡" },
-              { label: "AI Models", to: "/admin/ai-models", emoji: "🤖" },
+              { label: "Users", to: "/admin/users" },
+              { label: "Crops", to: "/admin/crops" },
+              { label: "Orders", to: "/admin/orders" },
+              { label: "Exports", to: "/admin/exports" },
+              { label: "Finance", to: "/admin/finance" },
+              { label: "Disputes", to: "/admin/disputes" },
+              { label: "Broadcast", to: "/admin/broadcast" },
+              { label: "Audit", to: "/admin/audit-logs" },
+              { label: "System", to: "/admin/system" },
+              { label: "AI Models", to: "/admin/ai-models" },
             ].map((nav) => (
               <Link
                 key={nav.to}
@@ -420,7 +425,7 @@ export default function AdminDashboard() {
                 className="tab-btn"
                 style={{ textDecoration: "none", fontSize: 12, padding: "6px 11px" }}
               >
-                <span>{nav.emoji}</span> {nav.label}
+                {nav.label}
               </Link>
             ))}
           </div>
@@ -446,11 +451,11 @@ export default function AdminDashboard() {
       {/* ── Error State (initial load failure only) ── */}
       {!loading && error && (
         <div className="card error-state" style={{ marginBottom: 24 }}>
-          <div className="error-state-icon">⚠️</div>
+          <div className="error-state-icon"><AlertTriangle size={40} strokeWidth={1.5} color="#ef4444" /></div>
           <div className="error-state-msg">Unable to load platform control center data</div>
           <div className="error-state-sub">{error}</div>
           <button className="btn-indigo" onClick={() => load(false)}>
-            🔄 Retry Connection
+            <RefreshCw size={13} strokeWidth={2} style={{ marginRight: 5 }} /> Retry Connection
           </button>
         </div>
       )}
@@ -461,12 +466,12 @@ export default function AdminDashboard() {
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
           padding: "10px 16px", marginBottom: 16, borderRadius: 12,
           background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)",
-          color: "#fbbf24", fontSize: 13, fontWeight: 600,
+          color: "#b45309", fontSize: 13, fontWeight: 600,
         }}>
           <span>⚠️ {bgError}</span>
           <button
             onClick={() => { setBgError(null); load(true); }}
-            style={{ background: "none", border: "none", color: "#fbbf24", cursor: "pointer", fontWeight: 800, fontSize: 13 }}
+            style={{ background: "none", border: "none", color: "#b45309", cursor: "pointer", fontWeight: 800, fontSize: 13 }}
           >
             Retry ↺
           </button>
@@ -486,54 +491,42 @@ export default function AdminDashboard() {
             }}
           >
             {[
-              {
-                emoji: "👥",
-                label: "Total Users",
+              { Icon: Users,        label: "Total Users",
                 val: data.kpis.totalUsers,
                 trend: userTrend,
                 sub: `${data.users.roles.farmer} Farmers · ${data.users.roles.user} Buyers`,
                 color: "#818cf8",
                 to: "/admin/users",
               },
-              {
-                emoji: "📦",
-                label: "Domestic Orders",
+              { Icon: Package,      label: "Domestic Orders",
                 val: data.kpis.totalOrders,
                 trend: orderTrend,
                 sub: `${data.orders.statuses.delivered} Delivered · ${data.orders.statuses.pending} Pending`,
-                color: "#a78bfa",
+                color: "#7c3aed",
                 to: "/admin/orders",
               },
-              {
-                emoji: "💎",
-                label: "Delivered GMV",
+              { Icon: Gem,          label: "Delivered GMV",
                 val: fmtINR(data.kpis.totalGmv),
                 trend: gmvTrend,
                 sub: `Est. Fee (2.5%): ${fmtINR(data.kpis.platformFeesEstimated)}`,
-                color: "#4ade80",
+                color: "#15803d",
                 to: "/admin/finance",
               },
-              {
-                emoji: "🌾",
-                label: "Total Crops",
+              { Icon: Wheat,        label: "Total Crops",
                 val: data.kpis.totalCrops,
                 trend: { hasData: true, label: `${data.crops.statuses.listed} Listed for Sale` },
                 sub: `${data.crops.statuses.growing} Growing in field`,
-                color: "#fbbf24",
+                color: "#b45309",
                 to: "/admin/crops",
               },
-              {
-                emoji: "🌍",
-                label: "Export Trades",
+              { Icon: Globe2,       label: "Export Trades",
                 val: data.kpis.totalExportDeals,
                 trend: { hasData: true, label: `${data.exports.activeContracts || 0} Active Contracts` },
                 sub: `${data.exports.rfqCount} RFQs · ${data.exports.activeShipments} Shipments`,
                 color: "#fb923c",
                 to: "/admin/exports",
               },
-              {
-                emoji: "⚖️",
-                label: "Active Disputes",
+              { Icon: Scale,        label: "Active Disputes",
                 val: data.kpis.openDisputes,
                 trend: { hasData: true, positive: data.kpis.openDisputes === 0, label: `${data.disputes.resolved || 0} Resolved Total` },
                 sub: `${data.disputes.open} Open · ${data.disputes.underReview} In Review`,
@@ -558,7 +551,9 @@ export default function AdminDashboard() {
               >
                 <div className="card" style={{ height: "100%", boxSizing: "border-box" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-                    <span style={{ fontSize: 22 }}>{k.emoji}</span>
+                    <span style={{ color: k.color, display: "flex", alignItems: "center" }}>
+                     {(() => { const Icon = k.Icon; return <Icon size={20} strokeWidth={1.75} />; })()}
+                   </span>
                     <span style={{ fontSize: 11, color: "#818cf8", fontWeight: 700 }}>Open →</span>
                   </div>
                   <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>
@@ -585,7 +580,7 @@ export default function AdminDashboard() {
           <div className="card" style={{ marginBottom: 24, padding: "18px 20px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
               <div>
-                <div className="card-title">🔄 Platform Trade &amp; Lifecycle Pipeline</div>
+                <div className="card-title"><ArrowRight size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Platform Trade & Lifecycle Pipeline</div>
                 <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
                   Real-time end-to-end flow from agricultural production to international shipping
                 </div>
@@ -596,11 +591,11 @@ export default function AdminDashboard() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 8 }}>
               {[
                 { emoji: "🌾", label: "Crops Listed", count: data.crops.total, to: "/admin/crops", color: "#818cf8" },
-                { emoji: "📦", label: "Orders Placed", count: data.orders.total, to: "/admin/orders", color: "#a78bfa" },
-                { emoji: "✅", label: "Delivered", count: data.orders.statuses.delivered || 0, to: "/admin/orders?status=delivered", color: "#4ade80" },
-                { emoji: "🌍", label: "Export Inquiries", count: data.exports.interestsCount || 0, to: "/admin/exports", color: "#fbbf24" },
+                { emoji: "📦", label: "Orders Placed", count: data.orders.total, to: "/admin/orders", color: "#7c3aed" },
+                { emoji: "✅", label: "Delivered", count: data.orders.statuses.delivered || 0, to: "/admin/orders?status=delivered", color: "#15803d" },
+                { emoji: "🌍", label: "Export Inquiries", count: data.exports.interestsCount || 0, to: "/admin/exports", color: "#b45309" },
                 { emoji: "🤝", label: "Confirmed Deals", count: data.kpis.totalExportDeals || 0, to: "/admin/exports", color: "#fb923c" },
-                { emoji: "🚢", label: "Active Shipments", count: data.exports.activeShipments || 0, to: "/admin/exports?tab=shipments", color: "#38bdf8" },
+                { emoji: "🚢", label: "Active Shipments", count: data.exports.activeShipments || 0, to: "/admin/exports?tab=shipments", color: "#0369a1" },
               ].map((step, idx, arr) => (
                 <Link
                   key={step.label}
@@ -669,7 +664,7 @@ export default function AdminDashboard() {
                       padding: "3px 9px",
                       borderRadius: 12,
                       background: "rgba(239,68,68,0.15)",
-                      color: "#f87171",
+                      color: "#dc2626",
                       fontWeight: 800,
                     }}
                   >
@@ -684,7 +679,7 @@ export default function AdminDashboard() {
               <div
                 style={{
                   padding: "16px 20px",
-                  background: "rgba(34,197,94,0.06)",
+                  background: "#f0fdf4",
                   border: "1px solid rgba(34,197,94,0.2)",
                   borderRadius: 14,
                   display: "flex",
@@ -694,7 +689,7 @@ export default function AdminDashboard() {
               >
                 <span style={{ fontSize: 22 }}>✅</span>
                 <div>
-                  <div style={{ fontWeight: 800, color: "#4ade80", fontSize: 14 }}>
+                  <div style={{ fontWeight: 800, color: "#15803d", fontSize: 14 }}>
                     ✓ All clear
                   </div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
@@ -751,7 +746,7 @@ export default function AdminDashboard() {
                           {act.level}
                         </span>
                       </div>
-                      <div style={{ fontWeight: 800, color: "#fff", fontSize: 14, marginBottom: 4 }}>
+                      <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 14, marginBottom: 4 }}>
                         {act.title}
                       </div>
                       <div style={{ fontSize: 12, color: "#a5b4fc", lineHeight: 1.4 }}>
@@ -786,9 +781,9 @@ export default function AdminDashboard() {
                 <div>
                   <div className="card-title">👥 User Distribution &amp; Roles</div>
                   <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
-                    Total Registered: <strong style={{ color: "#fff" }}>{totalUsers}</strong>
+                    Total Registered: <strong style={{ color: "#0f172a" }}>{totalUsers}</strong>
                     {data.users.suspended > 0 && (
-                      <span style={{ color: "#f87171", marginLeft: 8 }}>
+                      <span style={{ color: "#dc2626", marginLeft: 8 }}>
                         ({data.users.suspended} suspended)
                       </span>
                     )}
@@ -886,7 +881,7 @@ export default function AdminDashboard() {
                     >
                       <div style={{ minWidth: 0 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                          <span style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <span style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {u.name || "Unnamed"}
                           </span>
                           <span
@@ -938,22 +933,22 @@ export default function AdminDashboard() {
               {/* Domestic Orders Pipeline */}
               <div style={{ marginBottom: 18 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
                     Domestic Order Lifecycle ({totalOrders} Total)
                   </span>
-                  <span style={{ fontSize: 12, color: "#4ade80", fontWeight: 700 }}>
+                  <span style={{ fontSize: 12, color: "#15803d", fontWeight: 700 }}>
                     {getOrderPct(orderStatuses.delivered || 0)}% Fulfillment
                   </span>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(80px,1fr))", gap: 6, marginBottom: 8 }}>
                   {[
-                    { key: "pending", label: "Pending", count: orderStatuses.pending || 0, color: "#fbbf24" },
-                    { key: "accepted", label: "Accepted", count: orderStatuses.accepted || 0, color: "#38bdf8" },
+                    { key: "pending", label: "Pending", count: orderStatuses.pending || 0, color: "#b45309" },
+                    { key: "accepted", label: "Accepted", count: orderStatuses.accepted || 0, color: "#0369a1" },
                     { key: "processing", label: "Processing", count: orderStatuses.processing || 0, color: "#818cf8" },
-                    { key: "shipped", label: "Shipped", count: orderStatuses.shipped || 0, color: "#a78bfa" },
-                    { key: "delivered", label: "Delivered", count: orderStatuses.delivered || 0, color: "#4ade80" },
-                    { key: "cancelled", label: "Cancelled", count: (orderStatuses.cancelled || 0) + (orderStatuses.rejected || 0), color: "#f87171" },
+                    { key: "shipped", label: "Shipped", count: orderStatuses.shipped || 0, color: "#7c3aed" },
+                    { key: "delivered", label: "Delivered", count: orderStatuses.delivered || 0, color: "#15803d" },
+                    { key: "cancelled", label: "Cancelled", count: (orderStatuses.cancelled || 0) + (orderStatuses.rejected || 0), color: "#dc2626" },
                   ].map((st) => (
                     <Link
                       key={st.key}
@@ -979,20 +974,20 @@ export default function AdminDashboard() {
               {/* Crop Catalog Lifecycle */}
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>
                     Crop Catalog Status ({totalCrops} Total)
                   </span>
-                  <span style={{ fontSize: 12, color: "#fbbf24", fontWeight: 700 }}>
+                  <span style={{ fontSize: 12, color: "#b45309", fontWeight: 700 }}>
                     {data.crops.exportCount || 0} Export Listings
                   </span>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(80px,1fr))", gap: 6 }}>
                   {[
-                    { key: "growing", label: "Growing", count: cropStatuses.growing || 0, color: "#4ade80" },
-                    { key: "ready", label: "Ready", count: cropStatuses.ready || 0, color: "#fbbf24" },
+                    { key: "growing", label: "Growing", count: cropStatuses.growing || 0, color: "#15803d" },
+                    { key: "ready", label: "Ready", count: cropStatuses.ready || 0, color: "#b45309" },
                     { key: "listed", label: "Listed", count: cropStatuses.listed || 0, color: "#818cf8" },
-                    { key: "sold", label: "Sold", count: cropStatuses.sold || 0, color: "#38bdf8" },
+                    { key: "sold", label: "Sold", count: cropStatuses.sold || 0, color: "#0369a1" },
                   ].map((cs) => (
                     <Link
                       key={cs.key}
@@ -1085,7 +1080,7 @@ export default function AdminDashboard() {
                             }}
                           />
                         </div>
-                        <div style={{ width: 90, fontSize: 11, fontWeight: 700, color: "#fff", textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ width: 90, fontSize: 11, fontWeight: 700, color: "#0f172a", textAlign: "right", flexShrink: 0 }}>
                           {item.display}
                         </div>
 
@@ -1098,18 +1093,18 @@ export default function AdminDashboard() {
                               bottom: "100%",
                               transform: "translateX(-50%)",
                               padding: "4px 10px",
-                              background: "#0c0f24",
-                              border: "1px solid #6366f1",
+                              background: "#ffffff",
+                              border: "1px solid #e2e8f0",
                               borderRadius: 6,
                               fontSize: 11,
                               fontWeight: 700,
-                              color: "#fff",
+                              color: "#0f172a",
                               whiteSpace: "nowrap",
                               zIndex: 10,
-                              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                             }}
                           >
-                            {item.label}: <span style={{ color: "#4ade80" }}>{item.display}</span>
+                            {item.label}: <span style={{ color: "#15803d" }}>{item.display}</span>
                           </div>
                         )}
                       </div>
@@ -1137,10 +1132,10 @@ export default function AdminDashboard() {
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(95px,1fr))", gap: 8 }}>
                   {[
-                    { label: "Listings", count: data.exports.listingsCount ?? "—", color: "#fbbf24", to: "/admin/crops" },
-                    { label: "RFQs", count: data.exports.rfqCount ?? "—", color: "#38bdf8", to: "/admin/exports" },
-                    { label: "Inquiries", count: data.exports.interestsCount ?? "—", color: "#4ade80", to: "/admin/exports" },
-                    { label: "Shipments", count: data.exports.activeShipments ?? "—", color: "#a78bfa", to: "/admin/exports?tab=shipments" },
+                    { label: "Listings", count: data.exports.listingsCount ?? "—", color: "#b45309", to: "/admin/crops" },
+                    { label: "RFQs", count: data.exports.rfqCount ?? "—", color: "#0369a1", to: "/admin/exports" },
+                    { label: "Inquiries", count: data.exports.interestsCount ?? "—", color: "#15803d", to: "/admin/exports" },
+                    { label: "Shipments", count: data.exports.activeShipments ?? "—", color: "#7c3aed", to: "/admin/exports?tab=shipments" },
                     { label: "Contracts", count: data.exports.activeContracts ?? "—", color: "#fb923c", to: "/admin/exports" },
                   ].map((ex) => (
                     <Link
@@ -1180,9 +1175,9 @@ export default function AdminDashboard() {
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(70px,1fr))", gap: 8 }}>
                   {[
-                    { label: "Open", count: data.disputes.open || 0, color: "#f87171", to: "/admin/disputes?status=open" },
-                    { label: "In Review", count: data.disputes.underReview || 0, color: "#fbbf24", to: "/admin/disputes?status=under_review" },
-                    { label: "Resolved", count: data.disputes.resolved || 0, color: "#4ade80", to: "/admin/disputes?status=resolved" },
+                    { label: "Open", count: data.disputes.open || 0, color: "#dc2626", to: "/admin/disputes?status=open" },
+                    { label: "In Review", count: data.disputes.underReview || 0, color: "#b45309", to: "/admin/disputes?status=under_review" },
+                    { label: "Resolved", count: data.disputes.resolved || 0, color: "#15803d", to: "/admin/disputes?status=resolved" },
                     { label: "Rejected", count: data.disputes.rejected || 0, color: "#a5b4fc", to: "/admin/disputes?status=rejected" },
                   ].map((dp) => (
                     <Link
@@ -1263,7 +1258,7 @@ export default function AdminDashboard() {
                           {ACTION_ICONS[log.action] || "⚙️"}
                         </span>
                         <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {log.description}
                           </div>
                           <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 1 }}>

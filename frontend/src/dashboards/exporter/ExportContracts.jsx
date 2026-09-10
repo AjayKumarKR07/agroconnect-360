@@ -1,17 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
   .field-label{font-size:11px;font-weight:700;color:#a38a5d;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
-  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#fff;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
+  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
   .field-input:focus{border-color:rgba(245,158,11,0.4);}
   .field-input::placeholder{color:#7a8fa6;}
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
@@ -82,7 +82,7 @@ function AddContractModal({ onClose, onSaved }) {
       <div className="modal-box">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff" }}>📜 Add LC / Contract</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>📜 Add LC / Contract</div>
             <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Record a new Letter of Credit or trade contract</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
@@ -143,7 +143,7 @@ function AddContractModal({ onClose, onSaved }) {
             ℹ️ Default payment milestones: 20% Advance → 50% BL Onboard → 30% Port Customs. You can mark each as released after saving.
           </div>
 
-          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: 13 }}>⚠️ {err}</div>}
+          {err && <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>⚠️ {err}</div>}
 
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             <button type="button" className="btn-ghost" style={{ flex: 1, justifyContent: "center", padding: "12px" }} onClick={onClose}>Cancel</button>
@@ -228,7 +228,7 @@ export default function ExportContracts() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.3)", color: "#4ade80", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -252,7 +252,7 @@ export default function ExportContracts() {
       ) : contracts.length === 0 ? (
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
           <div style={{ fontSize: 52, marginBottom: 14 }}>📜</div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>No Contracts Yet</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Contracts Yet</div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export LC or trade contract to track payment milestones and buyer details.
           </div>
@@ -269,30 +269,30 @@ export default function ExportContracts() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                      {c.lcRef && <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#fbbf24", fontSize: 15 }}>{c.lcRef}</span>}
+                      {c.lcRef && <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#b45309", fontSize: 15 }}>{c.lcRef}</span>}
                       <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "#fef08a", fontWeight: 800, border: "1px solid rgba(245,158,11,0.3)" }}>
                         {c.lcType}
                       </span>
                       {isCompleted && (
-                        <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#4ade80", fontWeight: 800, border: "1px solid rgba(34,197,94,0.3)" }}>
+                        <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#15803d", fontWeight: 800, border: "1px solid rgba(34,197,94,0.3)" }}>
                           ✓ COMPLETED
                         </span>
                       )}
                     </div>
-                    <div style={{ fontWeight: 800, color: "#fff", fontSize: 16, marginTop: 6 }}>
+                    <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 16, marginTop: 6 }}>
                       {c.buyerName}{c.buyerCountry ? <span style={{ fontSize: 13, color: "#a38a5d", fontWeight: 400 }}> · {c.buyerCountry}</span> : ""}
                     </div>
                     {c.cropName && (
-                      <div style={{ fontSize: 13, color: "#38bdf8", fontWeight: 600, marginTop: 2 }}>
+                      <div style={{ fontSize: 13, color: "#0369a1", fontWeight: 600, marginTop: 2 }}>
                         🌾 {c.cropName}{c.quantityTons ? ` (${c.quantityTons} MT)` : ""}
                       </div>
                     )}
-                    {c.issuingBank && <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Issuing Bank: <strong style={{ color: "#fff" }}>{c.issuingBank}</strong></div>}
+                    {c.issuingBank && <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Issuing Bank: <strong style={{ color: "#0f172a" }}>{c.issuingBank}</strong></div>}
                   </div>
 
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Contract Value</div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#4ade80" }}>{fmtUsd(c.contractValueUsd)}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#15803d" }}>{fmtUsd(c.contractValueUsd)}</div>
                     <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
                       Added {new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
@@ -301,7 +301,7 @@ export default function ExportContracts() {
 
                 {/* Payment milestones */}
                 {c.milestones?.length > 0 && (
-                  <div style={{ background: "rgba(0,0,0,0.2)", padding: "14px 16px", borderRadius: 14, marginBottom: 14 }}>
+                  <div style={{ background: "#f1f5f9", padding: "14px 16px", borderRadius: 14, marginBottom: 14 }}>
                     <div style={{ fontSize: 11, fontWeight: 700, color: "#a38a5d", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
                       LC Payment Release Milestones — {label}
                     </div>
@@ -330,7 +330,7 @@ export default function ExportContracts() {
                             <div style={{ fontSize: 11, fontWeight: 800, color: m.released ? "#4ade80" : "#a38a5d" }}>
                               {busy ? "…" : m.released ? "✓ RELEASED" : "PENDING"}
                             </div>
-                            <div style={{ fontSize: 12, color: "#fff", fontWeight: 700, marginTop: 2 }}>{m.label}</div>
+                            <div style={{ fontSize: 12, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{m.label}</div>
                           </button>
                         );
                       })}
@@ -352,15 +352,15 @@ export default function ExportContracts() {
                 <div style={{ display: "flex", gap: 8 }}>
                   {deleteConfId === c._id ? (
                     <>
-                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteContract(c._id)}>
+                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#dc2626", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteContract(c._id)}>
                         Yes, Delete
                       </button>
-                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "var(--surface, rgba(255,255,255,0.04))", border: "1px solid rgba(255,255,255,0.08)", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "var(--surface, rgba(255,255,255,0.04))", border: "1px solid #e2e8f0", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
                         Cancel
                       </button>
                     </>
                   ) : (
-                    <button className="btn-ghost" style={{ color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(c._id)}>
+                    <button className="btn-ghost" style={{ color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }} onClick={() => setDeleteConfId(c._id)}>
                       🗑 Delete
                     </button>
                   )}

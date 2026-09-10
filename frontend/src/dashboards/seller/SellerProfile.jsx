@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Package, ClipboardList, BarChart3, RefreshCw } from "lucide-react";
 
 const tkn  = () => localStorage.getItem("agroconnect_token");
 const authH = () => ({ Authorization: `Bearer ${tkn()}`, "Content-Type": "application/json" });
 
 const EXTRA = `
   .sp-layout   { display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start; }
-  .sp-avatar   { width:84px; height:84px; border-radius:22px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:800; color:#fff; flex-shrink:0; transition:transform 0.2s; }
+  .sp-avatar   { width:84px; height:84px; border-radius:22px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:800; color:#0f172a; flex-shrink:0; transition:transform 0.2s; }
   .sp-avatar:hover { transform:scale(1.05); }
   .sp-grid     { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .sp-group    { display:flex; flex-direction:column; gap:5px; }
@@ -21,9 +22,9 @@ const EXTRA = `
   .sp-stat-lbl { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; }
   .sp-info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
   .sp-info-row:last-child { border-bottom:none; }
-  .sp-info-val { font-weight:600; color:#fff; text-align:right; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sp-info-val { font-weight:600; color:#0f172a; text-align:right; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .sp-nav-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; border:1px solid var(--border); text-decoration:none; color:var(--text2); font-size:13px; font-weight:600; transition:all 0.18s; }
-  .sp-nav-link:hover { background:rgba(167,139,250,0.06); border-color:rgba(167,139,250,0.2); color:#a78bfa; }
+  .sp-nav-link:hover { background:rgba(167,139,250,0.06); border-color:rgba(167,139,250,0.2); color:#7c3aed; }
   .sp-badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
   .sp-badge    { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
   @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -176,7 +177,7 @@ export default function SellerProfile() {
           <p className="pg-sub">Manage your personal details and business account.</p>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <Link to="/seller/dashboard" style={{ fontSize: 13, color: "#a78bfa", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "9px 16px", borderRadius: 11, textDecoration: "none", fontWeight: 700 }}>
+          <Link to="/seller/dashboard" style={{ fontSize: 13, color: "#7c3aed", background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.15)", padding: "9px 16px", borderRadius: 11, textDecoration: "none", fontWeight: 700 }}>
             ← Dashboard
           </Link>
         </div>
@@ -186,10 +187,10 @@ export default function SellerProfile() {
       {!loadingStats && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12, marginBottom: 24 }} className="sp-fadein">
           {[
-            { label: "Total Spend",    value: fmtINR(totalProcurement), color: "#4ade80", small: true },
-            { label: "Orders",         value: allOrders.length,          color: "#38bdf8" },
-            { label: "Delivered",      value: deliveredCount,            color: "#4ade80" },
-            { label: "Suppliers",      value: uniqueSuppliers,           color: "#a78bfa" },
+            { label: "Total Spend",    value: fmtINR(totalProcurement), color: "#15803d", small: true },
+            { label: "Orders",         value: allOrders.length,          color: "#0369a1" },
+            { label: "Delivered",      value: deliveredCount,            color: "#15803d" },
+            { label: "Suppliers",      value: uniqueSuppliers,           color: "#7c3aed" },
             { label: "My Products",    value: activeProducts,            color: "#fb923c" },
           ].map(s => (
             <div key={s.label} className="sp-stat">
@@ -204,7 +205,7 @@ export default function SellerProfile() {
           {[1,2,3,4,5].map(i => (
             <div key={i} className="sp-stat" style={{ height: 68 }}>
               <div style={{ height: 10, borderRadius: 6, background: "rgba(167,139,250,0.08)", marginBottom: 8 }} />
-              <div style={{ height: 20, borderRadius: 6, background: "rgba(167,139,250,0.05)" }} />
+              <div style={{ height: 20, borderRadius: 6, background: "#faf5ff" }} />
             </div>
           ))}
         </div>
@@ -224,19 +225,19 @@ export default function SellerProfile() {
                 {initials}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 24, fontWeight: 800, color: "#fff" }}>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 24, fontWeight: 800, color: "#0f172a" }}>
                   {cached.name || "Seller"}
                 </div>
                 <div style={{ fontSize: 13, color: "rgba(167,139,250,0.7)", marginTop: 3 }}>{cached.email}</div>
                 <div className="sp-badge-row">
-                  <span className="sp-badge" style={{ background: "rgba(167,139,250,0.12)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)" }}>
+                  <span className="sp-badge" style={{ background: "rgba(167,139,250,0.12)", color: "#7c3aed", border: "1px solid rgba(167,139,250,0.25)" }}>
                     🛍️ Seller
                   </span>
                   <span className="sp-badge" style={{ background: cached.profileCompleted ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", color: cached.profileCompleted ? "#4ade80" : "#fbbf24", border: `1px solid ${cached.profileCompleted ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}` }}>
                     {cached.profileCompleted ? "✅ Profile Complete" : "⚠️ Incomplete"}
                   </span>
                   {cached.state && (
-                    <span className="sp-badge" style={{ background: "rgba(56,189,248,0.08)", color: "#38bdf8", border: "1px solid rgba(56,189,248,0.15)" }}>
+                    <span className="sp-badge" style={{ background: "rgba(56,189,248,0.08)", color: "#0369a1", border: "1px solid rgba(56,189,248,0.15)" }}>
                       📍 {[cached.district, cached.state].filter(Boolean).join(", ")}
                     </span>
                   )}
@@ -244,7 +245,7 @@ export default function SellerProfile() {
               </div>
               <div style={{ textAlign: "right", flexShrink: 0 }}>
                 <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Member Since</div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 700, color: "#a78bfa", marginTop: 3 }}>{memberSince}</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 15, fontWeight: 700, color: "#7c3aed", marginTop: 3 }}>{memberSince}</div>
               </div>
             </div>
           </div>
@@ -254,12 +255,12 @@ export default function SellerProfile() {
             <div className="card-title" style={{ marginBottom: 20 }}>✏️ Edit Personal Information</div>
 
             {success && (
-              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", color: "#4ade80", fontSize: 14, marginBottom: 16 }}>
+              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16 }}>
                 {success}
               </div>
             )}
             {error && (
-              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: 14, marginBottom: 16 }}>
+              <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 14, marginBottom: 16 }}>
                 ⚠️ {error}
               </div>
             )}
@@ -345,7 +346,7 @@ export default function SellerProfile() {
                   style={{
                     padding: "12px 28px", borderRadius: 12, border: "none", cursor: saving ? "not-allowed" : "pointer",
                     background: saving ? "rgba(167,139,250,0.25)" : "linear-gradient(135deg,#7c3aed,#a78bfa)",
-                    color: "#fff", fontWeight: 800, fontSize: 14, fontFamily: "'Inter',sans-serif",
+                    color: "#0f172a", fontWeight: 800, fontSize: 14, fontFamily: "'Inter',sans-serif",
                     boxShadow: saving ? "none" : "0 4px 16px rgba(124,58,237,0.4)",
                     transition: "all 0.2s",
                   }}
@@ -366,8 +367,8 @@ export default function SellerProfile() {
           {allOrders.length > 0 && (
             <div className="card sp-fadein">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
-                <div className="card-title">📦 Recent Orders</div>
-                <Link to="/seller/orders" style={{ fontSize: 12, color: "#a78bfa", textDecoration: "none", fontWeight: 700 }}>View All →</Link>
+                <div className="card-title"><Package size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Recent Orders</div>
+                <Link to="/seller/orders" style={{ fontSize: 12, color: "#7c3aed", textDecoration: "none", fontWeight: 700 }}>View All →</Link>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {allOrders.slice(0, 4).map((o, i) => {
@@ -376,11 +377,11 @@ export default function SellerProfile() {
                   return (
                     <div key={(o._id || "") + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--surface)", borderRadius: 11, border: "1px solid var(--border)", flexWrap: "wrap", gap: 8 }}>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{o.cropName || "Product"}</div>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{o.cropName || "Product"}</div>
                         <div style={{ fontSize: 11, color: "var(--text2)", marginTop: 2 }}>{o.quantity} {o.unit || "kg"} · {o.farmerName || "Farmer"}</div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: "#4ade80" }}>₹{Number(o.totalPrice || 0).toLocaleString("en-IN")}</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#15803d" }}>₹{Number(o.totalPrice || 0).toLocaleString("en-IN")}</div>
                         <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: `${stColor}15`, color: stColor, fontWeight: 700 }}>
                           {o.status}
                         </span>
@@ -398,7 +399,7 @@ export default function SellerProfile() {
 
           {/* Account details */}
           <div className="card sp-fadein">
-            <div className="card-title" style={{ marginBottom: 14 }}>📋 Account Details</div>
+            <div className="card-title" style={{ marginBottom: 14 }}><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Account Details</div>
             {[
               ["🆔", "User ID",       (cached._id || cached.id || "—").toString().slice(-8).toUpperCase()],
               ["📧", "Email",         cached.email       || "—"],
@@ -417,7 +418,7 @@ export default function SellerProfile() {
 
           {/* Business summary */}
           <div className="card sp-fadein" style={{ borderColor: "rgba(167,139,250,0.18)" }}>
-            <div className="card-title" style={{ marginBottom: 14 }}>📊 Business Summary</div>
+            <div className="card-title" style={{ marginBottom: 14 }}><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Business Summary</div>
             {[
               ["💰", "Total Procurement", fmtINR(totalProcurement)],
               ["📦", "Total Orders",      allOrders.length],
@@ -458,13 +459,13 @@ export default function SellerProfile() {
 
           {/* Switch role */}
           <div className="card sp-fadein" style={{ borderColor: "rgba(56,189,248,0.12)" }}>
-            <div className="card-title" style={{ marginBottom: 8 }}>🔄 Switch Role</div>
+            <div className="card-title" style={{ marginBottom: 8 }}><RefreshCw size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#7c3aed", verticalAlign: "middle" }} />Switch Role</div>
             <p style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12, lineHeight: 1.6 }}>
               Want to use AgroConnect as a farmer, buyer, or exporter?
             </p>
             <button
               className="btn-ghost"
-              style={{ width: "100%", justifyContent: "center", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)", fontSize: 13 }}
+              style={{ width: "100%", justifyContent: "center", color: "#0369a1", borderColor: "rgba(56,189,248,0.2)", fontSize: 13 }}
               onClick={() => navigate("/select-role", { state: { isNewUser: false } })}
             >
               🔄 Change My Role
@@ -473,14 +474,14 @@ export default function SellerProfile() {
 
           {/* Danger zone */}
           <div className="card sp-fadein" style={{ borderColor: "rgba(239,68,68,0.12)" }}>
-            <div style={{ fontWeight: 700, color: "#f87171", marginBottom: 10, fontSize: 13 }}>⚠️ Danger Zone</div>
+            <div style={{ fontWeight: 700, color: "#dc2626", marginBottom: 10, fontSize: 13 }}>⚠️ Danger Zone</div>
             <button
               onClick={handleLogout}
               style={{
                 width: "100%", padding: "12px", borderRadius: 12,
                 border: "1px solid rgba(239,68,68,0.2)",
-                background: "rgba(239,68,68,0.06)",
-                color: "#f87171", cursor: "pointer",
+                background: "#fef2f2",
+                color: "#dc2626", cursor: "pointer",
                 fontWeight: 700, fontSize: 14,
                 fontFamily: "'Inter',sans-serif",
                 transition: "background 0.2s",

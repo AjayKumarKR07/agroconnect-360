@@ -1,35 +1,36 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
+import { Inbox, MessageSquare, Handshake, Clock } from "lucide-react";
 
 const DSX = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.18s;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.18s;}
   .btn-gold:hover{opacity:0.88;}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
   .btn-ghost:hover{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.12);}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
   .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  select.field-input option{background:#1a1206;color:#fff;}
+  select.field-input option{background:#1a1206;color:#0f172a;}
   .field-label{display:block;font-size:12px;font-weight:700;color:#a38a5d;margin-bottom:5px;}
 
   .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-  .badge-gold{background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.25);}
-  .badge-green{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
-  .badge-red{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
-  .badge-blue{background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.2);}
-  .badge-grey{background:rgba(255,255,255,0.06);color:#7a8fa6;border:1px solid rgba(255,255,255,0.1);}
+  .badge-gold{background:rgba(245,158,11,0.15);color:#b45309;border:1px solid rgba(245,158,11,0.25);}
+  .badge-green{background:rgba(34,197,94,0.12);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
+  .badge-red{background:rgba(239,68,68,0.12);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
+  .badge-blue{background:rgba(56,189,248,0.12);color:#0369a1;border:1px solid rgba(56,189,248,0.2);}
+  .badge-grey{background:rgba(255,255,255,0.06);color:#7a8fa6;border:1px solid #e2e8f0;}
 
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
   .modal-box{background:#1a1206;border:1px solid rgba(245,158,11,0.25);border-radius:24px;padding:28px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
   @keyframes fadeIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
-  .modal-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
+  .modal-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px;}
   .modal-sub{font-size:13px;color:#a38a5d;margin-bottom:20px;}
 
-  .toast{position:fixed;bottom:28px;right:28px;background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.3);color:#4ade80;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:99999;backdrop-filter:blur(12px);animation:slideUp 0.3s ease;}
+  .toast{position:fixed;bottom:28px;right:28px;background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.3);color:#15803d;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:99999;backdrop-filter:blur(12px);animation:slideUp 0.3s ease;}
   @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
   .icard{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px;transition:border-color 0.2s;}
@@ -98,7 +99,7 @@ function ActionModal({ interest, onClose, onUpdated }) {
         </div>
 
         {statusInfo.desc && (
-          <div style={{ padding: "8px 14px", borderRadius: 10, background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)", fontSize: 12, color: "#fbbf24", marginBottom: 16 }}>
+          <div style={{ padding: "8px 14px", borderRadius: 10, background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.15)", fontSize: 12, color: "#b45309", marginBottom: 16 }}>
             ℹ️ {statusInfo.desc}
           </div>
         )}
@@ -121,12 +122,12 @@ function ActionModal({ interest, onClose, onUpdated }) {
         ].map(([k, v]) => (
           <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(245,158,11,0.08)", fontSize: 13 }}>
             <span style={{ color: "#a38a5d" }}>{k}</span>
-            <span style={{ color: "#fff", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
+            <span style={{ color: "#0f172a", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
           </div>
         ))}
 
         {err && (
-          <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: 13 }}>
+          <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13 }}>
             ⚠️ {err}
           </div>
         )}
@@ -134,8 +135,8 @@ function ActionModal({ interest, onClose, onUpdated }) {
         {/* Actions for accepted/negotiating */}
         {["accepted", "negotiating"].includes(interest.status) && !action && (
           <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-            <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("counter")}>💬 Counter Offer</button>
-            <button className="btn-gold"  style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("confirm")}>🤝 Confirm Deal</button>
+            <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("counter")} id="counter-offer-btn"><MessageSquare size={14} strokeWidth={2} style={{ marginRight: 4 }} />Counter Offer</button>
+            <button className="btn-gold"  style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction("confirm")} id="confirm-deal-btn"><Handshake size={14} strokeWidth={2} style={{ marginRight: 4 }} />Confirm Deal</button>
           </div>
         )}
 
@@ -151,7 +152,7 @@ function ActionModal({ interest, onClose, onUpdated }) {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction(null)}>Back</button>
-              <button className="btn-gold"  style={{ flex: 2, justifyContent: "center" }} onClick={doAction} disabled={saving || !counter}>{saving ? "⏳…" : "💬 Send Counter"}</button>
+              <button className="btn-gold" style={{ flex: 2, justifyContent: "center" }} onClick={doAction} disabled={saving || !counter}>{saving ? <><Clock size={14} strokeWidth={2} />…</> : <><MessageSquare size={14} strokeWidth={2} style={{ marginRight: 4 }} />Send Counter</>}</button>
             </div>
           </div>
         )}
@@ -178,7 +179,7 @@ function ActionModal({ interest, onClose, onUpdated }) {
             </div>
             <div style={{ display: "flex", gap: 10 }}>
               <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setAction(null)}>Back</button>
-              <button className="btn-gold"  style={{ flex: 2, justifyContent: "center" }} onClick={doAction} disabled={saving}>{saving ? "⏳…" : "🤝 Confirm Deal"}</button>
+              <button className="btn-gold"  style={{ flex: 2, justifyContent: "center" }} onClick={doAction} disabled={saving}>{saving ? <><Clock size={14} strokeWidth={2} />…</> : <><Handshake size={14} strokeWidth={2} style={{ marginRight: 4 }} />Confirm Deal</>}</button>
             </div>
           </div>
         )}
@@ -247,7 +248,7 @@ export default function ExportInterests() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">My Export Activity</div>
-          <h1 className="pg-title">📩 My Export Interests</h1>
+          <h1 className="pg-title"><Inbox size={22} strokeWidth={2} style={{ marginRight: 8, color: "#d97706", verticalAlign: "middle" }} />My Export Interests</h1>
           <p className="pg-sub">Track your interest requests, negotiations and confirmed deals with farmers.</p>
         </div>
       </div>
@@ -294,7 +295,7 @@ export default function ExportInterests() {
       </div>
 
       {error && (
-        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#f87171", marginBottom: 20 }}>⚠️ {error}</div>
+        <div style={{ padding: "12px 18px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, color: "#dc2626", marginBottom: 20 }}>⚠️ {error}</div>
       )}
 
       {loading ? (
@@ -304,7 +305,7 @@ export default function ExportInterests() {
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>📩</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 8 }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>
             {filter === "all" ? "No interest requests yet" : `No ${filter} interests`}
           </div>
           <div style={{ fontSize: 14, color: "#a38a5d" }}>
@@ -324,7 +325,7 @@ export default function ExportInterests() {
               <div key={i._id} className="icard" style={{ borderColor: canAct ? "rgba(245,158,11,0.3)" : undefined }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
-                    <div style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{lst.name || "—"}</div>
+                    <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{lst.name || "—"}</div>
                     <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>🌾 {far.name || "Farmer"} · 📍 {far.location || far.state || "—"}</div>
                   </div>
                   <SBadge status={i.status} />
@@ -339,16 +340,16 @@ export default function ExportInterests() {
                     ["Destination", i.destination     || "—"],
                     ["Date",        new Date(i.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short"})],
                   ].map(([k,v]) => (
-                    <div key={k} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: "6px 10px" }}>
+                    <div key={k} style={{ background: "#f1f5f9", borderRadius: 8, padding: "6px 10px" }}>
                       <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{v}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "#0f172a" }}>{v}</div>
                     </div>
                   ))}
                 </div>
 
                 {i.status === "confirmed" && (
                   <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#4ade80", marginBottom: 4 }}>🎉 Deal Confirmed!</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#15803d", marginBottom: 4 }}>🎉 Deal Confirmed!</div>
                     <div style={{ fontSize: 12, color: "#7a8fa6" }}>
                       Agreed: {fmt(i.agreedPrice)}/{i.agreedUnit || "MT"} · {i.agreedQty} {i.agreedUnit || "MT"}
                       {i.shipmentTerms ? ` · ${i.shipmentTerms}` : ""}

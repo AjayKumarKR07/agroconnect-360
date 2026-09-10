@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RazorpayCheckout.jsx
  *
  * Reusable Razorpay payment component.
@@ -212,7 +212,7 @@ export default function RazorpayCheckout({
           background: "rgba(239,68,68,0.08)",
           border: "1px solid rgba(239,68,68,0.2)",
           borderRadius: 10,
-          color: "#f87171",
+          color: "#dc2626",
           fontSize: 13,
           fontWeight: 600,
         }}>
@@ -220,7 +220,7 @@ export default function RazorpayCheckout({
           {/* Always allow retry */}
           <button
             onClick={() => { setError(""); setProcessing(false); rzpRef.current = null; }}
-            style={{ background: "none", border: "none", color: "#38bdf8", cursor: "pointer", fontSize: 12, fontWeight: 700, marginLeft: 8 }}
+            style={{ background: "none", border: "none", color: "#0369a1", cursor: "pointer", fontSize: 12, fontWeight: 700, marginLeft: 8 }}
           >
             Try again
           </button>

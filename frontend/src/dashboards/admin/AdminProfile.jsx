@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
 import { ALL_INDIA_STATES, getDistrictsForState } from "../../utils/indiaData";
+import { ShieldCheck, User, Lock, Zap, RefreshCw } from "lucide-react";
 
 const PRIVILEGES = [
   { module: "User Lifecycle", perm: "Read, Update, Suspend, Activate", icon: "👥" },
@@ -158,7 +159,7 @@ export default function AdminProfile() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">AgroConnect 360 — Platform Administration</div>
-          <h1 className="pg-title">🛡️ Administrator Profile &amp; Security</h1>
+          <h1 className="pg-title"><ShieldCheck size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Administrator Profile & Security</h1>
           <p className="pg-sub">
             Manage superuser credentials, administrative headquarters, security authority, and regional jurisdiction.
           </p>
@@ -193,7 +194,7 @@ export default function AdminProfile() {
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <div className="card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-                <div className="card-title">👤 Identity &amp; Contact Credentials</div>
+                <div className="card-title"><User size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Identity & Contact Credentials</div>
                 <span className="badge badge-active">🛡️ SUPERADMIN</span>
               </div>
 
@@ -239,7 +240,7 @@ export default function AdminProfile() {
                       onChange={(e) => handleChange("phone", e.target.value)}
                     />
                     {formData.phone && formData.phone.length > 0 && formData.phone.length !== 10 && (
-                      <div style={{ fontSize: 11, color: "#fbbf24", marginTop: 4 }}>
+                      <div style={{ fontSize: 11, color: "#b45309", marginTop: 4 }}>
                         ⚠️ Enter exactly 10 digits ({formData.phone.length}/10)
                       </div>
                     )}
@@ -270,7 +271,7 @@ export default function AdminProfile() {
                         -- Select State --
                       </option>
                       {ALL_INDIA_STATES.map((st) => (
-                        <option key={st} value={st} style={{ background: "#0c0f24", color: "#fff" }}>
+                        <option key={st} value={st} style={{ background: "#0c0f24", color: "#0f172a" }}>
                           {st}
                         </option>
                       ))}
@@ -290,7 +291,7 @@ export default function AdminProfile() {
                         {formData.state ? "-- Select District --" : "-- Select State first --"}
                       </option>
                       {availableDistricts.map((dst) => (
-                        <option key={dst} value={dst} style={{ background: "#0c0f24", color: "#fff" }}>
+                        <option key={dst} value={dst} style={{ background: "#0c0f24", color: "#0f172a" }}>
                           {dst}
                         </option>
                       ))}
@@ -301,7 +302,7 @@ export default function AdminProfile() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
                   <div style={{ fontSize: 12, color: "#a5b4fc" }}>
                     {formData.state && formData.district ? (
-                      <span>📍 Jurisdiction: <strong style={{ color: "#4ade80" }}>{formData.district}, {formData.state}</strong></span>
+                      <span>📍 Jurisdiction: <strong style={{ color: "#15803d" }}>{formData.district}, {formData.state}</strong></span>
                     ) : (
                       <span>📍 Select state &amp; district to configure your jurisdiction</span>
                     )}
@@ -315,11 +316,11 @@ export default function AdminProfile() {
 
             {/* Security Protocol Card */}
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 12 }}>🔐 Security &amp; Session Parameters</div>
+              <div className="card-title" style={{ marginBottom: 12 }}><Lock size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Security & Session Parameters</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 13, color: "#a5b4fc" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: "rgba(99,102,241,0.04)", borderRadius: 10 }}>
                   <span>Authentication Protocol:</span>
-                  <strong style={{ color: "#4ade80" }}>JWT Bearer (Signed)</strong>
+                  <strong style={{ color: "#15803d" }}>JWT Bearer (Signed)</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: "rgba(99,102,241,0.04)", borderRadius: 10 }}>
                   <span>Role Authorization:</span>
@@ -327,7 +328,7 @@ export default function AdminProfile() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: "rgba(99,102,241,0.04)", borderRadius: 10 }}>
                   <span>Audit Logging:</span>
-                  <strong style={{ color: "#38bdf8" }}>Active (All mutations committed to MongoDB)</strong>
+                  <strong style={{ color: "#0369a1" }}>Active (All mutations committed to MongoDB)</strong>
                 </div>
               </div>
             </div>
@@ -343,7 +344,7 @@ export default function AdminProfile() {
                   height: 72,
                   borderRadius: "50%",
                   background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-                  color: "#fff",
+                  color: "#0f172a",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -357,16 +358,16 @@ export default function AdminProfile() {
                 {initials}
               </div>
 
-              <h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
+              <h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>
                 {formData.name || "Administrator"}
               </h2>
               <div style={{ fontSize: 13, color: "#a5b4fc", marginBottom: 12 }}>{formData.email}</div>
 
               <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 16 }}>
-                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(248,113,113,0.15)", color: "#f87171", fontWeight: 800 }}>
+                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(248,113,113,0.15)", color: "#dc2626", fontWeight: 800 }}>
                   🛡️ SUPERADMIN
                 </span>
-                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(74,222,128,0.15)", color: "#4ade80", fontWeight: 800 }}>
+                <span style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, background: "rgba(74,222,128,0.15)", color: "#15803d", fontWeight: 800 }}>
                   ● ACTIVE
                 </span>
               </div>
@@ -374,20 +375,20 @@ export default function AdminProfile() {
               <div style={{ borderTop: "1px solid rgba(99,102,241,0.12)", paddingTop: 14, fontSize: 12, color: "#a5b4fc", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <div>
                   <div style={{ fontSize: 10, textTransform: "uppercase", color: "#6366f1", fontWeight: 700 }}>Jurisdiction</div>
-                  <div style={{ color: "#4ade80", fontWeight: 700, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div style={{ color: "#15803d", fontWeight: 700, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {formData.district && formData.state ? `${formData.district}, ${formData.state}` : "All India (Super)"}
                   </div>
                 </div>
                 <div>
                   <div style={{ fontSize: 10, textTransform: "uppercase", color: "#6366f1", fontWeight: 700 }}>Joined</div>
-                  <div style={{ color: "#fff", fontWeight: 700, marginTop: 2 }}>{relativeTime(formData.createdAt)}</div>
+                  <div style={{ color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{relativeTime(formData.createdAt)}</div>
                 </div>
               </div>
             </div>
 
             {/* Administrative Privileges Matrix */}
             <div className="card">
-              <div className="card-title" style={{ marginBottom: 14 }}>⚡ Administrative Authority Matrix</div>
+              <div className="card-title" style={{ marginBottom: 14 }}><Zap size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Administrative Authority Matrix</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {PRIVILEGES.map((p) => (
                   <div
@@ -405,9 +406,9 @@ export default function AdminProfile() {
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
                       <span style={{ fontSize: 16 }}>{p.icon}</span>
-                      <span style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{p.module}</span>
+                      <span style={{ fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{p.module}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: "#4ade80", fontWeight: 700, flexShrink: 0 }}>
+                    <div style={{ fontSize: 11, color: "#15803d", fontWeight: 700, flexShrink: 0 }}>
                       ✅ Granted
                     </div>
                   </div>
@@ -417,7 +418,7 @@ export default function AdminProfile() {
 
             {/* Switch Role Card */}
             <div className="card" style={{ borderColor: "rgba(99,102,241,0.2)" }}>
-              <div className="card-title" style={{ marginBottom: 10, color: "#818cf8" }}>🔄 Switch Role</div>
+              <div className="card-title" style={{ marginBottom: 10, color: "#818cf8" }}><RefreshCw size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#818cf8", verticalAlign: "middle" }} />Switch Role</div>
               <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>
                 Need to view AgroConnect 360 as a farmer, buyer, seller, or exporter?
               </p>

@@ -1,39 +1,40 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import RazorpayCheckout from "../../components/RazorpayCheckout";
+import { RefreshCw, Package } from "lucide-react";
 
 const DS_USER = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:var(--text2);}
   .spinner{width:24px;height:24px;border:3px solid rgba(14,165,233,0.15);border-top-color:#0ea5e9;border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:12px;background:rgba(14,165,233,0.03);border:1px solid rgba(14,165,233,0.08);border-radius:18px;}
-  .empty-emoji{font-size:48px;} .empty-title{font-size:18px;font-weight:700;color:#fff;} .empty-sub{font-size:14px;color:var(--text2);}
-  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;}
+  .empty-emoji{font-size:48px;} .empty-title{font-size:18px;font-weight:700;color:#0f172a;} .empty-sub{font-size:14px;color:var(--text2);}
+  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;}
   .tab-btn{padding:7px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:var(--text2);transition:all 0.2s;font-family:'Inter',sans-serif;}
-  .tab-btn.active{background:rgba(14,165,233,0.12);color:#38bdf8;border-color:rgba(14,165,233,0.25);}
+  .tab-btn.active{background:rgba(14,165,233,0.12);color:#0369a1;border-color:rgba(14,165,233,0.25);}
 `;
 
 const STATUS_CONFIG = {
-  pending:    { label: "⏳ Pending",    bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
-  accepted:   { label: "✅ Accepted",   bg: "rgba(14,165,233,0.12)", color: "#38bdf8" },
-  processing: { label: "⚙️ Processing", bg: "rgba(167,139,250,0.12)",color: "#a78bfa" },
-  shipped:    { label: "🚚 Shipped",    bg: "rgba(56,189,248,0.12)", color: "#38bdf8" },
-  delivered:  { label: "📦 Delivered",  bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
-  rejected:   { label: "❌ Rejected",   bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
-  cancelled:  { label: "🚫 Cancelled",  bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
+  pending:    { label: "⏳ Pending",    bg: "rgba(251,191,36,0.12)", color: "#b45309" },
+  accepted:   { label: "✅ Accepted",   bg: "rgba(14,165,233,0.12)", color: "#0369a1" },
+  processing: { label: "⚙️ Processing", bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
+  shipped:    { label: "🚚 Shipped",    bg: "rgba(56,189,248,0.12)", color: "#0369a1" },
+  delivered:  { label: "📦 Delivered",  bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  rejected:   { label: "❌ Rejected",   bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
+  cancelled:  { label: "🚫 Cancelled",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
 };
 
 // Payment status badge config
 const PAY_STATUS_CONFIG = {
-  paid:    { label: "💰 Paid",    bg: "rgba(34,197,94,0.12)",  color: "#4ade80" },
-  pending: { label: "⏳ Pending", bg: "rgba(251,191,36,0.12)", color: "#fbbf24" },
-  failed:  { label: "❌ Failed",  bg: "rgba(239,68,68,0.12)",  color: "#f87171" },
-  refunded:{ label: "↩️ Refunded",bg: "rgba(167,139,250,0.12)",color: "#a78bfa" },
+  paid:    { label: "💰 Paid",    bg: "rgba(34,197,94,0.12)",  color: "#15803d" },
+  pending: { label: "⏳ Pending", bg: "rgba(251,191,36,0.12)", color: "#b45309" },
+  failed:  { label: "❌ Failed",  bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
+  refunded:{ label: "↩️ Refunded",bg: "rgba(167,139,250,0.12)",color: "#7c3aed" },
 };
 
 // Order/paymentStatuses where retry is BLOCKED
@@ -119,13 +120,13 @@ export default function UserOrders() {
         .order-card:hover{border-color:rgba(14,165,233,0.2);}
         .tracker{display:flex;align-items:center;margin:16px 0;}
         .tr-dot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
-        .tr-dot.done{background:linear-gradient(135deg,#0284c7,#38bdf8);border-color:#38bdf8;box-shadow:0 0 12px rgba(14,165,233,0.5);}
+        .tr-dot.done{background:linear-gradient(135deg,#0284c7,#38bdf8);border-color:#0369a1;box-shadow:0 0 12px rgba(14,165,233,0.5);}
         .tr-dot.cur{border-color:#0ea5e9;animation:trPulse 1.5s ease infinite;}
         @keyframes trPulse{0%,100%{box-shadow:0 0 6px rgba(14,165,233,0.3)}50%{box-shadow:0 0 14px rgba(14,165,233,0.7)}}
         .tr-line{flex:1;height:2px;background:rgba(14,165,233,0.12);}
         .tr-line.done{background:linear-gradient(90deg,#0284c7,#38bdf8);}
         .tr-label{font-size:10px;color:var(--text2);text-align:center;margin-top:6px;white-space:nowrap;}
-        .tr-label.done,.tr-label.cur{color:#38bdf8;font-weight:700;}
+        .tr-label.done,.tr-label.cur{color:#0369a1;font-weight:700;}
       `}</style>
 
       <div className="pg-head">
@@ -136,7 +137,7 @@ export default function UserOrders() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0ea5e9" }}>{orders.length} total</div>
-          <button className="tab-btn" onClick={load} style={{ fontSize: 12 }}>🔄 Refresh</button>
+          <button className="tab-btn" onClick={load} style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4 }}><RefreshCw size={12} strokeWidth={2} /> Refresh</button>
         </div>
       </div>
 
@@ -153,7 +154,7 @@ export default function UserOrders() {
 
       {!loading && filtered.length === 0 && (
         <div className="empty-state">
-          <div className="empty-emoji">📦</div>
+          <div className="empty-emoji"><Package size={40} strokeWidth={1.5} color="#bae6fd" /></div>
           <div className="empty-title">No {filter !== "all" ? filter : ""} orders</div>
           <div className="empty-sub">Your orders will appear here once you start shopping.</div>
         </div>
@@ -169,7 +170,7 @@ export default function UserOrders() {
             <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, cursor: "pointer" }} onClick={() => setExpanded(isExp ? null : o._id)}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                  <div style={{ fontWeight: 800, color: "#fff", fontSize: 15 }}>
+                  <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>
                     {o.items?.map(it => it.cropName).join(", ") || "Order"}
                   </div>
                   <span style={{ padding: "3px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, background: st.bg, color: st.color }}>{st.label}</span>
@@ -178,7 +179,7 @@ export default function UserOrders() {
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>🗓️ {new Date(o.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
                   <div style={{ fontSize: 12, color: "var(--text2)" }}>📦 {o.items?.length || 1} item(s)</div>
                   {/* Payment method */}
-                  <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "rgba(14,165,233,0.08)", color: "#38bdf8", letterSpacing: "0.04em" }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: "rgba(14,165,233,0.08)", color: "#0369a1", letterSpacing: "0.04em" }}>
                     {(o.paymentMethod === "razorpay" ? "ONLINE" : (o.paymentMethod || "COD").toUpperCase())}
                   </span>
                   {/* Payment status badge */}
@@ -225,7 +226,7 @@ export default function UserOrders() {
                   <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>Items Ordered</div>
                   {(o.items || []).map((it, j) => (
                     <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid rgba(14,165,233,0.06)", fontSize: 13 }}>
-                      <span style={{ color: "#fff", fontWeight: 600 }}>{it.cropName}</span>
+                      <span style={{ color: "#0f172a", fontWeight: 600 }}>{it.cropName}</span>
                       <span style={{ color: "var(--text2)" }}>{it.quantity} {it.unit} × ₹{it.price} = <span style={{ color: "#0ea5e9", fontWeight: 700 }}>₹{it.subtotal}</span></span>
                     </div>
                   ))}
@@ -240,7 +241,7 @@ export default function UserOrders() {
 
                 {/* Cancel button */}
                 {o.status === "pending" && (
-                  <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#f87171", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
+                  <button onClick={() => cancelOrder(o._id)} style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.07)", color: "#dc2626", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
                     🚫 Cancel Order
                   </button>
                 )}
@@ -270,14 +271,14 @@ export default function UserOrders() {
                         // component can open immediately without a second fetch
                         preloadedData={retryState.rzpData}
                       >
-                        <span style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#a78bfa", fontWeight: 700, fontSize: 13, fontFamily: "'Inter',sans-serif", cursor: "pointer" }}>
+                        <span style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, fontFamily: "'Inter',sans-serif", cursor: "pointer" }}>
                           💳 Complete Payment
                         </span>
                       </RazorpayCheckout>
                     ) : (
                       <button
                         onClick={() => handleRetry(o._id)}
-                        style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#a78bfa", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                        style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(99,102,241,0.3)", background: "rgba(99,102,241,0.1)", color: "#7c3aed", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
                       >
                         🔄 Retry Payment
                       </button>
@@ -311,7 +312,7 @@ export default function UserOrders() {
                       window.dispatchEvent(new Event("ac_cart_update"));
                       alert("✅ Items added to cart! Head to your cart to checkout.");
                     }}
-                    style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.25)", background: "rgba(14,165,233,0.07)", color: "#38bdf8", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
+                    style={{ padding: "8px 18px", borderRadius: 10, border: "1px solid rgba(14,165,233,0.25)", background: "rgba(14,165,233,0.07)", color: "#0369a1", fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "'Inter',sans-serif" }}
                   >
                     🔄 Reorder
                   </button>

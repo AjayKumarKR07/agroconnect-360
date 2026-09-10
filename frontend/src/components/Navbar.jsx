@@ -1,34 +1,38 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Sprout } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Track scroll for background change
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
+  useEffect(() => {
+    const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-    }, { passive: true });
-  }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
       <style>{`
         .navbar {
           position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-          transition: background 0.3s, backdrop-filter 0.3s, border-color 0.3s;
+          transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
           border-bottom: 1px solid transparent;
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(12px);
         }
         .navbar.scrolled {
-          background: rgba(5,10,14,0.85);
-          backdrop-filter: blur(20px);
-          border-color: rgba(255,255,255,0.08);
+          background: rgba(255, 255, 255, 0.96);
+          border-color: #e2e8f0;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         .navbar-inner {
           max-width: 1280px; margin: 0 auto;
           display: flex; align-items: center; justify-content: space-between;
-          padding: 18px 32px;
+          padding: 16px 32px;
         }
         .nav-brand {
           display: flex; align-items: center; gap: 10px;
@@ -36,51 +40,53 @@ export default function Navbar() {
         }
         .nav-logo {
           width: 38px; height: 38px; border-radius: 10px;
-          background: linear-gradient(135deg, #16a34a, #059669);
+          background: #16a34a;
           display: flex; align-items: center; justify-content: center;
-          font-size: 18px; box-shadow: 0 4px 14px rgba(34,197,94,0.35);
+          font-size: 18px; color: #ffffff;
         }
-        .nav-brand-text { font-size: 18px; font-weight: 800; color: #fff; }
-        .nav-brand-sub { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: -2px; }
+        .nav-brand-text { font-size: 18px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+        .nav-brand-sub { font-size: 11px; color: #64748b; font-weight: 500; margin-top: -2px; }
 
         .nav-links {
-          display: flex; align-items: center; gap: 36px; list-style: none;
+          display: flex; align-items: center; gap: 32px; list-style: none;
         }
         .nav-link {
-          font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.65);
-          text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em;
+          font-size: 14px; font-weight: 600; color: #475569;
+          text-decoration: none; transition: color 0.15s ease;
         }
-        .nav-link:hover { color: #fff; }
+        .nav-link:hover { color: #16a34a; }
 
         .nav-cta {
-          display: inline-flex; align-items: center; gap: 8px;
-          background: linear-gradient(135deg, #16a34a, #059669);
-          color: #fff; font-weight: 700; font-size: 14px;
-          padding: 10px 22px; border-radius: 10px; text-decoration: none;
-          box-shadow: 0 4px 16px rgba(34,197,94,0.3);
-          transition: transform 0.2s, box-shadow 0.2s;
+          display: inline-flex; align-items: center; gap: 6px;
+          background: #16a34a;
+          color: #ffffff; font-weight: 600; font-size: 14px;
+          padding: 9px 20px; border-radius: 9px; text-decoration: none;
+          box-shadow: 0 1px 2px rgba(22, 163, 74, 0.2);
+          transition: background 0.15s ease, transform 0.15s ease;
         }
         .nav-cta:hover {
+          background: #15803d;
           transform: translateY(-1px);
-          box-shadow: 0 8px 24px rgba(34,197,94,0.4);
         }
 
         .nav-hamburger {
           display: none; background: none; border: none; cursor: pointer;
-          padding: 4px; color: #fff; font-size: 22px;
+          padding: 6px; color: #0f172a; font-size: 22px;
         }
 
         .nav-mobile {
-          background: rgba(5,10,14,0.97); backdrop-filter: blur(20px);
-          border-top: 1px solid rgba(255,255,255,0.08);
-          padding: 20px 32px; display: flex; flex-direction: column; gap: 14px;
+          background: #ffffff; border-top: 1px solid #e2e8f0;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+          padding: 20px 24px; display: flex; flex-direction: column; gap: 12px;
         }
-        .nav-mobile a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 16px; padding: 8px 0; }
+        .nav-mobile a { color: #334155; text-decoration: none; font-size: 15px; font-weight: 600; padding: 8px 0; }
+        .nav-mobile a:hover { color: #16a34a; }
         .nav-mobile-cta {
-          margin-top: 8px; background: linear-gradient(135deg, #16a34a, #059669);
-          color: #fff; font-weight: 700; padding: 13px; border-radius: 10px;
+          margin-top: 6px; background: #16a34a;
+          color: #ffffff !important; font-weight: 600; padding: 12px !important; border-radius: 9px;
           text-align: center; text-decoration: none;
         }
+        .nav-mobile-cta:hover { background: #15803d; }
 
         @media (max-width: 768px) {
           .nav-links, .nav-cta { display: none; }
@@ -92,10 +98,10 @@ export default function Navbar() {
       <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="navbar-inner">
           <Link to="/" className="nav-brand">
-            <div className="nav-logo">🌱</div>
+            <div className="nav-logo"><Sprout size={20} strokeWidth={2} color="#16a34a" /></div>
             <div>
               <div className="nav-brand-text">AgroConnect 360</div>
-              <div className="nav-brand-sub">Smart Agriculture</div>
+              <div className="nav-brand-sub">Smart Agriculture Platform</div>
             </div>
           </Link>
 
@@ -110,7 +116,7 @@ export default function Navbar() {
             Login / Get Started →
           </Link>
 
-          <button className="nav-hamburger" onClick={() => setOpen(!open)}>
+          <button className="nav-hamburger" onClick={() => setOpen(!open)} aria-label="Toggle Navigation">
             {open ? "✕" : "☰"}
           </button>
         </div>
@@ -122,7 +128,7 @@ export default function Navbar() {
             <a href="#ai" onClick={() => setOpen(false)}>AI Tools</a>
             <a href="#how" onClick={() => setOpen(false)}>How It Works</a>
             <Link to="/login" className="nav-mobile-cta" onClick={() => setOpen(false)}>
-              Login / Get Started
+              Login / Get Started →
             </Link>
           </div>
         )}

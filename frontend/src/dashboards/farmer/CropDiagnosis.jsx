@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { ClipboardList } from "lucide-react";
 
 export default function CropDiagnosis() {
   const [cropName, setCropName] = useState("");
@@ -85,23 +86,23 @@ export default function CropDiagnosis() {
       <style>{DS + `
         .diag-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--surface);border-radius:12px;padding:4px;border:1px solid var(--border);width:fit-content;}
         .diag-tab{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text2);font-family:'Inter',sans-serif;transition:all 0.2s;}
-        .diag-tab.active{background:var(--green-dim);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
+        .diag-tab.active{background:var(--green-dim);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
         /* Modal */
         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
-        .modal-box{background:#07111a;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
+        .modal-box{background:#07111a;border:1px solid #e2e8f0;border-radius:24px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
         @keyframes fadeIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
         .modal-img{width:100%;height:220px;object-fit:cover;border-radius:20px 20px 0 0;}
         .modal-body{padding:24px 28px;}
-        .modal-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;}
+        .modal-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#0f172a;margin-bottom:4px;}
         .modal-row{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--border);}
         .modal-row:last-child{border-bottom:none;}
         .modal-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;}
         .modal-val{font-size:14px;color:var(--text);line-height:1.7;}
         /* History buttons */
         .hist-btns{display:flex;gap:8px;}
-        .btn-view{padding:7px 16px;border-radius:9px;border:1px solid rgba(56,189,248,0.25);background:rgba(56,189,248,0.07);color:#38bdf8;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;}
+        .btn-view{padding:7px 16px;border-radius:9px;border:1px solid rgba(56,189,248,0.25);background:rgba(56,189,248,0.07);color:#0369a1;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;}
         .btn-view:hover{background:rgba(56,189,248,0.14);}
-        .btn-del{padding:7px 14px;border-radius:9px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#f87171;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;}
+        .btn-del{padding:7px 14px;border-radius:9px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#dc2626;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;}
         .btn-del:hover{background:rgba(239,68,68,0.14);}
         .btn-del:disabled{opacity:0.4;cursor:not-allowed;}
       `}</style>
@@ -142,7 +143,7 @@ export default function CropDiagnosis() {
                 {preview ? (
                   <div style={{ position: "relative" }}>
                     <img src={preview} alt="Preview" style={{ width: "100%", height: 220, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
-                    <button type="button" onClick={() => { setImage(null); setPreview(""); setResult(null); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕ Remove</button>
+                    <button type="button" onClick={() => { setImage(null); setPreview(""); setResult(null); }} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 12, fontWeight: 700 }}>✕ Remove</button>
                   </div>
                 ) : (
                   <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "32px 16px", borderRadius: 12, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer", transition: "border-color 0.2s" }}
@@ -201,10 +202,10 @@ export default function CropDiagnosis() {
 
                   {/* Description & Impact */}
                   {result.description && (
-                    <div style={{ padding: "16px 18px", background: "rgba(56,189,248,0.04)", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)" }}>
+                    <div style={{ padding: "16px 18px", background: "#f0f9ff", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                         <span style={{ fontSize: 16 }}>📖</span>
-                        <span style={{ fontSize: 12, fontWeight: 800, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: "#0369a1", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                           Description & Crop Impact
                         </span>
                       </div>
@@ -237,15 +238,15 @@ export default function CropDiagnosis() {
 
                   {/* Treatment Recommendations */}
                   {(result.treatments?.length > 0 || result.treatment) && (
-                    <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(34,197,94,0.22)" }}>
+                    <div style={{ background: "#f0fdf4", borderRadius: 14, padding: "18px 20px", border: "1px solid rgba(34,197,94,0.22)" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <span style={{ fontSize: 18 }}>💊</span>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: "#15803d", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                             Treatment Recommendations
                           </span>
                         </div>
-                        <span style={{ fontSize: 11, background: "rgba(34,197,94,0.15)", color: "#4ade80", padding: "2px 8px", borderRadius: 8, fontWeight: 700 }}>
+                        <span style={{ fontSize: 11, background: "rgba(34,197,94,0.15)", color: "#15803d", padding: "2px 8px", borderRadius: 8, fontWeight: 700 }}>
                           Dosage Guide
                         </span>
                       </div>
@@ -257,7 +258,7 @@ export default function CropDiagnosis() {
                             const isCult = t.toLowerCase().includes("cultural");
                             const icon = isChem ? "🧪" : isOrg ? "🌿" : isCult ? "✂️" : "✓";
                             return (
-                              <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "rgba(0,0,0,0.2)", padding: "10px 12px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.06)" }}>
+                              <div key={idx} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "#f1f5f9", padding: "10px 12px", borderRadius: 10, border: "1px solid #e2e8f0" }}>
                                 <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{icon}</span>
                                 <div style={{ fontSize: 13.5, color: "var(--text)", lineHeight: 1.6 }}>{t}</div>
                               </div>
@@ -299,7 +300,7 @@ export default function CropDiagnosis() {
                     <div style={{ padding: "12px 16px", background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>
                         <span>AI Diagnostic Confidence</span>
-                        <span style={{ color: "#4ade80", fontWeight: 700 }}>{result.confidence}%</span>
+                        <span style={{ color: "#15803d", fontWeight: 700 }}>{result.confidence}%</span>
                       </div>
                       <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
                         <div style={{ height: "100%", width: `${result.confidence}%`, background: "linear-gradient(90deg,#16a34a,#4ade80)", borderRadius: 4, transition: "width 1s ease" }} />
@@ -311,7 +312,7 @@ export default function CropDiagnosis() {
                   <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "rgba(234,179,8,0.05)", borderRadius: 10, border: "1px solid rgba(234,179,8,0.15)" }}>
                     <span style={{ fontSize: 20 }}>📞</span>
                     <div style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.5 }}>
-                      <strong style={{ color: "#facc15" }}>Kisan Helpline:</strong> Call toll-free <span style={{ color: "#fff", fontWeight: 700 }}>1800-180-1551</span> or consult your nearest Krishi Vigyan Kendra (KVK) for regional chemical advice.
+                      <strong style={{ color: "#facc15" }}>Kisan Helpline:</strong> Call toll-free <span style={{ color: "#0f172a", fontWeight: 700 }}>1800-180-1551</span> or consult your nearest Krishi Vigyan Kendra (KVK) for regional chemical advice.
                     </div>
                   </div>
                 </div>
@@ -321,7 +322,7 @@ export default function CropDiagnosis() {
             {!loading && !result && (
               <div className="card" style={{ padding: "40px 24px", textAlign: "center" }}>
                 <div style={{ fontSize: 60, marginBottom: 16 }}>🌿</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>AI Disease Scanner Ready</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>AI Disease Scanner Ready</div>
                 <div style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.7 }}>Upload a clear photo of a diseased leaf or crop. The AI will identify the disease, its cause, and provide treatment recommendations.</div>
               </div>
             )}
@@ -335,7 +336,7 @@ export default function CropDiagnosis() {
           {historyLoading && <div className="loading-wrap"><div className="spinner" /><span>Loading history…</span></div>}
           {!historyLoading && history.length === 0 && (
             <div className="card empty-state">
-              <div className="empty-emoji">📋</div>
+              <div className="empty-emoji"><ClipboardList size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
               <div className="empty-title">No scan history</div>
               <div className="empty-sub">Your past diagnosis results will appear here.</div>
               <button className="btn-green" onClick={() => setActiveTab("scan")}>🔬 Run First Scan</button>
@@ -353,7 +354,7 @@ export default function CropDiagnosis() {
                         : <div style={{ width: 54, height: 54, borderRadius: 10, background: "var(--surface)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0, border: "1px solid var(--border)" }}>🌿</div>
                       }
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, color: "#fff", fontSize: 15 }}>{h.cropName}</div>
+                        <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 15 }}>{h.cropName}</div>
                         <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 2 }}>{h.disease || "Healthy"}</div>
                         <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 2 }}>📅 {new Date(h.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
                       </div>
@@ -414,8 +415,8 @@ export default function CropDiagnosis() {
               )}
 
               {viewItem.description && (
-                <div style={{ padding: "14px 16px", background: "rgba(56,189,248,0.05)", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#38bdf8", marginBottom: 6 }}>📖 Description & Impact</div>
+                <div style={{ padding: "14px 16px", background: "#f0f9ff", borderRadius: 12, border: "1px solid rgba(56,189,248,0.18)", margin: "8px 0" }}>
+                  <div className="modal-lbl" style={{ color: "#0369a1", marginBottom: 6 }}>📖 Description & Impact</div>
                   <div className="modal-val" style={{ whiteSpace: "pre-line" }}>{viewItem.description}</div>
                 </div>
               )}
@@ -443,12 +444,12 @@ export default function CropDiagnosis() {
               )}
 
               {(viewItem.treatments?.length > 0 || viewItem.treatment) && (
-                <div style={{ background: "rgba(34,197,94,0.06)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#4ade80", marginBottom: 8 }}>💊 Treatment Recommendations</div>
+                <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(34,197,94,0.18)", margin: "8px 0" }}>
+                  <div className="modal-lbl" style={{ color: "#15803d", marginBottom: 8 }}>💊 Treatment Recommendations</div>
                   {viewItem.treatments?.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {viewItem.treatments.map((t, i) => (
-                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "rgba(0,0,0,0.2)", padding: "8px 10px", borderRadius: 8 }}>
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "#f1f5f9", padding: "8px 10px", borderRadius: 8 }}>
                           <span>✓</span>
                           <span className="modal-val" style={{ fontSize: 13 }}>{t}</span>
                         </div>
@@ -482,7 +483,7 @@ export default function CropDiagnosis() {
                 <div style={{ marginTop: 14 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 6 }}>
                     <span>AI Confidence</span>
-                    <span style={{ color: "#4ade80", fontWeight: 700 }}>{viewItem.confidence}%</span>
+                    <span style={{ color: "#15803d", fontWeight: 700 }}>{viewItem.confidence}%</span>
                   </div>
                   <div style={{ height: 8, background: "var(--surface)", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${viewItem.confidence}%`, background: "linear-gradient(90deg,#16a34a,#4ade80)", borderRadius: 4 }} />

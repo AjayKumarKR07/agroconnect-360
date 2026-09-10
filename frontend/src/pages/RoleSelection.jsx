@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../config/api";
 
@@ -7,9 +7,9 @@ const ROLES = [
     id: "farmer",
     emoji: "🌾",
     label: "Farmer",
-    color: "#22c55e",
-    glow: "rgba(34,197,94,0.15)",
-    border: "rgba(34,197,94,0.3)",
+    color: "#16a34a",
+    glow: "rgba(22,163,74,0.12)",
+    border: "#86efac",
     desc: "Sell crops directly to buyers, track income, get AI disease diagnosis and weather forecasts.",
     features: ["List & Sell Crops", "AI Crop Diagnosis", "Weather Advisory", "Income Tracking"],
   },
@@ -17,9 +17,9 @@ const ROLES = [
     id: "user",
     emoji: "🛒",
     label: "Consumer / Buyer",
-    color: "#38bdf8",
-    glow: "rgba(56,189,248,0.15)",
-    border: "rgba(56,189,248,0.3)",
+    color: "#0284c7",
+    glow: "rgba(2,132,199,0.12)",
+    border: "#7dd3fc",
     desc: "Browse and buy fresh produce directly from local farmers at market prices.",
     features: ["Browse Fresh Produce", "Direct from Farmers", "Order Tracking", "Market Prices"],
   },
@@ -27,9 +27,9 @@ const ROLES = [
     id: "seller",
     emoji: "🏪",
     label: "Seller / Agent",
-    color: "#a78bfa",
-    glow: "rgba(167,139,250,0.15)",
-    border: "rgba(167,139,250,0.3)",
+    color: "#7c3aed",
+    glow: "rgba(124,58,237,0.12)",
+    border: "#c4b5fd",
     desc: "Operate as a local trader, APMC agent or aggregator between farmers and buyers.",
     features: ["Bulk Trading", "APMC Mandi Prices", "Manage Inventory", "Price Analytics"],
   },
@@ -37,9 +37,9 @@ const ROLES = [
     id: "exporter",
     emoji: "🚢",
     label: "Exporter",
-    color: "#fb923c",
-    glow: "rgba(251,146,60,0.15)",
-    border: "rgba(251,146,60,0.3)",
+    color: "#d97706",
+    glow: "rgba(217,119,6,0.12)",
+    border: "#fde68a",
     desc: "Export Indian agricultural commodities internationally with compliance tools.",
     features: ["Export Management", "Global Market Prices", "Compliance Tools", "Bulk Orders"],
   },
@@ -47,9 +47,9 @@ const ROLES = [
     id: "admin",
     emoji: "⚙️",
     label: "Admin",
-    color: "#f43f5e",
-    glow: "rgba(244,63,94,0.15)",
-    border: "rgba(244,63,94,0.3)",
+    color: "#dc2626",
+    glow: "rgba(220,38,38,0.12)",
+    border: "#fca5a5",
     desc: "Manage the AgroConnect 360 platform — users, listings, orders and system settings.",
     features: ["User Management", "Platform Analytics", "Moderate Listings", "System Settings"],
   },
@@ -103,19 +103,16 @@ export default function RoleSelection() {
     setError("");
 
     if (!isNewUser) {
-      // If clicking the current role, simply go back to dashboard
       if (savedUser.role === roleId) {
         goToDashboard(roleId);
         return;
       }
-      // Existing user — update role in backend using their saved profile data
       handleRoleSave(roleId, {
         name: savedUser.name || "User",
         phone: savedUser.phone || "",
         location: savedUser.location || "India",
       });
     } else {
-      // New user → show profile form
       setStep("profile");
     }
   };
@@ -152,7 +149,6 @@ export default function RoleSelection() {
     finally { setLoading(false); }
   };
 
-
   const selectedRoleData = ROLES.find((r) => r.id === selectedRole);
 
   return (
@@ -162,144 +158,153 @@ export default function RoleSelection() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         .rs-page {
-          min-height: 100vh; background: #050a0e;
-          font-family: 'Inter', sans-serif; padding: 40px 24px 60px;
-          position: relative; overflow-x: hidden;
-        }
-        .rs-bg {
-          position: fixed; inset: 0; pointer-events: none;
-          background:
-            radial-gradient(ellipse 80% 60% at 10% -10%, rgba(34,197,94,0.07) 0%, transparent 55%),
-            radial-gradient(ellipse 60% 50% at 90% 110%, rgba(56,189,248,0.05) 0%, transparent 55%),
-            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(167,139,250,0.03) 0%, transparent 60%);
-        }
-        .rs-grid-bg {
-          position: fixed; inset: 0; pointer-events: none;
-          background-image:
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 48px 48px;
+          min-height: 100vh; background: #f8fafc;
+          font-family: 'Inter', sans-serif; padding: 48px 24px 70px;
+          color: #0f172a;
         }
 
-        .rs-wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; }
+        .rs-wrap { max-width: 1100px; margin: 0 auto; }
 
         /* ── Header ── */
-        .rs-header { text-align: center; margin-bottom: 52px; }
-        .rs-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-        .rs-brand-logo { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg,#16a34a,#059669); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 8px 24px rgba(34,197,94,0.25); }
-        .rs-brand-name { font-family: 'Space Grotesk',sans-serif; font-size: 18px; font-weight: 800; color: #fff; }
-        .rs-eyebrow { font-size: 12px; font-weight: 700; color: #22c55e; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 16px; }
-        .rs-title { font-family: 'Space Grotesk',sans-serif; font-size: clamp(28px,4vw,44px); font-weight: 800; color: #fff; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 14px; }
-        .rs-title span { background: linear-gradient(135deg, #22c55e, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .rs-sub { font-size: 16px; color: rgba(255,255,255,0.45); max-width: 520px; margin: 0 auto; line-height: 1.7; }
-        .rs-email { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 6px 16px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 100px; font-size: 13px; color: #4ade80; font-weight: 600; }
+        .rs-header { text-align: center; margin-bottom: 40px; }
+        .rs-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 24px; text-decoration: none; }
+        .rs-brand-logo {
+          width: 40px; height: 40px; border-radius: 10px;
+          background: #16a34a; display: flex; align-items: center;
+          justify-content: center; font-size: 20px; color: #0f172a;
+        }
+        .rs-brand-name { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; }
+        .rs-eyebrow { font-size: 11px; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .rs-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4vw, 38px); font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .rs-title span { color: #16a34a; }
+        .rs-sub { font-size: 15px; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .rs-email { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 4px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 100px; font-size: 13px; color: #166534; font-weight: 600; }
 
         /* ── Role Grid ── */
-        .rs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; margin-bottom: 36px; }
+        .rs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; margin-bottom: 32px; }
 
         .rs-card {
-          background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 20px; padding: 28px 24px; cursor: pointer;
-          transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+          background: #ffffff; border: 1px solid #e2e8f0;
+          border-radius: 18px; padding: 26px 22px; cursor: pointer;
+          transition: all 0.2s ease;
           position: relative; overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
-        .rs-card::before {
-          content: ''; position: absolute; inset: 0; opacity: 0;
-          transition: opacity 0.25s;
-          background: radial-gradient(ellipse 100% 100% at 50% 0%, var(--glow) 0%, transparent 70%);
+        .rs-card:hover {
+          transform: translateY(-2px);
+          border-color: #cbd5e1;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
         }
-        .rs-card:hover { transform: translateY(-4px); border-color: var(--border); box-shadow: 0 20px 40px -10px var(--glow); }
-        .rs-card:hover::before { opacity: 1; }
-        .rs-card.selected { border-color: var(--border); box-shadow: 0 0 0 2px var(--border), 0 20px 60px -10px var(--glow); background: rgba(255,255,255,0.05); transform: translateY(-4px); }
-        .rs-card.selected::before { opacity: 1; }
+        .rs-card.selected {
+          border-color: #16a34a;
+          background: #f0fdf4;
+          box-shadow: 0 0 0 2px #16a34a, 0 8px 24px rgba(22, 163, 74, 0.12);
+        }
 
-        .rs-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-        .rs-card-emoji { font-size: 40px; line-height: 1; }
-        .rs-card-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-        .rs-card.selected .rs-card-check { background: var(--color); border-color: var(--color); }
-        .rs-card-label { font-family: 'Space Grotesk',sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-        .rs-card-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 18px; }
+        .rs-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+        .rs-card-emoji { font-size: 36px; line-height: 1; }
+        .rs-card-check {
+          width: 22px; height: 22px; border-radius: 50%;
+          border: 2px solid #cbd5e1; display: flex; align-items: center;
+          justify-content: center; transition: all 0.15s ease; flex-shrink: 0;
+        }
+        .rs-card.selected .rs-card-check {
+          background: #16a34a; border-color: #16a34a; color: #ffffff; font-size: 12px; font-weight: 900;
+        }
+        .rs-card-label { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+        .rs-card-desc { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 16px; }
         .rs-card-features { display: flex; flex-direction: column; gap: 6px; }
-        .rs-card-feature { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(255,255,255,0.55); }
-        .rs-card-feature::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--color); flex-shrink: 0; opacity: 0.7; }
-        .rs-card.selected .rs-card-feature { color: rgba(255,255,255,0.75); }
-        .rs-card.selected .rs-card-feature::before { opacity: 1; }
-        .rs-card.selected .rs-card-label { color: var(--color); }
+        .rs-card-feature { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #475569; font-weight: 500; }
+        .rs-card-feature::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
 
         /* ── Profile Step ── */
         .rs-profile-card {
-          max-width: 520px; margin: 0 auto;
-          background: #080c10; border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 24px; padding: 40px 36px;
+          max-width: 480px; margin: 0 auto;
+          background: #ffffff; border: 1px solid #e2e8f0;
+          border-radius: 20px; padding: 36px 32px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
-        .rs-profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
-        .rs-profile-role-badge { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
-        .rs-profile-title { font-family: 'Space Grotesk',sans-serif; font-size: 22px; font-weight: 800; color: #fff; }
-        .rs-profile-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 2px; }
-        .rs-fields { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
-        .rs-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 8px; }
+        .rs-profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+        .rs-profile-role-badge {
+          width: 48px; height: 48px; border-radius: 12px;
+          background: #f0fdf4; border: 1px solid #bbf7d0;
+          display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        .rs-profile-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; color: #0f172a; }
+        .rs-profile-sub { font-size: 13px; color: #64748b; margin-top: 2px; }
+        .rs-fields { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+        .rs-label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 6px; }
         .rs-input {
-          width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 15px;
-          font-family: 'Inter',sans-serif; outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
+          width: 100%; background: #ffffff; border: 1px solid #cbd5e1;
+          border-radius: 10px; padding: 12px 14px; color: #0f172a; font-size: 14px;
+          font-family: 'Inter', sans-serif; outline: none;
+          transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .rs-input::placeholder { color: rgba(255,255,255,0.2); }
-        .rs-input:focus { border-color: var(--focus-color, rgba(34,197,94,0.5)); box-shadow: 0 0 0 4px var(--focus-glow, rgba(34,197,94,0.08)); }
+        .rs-input::placeholder { color: #94a3b8; }
+        .rs-input:focus { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12); }
 
         /* ── Buttons ── */
         .rs-btn-primary {
-          width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer;
-          font-size: 16px; font-weight: 700; font-family: 'Inter',sans-serif; color: #fff;
-          background: var(--btn-bg, linear-gradient(135deg,#16a34a,#059669));
-          box-shadow: 0 8px 28px var(--btn-shadow, rgba(34,197,94,0.25));
-          transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
+          width: 100%; padding: 13px; border-radius: 10px; border: none; cursor: pointer;
+          font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; color: #ffffff;
+          background: #16a34a;
+          box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+          transition: background 0.15s, transform 0.15s;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .rs-btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 40px var(--btn-shadow, rgba(34,197,94,0.35)); }
-        .rs-btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-        .rs-btn-ghost { background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); border-radius: 12px; padding: 12px 20px; cursor: pointer; font-size: 14px; font-family: 'Inter',sans-serif; transition: all 0.2s; }
-        .rs-btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); }
+        .rs-btn-primary:hover:not(:disabled) { background: #15803d; transform: translateY(-1px); }
+        .rs-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
-        .rs-error { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 12px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; font-size: 14px; margin-bottom: 16px; }
+        .rs-error {
+          display: flex; align-items: center; gap: 8px; padding: 12px 14px;
+          border-radius: 10px; background: #fef2f2; border: 1px solid #fecaca;
+          color: #991b1b; font-size: 13px; margin-bottom: 16px;
+        }
 
-        .rs-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(255,255,255,0.35); background: none; border: none; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 20px; padding: 0; transition: color 0.2s; }
-        .rs-back:hover { color: rgba(255,255,255,0.7); }
+        .rs-back {
+          display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+          color: #64748b; background: none; border: none; cursor: pointer;
+          font-family: 'Inter', sans-serif; margin-top: 16px; padding: 0;
+          font-weight: 500;
+        }
+        .rs-back:hover { color: #0f172a; }
 
-        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+        .spinner {
+          width: 18px; height: 18px; border: 2px solid #ffffff;
+          border-top-color: transparent; border-radius: 50%;
+          animation: spin 0.7s linear infinite; flex-shrink: 0;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 600px) {
           .rs-page { padding: 24px 16px 48px; }
           .rs-grid { grid-template-columns: 1fr; }
-          .rs-profile-card { padding: 28px 20px; }
+          .rs-profile-card { padding: 24px 18px; }
         }
       `}</style>
 
       <div className="rs-page">
-        <div className="rs-bg" />
-        <div className="rs-grid-bg" />
         <div className="rs-wrap">
 
           {/* Header */}
           <div className="rs-header">
-            <div className="rs-brand">
+            <Link to="/" className="rs-brand">
               <div className="rs-brand-logo">🌱</div>
               <div className="rs-brand-name">AgroConnect 360</div>
-            </div>
+            </Link>
 
             {step === "role" ? (
               <>
-                <div className="rs-eyebrow">Welcome Aboard</div>
-                <h1 className="rs-title">How will you use <span>AgroConnect?</span></h1>
-                <p className="rs-sub">Select your role to unlock features tailored for you. You can always change this later.</p>
+                <div className="rs-eyebrow">Welcome to AgroConnect</div>
+                <h1 className="rs-title">How Will You Use <span>AgroConnect?</span></h1>
+                <p className="rs-sub">Select your primary role to unlock your tailored workspace. You can switch between roles at any time.</p>
                 {email && <div className="rs-email">✉️ Signed in as {email}</div>}
               </>
             ) : (
               <>
-                <div className="rs-eyebrow">Almost there</div>
-                <h1 className="rs-title">Complete your <span>Profile</span></h1>
-                <p className="rs-sub">Just a few more details and you're all set.</p>
+                <div className="rs-eyebrow">Quick Setup</div>
+                <h1 className="rs-title">Complete Your <span>Profile</span></h1>
+                <p className="rs-sub">Provide a few basic details to set up your account workspace.</p>
               </>
             )}
           </div>
@@ -308,26 +313,24 @@ export default function RoleSelection() {
           {step === "role" && (
             <>
               {savedUser?.role && (
-                <div style={{ textAlign: "center", marginBottom: 28 }}>
+                <div style={{ textAlign: "center", marginBottom: 24 }}>
                   <button
                     onClick={() => goToDashboard(savedUser.role)}
                     style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.18)",
+                      background: "#ffffff",
+                      border: "1px solid #cbd5e1",
                       borderRadius: 100,
-                      padding: "9px 22px",
-                      color: "#fff",
+                      padding: "8px 20px",
+                      color: "#334155",
                       cursor: "pointer",
                       fontSize: 13,
                       fontWeight: 600,
-                      fontFamily: "'Inter',sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: 8,
-                      transition: "all 0.2s",
+                      gap: 6,
+                      boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
-                    onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
                   >
                     ← Back to {savedUser.role.charAt(0).toUpperCase() + savedUser.role.slice(1)} Dashboard
                   </button>
@@ -335,26 +338,25 @@ export default function RoleSelection() {
               )}
 
               <div className="rs-grid">
-                {ROLES.map(({ id, emoji, label, color, glow, border, desc, features }) => {
+                {ROLES.map(({ id, emoji, label, color, desc, features }) => {
                   const isCurrent = savedUser.role === id;
                   return (
                     <div
                       key={id}
                       id={`role-${id}`}
                       className={`rs-card ${selectedRole === id ? "selected" : ""}`}
-                      style={{ "--color": color, "--glow": glow, "--border": border }}
                       onClick={() => !loading && handleRoleSelect(id)}
                     >
                       <div className="rs-card-top">
                         <span className="rs-card-emoji">{emoji}</span>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           {isCurrent && (
-                            <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 8, background: "rgba(34,197,94,0.18)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, background: "#dcfce7", color: "#15803d", border: "1px solid #bbf7d0", textTransform: "uppercase" }}>
                               Active Role
                             </span>
                           )}
                           <div className="rs-card-check">
-                            {selectedRole === id && <span style={{ color: "#fff", fontSize: 12, fontWeight: 900 }}>✓</span>}
+                            {selectedRole === id && <span>✓</span>}
                           </div>
                         </div>
                       </div>
@@ -366,7 +368,7 @@ export default function RoleSelection() {
                         ))}
                       </div>
                       {!isNewUser && !isCurrent && (
-                        <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)", fontSize: 12, color: color, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid #f1f5f9", fontSize: 12, color: color, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
                           <span>Switch to {label} →</span>
                         </div>
                       )}
@@ -375,11 +377,11 @@ export default function RoleSelection() {
                 })}
               </div>
 
-              {error && <div className="rs-error" style={{ maxWidth: 520, margin: "0 auto 16px" }}>⚠️ {error}</div>}
+              {error && <div className="rs-error" style={{ maxWidth: 480, margin: "0 auto 16px" }}>⚠️ {error}</div>}
 
               {loading && (
-                <div style={{ textAlign: "center", padding: "20px", color: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 15, fontWeight: 600 }}>
-                  <div className="spinner" /> Switching role and loading dashboard…
+                <div style={{ textAlign: "center", padding: "16px", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontSize: 14, fontWeight: 600 }}>
+                  <div className="spinner" style={{ borderColor: "#cbd5e1", borderTopColor: "#16a34a" }} /> Switching role…
                 </div>
               )}
             </>
@@ -389,7 +391,7 @@ export default function RoleSelection() {
           {step === "profile" && selectedRoleData && (
             <div className="rs-profile-card">
               <div className="rs-profile-header">
-                <div className="rs-profile-role-badge" style={{ background: selectedRoleData.glow, border: `1px solid ${selectedRoleData.border}` }}>
+                <div className="rs-profile-role-badge">
                   {selectedRoleData.emoji}
                 </div>
                 <div>
@@ -400,7 +402,7 @@ export default function RoleSelection() {
 
               {error && <div className="rs-error">⚠️ {error}</div>}
 
-              <form onSubmit={(e) => { e.preventDefault(); handleRoleSave(); }} style={{ "--focus-color": selectedRoleData.border, "--focus-glow": selectedRoleData.glow }}>
+              <form onSubmit={(e) => { e.preventDefault(); handleRoleSave(); }}>
                 <div className="rs-fields">
                   <div>
                     <label className="rs-label">Full Name *</label>
@@ -420,16 +422,12 @@ export default function RoleSelection() {
                   type="submit"
                   className="rs-btn-primary"
                   disabled={loading}
-                  style={{
-                    "--btn-bg": `linear-gradient(135deg, ${selectedRoleData.color}, ${selectedRoleData.color}cc)`,
-                    "--btn-shadow": selectedRoleData.glow,
-                  }}
                 >
-                  {loading ? <><div className="spinner" /> Setting up your account…</> : `🚀 Enter as ${selectedRoleData.label}`}
+                  {loading ? <><div className="spinner" /> Setting up workspace…</> : `🚀 Enter as ${selectedRoleData.label}`}
                 </button>
               </form>
 
-              <div style={{ marginTop: 16, textAlign: "center" }}>
+              <div style={{ marginTop: 14, textAlign: "center" }}>
                 <button className="rs-back" onClick={() => setStep("role")}>← Choose a different role</button>
               </div>
             </div>

@@ -14,8 +14,8 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #050a0e;
-  color: #f0f6ff;
+  background: #f8fafc;
+  color: #0f172a;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -24,22 +24,22 @@ body {
   min-height: 100vh;
 }
 
-a { text-decoration: none; }
+a { text-decoration: none; color: inherit; }
 button { font-family: inherit; }
 img { max-width: 100%; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0f14; }
-::-webkit-scrollbar-thumb { background: rgba(34,197,94,0.3); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(34,197,94,0.5); }
+/* Clean scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 /* Selection */
-::selection { background: rgba(34,197,94,0.25); color: #fff; }
+::selection { background: #dcfce7; color: #166534; }
 
-/* Global fix for native select dropdown options visibility in dark mode */
+/* Global select dropdown options */
 select option, .field-input option, optgroup {
-  background-color: #161e27 !important;
-  color: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
   padding: 10px;
 }

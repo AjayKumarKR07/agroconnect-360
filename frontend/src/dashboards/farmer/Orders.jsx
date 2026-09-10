@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { ClipboardList, Clock, CheckCircle2, Truck, XCircle, Inbox } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────────
    CONSTANTS — derived from actual Order model enum values
@@ -146,13 +147,13 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         }}>
           <div>
             <div style={{
-              fontSize: 10, fontWeight: 700, color: "#22c55e",
+              fontSize: 10, fontWeight: 700, color: "#16a34a",
               textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 4,
             }}>
               Order Details
             </div>
             <div style={{
-              fontSize: 18, fontWeight: 800, color: "#fff",
+              fontSize: 18, fontWeight: 800, color: "#0f172a",
               fontFamily: "'Space Grotesk', sans-serif", lineHeight: 1.2,
             }}>
               {na(order.cropName)}
@@ -210,14 +211,14 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                 <div
                   key={idx}
                   style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.06)",
+                    background: "#f8fafc",
+                    border: "1px solid #e2e8f0",
                     borderRadius: 12, padding: "14px 16px",
                     marginBottom: idx < items.length - 1 ? 10 : 0,
                   }}
                 >
                   <div style={{
-                    fontSize: 14, fontWeight: 700, color: "#fff",
+                    fontSize: 14, fontWeight: 700, color: "#0f172a",
                     marginBottom: 8, fontFamily: "'Space Grotesk', sans-serif",
                   }}>
                     🌿 {na(item.cropName)}
@@ -368,7 +369,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         }
         .od-section { margin-bottom: 22px; }
         .od-section-title {
-          font-size: 10px; font-weight: 700; color: #22c55e;
+          font-size: 10px; font-weight: 700; color: #16a34a;
           text-transform: uppercase; letter-spacing: 0.12em;
           margin-bottom: 10px;
           display: flex; align-items: center; gap: 8px;
@@ -386,20 +387,20 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         .od-row:last-child { border-bottom: none; }
         .od-label  { font-size: 12px; color: #7a8fa6; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
         .od-value  { font-size: 13px; color: #f0f6ff; font-weight: 500; text-align: right; word-break: break-all; max-width: 65%; }
-        .od-value-hl { font-size: 15px; color: #4ade80; font-weight: 800; text-align: right; }
+        .od-value-hl { font-size: 15px; color: #15803d; font-weight: 800; text-align: right; }
         .od-mono   { font-family: 'Courier New', monospace; font-size: 11px; color: #7a8fa6 !important; word-break: break-all; }
         /* Scoped badges (prefixed od- to avoid conflict) */
         .od-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; font-family:'Inter',sans-serif; }
-        .od-badge-green  { background:rgba(34,197,94,0.12);  color:#4ade80; border:1px solid rgba(34,197,94,0.2);  }
+        .od-badge-green  { background:rgba(34,197,94,0.12);  color:#15803d; border:1px solid rgba(34,197,94,0.2);  }
         .od-badge-amber  { background:rgba(251,191,36,0.12); color:#fde68a; border:1px solid rgba(251,191,36,0.2); }
-        .od-badge-red    { background:rgba(239,68,68,0.12);  color:#f87171; border:1px solid rgba(239,68,68,0.2);  }
+        .od-badge-red    { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2);  }
         .od-badge-blue   { background:rgba(56,189,248,0.12); color:#7dd3fc; border:1px solid rgba(56,189,248,0.2); }
         .od-badge-purple { background:rgba(167,139,250,0.12);color:#c4b5fd; border:1px solid rgba(167,139,250,0.2);}
         /* Scoped action buttons inside modal */
         .od-btn-green {
           display:inline-flex; align-items:center; justify-content:center; gap:8px;
           background:linear-gradient(135deg,#16a34a,#059669);
-          color:#fff; font-weight:700; font-size:14px;
+          color:#0f172a; font-weight:700; font-size:14px;
           padding:11px 20px; border-radius:12px; border:none; cursor:pointer;
           box-shadow:0 6px 18px rgba(34,197,94,0.25);
           transition:transform 0.15s, box-shadow 0.15s;
@@ -409,7 +410,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         .od-btn-green:disabled { opacity:0.5; cursor:not-allowed; }
         .od-btn-ghost {
           display:inline-flex; align-items:center; justify-content:center; gap:8px;
-          background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12);
+          background:#f8fafc; border:1px solid rgba(255,255,255,0.12);
           color:#f0f6ff; font-weight:600; font-size:14px;
           padding:10px 18px; border-radius:12px;
           cursor:pointer; transition:background 0.15s;
@@ -420,7 +421,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         .od-btn-danger {
           display:inline-flex; align-items:center; justify-content:center; gap:8px;
           background:rgba(239,68,68,0.10); border:1px solid rgba(239,68,68,0.20);
-          color:#f87171; font-weight:600; font-size:14px;
+          color:#dc2626; font-weight:600; font-size:14px;
           padding:10px 18px; border-radius:12px;
           cursor:pointer; transition:background 0.15s;
           font-family:'Inter',sans-serif;
@@ -549,7 +550,7 @@ export default function Orders() {
           transition:all 0.2s;font-family:'Inter',sans-serif;
         }
         .tab-btn:hover{background:var(--surface2);color:var(--text);}
-        .tab-btn.active{background:var(--green-dim);border-color:rgba(34,197,94,0.25);color:#4ade80;}
+        .tab-btn.active{background:var(--green-dim);border-color:rgba(34,197,94,0.25);color:#15803d;}
         .tab-count{
           display:inline-block;margin-left:6px;
           background:rgba(255,255,255,0.10);padding:1px 7px;border-radius:10px;font-size:11px;
@@ -591,9 +592,9 @@ export default function Orders() {
 
         /* Scoped card badges */
         .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;}
-        .badge-green{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
+        .badge-green{background:rgba(34,197,94,0.12);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
         .badge-amber{background:rgba(251,191,36,0.12);color:#fde68a;border:1px solid rgba(251,191,36,0.2);}
-        .badge-red{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
+        .badge-red{background:rgba(239,68,68,0.12);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
         .badge-blue{background:rgba(56,189,248,0.12);color:#7dd3fc;border:1px solid rgba(56,189,248,0.2);}
         .badge-purple{background:rgba(167,139,250,0.12);color:#c4b5fd;border:1px solid rgba(167,139,250,0.2);}
 
@@ -601,7 +602,7 @@ export default function Orders() {
         .card-btn-green{
           display:inline-flex;align-items:center;gap:7px;
           background:linear-gradient(135deg,#16a34a,#059669);
-          color:#fff;font-weight:700;font-size:13px;
+          color:#0f172a;font-weight:700;font-size:13px;
           padding:9px 18px;border-radius:10px;border:none;cursor:pointer;
           transition:transform 0.15s,box-shadow 0.15s;font-family:'Inter',sans-serif;
           box-shadow:0 4px 14px rgba(34,197,94,0.22);
@@ -620,7 +621,7 @@ export default function Orders() {
         .card-btn-danger{
           display:inline-flex;align-items:center;gap:7px;
           background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.18);
-          color:#f87171;font-weight:600;font-size:13px;
+          color:#dc2626;font-weight:600;font-size:13px;
           padding:9px 18px;border-radius:10px;cursor:pointer;
           transition:background 0.15s;font-family:'Inter',sans-serif;
         }
@@ -647,15 +648,15 @@ export default function Orders() {
       {!loading && (
         <div className="stat-grid" style={{ marginBottom: 24 }}>
           {[
-            { emoji: "📋", label: "Total",    value: orders.length,                                   color: "#38bdf8" },
-            { emoji: "⏳", label: "Pending",  value: counts.pending,                                  color: "#fbbf24" },
-            { emoji: "✅", label: "Accepted", value: (counts.accepted || 0) + (counts.processing || 0), color: "#4ade80" },
-            { emoji: "🚚", label: "Shipped",  value: (counts.shipped  || 0) + (counts.delivered  || 0), color: "#a78bfa" },
-            { emoji: "❌", label: "Rejected", value: (counts.rejected || 0) + (counts.cancelled  || 0), color: "#f87171" },
-          ].map(({ emoji, label, value, color }) => (
+            { Icon: ClipboardList, label: "Total",    value: orders.length,                                   color: "#0369a1" },
+            { Icon: Clock,         label: "Pending",  value: counts.pending,                                  color: "#b45309" },
+            { Icon: CheckCircle2,  label: "Accepted", value: (counts.accepted || 0) + (counts.processing || 0), color: "#15803d" },
+            { Icon: Truck,         label: "Shipped",  value: (counts.shipped  || 0) + (counts.delivered  || 0), color: "#7c3aed" },
+            { Icon: XCircle,       label: "Rejected", value: (counts.rejected || 0) + (counts.cancelled  || 0), color: "#dc2626" },
+          ].map(({ Icon, label, value, color }) => (
             <div key={label} className="stat-card">
               <div className="stat-glow" style={{ background: color }} />
-              <div className="stat-emoji">{emoji}</div>
+              <div className="stat-icon" style={{ color }}><Icon size={20} strokeWidth={1.75} /></div>
               <div className="stat-val">{value}</div>
               <div className="stat-lbl">{label}</div>
             </div>
@@ -688,7 +689,7 @@ export default function Orders() {
       {/* ── Empty state ── */}
       {!loading && filtered.length === 0 && (
         <div className="card empty-state">
-          <div className="empty-emoji">📭</div>
+          <div className="empty-emoji"><Inbox size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">
             No {filter === "all" ? "" : filter} orders yet
           </div>
@@ -737,7 +738,7 @@ export default function Orders() {
                       {meta.emoji}
                     </div>
                     <div>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
                         {order.cropName || "Crop Order"}
                       </div>
                       <div style={{ fontSize: 13, color: "var(--text2)", marginTop: 3 }}>
@@ -759,7 +760,7 @@ export default function Orders() {
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                     <span className={`badge ${meta.badge}`}>{meta.emoji} {meta.label}</span>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: "#4ade80" }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: "#15803d" }}>
                       ₹{Number(total).toLocaleString("en-IN")}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--text2)" }}>

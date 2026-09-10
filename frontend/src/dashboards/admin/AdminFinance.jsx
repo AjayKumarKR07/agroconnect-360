@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, fmtINR, relativeTime } from "./adminStyles";
+import { IndianRupee, TrendingUp, Package, Receipt } from "lucide-react";
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -48,7 +49,7 @@ export default function AdminFinance() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Financial Analytics — Real Order Data</div>
-          <h1 className="pg-title">💰 Platform Finance &amp; Revenue</h1>
+          <h1 className="pg-title"><IndianRupee size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />Platform Finance & Revenue</h1>
           <p className="pg-sub">Order GMV, revenue breakdown, and transaction history derived from real database records.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -100,7 +101,7 @@ export default function AdminFinance() {
 
           {/* Monthly Revenue Chart (last 6 months) */}
           <div className="card" style={{ marginBottom: 24 }}>
-            <div className="card-title" style={{ marginBottom: 16 }}>📈 Monthly Revenue (Last 6 Months — Delivered Orders)</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><TrendingUp size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Monthly Revenue (Last 6 Months — Delivered Orders)</div>
             {data.monthlyRevenue.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-state-icon">📈</div>
@@ -112,7 +113,7 @@ export default function AdminFinance() {
                   const pct = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
                   return (
                     <div key={`${m._id.year}-${m._id.month}`} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                      <div style={{ fontSize: 11, color: "#4ade80", fontWeight: 700 }}>{fmtINR(m.revenue)}</div>
+                      <div style={{ fontSize: 11, color: "#15803d", fontWeight: 700 }}>{fmtINR(m.revenue)}</div>
                       <div
                         title={`${m.count} orders`}
                         style={{ width: "100%", maxWidth: 60, background: "linear-gradient(180deg,#4f46e5,#6366f1)", borderRadius: "6px 6px 0 0", height: `${Math.max(pct, 4)}%`, minHeight: 4, transition: "height 0.5s" }}
@@ -127,7 +128,7 @@ export default function AdminFinance() {
 
           {/* GMV by Status */}
           <div className="card" style={{ marginBottom: 24 }}>
-            <div className="card-title" style={{ marginBottom: 16 }}>📦 Order Value by Status</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Package size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Order Value by Status</div>
             <div className="table-scroll">
               <table className="admin-table">
                 <thead><tr><th>Status</th><th>Orders</th><th>Total Value</th></tr></thead>
@@ -135,7 +136,7 @@ export default function AdminFinance() {
                   {data.byStatus.map((s) => (
                     <tr key={s._id}>
                       <td><span style={{ padding: "3px 10px", borderRadius: 8, background: "rgba(99,102,241,0.1)", color: "#c7d2fe", fontWeight: 700, fontSize: 12 }}>{s._id}</span></td>
-                      <td style={{ color: "#fff", fontWeight: 700 }}>{s.count}</td>
+                      <td style={{ color: "#0f172a", fontWeight: 700 }}>{s.count}</td>
                       <td style={{ color: "#818cf8", fontWeight: 800, fontFamily: "'Space Grotesk',sans-serif" }}>{fmtINR(s.total)}</td>
                     </tr>
                   ))}
@@ -146,7 +147,7 @@ export default function AdminFinance() {
 
           {/* Recent Delivered Orders */}
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>🧾 Recent Delivered Orders</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Receipt size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Recent Delivered Orders</div>
             {data.recentDelivered.length === 0 ? (
               <div className="empty-state"><div className="empty-state-msg">No delivered orders yet</div></div>
             ) : (
@@ -154,7 +155,7 @@ export default function AdminFinance() {
                 {data.recentDelivered.map((o) => (
                   <div key={o._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: "rgba(99,102,241,0.03)", borderRadius: 12, border: "1px solid rgba(99,102,241,0.08)", flexWrap: "wrap", gap: 10 }}>
                     <div>
-                      <div style={{ fontWeight: 700, color: "#fff", fontSize: 14 }}>
+                      <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}>
                         {o.items?.map((it) => it.cropName).join(", ") || "Order"}
                       </div>
                       <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 2 }}>
@@ -162,10 +163,10 @@ export default function AdminFinance() {
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#4ade80" }}>
+                      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#15803d" }}>
                         {fmtINR(o.totalAmount)}
                       </div>
-                      <div style={{ fontSize: 11, color: "#4ade80", marginTop: 2 }}>
+                      <div style={{ fontSize: 11, color: "#15803d", marginTop: 2 }}>
                         Est. fee: {fmtINR(o.totalAmount * 0.025)}
                       </div>
                     </div>

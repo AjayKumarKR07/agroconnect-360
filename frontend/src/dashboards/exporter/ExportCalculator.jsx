@@ -1,19 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 
 const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
   .field-label{display:block;font-size:11px;font-weight:700;color:#a38a5d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#fff;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
   .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  .field-input option{background:#1a1206;color:#fff;}
+  .field-input option{background:#1a1206;color:#0f172a;}
   .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;}
   .divider{border-top:1px solid rgba(245,158,11,0.12);margin:10px 0;}
 `;
@@ -169,7 +169,7 @@ export default function ExportCalculator() {
       <style>{DS}</style>
 
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", color: "#fbbf24", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", color: "#b45309", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -186,7 +186,7 @@ export default function ExportCalculator() {
           <div style={{ fontSize: 11, color: "#a38a5d", marginBottom: 4 }}>
             {fxLoading ? "Fetching FX…" : `Live FX · ${fxUpdated ? fxUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}`}
           </div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fbbf24" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#b45309" }}>
             1 USD = ₹{usdInr.toFixed(2)}
           </div>
           <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 2 }}>⟳ Refresh</button>
@@ -197,7 +197,7 @@ export default function ExportCalculator() {
         {/* ── Left: Inputs ─────────────────────────────────────────── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <div className="card">
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 16 }}>⚙️ Export Shipment Parameters</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 16 }}>⚙️ Export Shipment Parameters</div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
@@ -238,7 +238,7 @@ export default function ExportCalculator() {
               </button>
 
               {showAdv && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, padding: "14px", borderRadius: 12, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(245,158,11,0.1)" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, padding: "14px", borderRadius: 12, background: "#f1f5f9", border: "1px solid rgba(245,158,11,0.1)" }}>
                   <div>
                     <label className="field-label">Freight ($/MT)</label>
                     <input className="field-input" type="number" min="0" value={freightPerTon} onChange={e => setFreightPerTon(Number(e.target.value))} />
@@ -267,7 +267,7 @@ export default function ExportCalculator() {
 
         {/* ── Right: Output ────────────────────────────────────────── */}
         <div className="card" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#fff" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a" }}>
             📊 CIF Landed Cost & Profit Projection
           </div>
 
@@ -286,12 +286,12 @@ export default function ExportCalculator() {
             ))}
             <div className="divider" />
             <div className="row" style={{ fontWeight: 800, fontSize: 15 }}>
-              <span style={{ color: "#fff" }}>Total Landed CIF Cost</span>
+              <span style={{ color: "#0f172a" }}>Total Landed CIF Cost</span>
               <span style={{ color: "#f59e0b" }}>{fmtUsd(landedCostUsd)}</span>
             </div>
             <div className="row" style={{ fontSize: 13 }}>
               <span style={{ color: "#a38a5d" }}>Selling Price ({markupPct}% markup)</span>
-              <span style={{ color: "#fff", fontWeight: 700 }}>{fmtUsd(sellingUsd)}</span>
+              <span style={{ color: "#0f172a", fontWeight: 700 }}>{fmtUsd(sellingUsd)}</span>
             </div>
           </div>
 
@@ -302,7 +302,7 @@ export default function ExportCalculator() {
             </div>
             <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: netMarginUsd > 0 ? "#4ade80" : "#f87171", marginTop: 4 }}>
               {netMarginUsd > 0 ? "+" : ""}{fmtUsd(netMarginUsd)}
-              <span style={{ fontSize: 14, color: "#fff", marginLeft: 8 }}>{fmtInr(netMarginUsd * usdInr)}</span>
+              <span style={{ fontSize: 14, color: "#0f172a", marginLeft: 8 }}>{fmtInr(netMarginUsd * usdInr)}</span>
             </div>
             <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 4 }}>
               ROI: {marginPctActual.toFixed(1)}% · Based on live rate 1 USD = ₹{usdInr.toFixed(2)}
@@ -310,7 +310,7 @@ export default function ExportCalculator() {
           </div>
 
           {/* Disclaimer */}
-          <div style={{ fontSize: 11, color: "#a38a5d", padding: "10px 12px", borderRadius: 10, background: "rgba(56,189,248,0.05)", border: "1px solid rgba(56,189,248,0.12)" }}>
+          <div style={{ fontSize: 11, color: "#a38a5d", padding: "10px 12px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)" }}>
             ℹ️ Estimates only. Actual freight, tariffs, and insurance vary by carrier, HS code, and trade agreement. Consult a customs broker for binding rates.
           </div>
 

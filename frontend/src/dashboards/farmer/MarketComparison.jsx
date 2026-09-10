@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { MapPin, Store, BarChart2, TrendingUp } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -102,14 +103,14 @@ export default function MarketComparison() {
     <>
       <style>{DS + `
         .mc-tab { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:30px; border:1px solid var(--border); font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; background:transparent; color:var(--text2); font-family:'Inter',sans-serif; }
-        .mc-tab.active { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); color:#4ade80; }
-        .mc-tab:hover:not(.active) { border-color:rgba(255,255,255,0.2); color:#fff; }
+        .mc-tab.active { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); color:#15803d; }
+        .mc-tab:hover:not(.active) { border-color:#cbd5e1; color:#0f172a; }
         .mc-row { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); transition:background .15s; }
         .mc-row:hover { background:var(--surface2); }
-        .mc-crop { font-weight:700; color:#fff; font-size:14px; flex:1; }
-        .mc-price { font-weight:800; color:#4ade80; font-size:14px; white-space:nowrap; }
+        .mc-crop { font-weight:700; color:#0f172a; font-size:14px; flex:1; }
+        .mc-price { font-weight:800; color:#15803d; font-size:14px; white-space:nowrap; }
         .mc-label { font-size:11px; color:var(--text2); }
-        .mc-search { padding:10px 16px; border-radius:30px; border:1px solid var(--border); background:var(--surface); color:#fff; font-size:13px; outline:none; width:220px; transition:border-color .2s; font-family:'Inter',sans-serif; }
+        .mc-search { padding:10px 16px; border-radius:30px; border:1px solid var(--border); background:var(--surface); color:#0f172a; font-size:13px; outline:none; width:220px; transition:border-color .2s; font-family:'Inter',sans-serif; }
         .mc-search:focus { border-color:rgba(34,197,94,0.4); }
         .mc-select { width:100%; appearance:none; padding:11px 16px; border-radius:12px; border:1px solid var(--border2); background:var(--surface); color:var(--text); font-size:13px; outline:none; font-family:'Inter',sans-serif; transition:border-color .2s; }
         .mc-select:focus { border-color:rgba(34,197,94,.4); box-shadow:0 0 0 3px rgba(34,197,94,.07); }
@@ -126,10 +127,10 @@ export default function MarketComparison() {
 
       {/* Location picker */}
       <div className="card" style={{ marginBottom: 24 }}>
-        <div className="card-title" style={{ marginBottom: 6 }}>📍 Select Location</div>
+        <div className="card-title" style={{ marginBottom: 6 }}><MapPin size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Select Location</div>
         <p className="card-sub" style={{ marginBottom: 18 }}>
-          Your profile location: <strong style={{ color: "#fff" }}>{user.district ? `${user.district}, ${user.state}` : user.location || "—"}</strong>
-          {!user.district && <> — <Link to="/farmer/profile" style={{ color: "#38bdf8" }}>update your profile</Link> to pre-fill this.</>}
+          Your profile location: <strong style={{ color: "#0f172a" }}>{user.district ? `${user.district}, ${user.state}` : user.location || "—"}</strong>
+          {!user.district && <> — <Link to="/farmer/profile" style={{ color: "#0369a1" }}>update your profile</Link> to pre-fill this.</>}
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 16 }}>
@@ -183,7 +184,7 @@ export default function MarketComparison() {
         </div>
 
         <p style={{ fontSize: 12, color: "var(--text2)" }}>
-          💡 Tip: Save your state in <Link to="/farmer/my-farm" style={{ color: "#4ade80" }}>My Farm</Link> to have it pre-filled in the Smart Farm Planner.
+          💡 Tip: Save your state in <Link to="/farmer/my-farm" style={{ color: "#15803d" }}>My Farm</Link> to have it pre-filled in the Smart Farm Planner.
         </p>
       </div>
 
@@ -192,7 +193,7 @@ export default function MarketComparison() {
       {/* Results */}
       {!hasFetched ? (
         <div className="empty-state">
-          <div className="empty-emoji">🏪</div>
+          <div className="empty-emoji"><Store size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">Select state and district above</div>
           <div className="empty-sub">Choose your state from the dropdown — districts will load automatically. Then click "Fetch Prices".</div>
         </div>
@@ -210,7 +211,7 @@ export default function MarketComparison() {
           {tab === "district" ? (
             prices.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-emoji">📊</div>
+                <div className="empty-emoji"><BarChart2 size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
                 <div className="empty-title">No price data for "{district || state}"</div>
                 <div className="empty-sub">
                   APMC data may not be available for this district in the dataset.<br />
@@ -220,7 +221,7 @@ export default function MarketComparison() {
             ) : (
               <>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 12 }}>
-                  {prices.length} commodity price{prices.length !== 1 ? "s" : ""} — <strong style={{ color: "#fff" }}>{district}, {state}</strong>
+                  {prices.length} commodity price{prices.length !== 1 ? "s" : ""} — <strong style={{ color: "#0f172a" }}>{district}, {state}</strong>
                 </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {prices.map((p, i) => {
@@ -259,7 +260,7 @@ export default function MarketComparison() {
 
               if (totalItems === 0) return (
                 <div className="empty-state">
-                  <div className="empty-emoji">📈</div>
+                  <div className="empty-emoji"><TrendingUp size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
                   <div className="empty-title">No trend data for "{state}"</div>
                   <div className="empty-sub">Market price history for this state has not yet been synced. Fetch district prices first — this populates the trend database.</div>
                 </div>
@@ -285,7 +286,7 @@ export default function MarketComparison() {
                   {/* Highest priced crops */}
                   {topH.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color:"#4ade80",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🏆 Highest Value Crops — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#15803d",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🏆 Highest Value Crops — {state}</div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {topH.map((t,i) => (
                           <TrendRow key={i} icon="🌾"
@@ -300,7 +301,7 @@ export default function MarketComparison() {
                   {/* Lowest priced crops */}
                   {topL.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color:"#38bdf8",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>💰 Most Affordable Crops — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#0369a1",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>💰 Most Affordable Crops — {state}</div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {topL.map((t,i) => (
                           <TrendRow key={i} icon="🌿"
@@ -330,7 +331,7 @@ export default function MarketComparison() {
                   {/* Latest prices */}
                   {latest.length > 0 && (
                     <div>
-                      <div style={{ fontSize:12,fontWeight:700,color:"#a78bfa",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🕒 Latest Arrivals — {state}</div>
+                      <div style={{ fontSize:12,fontWeight:700,color: "#7c3aed",textTransform:"uppercase",letterSpacing:".06em",marginBottom:10 }}>🕒 Latest Arrivals — {state}</div>
                       <div style={{ display:"flex",flexDirection:"column",gap:8 }}>
                         {latest.map((t,i) => (
                           <TrendRow key={i} icon="🗓️"

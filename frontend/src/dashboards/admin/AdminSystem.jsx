@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
+import { Zap, Brain, Plug } from "lucide-react";
 
 const dbStateLabel = { connected: "🟢 Connected", disconnected: "🔴 Disconnected", connecting: "🟡 Connecting", disconnecting: "🟠 Disconnecting" };
 const dbStateColor = { connected: "#4ade80", disconnected: "#f87171", connecting: "#fbbf24", disconnecting: "#fb923c" };
 
 function Metric({ label, value, sub, color = "#818cf8", icon }) {
   return (
-    <div style={{ padding: "16px 18px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid rgba(99,102,241,0.1)" }}>
+    <div style={{ padding: "16px 18px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: "1px solid #e2e8f0" }}>
       <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
       <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
       <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color }}>{value}</div>
@@ -63,7 +64,7 @@ export default function AdminSystem() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Infrastructure &amp; Runtime Health</div>
-          <h1 className="pg-title">⚡ System Health Dashboard</h1>
+          <h1 className="pg-title"><Zap size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />System Health Dashboard</h1>
           <p className="pg-sub">Live server metrics derived from real Node.js runtime and MongoDB connection state.</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
@@ -103,7 +104,7 @@ export default function AdminSystem() {
                 API Status: {health.api.toUpperCase()}
               </div>
               <div style={{ fontSize: 13, color: "#a5b4fc", marginTop: 2 }}>
-                Response time: <strong style={{ color: "#fff" }}>{health.responseTimeMs}ms</strong> · Checked: {new Date(health.checkedAt).toLocaleTimeString("en-IN")}
+                Response time: <strong style={{ color: "#0f172a" }}>{health.responseTimeMs}ms</strong> · Checked: {new Date(health.checkedAt).toLocaleTimeString("en-IN")}
               </div>
             </div>
           </div>
@@ -118,12 +119,12 @@ export default function AdminSystem() {
 
           {/* Memory Usage */}
           <div className="card" style={{ marginBottom: 24 }}>
-            <div className="card-title" style={{ marginBottom: 16 }}>🧠 Memory Usage (Node.js Heap)</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Brain size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Memory Usage (Node.js Heap)</div>
             <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13, color: "#a5b4fc" }}>
-                  <span>Heap Used: <strong style={{ color: "#fff" }}>{health.memory.heapUsedMB} MB</strong></span>
-                  <span>Heap Total: <strong style={{ color: "#fff" }}>{health.memory.heapTotalMB} MB</strong></span>
+                  <span>Heap Used: <strong style={{ color: "#0f172a" }}>{health.memory.heapUsedMB} MB</strong></span>
+                  <span>Heap Total: <strong style={{ color: "#0f172a" }}>{health.memory.heapTotalMB} MB</strong></span>
                   <span style={{ color: heapPct > 85 ? "#f87171" : heapPct > 65 ? "#fbbf24" : "#4ade80" }}>{heapPct}%</span>
                 </div>
                 <div style={{ height: 10, background: "rgba(99,102,241,0.1)", borderRadius: 6, overflow: "hidden" }}>
@@ -132,7 +133,7 @@ export default function AdminSystem() {
               </div>
             </div>
             <div style={{ fontSize: 13, color: "#a5b4fc" }}>
-              RSS (total process): <strong style={{ color: "#fff" }}>{health.memory.rssMB} MB</strong>
+              RSS (total process): <strong style={{ color: "#0f172a" }}>{health.memory.rssMB} MB</strong>
             </div>
             <div style={{ marginTop: 12, fontSize: 12, color: "#818cf8" }}>
               💡 Heap data from <code>process.memoryUsage()</code>. CPU% not exposed — requires native Node.js addons.
@@ -141,7 +142,7 @@ export default function AdminSystem() {
 
           {/* Integrated Services (actual, no fake statuses) */}
           <div className="card">
-            <div className="card-title" style={{ marginBottom: 16 }}>🔌 Integrated Services</div>
+            <div className="card-title" style={{ marginBottom: 16 }}><Plug size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#4f46e5", verticalAlign: "middle" }} />Integrated Services</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 12 }}>
               {[
                 { name: "MongoDB Atlas", status: health.database === "connected" ? "Connected" : health.database, ok: health.database === "connected", icon: "🗄️" },
@@ -152,7 +153,7 @@ export default function AdminSystem() {
                 <div key={svc.name} style={{ padding: "14px 16px", background: "rgba(99,102,241,0.04)", borderRadius: 14, border: `1px solid ${svc.ok === true ? "rgba(34,197,94,0.2)" : svc.ok === false ? "rgba(239,68,68,0.2)" : "rgba(251,191,36,0.15)"}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>{svc.icon}</span>
-                    <span style={{ fontWeight: 800, color: "#fff", fontSize: 14 }}>{svc.name}</span>
+                    <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{svc.name}</span>
                   </div>
                   <div style={{ fontSize: 12, color: svc.ok === true ? "#4ade80" : svc.ok === false ? "#f87171" : "#fbbf24", fontWeight: 700 }}>● {svc.status}</div>
                   {svc.note && <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{svc.note}</div>}

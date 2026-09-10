@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { HeartPulse } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -55,7 +56,7 @@ export default function CropHealthHistory() {
         .chh-img { width:100%; height:140px; object-fit:cover; }
         .chh-img-placeholder { width:100%; height:140px; display:flex; align-items:center; justify-content:center; background:rgba(167,139,250,0.05); border-bottom:1px solid var(--border); font-size:48px; }
         .chh-body { padding:16px; }
-        .chh-crop { font-size:16px; font-weight:700; color:#fff; margin-bottom:4px; }
+        .chh-crop { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:4px; }
         .chh-disease { font-size:13px; color:var(--text2); margin-bottom:10px; }
         .chh-meta { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
         .chh-sev { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
@@ -82,7 +83,7 @@ export default function CropHealthHistory() {
         <div className="loading-wrap"><div className="spinner" /><span>Loading diagnosis history…</span></div>
       ) : diagnoses.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-emoji">🩺</div>
+          <div className="empty-emoji"><HeartPulse size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
           <div className="empty-title">No diagnoses yet</div>
           <div className="empty-sub">Run your first AI crop disease detection to see results here.</div>
           <Link to="/farmer/disease-detection" className="btn-green" style={{ marginTop: 16, display: "inline-flex" }}>🔬 Scan a Crop</Link>
@@ -92,9 +93,9 @@ export default function CropHealthHistory() {
           {/* Summary bar */}
           <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
             {[
-              { label: "Total Scans",    value: diagnoses.length,                                                    color: "#a78bfa" },
-              { label: "Diseases Found", value: diagnoses.filter(d => !d.isHealthy).length,                          color: "#f87171" },
-              { label: "Healthy",        value: diagnoses.filter(d => d.isHealthy).length,                           color: "#4ade80" },
+              { label: "Total Scans",    value: diagnoses.length,                                                    color: "#7c3aed" },
+              { label: "Diseases Found", value: diagnoses.filter(d => !d.isHealthy).length,                          color: "#dc2626" },
+              { label: "Healthy",        value: diagnoses.filter(d => d.isHealthy).length,                           color: "#15803d" },
               { label: "High/Critical",  value: diagnoses.filter(d => ["high","critical"].includes(d.severity)).length, color: "#fb923c" },
             ].map(({ label, value, color }) => (
               <div key={label} className="stat-card" style={{ flex: "1 1 120px", minWidth: 120 }}>
@@ -133,14 +134,14 @@ export default function CropHealthHistory() {
                   <div className="chh-actions">
                     <button
                       className="btn-ghost"
-                      style={{ fontSize: 12, padding: "7px 14px", color: "#a78bfa", borderColor: "rgba(167,139,250,0.2)" }}
+                      style={{ fontSize: 12, padding: "7px 14px", color: "#7c3aed", borderColor: "rgba(167,139,250,0.2)" }}
                       onClick={() => setSelected(selected?._id === diag._id ? null : diag)}
                     >
                       {selected?._id === diag._id ? "▲ Hide" : "▼ View Details"}
                     </button>
                     <button
                       className="btn-ghost"
-                      style={{ fontSize: 12, padding: "7px 14px", color: "#f87171", borderColor: "rgba(239,68,68,0.2)" }}
+                      style={{ fontSize: 12, padding: "7px 14px", color: "#dc2626", borderColor: "rgba(239,68,68,0.2)" }}
                       onClick={() => handleDelete(diag._id)}
                       disabled={deleting === diag._id}
                     >

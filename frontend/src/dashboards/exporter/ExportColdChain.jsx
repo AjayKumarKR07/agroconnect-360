@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 
@@ -6,10 +6,10 @@ const DS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
-  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;line-height:1.2;}
+  .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
   .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
   .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
@@ -102,7 +102,7 @@ export default function ExportColdChain() {
           </p>
         </div>
         {!loading && reefers.length > 0 && (
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#fbbf24" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#b45309" }}>
             {reefers.length} Active Reefe{reefers.length !== 1 ? "rs" : "r"} Monitored
           </div>
         )}
@@ -118,7 +118,7 @@ export default function ExportColdChain() {
         /* ── No shipments at all ──────────────────────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
           <div style={{ fontSize: 52, marginBottom: 14 }}>❄️</div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             No Containers to Monitor
           </div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
@@ -131,7 +131,7 @@ export default function ExportColdChain() {
         /* ── All shipments delivered / cancelled ─────────────────── */
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
           <div style={{ fontSize: 52, marginBottom: 14 }}>✅</div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             All Containers Delivered
           </div>
           <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 24 }}>
@@ -160,18 +160,18 @@ export default function ExportColdChain() {
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#fbbf24", fontSize: 13 }}>{s.containerNo}</span>
+                    <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#b45309", fontSize: 13 }}>{s.containerNo}</span>
                     <span style={{ fontSize: 10, padding: "2px 7px", borderRadius: 6, background: `${sensors.color}20`, color: sensors.color, fontWeight: 800 }}>
                       ● {sensors.status}
                     </span>
                   </div>
-                  <div style={{ fontWeight: 700, color: "#fff", fontSize: 13, marginBottom: 6 }}>
+                  <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 6 }}>
                     {s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}
                   </div>
                   <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#a38a5d" }}>
-                    <span>🌡️ <strong style={{ color: "#fff" }}>{sensors.temp}</strong></span>
-                    <span>💧 <strong style={{ color: "#fff" }}>{sensors.humidity}</strong></span>
-                    <span>🔋 <strong style={{ color: "#fff" }}>{sensors.battery}</strong></span>
+                    <span>🌡️ <strong style={{ color: "#0f172a" }}>{sensors.temp}</strong></span>
+                    <span>💧 <strong style={{ color: "#0f172a" }}>{sensors.humidity}</strong></span>
+                    <span>🔋 <strong style={{ color: "#0f172a" }}>{sensors.battery}</strong></span>
                   </div>
                 </div>
               );
@@ -184,10 +184,10 @@ export default function ExportColdChain() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16, flexWrap: "wrap", gap: 12 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#fbbf24" }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#b45309" }}>
                     ❄️ Reefer Unit: {selected.containerNo}
                   </div>
-                  <div style={{ fontSize: 14, color: "#fff", fontWeight: 700, marginTop: 4 }}>
+                  <div style={{ fontSize: 14, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>
                     {selected.cargo} {selected.quantityTons ? `(${selected.quantityTons} MT)` : ""}
                   </div>
                   <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
@@ -217,14 +217,14 @@ export default function ExportColdChain() {
 
               {/* Temp spike alert */}
               {selectedSensors.status === "TEMP SPIKE" && (
-                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24", fontSize: 13, fontWeight: 600 }}>
+                <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "#b45309", fontSize: 13, fontWeight: 600 }}>
                   ⚠️ Temperature deviation detected. Monitor closely — cargo quality may be affected if deviation persists.
                 </div>
               )}
 
               {/* 24h Climate Log */}
               <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginBottom: 12 }}>
                   📈 Simulated 24-Hour Climate Log
                 </div>
                 <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
@@ -238,7 +238,7 @@ export default function ExportColdChain() {
               </div>
 
               {/* Info note */}
-              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(56,189,248,0.06)", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#7dd3fc" }}>
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#7dd3fc" }}>
                 ℹ️ Sensor readings are simulated from your container data. Connect real IoT devices (Carrier, Daikin, Emerson) to get live telemetry.
               </div>
             </div>

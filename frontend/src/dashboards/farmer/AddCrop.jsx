@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
@@ -131,7 +131,7 @@ export default function AddCrop() {
               {imagePreview ? (
                 <div style={{ position: "relative" }}>
                   <img src={imagePreview} alt="Preview" style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
-                  <button type="button" onClick={removeImage} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 700 }}>✕ Remove</button>
+                  <button type="button" onClick={removeImage} style={{ position: "absolute", top: 8, right: 8, background: "rgba(239,68,68,0.9)", border: "none", borderRadius: 8, padding: "4px 10px", color: "#0f172a", cursor: "pointer", fontSize: 13, fontWeight: 700 }}>✕ Remove</button>
                 </div>
               ) : (
                 <label style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, padding: "32px 16px", borderRadius: 12, border: "2px dashed var(--border2)", background: "var(--surface)", cursor: "pointer", transition: "border-color 0.2s" }}
@@ -145,9 +145,9 @@ export default function AddCrop() {
               )}
             </div>
 
-            <div className="card" style={{ background: "rgba(34,197,94,0.04)", borderColor: "rgba(34,197,94,0.15)" }}>
+            <div className="card" style={{ background: "#f0fdf4", borderColor: "rgba(34,197,94,0.15)" }}>
               <div style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.7 }}>
-                <strong style={{ color: "#4ade80" }}>💡 Tips for better listings:</strong><br />
+                <strong style={{ color: "#15803d" }}>💡 Tips for better listings:</strong><br />
                 • Use clear, daylight photos<br />
                 • Set competitive prices using the Price Prediction tool<br />
                 • Add accurate location for local buyers to find you

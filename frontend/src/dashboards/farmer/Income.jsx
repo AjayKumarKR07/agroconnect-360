@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { IndianRupee, CalendarDays, CheckCircle2, Scale, BarChart3, ClipboardList, Sprout } from "lucide-react";
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const fmt  = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
@@ -60,10 +61,10 @@ export default function Income() {
   const maxVal = Math.max(...monthlyTotals, 1); // avoid /0
 
   const statCards = [
-    { emoji: "💰", label: "Total Earnings",   value: fmt(summary.totalIncome),        color: "#4ade80", glow: "#22c55e" },
-    { emoji: "📅", label: "This Month",       value: fmt(summary.currentMonthIncome),  color: "#38bdf8", glow: "#38bdf8" },
-    { emoji: "✅", label: "Completed Orders", value: summary.completedOrders,          color: "#a78bfa", glow: "#a78bfa" },
-    { emoji: "⚖️", label: "Qty Sold",        value: `${summary.totalQuantitySold}`,   color: "#fbbf24", glow: "#fbbf24" },
+    { Icon: IndianRupee,  label: "Total Earnings",   value: fmt(summary.totalIncome),        color: "#15803d", glow: "#22c55e" },
+    { Icon: CalendarDays, label: "This Month",       value: fmt(summary.currentMonthIncome),  color: "#0369a1", glow: "#38bdf8" },
+    { Icon: CheckCircle2, label: "Completed Orders", value: summary.completedOrders,          color: "#7c3aed", glow: "#a78bfa" },
+    { Icon: Scale,        label: "Qty Sold",         value: `${summary.totalQuantitySold}`,   color: "#b45309", glow: "#fbbf24" },
   ];
 
   return (
@@ -118,7 +119,7 @@ export default function Income() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Earnings</div>
-          <h1 className="pg-title">💰 Income</h1>
+          <h1 className="pg-title"><IndianRupee size={22} strokeWidth={2} style={{ marginRight: 8, color: "#16a34a", verticalAlign: "middle" }} />Income</h1>
           <p className="pg-sub">Track your farm earnings and transaction history.</p>
         </div>
       </div>
@@ -134,10 +135,10 @@ export default function Income() {
         <>
           {/* ── Stat cards ── */}
           <div className="stat-grid">
-            {statCards.map(({ emoji, label, value, color, glow }) => (
+            {statCards.map(({ Icon, label, value, color, glow }) => (
               <div key={label} className="stat-card">
                 <div className="stat-glow" style={{ background: glow }} />
-                <div className="stat-emoji">{emoji}</div>
+                <div className="stat-icon" style={{ color }}><Icon size={22} strokeWidth={1.75} /></div>
                 <div className="stat-val" style={{ fontSize: 26 }}>{value}</div>
                 <div className="stat-lbl">{label}</div>
               </div>
@@ -148,7 +149,7 @@ export default function Income() {
           <div className="card" style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
               <div>
-                <div className="card-title">📊 Earnings Breakdown</div>
+                <div className="card-title"><BarChart3 size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Earnings Breakdown</div>
                 <div className="card-sub">Monthly income — {curYear}</div>
               </div>
               {maxVal > 1 && (
@@ -208,7 +209,7 @@ export default function Income() {
           {/* ── Transaction History ── */}
           <div className="card">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div className="card-title">📋 Transaction History</div>
+              <div className="card-title"><ClipboardList size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Transaction History</div>
               {transactions.length > 0 && (
                 <div style={{
                   fontSize: 12, color: "#7a8fa6",
@@ -222,7 +223,7 @@ export default function Income() {
 
             {transactions.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-emoji">💸</div>
+                <div className="empty-emoji"><IndianRupee size={40} strokeWidth={1.5} color="#bbf7d0" /></div>
                 <div className="empty-title">No transactions yet</div>
                 <div className="empty-sub">Completed orders will appear here as income.</div>
               </div>
@@ -258,7 +259,7 @@ export default function Income() {
                           <td style={{ color: "var(--text2)" }}>{txBuyer}</td>
                           <td>{txQty} {txUnit}</td>
                           <td style={{ color: "var(--text2)", fontSize: 12 }}>{txPay}</td>
-                          <td style={{ color: "#4ade80", fontWeight: 700 }}>{fmt(txAmt)}</td>
+                          <td style={{ color: "#15803d", fontWeight: 700 }}>{fmt(txAmt)}</td>
                           <td>
                             <span className="badge badge-green">✅ Delivered</span>
                           </td>
@@ -274,7 +275,7 @@ export default function Income() {
           {/* ── Items breakdown (if multi-item orders exist) ── */}
           {transactions.some(t => Array.isArray(t.items) && t.items.length > 1) && (
             <div className="card" style={{ marginTop: 20 }}>
-              <div className="card-title" style={{ marginBottom: 16 }}>🌾 Order Item Details</div>
+              <div className="card-title" style={{ marginBottom: 16 }}><Sprout size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#16a34a", verticalAlign: "middle" }} />Order Item Details</div>
               {transactions.map((t, ti) => {
                 const items = Array.isArray(t.items) ? t.items : [];
                 if (items.length === 0) return null;
@@ -299,7 +300,7 @@ export default function Income() {
                             <td>{item.cropName || "—"}</td>
                             <td>{item.quantity} {item.unit || "kg"}</td>
                             <td style={{ color: "var(--text2)" }}>{fmt(item.price)}</td>
-                            <td style={{ color: "#4ade80", fontWeight: 700 }}>{fmt(item.subtotal)}</td>
+                            <td style={{ color: "#15803d", fontWeight: 700 }}>{fmt(item.subtotal)}</td>
                           </tr>
                         ))}
                       </tbody>

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { API_URL } from "../../config/api";
 import { DS } from "../../styles/ds";
+import { Tractor } from "lucide-react";
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`,
@@ -79,7 +80,7 @@ export default function MyFarm() {
         .mf-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
         .mf-field-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; }
         .mf-field-lbl { font-size:10px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
-        .mf-field-val { font-size:15px; font-weight:700; color:#fff; }
+        .mf-field-val { font-size:15px; font-weight:700; color:#0f172a; }
         .mf-field-val.empty { color:var(--text2); font-weight:400; font-style:italic; }
         .mf-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
         .mf-completion { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:12px; margin-bottom:20px; }
@@ -88,7 +89,7 @@ export default function MyFarm() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Farm Management</div>
-          <h1 className="pg-title">🌾 My Farm</h1>
+          <h1 className="pg-title"><Tractor size={22} strokeWidth={2} style={{ marginRight: 8, color: "#16a34a", verticalAlign: "middle" }} />My Farm</h1>
           <p className="pg-sub">Manage your farm profile. This information is used across Smart Farm Planner and other tools.</p>
         </div>
         {!editing && farm && (
@@ -98,7 +99,7 @@ export default function MyFarm() {
         )}
       </div>
 
-      {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#4ade80", fontSize: 14, marginBottom: 16 }}>{success}</div>}
+      {success && <div style={{ padding: "12px 16px", borderRadius: 12, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", color: "#15803d", fontSize: 14, marginBottom: 16 }}>{success}</div>}
       {error   && <div className="alert-error">⚠️ {error}</div>}
 
       {loading ? (
@@ -174,7 +175,7 @@ export default function MyFarm() {
           <div className="mf-hero">
             <div className="mf-farm-icon">🌾</div>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#fff" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a" }}>
                 {farm?.farmName || `${user.name || "My"}'s Farm`}
               </div>
               <div style={{ color: "var(--text2)", marginTop: 4, fontSize: 14 }}>
@@ -213,8 +214,8 @@ export default function MyFarm() {
           </div>
 
           {/* Tip */}
-          <div style={{ marginTop: 24, padding: "16px 20px", background: "rgba(56,189,248,0.06)", border: "1px solid rgba(56,189,248,0.15)", borderRadius: 14, fontSize: 13, color: "#94a3b8", lineHeight: 1.7 }}>
-            💡 <strong style={{ color: "#38bdf8" }}>Tip:</strong> Once your farm details are saved, the Smart Farm Planner can auto-fill your location, soil type, irrigation, and more with a single click — saving you time every session.
+          <div style={{ marginTop: 24, padding: "16px 20px", background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.15)", borderRadius: 14, fontSize: 13, color: "#94a3b8", lineHeight: 1.7 }}>
+            💡 <strong style={{ color: "#0369a1" }}>Tip:</strong> Once your farm details are saved, the Smart Farm Planner can auto-fill your location, soil type, irrigation, and more with a single click — saving you time every session.
           </div>
         </>
       )}

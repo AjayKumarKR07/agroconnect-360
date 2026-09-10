@@ -2,33 +2,34 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useSearchParams } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { DS_ADMIN, fmtINR, relativeTime } from "./adminStyles";
+import { Package } from "lucide-react";
 
 const ORDER_STATUSES = ["all", "pending", "accepted", "processing", "shipped", "delivered", "cancelled", "rejected"];
 
 const STATUS_STYLE = {
-  pending:    { bg: "rgba(251,191,36,0.12)",  color: "#fbbf24" },
-  accepted:   { bg: "rgba(34,197,94,0.12)",   color: "#4ade80" },
-  processing: { bg: "rgba(56,189,248,0.12)",  color: "#38bdf8" },
-  shipped:    { bg: "rgba(167,139,250,0.12)", color: "#a78bfa" },
-  delivered:  { bg: "rgba(34,197,94,0.15)",   color: "#4ade80" },
-  cancelled:  { bg: "rgba(239,68,68,0.12)",   color: "#f87171" },
-  rejected:   { bg: "rgba(239,68,68,0.12)",   color: "#f87171" },
+  pending:    { bg: "rgba(251,191,36,0.12)",  color: "#b45309" },
+  accepted:   { bg: "rgba(34,197,94,0.12)",   color: "#15803d" },
+  processing: { bg: "rgba(56,189,248,0.12)",  color: "#0369a1" },
+  shipped:    { bg: "rgba(167,139,250,0.12)", color: "#7c3aed" },
+  delivered:  { bg: "rgba(34,197,94,0.15)",   color: "#15803d" },
+  cancelled:  { bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
+  rejected:   { bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
 };
 
 // Payment status badges
 const PAY_STATUS_STYLE = {
-  paid:    { label: "✅ Paid",     bg: "rgba(34,197,94,0.12)",   color: "#4ade80" },
-  pending: { label: "⏳ Pending",  bg: "rgba(251,191,36,0.12)",  color: "#fbbf24" },
-  failed:  { label: "❌ Failed",   bg: "rgba(239,68,68,0.12)",   color: "#f87171" },
-  refunded:{ label: "↩️ Refunded", bg: "rgba(167,139,250,0.12)", color: "#a78bfa" },
+  paid:    { label: "✅ Paid",     bg: "rgba(34,197,94,0.12)",   color: "#15803d" },
+  pending: { label: "⏳ Pending",  bg: "rgba(251,191,36,0.12)",  color: "#b45309" },
+  failed:  { label: "❌ Failed",   bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
+  refunded:{ label: "↩️ Refunded", bg: "rgba(167,139,250,0.12)", color: "#7c3aed" },
 };
 
 const PAY_METHOD_LABEL = {
   cod:        { label: "COD",    bg: "rgba(148,163,184,0.1)",   color: "#94a3b8" },
-  razorpay:   { label: "ONLINE", bg: "rgba(14,165,233,0.1)",   color: "#38bdf8" },
-  upi:        { label: "UPI",    bg: "rgba(14,165,233,0.08)",  color: "#38bdf8" },
-  card:       { label: "CARD",   bg: "rgba(167,139,250,0.1)",  color: "#a78bfa" },
-  netbanking: { label: "NBNK",   bg: "rgba(167,139,250,0.08)", color: "#a78bfa" },
+  razorpay:   { label: "ONLINE", bg: "rgba(14,165,233,0.1)",   color: "#0369a1" },
+  upi:        { label: "UPI",    bg: "rgba(14,165,233,0.08)",  color: "#0369a1" },
+  card:       { label: "CARD",   bg: "rgba(167,139,250,0.1)",  color: "#7c3aed" },
+  netbanking: { label: "NBNK",   bg: "rgba(167,139,250,0.08)", color: "#7c3aed" },
 };
 
 function ConfirmModal({ order, newStatus, onConfirm, onCancel, loading }) {
@@ -58,7 +59,7 @@ function ConfirmModal({ order, newStatus, onConfirm, onCancel, loading }) {
               <div style={{ fontSize: 13, color: sc.color, fontWeight: 800, textTransform: "uppercase" }}>{newStatus}</div>
             </div>
           </div>
-          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>
+          <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600 }}>
             ⚠️ This change is shared — the Farmer and Buyer will both see the updated order status immediately.
           </div>
         </div>
@@ -177,7 +178,7 @@ export default function AdminOrders() {
       <div className="pg-head">
         <div>
           <div className="eyebrow">Marketplace Order Management</div>
-          <h1 className="pg-title">📦 All Orders</h1>
+          <h1 className="pg-title"><Package size={22} strokeWidth={2} style={{ marginRight: 8, color: "#4f46e5", verticalAlign: "middle" }} />All Orders</h1>
           <p className="pg-sub">View and manage every order on the platform. Status changes are recorded in the audit log.</p>
         </div>
         <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#818cf8" }}>
@@ -268,13 +269,13 @@ export default function AdminOrders() {
                       <tr style={{ cursor: "pointer" }} onClick={() => setExpandedId(expandedId === o._id ? null : o._id)}>
                         <td style={{ fontFamily: "monospace", fontSize: 12, color: "#818cf8" }}>…{String(o._id).slice(-8)}</td>
                         <td>
-                          <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{o.buyer?.name || "—"}</div>
+                          <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13 }}>{o.buyer?.name || "—"}</div>
                           <div style={{ fontSize: 11, color: "#a5b4fc" }}>{o.buyer?.email}</div>
                         </td>
                         <td style={{ fontSize: 13, color: "#a5b4fc" }}>
                           {o.items?.map((it) => it.cropName).join(", ") || "—"}
                         </td>
-                        <td style={{ fontWeight: 800, color: "#4ade80", fontFamily: "'Space Grotesk',sans-serif" }}>
+                        <td style={{ fontWeight: 800, color: "#15803d", fontFamily: "'Space Grotesk',sans-serif" }}>
                           {fmtINR(o.totalAmount)}
                         </td>
                         <td style={{ fontSize: 12 }}>
