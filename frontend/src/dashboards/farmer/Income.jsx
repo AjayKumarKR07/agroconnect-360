@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "../../config/api";
 import { IndianRupee, CalendarDays, CheckCircle2, Scale, BarChart3, ClipboardList, Sprout, AlertTriangle } from "lucide-react";
+import { DS } from "../../styles/ds";
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const fmt  = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;

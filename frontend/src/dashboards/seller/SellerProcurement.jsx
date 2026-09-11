@@ -180,7 +180,7 @@ export default function SellerProcurement() {
           <p className="pg-sub">Browse and buy crops directly from farmers for resale.</p>
         </div>
         <div style={{ fontSize: 13, color: "var(--text2)", textAlign: "right" }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#7c3aed" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>
             {loading ? "—" : filtered.length}
           </div>
           listings available
@@ -275,7 +275,7 @@ export default function SellerProcurement() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
                   <div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#15803d" }}>₹{Number(c.price).toLocaleString("en-IN")}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>₹{Number(c.price).toLocaleString("en-IN")}</div>
                     <div style={{ fontSize: 11, color: "var(--text2)" }}>per {c.unit} · {c.quantity} {c.unit} avail.</div>
                   </div>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, padding: "3px 10px", borderRadius: 8, background: c.status === "ready" ? "rgba(59,130,246,0.1)" : "rgba(34,197,94,0.1)", color: c.status === "ready" ? "#2563eb" : "#15803d", fontWeight: 700 }}>
@@ -404,7 +404,7 @@ export default function SellerProcurement() {
                       fontFamily: "'Space Grotesk',sans-serif",
                       fontSize: 22,
                       fontWeight: 800,
-                      color: "#15803d",
+                      color: "#0f172a",
                       wordBreak: "break-word",
                       overflowWrap: "anywhere",
                       marginTop: 4,

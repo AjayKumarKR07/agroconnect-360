@@ -117,7 +117,7 @@ export default function ExportColdChain() {
           </p>
         </div>
         {!loading && reefers.length > 0 && (
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#b45309" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
             {reefers.length} Active Reefe{reefers.length !== 1 ? "rs" : "r"} Monitored
           </div>
         )}
@@ -207,7 +207,7 @@ export default function ExportColdChain() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16, flexWrap: "wrap", gap: 12 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#b45309", display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
                     <Snowflake size={18} color="#0284c7" /> Reefer Unit: {selected.containerNo}
                   </div>
                   <div style={{ fontSize: 14, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>
@@ -234,7 +234,7 @@ export default function ExportColdChain() {
                     <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 5 }}>
                       <Icon size={12} color={color} /> {label}
                     </div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color, marginTop: 4 }}>{val}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginTop: 4 }}>{val}</div>
                     <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 2 }}>{sub}</div>
                   </div>
                 ))}
@@ -257,7 +257,7 @@ export default function ExportColdChain() {
                   {selectedSensors.log.map((entry, idx) => (
                     <div key={idx} style={{ flex: 1, minWidth: 72, padding: "10px 8px", borderRadius: 10, background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)", textAlign: "center" }}>
                       <div style={{ fontSize: 10, color: "#a38a5d" }}>{entry.time}</div>
-                      <div style={{ fontSize: 13, fontWeight: 800, color: "#f59e0b", marginTop: 2 }}>+{entry.temp}°C</div>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginTop: 2 }}>+{entry.temp}°C</div>
                     </div>
                   ))}
                 </div>

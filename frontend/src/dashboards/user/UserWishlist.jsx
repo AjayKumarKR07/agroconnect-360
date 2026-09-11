@@ -134,7 +134,7 @@ export default function UserWishlist() {
                     <MapPin size={12} /> {c.location} · {c.quantity} {c.unit} avail.
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>₹{c.price}<span style={{ fontSize: 11, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span></div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>₹{c.price}<span style={{ fontSize: 11, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span></div>
                     <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
                       <Sprout size={11} /> Fresh
                     </span>

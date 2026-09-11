@@ -318,7 +318,7 @@ export default function ExportContracts() {
 
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Contract Value</div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#15803d" }}>{fmtUsd(c.contractValueUsd)}</div>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a" }}>{fmtUsd(c.contractValueUsd)}</div>
                     <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
                       Added {new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </div>

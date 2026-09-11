@@ -127,7 +127,7 @@ export default function SellerLogistics() {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#7c3aed" }}>{counts.in_transit}</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a" }}>{counts.in_transit}</div>
             <div style={{ fontSize: 11, color: "var(--text2)" }}>In Transit</div>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function SellerLogistics() {
               <IconComponent size={20} color={color} />
             </div>
             <div style={{ fontSize: 10, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 24, fontWeight: 800, color }}>{val}</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 24, fontWeight: 800, color: "#0f172a" }}>{val}</div>
           </div>
         ))}
       </div>

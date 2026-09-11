@@ -276,7 +276,7 @@ function QuickViewModal({ item, onClose, onAdd }) {
 
         <div style={{ fontSize: 13, color: "#b0c4d8", lineHeight: 1.6, marginBottom: 16 }}>{item.desc}</div>
 
-        <div style={{ fontSize: 24, fontWeight: 800, color: "#15803d", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 16 }}>
+        <div style={{ fontSize: 24, fontWeight: 800, color: "#0f172a", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 16 }}>
           ₹{item.price.toLocaleString("en-IN")}
           <span style={{ fontSize: 13, color: "#7a8fa6", fontWeight: 400, marginLeft: 6 }}>per {item.unit}</span>
         </div>
@@ -672,7 +672,7 @@ export default function BuyInputs() {
             {cart.length > 0 && (
               <div style={{ textAlign: "right" }}>
                 <div style={{ fontSize: 13, color: "var(--text2)", display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}><ShoppingCart size={14} /> {totalItems} items</div>
-                <div style={{ fontWeight: 800, color: "#15803d", fontSize: 18 }}>₹{totalAmount.toLocaleString("en-IN")}</div>
+                <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 18 }}>₹{totalAmount.toLocaleString("en-IN")}</div>
               </div>
             )}
           </div>

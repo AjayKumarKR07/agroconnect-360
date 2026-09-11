@@ -171,7 +171,7 @@ export default function SellerOrders() {
             <RefreshCw size={14} className={refreshing ? "spin" : ""} />
             {refreshing ? "Refreshing…" : "Refresh"}
           </button>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#7c3aed" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
             {loading ? "—" : orders.length} total
           </div>
         </div>

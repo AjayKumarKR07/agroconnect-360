@@ -676,7 +676,7 @@ export default function FarmerDashboard() {
               {prices.map(p => (
                 <div key={p.name} style={{ padding: "12px 14px", borderRadius: 12, background: "#f0fdf4", border: "1px solid rgba(34,197,94,0.12)" }}>
                   <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#16a34a" }}>
+                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
                     ₹{Number(p.modalPrice).toLocaleString("en-IN")}
                   </div>
                   <div style={{ fontSize: 10, color: "var(--text2)", marginTop: 3 }}>

@@ -24,6 +24,8 @@ const SHIPMENT_STEP_LABEL = {
   cancelled:        { label: "Cancelled",         Icon: XCircle,       iconColor: "#dc2626", step: -1 },
 };
 
+const STEPS = Object.values(SHIPMENT_STEP_LABEL).filter((s) => s.step >= 0).sort((a, b) => a.step - b.step);
+
 function ConfirmModal({ message, detail, warning, onConfirm, onCancel, loading }) {
   return (
     <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="exports-modal-title">
@@ -63,6 +65,7 @@ export default function AdminExports() {
   const [tab, setTab] = useState(searchParams.get("tab") === "shipments" ? "shipments" : "rfqs");
   const [rfqs, setRfqs] = useState([]);
   const [shipments, setShipments] = useState([]);
+  const [selectedShipment, setSelectedShipment] = useState(null);
   const [rfqLoading, setRfqLoading] = useState(true);
   const [shipmentLoading, setShipmentLoading] = useState(true);
   const [rfqError, setRfqError] = useState(null);
@@ -388,15 +391,19 @@ export default function AdminExports() {
                           className="field-input"
                           style={{ padding: "5px 8px", fontSize: 12, width: "auto" }}
                           value={s.status}
-                          disabled={updatingShipmentId === s._id}
+                          disabled={updating === s._id}
                           onClick={(e) => e.stopPropagation()}
                           onChange={(e) => {
                             e.stopPropagation();
-                            setConfirmModal({
-                              title: `Update Shipment Status to "${e.target.value}"?`,
-                              body: `This will advance shipment ${s.shipmentId || s._id} and notify the exporter.`,
-                              warning: e.target.value === "cancelled" ? "Cancelling this shipment is permanent." : null,
-                              onConfirm: () => handleUpdateShipment(s._id, e.target.value),
+                            const newStatus = e.target.value;
+                            setConfirm({
+                              message: `Update Shipment Status to "${newStatus.replace(/_/g, " ")}"?`,
+                              detail: [
+                                { label: "Shipment ID", value: s.shipmentId || s._id },
+                                { label: "New Status", value: newStatus.replace(/_/g, " ") },
+                              ],
+                              warning: newStatus === "cancelled" ? "Cancelling this shipment is permanent." : null,
+                              onConfirm: () => updateShipmentStatus(s._id, newStatus),
                             });
                           }}
                         >

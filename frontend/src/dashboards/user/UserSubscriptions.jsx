@@ -103,7 +103,7 @@ export default function UserSubscriptions() {
           </h1>
           <p className="pg-sub">Subscribe to recurring fresh produce boxes straight from verified local farmers.</p>
         </div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>
+        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
           {activeSubs.length} Active Subscription{activeSubs.length !== 1 ? "s" : ""}
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function UserSubscriptions() {
                 <div style={{ display: "flex", justifyContent: "space-between", background: "#f1f5f9", padding: "10px 14px", borderRadius: 12, marginBottom: 14, fontSize: 13 }}>
                   <div>
                     <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase" }}>Price & Frequency</div>
-                    <div style={{ color: "#0ea5e9", fontWeight: 800 }}>₹{s.price} / {s.freq || s.cycle}</div>
+                    <div style={{ color: "#0f172a", fontWeight: 800 }}>₹{s.price} / {s.freq || s.cycle}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 11, color: "var(--text2)", textTransform: "uppercase" }}>Next Delivery</div>
@@ -178,7 +178,7 @@ export default function UserSubscriptions() {
               <div className="card-title" style={{ marginBottom: 4 }}>{b.name}</div>
               <div style={{ fontSize: 12, color: "var(--text2)", marginBottom: 14 }}><Wheat size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />Harvested by {b.farmer}</div>
 
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: "#0ea5e9", marginBottom: 16 }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: "#0f172a", marginBottom: 16 }}>
                 ₹{b.price} <span style={{ fontSize: 13, color: "var(--text2)", fontWeight: 500 }}>/ {b.cycle.toLowerCase()}</span>
               </div>
 

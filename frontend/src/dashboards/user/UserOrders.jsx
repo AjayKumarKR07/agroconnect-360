@@ -146,7 +146,7 @@ export default function UserOrders() {
           <p className="pg-sub">Track all your purchases and delivery status.</p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0ea5e9" }}>{orders.length} total</div>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{orders.length} total</div>
           <button className="tab-btn" onClick={load} style={{ fontSize: 12, display: "inline-flex", alignItems: "center", gap: 4 }}><RefreshCw size={12} strokeWidth={2} /> Refresh</button>
         </div>
       </div>
@@ -208,7 +208,7 @@ export default function UserOrders() {
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0ea5e9" }}>₹{Number(o.totalAmount || 0).toLocaleString("en-IN")}</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>₹{Number(o.totalAmount || 0).toLocaleString("en-IN")}</div>
                 <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>{isExp ? "▲ Hide" : "▼ Details"}</div>
               </div>
             </div>

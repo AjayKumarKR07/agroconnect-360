@@ -71,6 +71,19 @@ const fmtDate = (d) =>
    clipped by the layout's overflow, transform, or z-index context.
 ───────────────────────────────────────────────────────────────────── */
 function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
+  // Escape key + body scroll-lock
+  useEffect(() => {
+    if (!order) return;
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [order, onClose]);
+
   if (!order) return null;
 
   const meta       = STATUS_META[order.status] || STATUS_META.pending;
@@ -95,18 +108,6 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
 
   // items[] from the API — may contain multiple crops from the same order
   const items = Array.isArray(order.items) ? order.items : [];
-
-  // Escape key + body scroll-lock
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
 
   const handleBackdrop = (e) => {
     if (e.target === e.currentTarget) onClose();
@@ -764,7 +765,7 @@ export default function Orders() {
 
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
                     <span className={`badge ${meta.badge}`}>{meta.Icon && <meta.Icon size={11} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 3 }} />}{meta.label}</span>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: "#15803d" }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
                       ₹{Number(total).toLocaleString("en-IN")}
                     </div>
                     <div style={{ fontSize: 13, color: "var(--text2)" }}>

@@ -1184,7 +1184,7 @@ export default function SmartFarmPlanner() {
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: "#15803d", fontFamily: "'Space Grotesk',sans-serif" }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: "#0f172a", fontFamily: "'Space Grotesk',sans-serif" }}>
                     ₹{fmt(plan.bestMarket.price)}/quintal
                   </div>
                   {plan.bestMarket.minPrice > 0 && (

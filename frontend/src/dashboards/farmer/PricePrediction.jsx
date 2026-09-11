@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Bot, BarChart3, TrendingUp, TrendingDown, ArrowRight, AlertTriangle, Clock, Sparkles, Cpu } from "lucide-react";
+import { DS } from "../../styles/ds";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -254,7 +255,7 @@ export default function PricePrediction() {
 
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Predicted Price ({forecastDays} Days)</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#15803d", marginTop: 4 }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#0f172a", marginTop: 4 }}>
                 ₹{Number(prediction.forecast?.[prediction.forecast.length - 1]?.predictedPrice || 0).toLocaleString("en-IN")}
                 <span style={{ fontSize: 13, color: "var(--text2)", fontWeight: 500 }}> / quintal</span>
               </div>
@@ -273,7 +274,7 @@ export default function PricePrediction() {
 
             <div className="card">
               <div style={{ fontSize: 12, color: "var(--text2)", fontWeight: 700, textTransform: "uppercase" }}>Model Accuracy</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#0369a1", marginTop: 4 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#0f172a", marginTop: 4 }}>
                 {prediction.model?.algorithm || "Random Forest"}
               </div>
               <div style={{ fontSize: 12, color: "var(--text2)", marginTop: 4 }}>

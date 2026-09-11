@@ -145,17 +145,18 @@ function MiniBarChart({ monthly }) {
 const PIPELINE_STEPS = ["pending", "accepted", "shipped", "delivered"];
 
 function OrderDetailsModal({ order, onClose }) {
+  useEffect(() => {
+    if (!order) return;
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [order, onClose]);
+
   if (!order) return null;
   const status = order.status || "pending";
   const stColor = STATUS_COLOR[status] || "#94a3b8";
   const isTerminal = ["rejected", "cancelled"].includes(status);
   const curStep = PIPELINE_STEPS.indexOf(status);
-
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
 
   return (
     <div

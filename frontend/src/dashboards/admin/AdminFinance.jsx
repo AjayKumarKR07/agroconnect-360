@@ -88,7 +88,7 @@ export default function AdminFinance() {
               <div key={label} className="card">
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 10, background: color + "18", color, marginBottom: 8 }}><Icon size={20} strokeWidth={1.75} /></div>
                 <div style={{ fontSize: 11, color: "#a5b4fc", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>{label}</div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color }}>{val}</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{val}</div>
                 <div style={{ fontSize: 12, color: "#a5b4fc", marginTop: 4 }}>{sub}</div>
               </div>
             ))}
@@ -113,7 +113,7 @@ export default function AdminFinance() {
                   const pct = maxRevenue > 0 ? (m.revenue / maxRevenue) * 100 : 0;
                   return (
                     <div key={`${m._id.year}-${m._id.month}`} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                      <div style={{ fontSize: 11, color: "#15803d", fontWeight: 700 }}>{fmtINR(m.revenue)}</div>
+                      <div style={{ fontSize: 11, color: "#64748b", fontWeight: 700 }}>{fmtINR(m.revenue)}</div>
                       <div
                         title={`${m.count} orders`}
                         style={{ width: "100%", maxWidth: 60, background: "linear-gradient(180deg,#4f46e5,#6366f1)", borderRadius: "6px 6px 0 0", height: `${Math.max(pct, 4)}%`, minHeight: 4, transition: "height 0.5s" }}
@@ -137,7 +137,7 @@ export default function AdminFinance() {
                     <tr key={s._id}>
                       <td><span style={{ padding: "3px 10px", borderRadius: 8, background: "rgba(99,102,241,0.1)", color: "#c7d2fe", fontWeight: 700, fontSize: 12 }}>{s._id}</span></td>
                       <td style={{ color: "#0f172a", fontWeight: 700 }}>{s.count}</td>
-                      <td style={{ color: "#818cf8", fontWeight: 800, fontFamily: "'Space Grotesk',sans-serif" }}>{fmtINR(s.total)}</td>
+                      <td style={{ color: "#0f172a", fontWeight: 800, fontFamily: "'Space Grotesk',sans-serif" }}>{fmtINR(s.total)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -163,10 +163,10 @@ export default function AdminFinance() {
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#15803d" }}>
+                      <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                         {fmtINR(o.totalAmount)}
                       </div>
-                      <div style={{ fontSize: 11, color: "#15803d", marginTop: 2 }}>
+                      <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
                         Est. fee: {fmtINR(o.totalAmount * 0.025)}
                       </div>
                     </div>

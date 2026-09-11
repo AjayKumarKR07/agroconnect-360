@@ -395,7 +395,7 @@ export default function ExportLogistics() {
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16 }}>
                 <div>
-                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#b45309", display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
                     <Package size={20} color="#d97706" /> {activeShipment.containerNo}
                   </div>
                   <div style={{ fontSize: 15, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>{activeShipment.cargo} {activeShipment.quantityTons ? `(${activeShipment.quantityTons} MT)` : ""}</div>
@@ -405,7 +405,7 @@ export default function ExportLogistics() {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Estimated Arrival</div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#15803d" }}>{fmtDate(activeShipment.eta)}</div>
+                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{fmtDate(activeShipment.eta)}</div>
                   <div style={{ fontSize: 11, color: "#a38a5d" }}>ETD: {fmtDate(activeShipment.etd)}</div>
                 </div>
               </div>

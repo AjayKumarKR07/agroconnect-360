@@ -277,7 +277,7 @@ export default function ExportSourcing() {
           <h1 className="pg-title"><Wheat size={22} strokeWidth={2} style={{ marginRight: 8, color: "#d97706", verticalAlign: "middle" }} />Available Farmer Produce</h1>
           <p className="pg-sub">Browse export-ready produce listed directly by Indian farmers. Express interest to connect.</p>
         </div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#b45309" }}>
+        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
           {listings.length} Listing{listings.length !== 1 ? "s" : ""}
         </div>
       </div>
@@ -372,7 +372,7 @@ export default function ExportSourcing() {
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Price</div>
-                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#f59e0b" }}>
+                    <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                       {l.expectedExportPrice ? `${fmt(l.expectedExportPrice)}` : "Negotiate"}
                       {l.expectedExportPrice && <span style={{ fontSize: 11, color: "#a38a5d" }}>/{l.exportUnit}</span>}
                     </div>

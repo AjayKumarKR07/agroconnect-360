@@ -189,7 +189,7 @@ export default function ExportCalculator() {
           <div style={{ fontSize: 11, color: "#a38a5d", marginBottom: 4 }}>
             {fxLoading ? "Fetching FX…" : `Live FX · ${fxUpdated ? fxUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}`}
           </div>
-          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#b45309" }}>
+          <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
             1 USD = ₹{usdInr.toFixed(2)}
           </div>
           <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 2 }}>⟳ Refresh</button>
@@ -265,7 +265,7 @@ export default function ExportCalculator() {
           {/* ── Price per ton summary ────────────────────────────── */}
           <div className="card" style={{ padding: "14px 18px" }}>
             <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase", marginBottom: 4 }}>Landed Cost per MT</div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#f59e0b" }}>{fmtUsd(pricePerTonUsd)}</div>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>{fmtUsd(pricePerTonUsd)}</div>
             <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>at destination port in {destCfg.flag} {dest}</div>
           </div>
         </div>

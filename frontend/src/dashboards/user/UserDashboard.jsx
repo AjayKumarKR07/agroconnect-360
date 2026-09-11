@@ -266,7 +266,7 @@ export default function UserDashboard() {
                         <MapPin size={11} style={{ flexShrink: 0 }} /> {c.location} · {c.quantity} {c.unit} avail.
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0ea5e9" }}>
+                        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                           ₹{c.price}<span style={{ fontSize: 10, color: "var(--text2)", fontWeight: 400 }}>/{c.unit}</span>
                         </div>
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 10, padding: "2px 7px", borderRadius: 5, background: "rgba(34,197,94,0.1)", color: "#15803d", fontWeight: 700 }}><Sprout size={10} /> FRESH</span>
