@@ -170,7 +170,7 @@ export default function AdminDashboard() {
         levelColor: "#f87171",
         icon: <AlertTriangle size={18} strokeWidth={2} />,
         title: `${kpis.openDisputes} Open Dispute${kpis.openDisputes > 1 ? "s" : ""}`,
-        desc: "Mediation required between buyer/seller or farmer.",
+        desc: "Mediation required between buyer or farmer.",
         to: "/admin/disputes?status=open",
         badge: "Requires Resolution",
       });
@@ -801,7 +801,6 @@ export default function AdminDashboard() {
                 {[
                   { role: "farmer",   label: "Farmers",   count: userRoles.farmer || 0,   color: ROLE_COLOR.farmer,   icon: <Wheat          size={18} strokeWidth={1.75} /> },
                   { role: "user",     label: "Buyers",    count: userRoles.user || 0,     color: ROLE_COLOR.user,     icon: <ShoppingCart    size={18} strokeWidth={1.75} /> },
-                  { role: "seller",   label: "Sellers",   count: userRoles.seller || 0,   color: ROLE_COLOR.seller,   icon: <Store           size={18} strokeWidth={1.75} /> },
                   { role: "exporter", label: "Exporters", count: userRoles.exporter || 0, color: ROLE_COLOR.exporter, icon: <Globe2          size={18} strokeWidth={1.75} /> },
                   { role: "admin",    label: "Admins",    count: userRoles.admin || 0,    color: ROLE_COLOR.admin,    icon: <Shield          size={18} strokeWidth={1.75} /> },
                 ].map((r) => (
@@ -840,7 +839,6 @@ export default function AdminDashboard() {
                 {[
                   { role: "farmer", count: userRoles.farmer || 0, color: ROLE_COLOR.farmer },
                   { role: "user", count: userRoles.user || 0, color: ROLE_COLOR.user },
-                  { role: "seller", count: userRoles.seller || 0, color: ROLE_COLOR.seller },
                   { role: "exporter", count: userRoles.exporter || 0, color: ROLE_COLOR.exporter },
                   { role: "admin", count: userRoles.admin || 0, color: ROLE_COLOR.admin },
                 ].map((r) => (

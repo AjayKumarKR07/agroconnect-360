@@ -424,7 +424,7 @@ export default function AdminProfile() {
             <div className="card" style={{ borderColor: "rgba(99,102,241,0.2)" }}>
               <div className="card-title" style={{ marginBottom: 10, color: "#818cf8" }}><RefreshCw size={15} strokeWidth={1.75} style={{ marginRight: 6, color: "#818cf8", verticalAlign: "middle" }} />Switch Role</div>
               <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14, lineHeight: 1.6 }}>
-                Need to view AgroConnect 360 as a farmer, buyer, seller, or exporter?
+                Need to view AgroConnect 360 as a farmer, buyer, or exporter?
               </p>
               <button
                 className="btn-ghost"

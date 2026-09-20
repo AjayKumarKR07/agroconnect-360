@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../config/api";
-import { Wheat, ShoppingCart, Store, Ship, Settings, Sprout, AlertTriangle, Check } from "lucide-react";
+import { Wheat, ShoppingCart, Ship, Settings, Sprout, AlertTriangle, Check } from "lucide-react";
 
 const ROLES = [
   {
@@ -11,7 +11,7 @@ const ROLES = [
     glow: "rgba(22,163,74,0.12)",
     border: "#86efac",
     label: "Farmer",
-    desc: "Sell crops directly to buyers, track income, get AI disease diagnosis and weather forecasts.",
+    desc: "Produce and sell agricultural products directly to buyers and exporters with AI-powered tools.",
     features: ["List & Sell Crops", "AI Crop Diagnosis", "Weather Advisory", "Income Tracking"],
   },
   {
@@ -21,18 +21,8 @@ const ROLES = [
     glow: "rgba(2,132,199,0.12)",
     border: "#7dd3fc",
     label: "Consumer / Buyer",
-    desc: "Browse and buy fresh produce directly from local farmers at market prices.",
+    desc: "Purchase fresh agricultural products directly from local farmers at transparent market prices.",
     features: ["Browse Fresh Produce", "Direct from Farmers", "Order Tracking", "Market Prices"],
-  },
-  {
-    id: "seller",
-    Icon: Store,
-    color: "#7c3aed",
-    glow: "rgba(124,58,237,0.12)",
-    border: "#c4b5fd",
-    label: "Seller / Agent",
-    desc: "Operate as a local trader, APMC agent or aggregator between farmers and buyers.",
-    features: ["Bulk Trading", "APMC Mandi Prices", "Manage Inventory", "Price Analytics"],
   },
   {
     id: "exporter",
@@ -41,7 +31,7 @@ const ROLES = [
     glow: "rgba(217,119,6,0.12)",
     border: "#fde68a",
     label: "Exporter",
-    desc: "Export Indian agricultural commodities internationally with compliance tools.",
+    desc: "Handle international agricultural trade — source from farmers, manage compliance and logistics.",
     features: ["Export Management", "Global Market Prices", "Compliance Tools", "Bulk Orders"],
   },
   {
@@ -51,7 +41,7 @@ const ROLES = [
     glow: "rgba(220,38,38,0.12)",
     border: "#fca5a5",
     label: "Admin",
-    desc: "Manage the AgroConnect 360 platform — users, listings, orders and system settings.",
+    desc: "Manage the complete AgroConnect 360 platform — users, listings, orders and system settings.",
     features: ["User Management", "Platform Analytics", "Moderate Listings", "System Settings"],
   },
 ];
@@ -91,7 +81,6 @@ export default function RoleSelection() {
   const goToDashboard = (role) => {
     switch (role) {
       case "farmer":   navigate("/farmer/dashboard",   { replace: true }); break;
-      case "seller":   navigate("/seller/dashboard",   { replace: true }); break;
       case "exporter": navigate("/exporter/dashboard", { replace: true }); break;
       case "admin":    navigate("/admin/dashboard",    { replace: true }); break;
       case "user":     navigate("/user/dashboard",     { replace: true }); break;

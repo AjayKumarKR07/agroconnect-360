@@ -3,7 +3,7 @@ import { API_URL } from "../../config/api";
 import { DS_ADMIN, relativeTime } from "./adminStyles";
 import { Megaphone, Send, Pencil, ClipboardList, RefreshCw, AlertTriangle, Lightbulb, Globe, User, Target, Mail } from "lucide-react";
 
-const ROLE_OPTIONS = ["all", "farmer", "seller", "user", "exporter"];
+const ROLE_OPTIONS = ["all", "farmer", "user", "exporter"];
 
 function ConfirmBroadcast({ title, message, targetRole, count, countLoading, onConfirm, onCancel, sending }) {
   return (

@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 // Role → home dashboard mapping
 const ROLE_HOME = {
   farmer:   "/farmer/dashboard",
-  seller:   "/seller/dashboard",
   exporter: "/exporter/dashboard",
   admin:    "/admin/dashboard",
   user:     "/user/dashboard",

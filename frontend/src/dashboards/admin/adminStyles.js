@@ -119,7 +119,6 @@ export const DS_ADMIN = `
 // Role color map (consistent across all admin components)
 export const ROLE_COLOR = {
   farmer: "#16a34a",
-  seller: "#7c3aed",
   user: "#0284c7",
   exporter: "#d97706",
   admin: "#dc2626",

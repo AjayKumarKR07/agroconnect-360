@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../config/api";
-import { Wheat, ShoppingCart, Store, Ship, Sprout, AlertTriangle, ArrowRight } from "lucide-react";
+import { Wheat, ShoppingCart, Ship, Sprout, AlertTriangle, ArrowRight } from "lucide-react";
 
 const ROLES = [
-  { id: "farmer",   Icon: Wheat,        color: "#16a34a", label: "Farmer",    desc: "Sell your crops directly to buyers and exporters" },
-  { id: "user",     Icon: ShoppingCart, color: "#0284c7", label: "Consumer",  desc: "Buy fresh produce directly from local farmers" },
-  { id: "seller",   Icon: Store,        color: "#7c3aed", label: "Seller",    desc: "Operate as a local trader or APMC agent" },
-  { id: "exporter", Icon: Ship,         color: "#d97706", label: "Exporter",  desc: "Export agricultural commodities internationally" },
+  { id: "farmer",   Icon: Wheat,        color: "#16a34a", label: "Farmer",          desc: "Produce and sell agricultural products directly to buyers" },
+  { id: "user",     Icon: ShoppingCart, color: "#0284c7", label: "Consumer / Buyer", desc: "Purchase fresh produce directly from local farmers" },
+  { id: "exporter", Icon: Ship,         color: "#d97706", label: "Exporter",         desc: "Handle international agricultural trade and exports" },
 ];
 
 export default function CompleteProfile() {
@@ -43,8 +42,8 @@ export default function CompleteProfile() {
       localStorage.setItem("agroconnect_user", JSON.stringify(d.user));
       switch (d.user.role) {
         case "farmer":   navigate("/farmer/dashboard",   { replace: true }); break;
-        case "seller":   navigate("/seller/dashboard",   { replace: true }); break;
         case "exporter": navigate("/exporter/dashboard", { replace: true }); break;
+        case "admin":    navigate("/admin/dashboard",    { replace: true }); break;
         case "user":     navigate("/user/dashboard",     { replace: true }); break;
         default:         navigate("/",                   { replace: true });
       }

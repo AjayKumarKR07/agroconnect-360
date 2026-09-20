@@ -110,12 +110,12 @@ export default function Home() {
       perks: ["List & sell produce directly", "Instant AI disease detection", "Daily APMC mandi alerts", "Hyperlocal weather advisory"],
     },
     {
-      Icon: Store,
-      title: "Sellers & Traders",
-      badge: "Commerce",
-      accent: "#7c3aed",
-      desc: "Source fresh commodities directly from farmers with transparent inventory and price tracking.",
-      perks: ["Direct farm-gate sourcing", "Bulk procurement management", "Live inventory tracking", "Real-time mandi analytics"],
+      Icon: ShoppingBag,
+      title: "Buyers & Consumers",
+      badge: "Direct Farm",
+      accent: "#0284c7",
+      desc: "Enjoy fresh, pesticide-checked farm produce with zero middlemen markups and transparent sourcing.",
+      perks: ["Direct from verified farms", "Fresh harvest notifications", "Fair, transparent pricing", "Order status tracking"],
     },
     {
       Icon: Ship,
@@ -126,18 +126,18 @@ export default function Home() {
       perks: ["Bulk export sourcing", "Quality certification tracking", "Global price comparisons", "Shipment coordination"],
     },
     {
-      Icon: ShoppingBag,
-      title: "Buyers & Consumers",
-      badge: "Direct Farm",
-      accent: "#0284c7",
-      desc: "Enjoy fresh, pesticide-checked farm produce with zero middlemen markups and transparent sourcing.",
-      perks: ["Direct from verified farms", "Fresh harvest notifications", "Fair, transparent pricing", "Order status tracking"],
+      Icon: Store,
+      title: "Platform Admin",
+      badge: "Operations",
+      accent: "#dc2626",
+      desc: "Manage the complete AgroConnect 360 platform — users, listings, orders and system settings.",
+      perks: ["User management", "Platform analytics", "Moderate listings", "System settings"],
     },
   ];
 
   const steps = [
     { n: "01", Icon: Smartphone, title: "Quick OTP Login", desc: "Sign in with your email in 30 seconds. No passwords required." },
-    { n: "02", Icon: Sprout,     title: "Select Your Role", desc: "Choose Farmer, Seller, Exporter, or Buyer to unlock your tailored workspace." },
+    { n: "02", Icon: Sprout,     title: "Select Your Role", desc: "Choose Farmer, Exporter, Buyer, or Admin to unlock your tailored workspace." },
     { n: "03", Icon: Zap,        title: "Access Smart Tools", desc: "Check live mandi rates, scan diseased crops, or forecast commodity prices." },
     { n: "04", Icon: TrendingUp, title: "Grow Your Business", desc: "Make data-backed decisions, eliminate middlemen, and increase income." },
   ];
@@ -942,7 +942,7 @@ export default function Home() {
             </h1>
 
             <p className="hero-desc">
-              AgroConnect 360 equips farmers, sellers, exporters, and buyers with live APMC mandi prices, AI crop disease detection, and ML price predictions — all in one clean, reliable platform.
+              AgroConnect 360 equips farmers, exporters, buyers, and admins with live APMC mandi prices, AI crop disease detection, and ML price predictions — all in one clean, reliable platform.
             </p>
 
             <div className="hero-actions">

@@ -29,7 +29,6 @@ const completeProfile = async (req, res) => {
     const allowedRoles = [
       "farmer",
       "user",
-      "seller",
       "exporter",
       "admin",
     ];
@@ -193,7 +192,7 @@ const updateFarmDetails = async (req, res) => {
   }
 }
 
-// UPDATE GENERAL PROFILE (Admin, User, Seller, Exporter, Farmer)
+// UPDATE GENERAL PROFILE (Admin, User, Exporter, Farmer)
 const updateProfile = async (req, res) => {
   try {
     const { name, phone, location, district, state } = req.body;

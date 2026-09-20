@@ -279,7 +279,6 @@ const getAdminDashboardOverview = async (req, res) => {
     const userRoles = {
       farmer: 0,
       user: 0, // buyer
-      seller: 0,
       exporter: 0,
       admin: 0,
     };

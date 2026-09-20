@@ -42,19 +42,6 @@ import FarmerNotifications from "./dashboards/farmer/FarmerNotifications";
 import CropHealthHistory from "./dashboards/farmer/CropHealthHistory";
 import MarketComparison from "./dashboards/farmer/MarketComparison";
 
-// Seller
-import SellerLayout from "./layouts/SellerLayout";
-import SellerDashboard from "./dashboards/seller/SellerDashboard";
-import SellerProducts from "./dashboards/seller/SellerProducts";
-import AddSellerProduct from "./dashboards/seller/AddSellerProduct";
-import SellerOrders from "./dashboards/seller/SellerOrders";
-import SellerRevenue from "./dashboards/seller/SellerRevenue";
-import EditSellerProduct from "./dashboards/seller/EditSellerProduct";
-import SellerProcurement from "./dashboards/seller/SellerProcurement";
-import SellerAnalytics from "./dashboards/seller/SellerAnalytics";
-import SellerLogistics from "./dashboards/seller/SellerLogistics";
-import SellerAIAssistant from "./dashboards/seller/SellerAIAssistant";
-import SellerProfile from "./dashboards/seller/SellerProfile";
 
 // User / Buyer
 import UserLayout from "./layouts/UserLayout";
@@ -233,32 +220,6 @@ export default function App() {
 </Route>
 
 
-        {/* =========================
-            SELLER ROUTES
-        ========================== */}
-        <Route
-          path="/seller"
-          element={
-            <ProtectedRoute allowedRole="seller">
-              <SellerLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard"     element={<SellerDashboard />} />
-
-          <Route path="products"            element={<SellerProducts />} />
-          <Route path="products/add"        element={<AddSellerProduct />} />
-          <Route path="products/:id/edit"   element={<EditSellerProduct />} />
-          <Route path="orders"            element={<SellerOrders />} />
-          <Route path="procurement"        element={<SellerProcurement />} />
-          <Route path="revenue"            element={<SellerRevenue />} />
-          <Route path="analytics"          element={<SellerAnalytics />} />
-          <Route path="logistics"          element={<SellerLogistics />} />
-          <Route path="market-trends" element={<MarketTrends />} />
-          <Route path="assistant"     element={<SellerAIAssistant />} />
-          <Route path="profile"       element={<SellerProfile />} />
-        </Route>
 
         {/* =========================
             USER / BUYER ROUTES

@@ -7,7 +7,6 @@ import {
   Leaf,
   ShoppingCart,
   Sprout,
-  Store,
   Truck,
 } from "lucide-react";
 
@@ -31,13 +30,8 @@ export default function Register() {
     },
     {
       id: "user",
-      name: "Consumer",
+      name: "Consumer / Buyer",
       icon: ShoppingCart,
-    },
-    {
-      id: "seller",
-      name: "Seller",
-      icon: Store,
     },
     {
       id: "exporter",
@@ -228,15 +222,6 @@ export default function Register() {
                 After registration, you can complete your farmer
                 profile with farm size, crop types, language preference,
                 payment information and other agricultural details.
-              </div>
-            )}
-
-            {/* SELLER */}
-
-            {role === "seller" && (
-              <div className="md:col-span-2 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
-                Seller business information and agricultural product
-                details will be completed from your Seller Dashboard.
               </div>
             )}
 

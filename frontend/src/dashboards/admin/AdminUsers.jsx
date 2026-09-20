@@ -4,7 +4,7 @@ import { API_URL } from "../../config/api";
 import { DS_ADMIN, ROLE_COLOR, relativeTime } from "./adminStyles";
 import { Users, Ban, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
-const ROLE_FILTERS = ["all", "farmer", "seller", "user", "exporter", "admin"];
+const ROLE_FILTERS = ["all", "farmer", "user", "exporter", "admin"];
 
 function ConfirmModal({ user, onConfirm, onCancel, loading }) {
   const isSuspending = user.isActive;
