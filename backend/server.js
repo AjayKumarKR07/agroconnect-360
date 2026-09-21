@@ -61,6 +61,9 @@ const complianceRoutes = require(
 const disputeRoutes = require(
   "./routes/disputeRoutes"
 );
+const subscriptionRoutes = require(
+  "./routes/subscriptionRoutes"
+);
 
 
 // Connect to MongoDB
@@ -153,6 +156,10 @@ app.use(
 app.use(
   "/api/disputes",
   disputeRoutes
+);
+app.use(
+  "/api/subscriptions",
+  subscriptionRoutes
 );
 
 

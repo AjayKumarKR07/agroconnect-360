@@ -1,4 +1,4 @@
-﻿/**
+/**
  * paymentController.js
  *
  * Security invariants (all preserved from V1, additions noted):
@@ -22,6 +22,7 @@ const Razorpay     = require("razorpay");
 const mongoose     = require("mongoose");
 const Order        = require("../models/Order");
 const Notification = require("../models/Notification");
+const { handleSubscriptionWebhookEvent } = require("./subscriptionController");
 
 // ── Order status values that block any new payment action ────────────────────
 const BLOCKED_ORDER_STATUSES = ["cancelled", "rejected", "delivered"];
@@ -376,6 +377,22 @@ const razorpayWebhook = async (req, res) => {
           }
           // If already "failed" — idempotent, no action
         }
+      }
+    }
+
+    // ── subscription.* events ─────────────────────────────────────────────────
+    const SUBSCRIPTION_EVENTS = [
+      "subscription.activated",
+      "subscription.pending",
+      "subscription.halted",
+      "subscription.cancelled",
+      "subscription.completed",
+    ];
+    if (SUBSCRIPTION_EVENTS.includes(event)) {
+      try {
+        await handleSubscriptionWebhookEvent(event, payload);
+      } catch (subErr) {
+        console.error(`[Webhook] ${event} handling error:`, subErr.message);
       }
     }
 
