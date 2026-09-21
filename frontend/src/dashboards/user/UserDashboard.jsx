@@ -12,7 +12,7 @@ const DS_USER = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,30px);font-weight:800;color:#0f172a;line-height:1.2;letter-spacing:-0.02em;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
   .ud-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:28px;}
   .ud-stat{background:rgba(14,165,233,0.05);border:1px solid rgba(14,165,233,0.12);border-radius:18px;padding:22px 20px;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;}
   .ud-stat:hover{transform:translateY(-2px);border-color:rgba(14,165,233,0.25);}
@@ -20,18 +20,18 @@ const DS_USER = `
   .ud-stat-glow{position:absolute;width:70px;height:70px;border-radius:50%;filter:blur(20px);top:-20px;right:-10px;opacity:0.3;}
   .ud-stat-icon{display:flex;align-items:center;margin-bottom:10px;}
   .ud-stat-val{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:800;color:#0f172a;}
-  .ud-stat-lbl{font-size:12px;color:var(--text2);margin-top:4px;text-transform:uppercase;letter-spacing:0.05em;}
+  .ud-stat-lbl{font-size:12px;color:#475569;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em;}
   .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:22px;}
   .card-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:800;color:#0f172a;}
-  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:var(--text2);}
+  .loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:60px 0;color:#475569;}
   .spinner{width:24px;height:24px;border:3px solid rgba(14,165,233,0.15);border-top-color:#0ea5e9;border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:opacity 0.2s,transform 0.2s;box-shadow:0 6px 20px rgba(14,165,233,0.3);}
   .btn-cyan:hover{opacity:0.9;transform:translateY(-1px);}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#7dd3fc;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#0284c7;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
   .btn-ghost:hover{background:rgba(14,165,233,0.12);}
   .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:12px;}
-  .empty-emoji{font-size:48px;} .empty-title{font-size:18px;font-weight:700;color:#0f172a;} .empty-sub{font-size:14px;color:var(--text2);}
+  .empty-emoji{font-size:48px;} .empty-title{font-size:18px;font-weight:700;color:#0f172a;} .empty-sub{font-size:14px;color:#475569;}
   .feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
   .feat-card{background:rgba(14,165,233,0.03);border:1px solid rgba(14,165,233,0.1);border-radius:14px;overflow:hidden;transition:all 0.2s;cursor:pointer;}
   .feat-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
@@ -277,7 +277,7 @@ export default function UserDashboard() {
                           width: "100%", padding: "8px 0", borderRadius: 10, border: "none", cursor: "pointer",
                           fontFamily: "'Inter',sans-serif", fontWeight: 700, fontSize: 13,
                           background: addedId === c._id ? "rgba(34,197,94,0.15)" : "linear-gradient(135deg,#0284c7,#0ea5e9)",
-                          color: addedId === c._id ? "#4ade80" : "#fff",
+                          color: addedId === c._id ? "#16a34a" : "#fff",
                           transition: "all 0.2s",
                           display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
                         }}

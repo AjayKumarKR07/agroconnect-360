@@ -78,9 +78,9 @@ export default function SellerProducts() {
         .prod-img-placeholder { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(167,139,250,0.05)); display: flex; align-items: center; justify-content: center; font-size: 52px; }
         .prod-body { padding: 16px 18px; }
         .prod-name { font-weight: 800; font-size: 16px; color: #0f172a; margin-bottom: 4px; }
-        .prod-cat { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+        .prod-cat { font-size: 12px; color: #475569; margin-bottom: 10px; }
         .prod-price { font-family: 'Space Grotesk',sans-serif; font-size: 22px; font-weight: 800; color: #7c3aed; }
-        .prod-unit { font-size: 11px; color: var(--text2); }
+        .prod-unit { font-size: 11px; color: #475569; }
         .prod-actions { display: flex; gap: 8px; margin-top: 14px; }
       `}</style>
 

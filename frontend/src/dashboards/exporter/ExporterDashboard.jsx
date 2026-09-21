@@ -11,112 +11,114 @@ import {
 
 /* ─── Exporter-specific overrides on top of DS ─────────────────────────── */
 const EX_STYLES = `
-  /* ── Design tokens ── */
+  /* ── Design tokens (LIGHT THEME) ── */
   :root {
-    --bg:     #0f0b05;
-    --bg2:    #171006;
-    --surface:  #171006;
-    --surface2: #1e1508;
-    --border:   #3f2a08;
-    --border2:  #5a3d0c;
-    --text:   #f8fafc;
-    --text2:  #cbd5e1;
-    --text3:  #94a3b8;
-    --accent:     #f59e0b;
-    --accent2:    #d97706;
-    --green:  #f59e0b;
-    --green-dim: rgba(245,158,11,0.12);
-    --amber:rgba(251,191,36,0.1); --amber-text:#fbbf24;
-    --blue:rgba(56,189,248,0.1); --blue-text:#7dd3fc;
+    --bg:       #f8fafc;
+    --bg2:      #f1f5f9;
+    --surface:  #ffffff;
+    --surface2: #f8fafc;
+    --border:   #e2e8f0;
+    --border2:  #cbd5e1;
+    --text:     #0f172a;
+    --text2:    #475569;
+    --text3:    #64748b;
+    --accent:   #f59e0b;
+    --accent2:  #d97706;
+    --green:    #d97706;
+    --green-dim: rgba(245,158,11,0.1);
+    --amber:rgba(245,158,11,0.1); --amber-text:#d97706;
+    --blue:rgba(56,189,248,0.1); --blue-text:#0284c7;
   }
 
   /* Body */
-  body { background:#0f0b05; color:#f8fafc; }
+  body { background:#f8fafc; color:#0f172a; }
 
   /* ── Eyebrow ── */
   .eyebrow { color:#f59e0b !important; }
 
   /* ── Page headings ── */
-  .pg-title { color:#f8fafc !important; }
-  .pg-sub   { color:#94a3b8 !important; }
+  .pg-title { color:#0f172a !important; }
+  .pg-sub   { color:#64748b !important; }
 
   /* ── Card headings ── */
-  .card-title { color:#f8fafc !important; }
-  .card-sub   { color:#94a3b8 !important; }
+  .card-title { color:#0f172a !important; }
+  .card-sub   { color:#64748b !important; }
 
   /* ── Cards ── */
   .card {
-    background:#171006 !important;
-    border:1px solid #3f2a08 !important;
+    background:#ffffff !important;
+    border:1px solid #e2e8f0 !important;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06) !important;
   }
 
   /* ── Stat cards ── */
   .stat-card {
-    background:#171006 !important;
-    border:1px solid #3f2a08 !important;
+    background:#ffffff !important;
+    border:1px solid #e2e8f0 !important;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06) !important;
   }
-  .stat-lbl { color:#cbd5e1 !important; }
-  .stat-val { color:#f8fafc !important; }
+  .stat-lbl { color:#475569 !important; }
+  .stat-val { color:#0f172a !important; }
 
   /* stat-card shimmer */
   .stat-card::before {
-    background:linear-gradient(90deg,transparent,rgba(245,158,11,0.15),transparent) !important;
+    background:linear-gradient(90deg,transparent,rgba(245,158,11,0.08),transparent) !important;
   }
 
   /* ── Amber button ── */
   .btn-amber {
     display:inline-flex; align-items:center; gap:8px;
     background:linear-gradient(135deg,#d97706,#f59e0b);
-    color:#0f172a !important; font-weight:700; font-size:14px;
+    color:#ffffff !important; font-weight:700; font-size:14px;
     padding:11px 22px; border-radius:12px; border:none; cursor:pointer;
-    box-shadow:0 6px 20px rgba(245,158,11,0.25);
+    box-shadow:0 4px 14px rgba(245,158,11,0.3);
     transition:transform 0.2s,box-shadow 0.2s;
     font-family:'Inter',sans-serif; text-decoration:none;
   }
-  .btn-amber:hover { transform:translateY(-1px); box-shadow:0 12px 32px rgba(245,158,11,0.35); }
+  .btn-amber:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(245,158,11,0.4); }
 
   /* ── Ghost button ── */
   .btn-ghost {
-    border-color:#5a3d0c !important;
-    color:#f8fafc !important;
-    background:rgba(245,158,11,0.06) !important;
+    border-color:#e2e8f0 !important;
+    color:#0f172a !important;
+    background:#ffffff !important;
   }
   .btn-ghost:hover {
-    background:rgba(245,158,11,0.12) !important;
-    border-color:#7a5514 !important;
+    background:#f8fafc !important;
+    border-color:#cbd5e1 !important;
   }
 
-  /* ── Badges — all light enough to read on dark background ── */
-  .badge-green  { background:rgba(74,222,128,0.12);  color:#4ade80;  border:1px solid rgba(74,222,128,0.22); }
-  .badge-amber  { background:rgba(251,191,36,0.12);  color:#fbbf24;  border:1px solid rgba(251,191,36,0.25); }
-  .badge-red    { background:rgba(248,113,113,0.12); color:#f87171;  border:1px solid rgba(248,113,113,0.22); }
-  .badge-blue   { background:rgba(125,211,252,0.12); color:#7dd3fc;  border:1px solid rgba(125,211,252,0.2);  }
-  .badge-purple { background:rgba(196,181,253,0.12); color:#c4b5fd;  border:1px solid rgba(196,181,253,0.2);  }
-  .badge-grey   { background:rgba(203,213,225,0.08); color:#cbd5e1;  border:1px solid rgba(203,213,225,0.15); }
-  .badge-gold   { background:rgba(245,158,11,0.14);  color:#fbbf24;  border:1px solid rgba(245,158,11,0.28); }
+  /* ── Badges — readable on WHITE background ── */
+  .badge-green  { background:rgba(34,197,94,0.1);   color:#15803d; border:1px solid rgba(34,197,94,0.25);  }
+  .badge-amber  { background:rgba(245,158,11,0.1);  color:#d97706; border:1px solid #e2e8f0; }
+  .badge-red    { background:rgba(239,68,68,0.1);   color:#dc2626; border:1px solid rgba(239,68,68,0.25);  }
+  .badge-blue   { background:rgba(56,189,248,0.1);  color:#0284c7; border:1px solid rgba(56,189,248,0.25); }
+  .badge-purple { background:rgba(139,92,246,0.1);  color:#7c3aed; border:1px solid rgba(139,92,246,0.25); }
+  .badge-grey   { background:rgba(100,116,139,0.1); color:#64748b; border:1px solid rgba(100,116,139,0.2); }
+  .badge-gold   { background:rgba(245,158,11,0.1);  color:#d97706; border:1px solid #e2e8f0; }
 
   /* ── Table ── */
   .data-table th {
-    border-bottom:1px solid #3f2a08 !important;
-    color:#94a3b8 !important;
-    background:#1e1508 !important;
+    border-bottom:1px solid #e2e8f0 !important;
+    color:#64748b !important;
+    background:#f8fafc !important;
   }
   .data-table td {
-    border-bottom:1px solid #2a1b04 !important;
-    color:#f8fafc !important;
+    border-bottom:1px solid #f1f5f9 !important;
+    color:#0f172a !important;
   }
-  .data-table tr:hover td { background:rgba(245,158,11,0.04) !important; }
+  .data-table tr:hover td { background:#f8fafc !important; }
 
   /* ── Form inputs ── */
   .field-input {
-    background:#1e1508 !important;
-    border:1px solid #3f2a08 !important;
-    color:#f8fafc !important;
+    background:#ffffff !important;
+    border:1px solid #e2e8f0 !important;
+    color:#0f172a !important;
   }
-  .field-input::placeholder { color:#64748b !important; }
+  .field-input::placeholder { color:#94a3b8 !important; }
   .field-input:focus { border-color:rgba(245,158,11,0.5) !important; box-shadow:0 0 0 3px rgba(245,158,11,0.1) !important; }
-  select.field-input option { background:#1e1508; color:#f8fafc; }
-  .field-label { color:#94a3b8 !important; }
+  select.field-input option { background:#ffffff; color:#0f172a; }
+  .field-label { color:#64748b !important; }
 
   /* ── Spinner ── */
   .spinner { border-top-color:#f59e0b !important; }
@@ -127,12 +129,12 @@ const EX_STYLES = `
     width:44px; height:44px; border-radius:12px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800;
-    border:1px solid #3f2a08; background:#1e1508;
-    color:#f8fafc; transition:all 0.2s;
+    border:1px solid #e2e8f0; background:#f8fafc;
+    color:#0f172a; transition:all 0.2s;
   }
-  .pipe-count.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:#f59e0b; }
-  .pipe-label { font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
-  .pipe-arrow { color:#3f2a08; font-size:16px; flex-shrink:0; padding-top:12px; }
+  .pipe-count.active { background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.4); color:#d97706; }
+  .pipe-label { font-size:10px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
+  .pipe-arrow { color:#e2e8f0; font-size:16px; flex-shrink:0; padding-top:12px; }
 
   /* ── Section heading ── */
   .sec-head {
@@ -143,36 +145,36 @@ const EX_STYLES = `
   /* ── Listing card ── */
   .listing-card {
     padding:14px 16px; border-radius:14px;
-    border:1px solid #3f2a08;
-    background:#1e1508;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
     transition:border-color 0.2s,background 0.2s;
   }
-  .listing-card:hover { border-color:#5a3d0c; background:#261c09; }
+  .listing-card:hover { border-color:#cbd5e1; background:#ffffff; }
 
   /* ── Action item (quick alert rows) ── */
   .action-item {
     display:flex; align-items:center; justify-content:space-between;
     padding:13px 16px; border-radius:12px; gap:12px;
-    border:1px solid #3f2a08;
-    background:#1e1508;
+    border:1px solid #e2e8f0;
+    background:#ffffff;
     text-decoration:none; transition:background 0.18s,border-color 0.18s;
   }
-  .action-item:hover { background:#261c09; border-color:#5a3d0c; }
+  .action-item:hover { background:#f8fafc; border-color:#cbd5e1; }
 
   /* ── Ship alert row ── */
   .ship-alert-item {
     display:flex; align-items:center; justify-content:space-between;
     padding:12px 14px; border-radius:12px; gap:10px; flex-wrap:wrap;
-    border:1px solid #3f2a08;
-    background:#1e1508;
+    border:1px solid #e2e8f0;
+    background:#f8fafc;
     transition:background 0.18s;
   }
-  .ship-alert-item:hover { background:#261c09; }
+  .ship-alert-item:hover { background:#ffffff; }
 
   /* ── Activity timeline ── */
   .activity-item {
     display:flex; align-items:flex-start; gap:12px;
-    padding:10px 0; border-bottom:1px solid #2a1b04;
+    padding:10px 0; border-bottom:1px solid #f1f5f9;
   }
   .activity-item:last-child { border-bottom:none; }
   .activity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
@@ -180,20 +182,20 @@ const EX_STYLES = `
   /* ── Interest row ── */
   .int-row {
     display:flex; align-items:center; justify-content:space-between;
-    padding:9px 0; border-bottom:1px solid #2a1b04;
+    padding:9px 0; border-bottom:1px solid #f1f5f9;
   }
   .int-row:last-child { border-bottom:none; }
 
   /* ── FX card ── */
-  .fx-card { padding:14px 16px; border-radius:14px; border:1px solid #3f2a08; background:#1e1508; }
+  .fx-card { padding:14px 16px; border-radius:14px; border:1px solid #e2e8f0; background:#f8fafc; }
 
   /* ── Skeleton ── */
-  .skel { border-radius:8px; background:#1e1508; animation:pulse 1.8s ease-in-out infinite; }
+  .skel { border-radius:8px; background:#e2e8f0; animation:pulse 1.8s ease-in-out infinite; }
 
   /* ── Compliance row ── */
   .comp-row {
     display:flex; align-items:center; justify-content:space-between;
-    padding:10px 0; border-bottom:1px solid #2a1b04; gap:8px;
+    padding:10px 0; border-bottom:1px solid #f1f5f9; gap:8px;
   }
   .comp-row:last-child { border-bottom:none; }
 
@@ -211,6 +213,7 @@ const EX_STYLES = `
   .overflow-x-auto { overflow-x:auto; }
   .nowrap { white-space:nowrap; }
 `;
+
 
 /* ─── Constants ─────────────────────────────────────────────────────────── */
 const SHIPMENT_STATUSES = {
@@ -282,10 +285,10 @@ function Skeleton({ h = 60, mb = 0 }) {
 
 function SectionError({ msg, onRetry }) {
   return (
-    <div style={{ padding:"16px", borderRadius:12, background:"rgba(239,68,68,0.08)", border:"1px solid rgba(248,113,113,0.2)", color:"#f87171", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+    <div style={{ padding:"16px", borderRadius:12, background:"rgba(239,68,68,0.08)", border:"1px solid rgba(248,113,113,0.2)", color:"#dc2626", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
       <span style={{ display:"inline-flex", alignItems:"center", gap:8 }}><AlertTriangle size={16} style={{ flexShrink: 0 }} /> {msg}</span>
       {onRetry && (
-        <button onClick={onRetry} style={{ background:"none", border:"1px solid rgba(248,113,113,0.25)", color:"#f87171", borderRadius:8, padding:"5px 12px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
+        <button onClick={onRetry} style={{ background:"none", border:"1px solid rgba(248,113,113,0.25)", color:"#dc2626", borderRadius:8, padding:"5px 12px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
           Retry
         </button>
       )}
@@ -301,7 +304,7 @@ function EmptyState({ icon: Icon, msg, action }) {
             Always call as JSX; fall back to <Package> if nothing provided. */}
         {Icon ? <Icon size={32} /> : <Package size={32} />}
       </div>
-      <div style={{ color:"#f8fafc", fontWeight:600, marginBottom:6 }}>{msg}</div>
+      <div style={{ color:"#0f172a", fontWeight:600, marginBottom:6 }}>{msg}</div>
       {action}
     </div>
   );
@@ -529,8 +532,8 @@ export default function ExporterDashboard() {
           >
             {(() => { const Icon = q.Icon; return <Icon size={20} strokeWidth={1.75} style={{ color: "#d97706", flexShrink: 0 }} />; })()}
             <div>
-              <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{q.label}</div>
-              <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>{q.sub}</div>
+              <div style={{ fontSize:13, fontWeight:700, color:"#0f172a" }}>{q.label}</div>
+              <div style={{ fontSize:11, color:"#0f172a", marginTop:2 }}>{q.sub}</div>
             </div>
           </Link>
         ))}
@@ -553,17 +556,17 @@ export default function ExporterDashboard() {
           { Icon: Ship,         label:"Active Shipments",
             val: stats.activeContainers ?? "—",
             sub: `${stats.totalShipments} total shipment${stats.totalShipments !== 1 ? "s" : ""}`,
-            color: "#7dd3fc",
+            color: "#0284c7",
           },
           { Icon: Package,      label:"Export Volume",
             val: totalVolume > 0 ? `${totalVolume} MT` : "—",
             sub: "metric tons across all shipments",
-            color: "#c4b5fd",
+            color: "#7c3aed",
           },
           { Icon: CheckCircle2, label:"Customs Cleared",
             val: stats.customsCleared ?? "—",
             sub: "shipments past customs",
-            color: "#4ade80",
+            color: "#16a34a",
           },
           { Icon: Inbox,        label:"Export Interests",
             val: loadingInt ? "…" : interests.length,
@@ -579,9 +582,9 @@ export default function ExporterDashboard() {
           <div key={label} className="stat-card">
             <div className="stat-glow" style={{ background: color }} />
             <div className="stat-icon" style={{ color }}><Icon size={22} strokeWidth={1.75} /></div>
-            <div className="stat-val" style={{ color:"#f8fafc" }}>{val}</div>
-            <div className="stat-lbl" style={{ color:"#cbd5e1" }}>{label}</div>
-            <div style={{ fontSize:11, color:"#94a3b8", marginTop:4 }}>{sub}</div>
+            <div className="stat-val" style={{ color:"#0f172a" }}>{val}</div>
+            <div className="stat-lbl" style={{ color:"#0f172a" }}>{label}</div>
+            <div style={{ fontSize:11, color:"#64748b", marginTop:4 }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -620,7 +623,7 @@ export default function ExporterDashboard() {
                 <div key={l._id} className="listing-card">
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontWeight:700, color: "#f8fafc", fontSize:14 }}>{l.name}</div>
+                      <div style={{ fontWeight:700, color: "#0f172a", fontSize:14 }}>{l.name}</div>
                       <div style={{ fontSize:12, color:"var(--text2)", marginTop:3, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
                         <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
                           <User size={12} style={{ color: "#d97706" }} /> {l.farmer?.name || "Farmer"}
@@ -657,7 +660,7 @@ export default function ExporterDashboard() {
                     </div>
                     <Link
                       to="/exporter/sourcing"
-                      style={{ fontSize:12, fontWeight:700, color: "#b45309", textDecoration:"none", padding:"6px 12px", borderRadius:8, border:"1px solid rgba(245,158,11,0.25)", background:"rgba(245,158,11,0.08)", flexShrink:0 }}
+                      style={{ fontSize:12, fontWeight:700, color: "#f59e0b", textDecoration:"none", padding:"6px 12px", borderRadius:8, border:"1px solid rgba(245,158,11,0.25)", background:"rgba(245,158,11,0.08)", flexShrink:0 }}
                     >
                       View →
                     </Link>
@@ -665,7 +668,7 @@ export default function ExporterDashboard() {
                 </div>
               ))}
               {listings.length > 5 && (
-                <Link to="/exporter/sourcing" style={{ fontSize:13, color: "#b45309", fontWeight:700, textDecoration:"none", textAlign:"center", padding:"8px 0" }}>
+                <Link to="/exporter/sourcing" style={{ fontSize:13, color: "#f59e0b", fontWeight:700, textDecoration:"none", textAlign:"center", padding:"8px 0" }}>
                   +{listings.length - 5} more listings — Browse All
                 </Link>
               )}
@@ -719,17 +722,17 @@ export default function ExporterDashboard() {
               {pendingInt.length > 0 && (() => {
                 const top = pendingInt[0];
                 return (
-                  <div style={{ marginTop:14, padding:"12px 14px", borderRadius:12, background:"rgba(245,158,11,0.05)", border:"1px solid rgba(245,158,11,0.18)" }}>
+                  <div style={{ marginTop:14, padding:"12px 14px", borderRadius:12, background:"#ffffff", border:"1px solid rgba(245,158,11,0.18)" }}>
                     <div style={{ fontSize:10, color:"var(--text2)", textTransform:"uppercase", fontWeight:700, marginBottom:6 }}>
                       Latest Pending
                     </div>
-                    <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{top.listing?.name || "—"}</div>
+                    <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{top.listing?.name || "—"}</div>
                     <div style={{ fontSize:12, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
                       <User size={12} style={{ color: "#d97706" }} /> {top.farmer?.name || "Farmer"} &nbsp;·&nbsp; {top.requestedQty} {top.requestedUnit || "MT"}
                     </div>
                     <Link
                       to="/exporter/my-interests"
-                      style={{ fontSize:12, fontWeight:700, color: "#b45309", textDecoration:"none", display:"inline-block", marginTop:8 }}
+                      style={{ fontSize:12, fontWeight:700, color: "#f59e0b", textDecoration:"none", display:"inline-block", marginTop:8 }}
                     >
                       Review Interest →
                     </Link>
@@ -748,7 +751,7 @@ export default function ExporterDashboard() {
           if (pendingInt.length > 0)
             actions.push({
               Icon: Inbox,
-              color: "#b45309",
+              color: "#f59e0b",
               msg:`${pendingInt.length} farmer interest${pendingInt.length > 1 ? "s" : ""} awaiting your review`,
               sub: pendingInt[0]?.listing?.name ? `Latest: ${pendingInt[0].listing.name}` : undefined,
               to:"/exporter/my-interests",
@@ -757,7 +760,7 @@ export default function ExporterDashboard() {
           if (negotiatingInt.length > 0)
             actions.push({
               Icon: MessageSquare,
-              color: "#c4b5fd",
+              color: "#7c3aed",
               msg:`${negotiatingInt.length} interest${negotiatingInt.length > 1 ? "s" : ""} in active negotiation`,
               sub: negotiatingInt[0]?.listing?.name ? `Latest: ${negotiatingInt[0].listing.name}` : undefined,
               to:"/exporter/my-interests",
@@ -767,7 +770,7 @@ export default function ExporterDashboard() {
         if (!loadingShip && !errShip && approachingShipments.length > 0)
           actions.push({
             Icon: Ship,
-            color: "#7dd3fc",
+            color: "#0284c7",
             msg:`${approachingShipments.length} shipment${approachingShipments.length > 1 ? "s" : ""} arriving within 3 days`,
             sub: approachingShipments[0]?.containerNo ? `Container: ${approachingShipments[0].containerNo}` : undefined,
             to:"/exporter/logistics",
@@ -777,7 +780,7 @@ export default function ExporterDashboard() {
         if (!loadingShip && !errShip && overdueShipments.length > 0)
           actions.push({
             Icon: AlertTriangle,
-            color: "#f87171",
+            color: "#dc2626",
             msg:`${overdueShipments.length} shipment${overdueShipments.length > 1 ? "s" : ""} past ETA — follow up required`,
             sub: overdueShipments[0]?.containerNo ? `Container: ${overdueShipments[0].containerNo}` : undefined,
             to:"/exporter/logistics",
@@ -795,7 +798,7 @@ export default function ExporterDashboard() {
         if (!loadingComp && !errComp && complianceAlerts.length > 0)
           actions.push({
             Icon: FileText,
-            color: "#f87171",
+            color: "#dc2626",
             msg:`${complianceAlerts.length} compliance document${complianceAlerts.length > 1 ? "s" : ""} need attention`,
             sub: complianceAlerts[0]?.title || undefined,
             to:"/exporter/compliance",
@@ -809,7 +812,7 @@ export default function ExporterDashboard() {
             <div className="sec-head">
               <div>
                 <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <AlertTriangle size={18} style={{ color: "#f87171" }} /> Action Required
+                  <AlertTriangle size={18} style={{ color: "#dc2626" }} /> Action Required
                 </div>
                 <div className="card-sub">Items that need your attention right now</div>
               </div>
@@ -822,8 +825,8 @@ export default function ExporterDashboard() {
                 {[1,2].map(i => <Skeleton key={i} h={52} />)}
               </div>
             ) : actions.length === 0 ? (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background:"rgba(74,222,128,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
-                <CheckCircle2 size={16} style={{ color:"#4ade80" }} /> No urgent actions right now. Everything looks good.
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background:"rgba(34,197,94,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#16a34a", fontSize:13, fontWeight:600 }}>
+                <CheckCircle2 size={16} style={{ color:"#16a34a" }} /> No urgent actions right now. Everything looks good.
               </div>
             ) : (
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -834,8 +837,8 @@ export default function ExporterDashboard() {
                         <a.Icon size={18} style={{ color: a.color }} />
                       </div>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:13, fontWeight:600, color:"#f8fafc" }}>{a.msg}</div>
-                        {a.sub && <div style={{ fontSize:11, color:"#94a3b8", marginTop:2 }}>{a.sub}</div>}
+                        <div style={{ fontSize:13, fontWeight:600, color:"#0f172a" }}>{a.msg}</div>
+                        {a.sub && <div style={{ fontSize:11, color:"#64748b", marginTop:2 }}>{a.sub}</div>}
                       </div>
                     </div>
                     <span style={{ fontSize:12, fontWeight:700, color:a.color, whiteSpace:"nowrap", flexShrink:0, padding:"6px 12px", borderRadius:8, border:`1px solid ${a.color}30`, background:`${a.color}10` }}>
@@ -881,8 +884,8 @@ export default function ExporterDashboard() {
               .forEach(s => alerts.push({ s, kind:'cancelled' }));
 
             if (alerts.length === 0) return (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background:"rgba(74,222,128,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
-                <CheckCircle2 size={16} style={{ color:"#4ade80" }} /> No shipment alerts.
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background:"rgba(34,197,94,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#16a34a", fontSize:13, fontWeight:600 }}>
+                <CheckCircle2 size={16} style={{ color:"#16a34a" }} /> No shipment alerts.
               </div>
             );
 
@@ -891,20 +894,20 @@ export default function ExporterDashboard() {
                 {alerts.slice(0,6).map(({ s, kind }, i) => {
                   const d = daysUntil(s.eta);
                   const kindCfg = kind === 'overdue'
-                    ? { color:'#f87171', bg:'rgba(239,68,68,0.06)', Icon: AlertTriangle, label:'Past ETA' }
+                    ? { color:'#dc2626', bg:'rgba(239,68,68,0.06)', Icon: AlertTriangle, label:'Past ETA' }
                     : kind === 'soon'
-                    ? { color:'#fbbf24', bg:'rgba(251,191,36,0.06)', Icon: Clock, label: d === 0 ? 'Due Today' : `${d}d to ETA` }
-                    : { color:'#94a3b8', bg:'rgba(148,163,184,0.06)', Icon: X, label:'Cancelled' };
+                    ? { color:'#d97706', bg:'rgba(251,191,36,0.06)', Icon: Clock, label: d === 0 ? 'Due Today' : `${d}d to ETA` }
+                    : { color:'#64748b', bg:'rgba(148,163,184,0.06)', Icon: X, label:'Cancelled' };
                   return (
                     <div key={s._id || i} className="ship-alert-item" style={{ borderColor:`${kindCfg.color}22`, background:kindCfg.bg }}>
                       <div style={{ flex:1 }}>
                         <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
                           <kindCfg.Icon size={14} style={{ color: kindCfg.color }} />
-                          <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#b45309" }}>{s.containerNo}</span>
+                          <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#f59e0b" }}>{s.containerNo}</span>
                           <span style={{ fontSize:11, fontWeight:700, color:kindCfg.color }}>{kindCfg.label}</span>
                         </div>
-                        <div style={{ fontSize:12, color:"#f8fafc", fontWeight:600 }}>{s.cargo}{s.quantityTons ? ` · ${s.quantityTons} MT` : ""}</div>
-                        <div style={{ fontSize:11, color:"#94a3b8" }}>{s.portOfOrigin} → {s.destPort || s.destinationCountry}</div>
+                        <div style={{ fontSize:12, color:"#0f172a", fontWeight:600 }}>{s.cargo}{s.quantityTons ? ` · ${s.quantityTons} MT` : ""}</div>
+                        <div style={{ fontSize:11, color:"#64748b" }}>{s.portOfOrigin} → {s.destPort || s.destinationCountry}</div>
                       </div>
                       <Link
                         to="/exporter/logistics"
@@ -941,13 +944,13 @@ export default function ExporterDashboard() {
               const ts = int.updatedAt || int.createdAt;
               if (!ts) return;
               const statusMap = {
-                pending:     { Icon: Inbox, color:'#fbbf24', text:`Interest submitted for ${int.listing?.name || 'a listing'}` },
-                accepted:    { Icon: CheckCircle2, color:'#4ade80', text:`Interest accepted: ${int.listing?.name || 'listing'}` },
+                pending:     { Icon: Inbox, color:'#d97706', text:`Interest submitted for ${int.listing?.name || 'a listing'}` },
+                accepted:    { Icon: CheckCircle2, color:'#16a34a', text:`Interest accepted: ${int.listing?.name || 'listing'}` },
                 negotiating: { Icon: MessageSquare, color:'#a78bfa', text:`Negotiating: ${int.listing?.name || 'listing'} with ${int.farmer?.name || 'farmer'}` },
-                confirmed:   { Icon: Handshake, color:'#4ade80', text:`Deal confirmed: ${int.listing?.name || 'listing'}` },
-                rejected:    { Icon: X, color:'#f87171', text:`Interest rejected: ${int.listing?.name || 'listing'}` },
-                cancelled:   { Icon: Ban, color:'#94a3b8', text:`Interest cancelled: ${int.listing?.name || 'listing'}` },
-                completed:   { Icon: Trophy, color:'#4ade80', text:`Deal completed: ${int.listing?.name || 'listing'}` },
+                confirmed:   { Icon: Handshake, color:'#16a34a', text:`Deal confirmed: ${int.listing?.name || 'listing'}` },
+                rejected:    { Icon: X, color:'#dc2626', text:`Interest rejected: ${int.listing?.name || 'listing'}` },
+                cancelled:   { Icon: Ban, color:'#64748b', text:`Interest cancelled: ${int.listing?.name || 'listing'}` },
+                completed:   { Icon: Trophy, color:'#16a34a', text:`Deal completed: ${int.listing?.name || 'listing'}` },
               };
               const cfg = statusMap[int.status];
               if (cfg) events.push({ ts: new Date(ts).getTime(), Icon:cfg.Icon, color:cfg.color, text:cfg.text });
@@ -1008,7 +1011,7 @@ export default function ExporterDashboard() {
                     <div className="activity-dot" style={{ background:ev.color, boxShadow:`0 0 6px ${ev.color}60` }} />
                     <div style={{ flex:1 }}>
                       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:8 }}>
-                        <div style={{ fontSize:13, color: "#f8fafc", fontWeight:500, lineHeight:1.4, display:"flex", alignItems:"flex-start", gap:6 }}>
+                        <div style={{ fontSize:13, color: "#0f172a", fontWeight:500, lineHeight:1.4, display:"flex", alignItems:"flex-start", gap:6 }}>
                           <ev.Icon size={14} style={{ color: ev.color, flexShrink: 0, marginTop: 2 }} />
                           <span>{ev.text}</span>
                         </div>
@@ -1079,12 +1082,12 @@ export default function ExporterDashboard() {
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
                           <div style={{ flex:1 }}>
                             <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:4 }}>
-                              <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#b45309" }}>{s.containerNo}</span>
+                              <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#f59e0b" }}>{s.containerNo}</span>
                               <span className={`badge ${cfg.badge}`}>{cfg.label}</span>
                             </div>
-                            <div style={{ fontSize:12, color: "#f8fafc", fontWeight:600 }}>{s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}</div>
+                            <div style={{ fontSize:12, color: "#0f172a", fontWeight:600 }}>{s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}</div>
                             <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
-                              {s.portOfOrigin} → <strong style={{ color:"#e5e7eb" }}>{s.destPort || s.destinationCountry}</strong>
+                              {s.portOfOrigin} → <strong style={{ color:"#0f172a" }}>{s.destPort || s.destinationCountry}</strong>
                               {s.vessel && <> &nbsp;·&nbsp; <Ship size={11} style={{ verticalAlign: "middle", color: "#d97706" }} /> {s.vessel}</>}
                             </div>
                           </div>
@@ -1094,7 +1097,7 @@ export default function ExporterDashboard() {
                     );
                   })}
                   {activeShipments.length > 4 && (
-                    <Link to="/exporter/logistics" style={{ fontSize:13, color: "#b45309", fontWeight:700, textDecoration:"none", textAlign:"center", padding:"6px 0" }}>
+                    <Link to="/exporter/logistics" style={{ fontSize:13, color: "#f59e0b", fontWeight:700, textDecoration:"none", textAlign:"center", padding:"6px 0" }}>
                       +{activeShipments.length - 4} more — View All Shipments
                     </Link>
                   )}
@@ -1153,7 +1156,7 @@ export default function ExporterDashboard() {
                   return (
                     <div key={r._id} style={{ padding:"10px 12px", borderRadius:10, background:"var(--surface)", border:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                       <div>
-                        <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{r.cropName}</div>
+                        <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{r.cropName}</div>
                         <div style={{ fontSize:11, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
                           <Globe size={11} style={{ color: "#d97706" }} /> {r.destinationCountry} &nbsp;·&nbsp; {r.quantityTons} MT
                           {r.targetPriceUsd > 0 && <> &nbsp;·&nbsp; ${r.targetPriceUsd}/MT</>}
@@ -1207,7 +1210,7 @@ export default function ExporterDashboard() {
             {fxRates.map(f => (
               <div key={f.pair} className="fx-card">
                 <div style={{ fontSize:11, color:"var(--text2)", fontWeight:700, marginBottom:4 }}>{f.flag} {f.pair}</div>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:20, fontWeight:800, color: "#f8fafc" }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:20, fontWeight:800, color: "#0f172a" }}>
                   ₹{f.from === "JPY" ? f.rate.toFixed(4) : f.rate.toFixed(2)}
                 </div>
               </div>
@@ -1268,13 +1271,13 @@ export default function ExporterDashboard() {
                   return (
                     <div key={doc._id} className="comp-row">
                       <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontSize:13, fontWeight:600, color: "#f8fafc", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                        <div style={{ fontSize:13, fontWeight:600, color: "#0f172a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                           {doc.title}
                         </div>
                         {doc.isLifetime ? (
                           <div style={{ fontSize:11, color:"var(--text2)" }}>Lifetime · {doc.docType}</div>
                         ) : doc.validTill ? (
-                          <div style={{ fontSize:11, color: expired ? "#f87171" : expiring ? "#fbbf24" : "var(--text2)" }}>
+                          <div style={{ fontSize:11, color: expired ? "#dc2626" : expiring ? "#d97706" : "var(--text2)" }}>
                             {expired ? (
                               <span style={{ display:"inline-flex", alignItems:"center", gap:3 }}>
                                 <AlertTriangle size={11} /> Expired
@@ -1294,7 +1297,7 @@ export default function ExporterDashboard() {
                   );
                 })}
                 {compliance.length > 6 && (
-                  <Link to="/exporter/compliance" style={{ fontSize:13, color: "#b45309", fontWeight:700, textDecoration:"none", display:"block", textAlign:"center", paddingTop:12 }}>
+                  <Link to="/exporter/compliance" style={{ fontSize:13, color: "#f59e0b", fontWeight:700, textDecoration:"none", display:"block", textAlign:"center", paddingTop:12 }}>
                     +{compliance.length - 6} more documents →
                   </Link>
                 )}
@@ -1334,10 +1337,10 @@ export default function ExporterDashboard() {
                     <Icon size={16} style={{ color: "#d97706" }} />
                     <span style={{ fontSize:13, color:"var(--text2)" }}>{label}</span>
                   </div>
-                  <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color: "#f8fafc" }}>{val}</span>
+                  <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color: "#0f172a" }}>{val}</span>
                 </div>
               ))}
-              <div style={{ padding:"10px 12px", borderRadius:10, background:"rgba(245,158,11,0.04)", border:"1px solid rgba(245,158,11,0.1)", fontSize:12, color:"var(--text2)", textAlign:"center", marginTop:4 }}>
+              <div style={{ padding:"10px 12px", borderRadius:10, background:"#ffffff", border:"1px solid rgba(245,158,11,0.1)", fontSize:12, color:"var(--text2)", textAlign:"center", marginTop:4 }}>
                 Detailed chart analytics available after sufficient shipment history is recorded.
               </div>
             </div>
@@ -1389,13 +1392,13 @@ export default function ExporterDashboard() {
                   const cfg = SHIPMENT_STATUSES[s.status] || { label:s.status, badge:"badge-grey" };
                   return (
                     <tr key={s._id}>
-                      <td className="nowrap" style={{ fontFamily:"monospace", fontWeight:800, color: "#b45309" }}>{s.containerNo}</td>
+                      <td className="nowrap" style={{ fontFamily:"monospace", fontWeight:800, color: "#f59e0b" }}>{s.containerNo}</td>
                       <td style={{ fontWeight:600 }}>{s.cargo}</td>
                       <td style={{ color:"var(--text2)" }}>{s.vessel || "—"}</td>
                       <td className="nowrap" style={{ color:"var(--text2)" }}>
-                        {s.portOfOrigin} → <strong style={{ color: "#f8fafc" }}>{s.destPort || s.destinationCountry}</strong>
+                        {s.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{s.destPort || s.destinationCountry}</strong>
                       </td>
-                      <td style={{ color: "#b45309" }}>{s.quantityTons ? `${s.quantityTons} MT` : "—"}</td>
+                      <td style={{ color: "#f59e0b" }}>{s.quantityTons ? `${s.quantityTons} MT` : "—"}</td>
                       <td className="nowrap"><EtaDisplay eta={s.eta} status={s.status} /></td>
                       <td><span className={`badge ${cfg.badge}`}>{cfg.label}</span></td>
                     </tr>
@@ -1405,7 +1408,7 @@ export default function ExporterDashboard() {
             </table>
             {shipments.length > 8 && (
               <div style={{ textAlign:"center", padding:"14px 0" }}>
-                <Link to="/exporter/logistics" style={{ fontSize:13, color: "#b45309", fontWeight:700, textDecoration:"none" }}>
+                <Link to="/exporter/logistics" style={{ fontSize:13, color: "#f59e0b", fontWeight:700, textDecoration:"none" }}>
                   +{shipments.length - 8} more — View All in Logistics →
                 </Link>
               </div>

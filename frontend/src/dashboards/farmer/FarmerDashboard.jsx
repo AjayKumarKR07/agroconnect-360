@@ -72,7 +72,7 @@ const EXTRA = `
 
   /* profile bar */
   .fd-prof-bar-bg { height:6px; border-radius:3px; background:#e2e8f0; overflow:hidden; margin:6px 0; }
-  .fd-prof-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#16a34a,#4ade80); transition:width 0.6s ease; }
+  .fd-prof-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#16a34a,#16a34a); transition:width 0.6s ease; }
 
   /* kpi card hover cursor */
   .stat-card-link { display:block; text-decoration:none; }
@@ -730,7 +730,7 @@ export default function FarmerDashboard() {
             <>
               <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
                 {[
-                  [exportStats.listingCount    ?? 0, "My Listings",      "#4ade80"],
+                  [exportStats.listingCount    ?? 0, "My Listings",      "#16a34a"],
                   [exportStats.pendingInterests ?? 0, "Pending Requests", "#fbbf24"],
                   [exportStats.unreadInterests  ?? 0, "Unread Updates",   "#f87171"],
                 ].map(([v, l, c]) => (

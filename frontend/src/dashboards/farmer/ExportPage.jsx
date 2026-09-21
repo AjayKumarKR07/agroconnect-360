@@ -430,14 +430,14 @@ export default function ExportPage() {
         .exp-tab {
           padding:8px 18px; border-radius:10px; font-size:13px; font-weight:600;
           cursor:pointer; border:1px solid var(--border);
-          background:var(--surface); color:var(--text2); transition:all 0.18s;
+          background:var(--surface); color:#475569; transition:all 0.18s;
           display:flex; align-items:center; gap:8px; position:relative;
         }
         .exp-tab.active { background:var(--green-dim); color:#15803d; border-color:rgba(34,197,94,0.2); }
         .exp-tab:hover:not(.active) { border-color:var(--border2); color:var(--text); }
         .tab-badge {
           min-width:18px; height:18px; border-radius:9px; font-size:10px; font-weight:800;
-          background:#4ade80; color:#000; display:flex; align-items:center; justify-content:center; padding:0 4px;
+          background:#16a34a; color:#000; display:flex; align-items:center; justify-content:center; padding:0 4px;
         }
 
         .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:6px; font-size:11px; font-weight:600; }
@@ -446,11 +446,11 @@ export default function ExportPage() {
         .badge-red    { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2);  }
         .badge-blue   { background:rgba(56,189,248,0.12); color:#0369a1; border:1px solid rgba(56,189,248,0.2); }
 
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(6px); }
-        .modal-box { background:#080d12; border:1px solid rgba(255,255,255,0.10); border-radius:24px; padding:28px; width:100%; max-height:90vh; overflow-y:auto; animation:fadeIn 0.2s ease; }
+        .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.45); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(6px); }
+        .modal-box { background:#ffffff; border:1px solid rgba(255,255,255,0.10); border-radius:24px; padding:28px; width:100%; max-height:90vh; overflow-y:auto; animation:fadeIn 0.2s ease; }
         @keyframes fadeIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
         .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin-bottom:4px; }
-        .modal-sub { font-size:13px; color:var(--text2); margin-bottom:20px; }
+        .modal-sub { font-size:13px; color:#475569; margin-bottom:20px; }
 
         .toast { position:fixed; bottom:28px; right:28px; background:rgba(34,197,94,0.14); border:1px solid rgba(34,197,94,0.3); color:#15803d; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:99999; backdrop-filter:blur(12px); animation:slideUp 0.3s ease; }
         @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
@@ -497,7 +497,7 @@ export default function ExportPage() {
       {(stats.listingCount > 0 || stats.pendingInterests > 0) && (
         <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
           {[
-            [ClipboardList, "Export Listings",    stats.listingCount      || 0, "#4ade80"],
+            [ClipboardList, "Export Listings",    stats.listingCount      || 0, "#16a34a"],
             [Mail,          "Pending Requests",   stats.pendingInterests  || 0, "#fbbf24"],
             [Inbox,         "Unread Updates",     stats.unreadInterests   || 0, "#f87171"],
           ].map(([Icon, l, v, c]) => (

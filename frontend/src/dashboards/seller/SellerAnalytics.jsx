@@ -30,18 +30,18 @@ const STYLES = `
     flex: 1; min-width: 20px;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
   }
-  .sa-bar-val { font-size: 8px; color: var(--text2); white-space: nowrap; }
+  .sa-bar-val { font-size: 8px; color: #475569; white-space: nowrap; }
   .sa-bar-fill {
     width: 100%; border-radius: 5px 5px 0 0;
     transition: height 0.5s ease;
     min-height: 4px;
   }
-  .sa-bar-lbl { font-size: 8px; color: var(--text2); text-align: center; white-space: nowrap; }
+  .sa-bar-lbl { font-size: 8px; color: #475569; text-align: center; white-space: nowrap; }
   .sa-period-tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
   .sa-period-tab {
     padding: 7px 18px; border-radius: 10px; font-size: 12px; font-weight: 700;
     cursor: pointer; border: 1px solid var(--border);
-    background: var(--surface); color: var(--text2);
+    background: var(--surface); color: #475569;
     transition: all 0.2s; font-family: 'Inter', sans-serif;
   }
   .sa-period-tab.active {
@@ -59,7 +59,7 @@ const STYLES = `
   @media(max-width: 768px) { .sa-grid-2 { grid-template-columns: 1fr; } }
   .sa-empty {
     text-align: center; padding: 48px 20px;
-    color: var(--text2); font-size: 14px;
+    color: #475569; font-size: 14px;
   }
 `;
 

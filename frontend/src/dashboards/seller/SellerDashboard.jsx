@@ -38,7 +38,7 @@ const STATUS_COLOR = {
   accepted:   "#38bdf8",
   processing: "#a78bfa",
   shipped:    "#fb923c",
-  delivered:  "#4ade80",
+  delivered:  "#16a34a",
   rejected:   "#f87171",
   cancelled:  "#f87171",
 };
@@ -302,8 +302,8 @@ const EXTRA = `
   .sd-kpi    { padding:20px 22px; border-radius:16px; background:var(--surface); border:1px solid var(--border); cursor:pointer; transition:transform 0.2s, border-color 0.2s, box-shadow 0.2s; animation:fadeIn 0.4s ease; }
   .sd-kpi:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,0.35); }
   .sd-kpi-val { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; margin-top:8px; }
-  .sd-kpi-lbl { font-size:11px; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
-  .sd-kpi-sub { font-size:11px; color:var(--text2); margin-top:4px; }
+  .sd-kpi-lbl { font-size:11px; color:#475569; text-transform:uppercase; letter-spacing:0.05em; }
+  .sd-kpi-sub { font-size:11px; color:#475569; margin-top:4px; }
 
   .sd-pipe-bar { display:flex; gap:0; border-radius:12px; overflow:hidden; height:10px; margin:14px 0; }
   .sd-pipe-seg { transition:flex 0.5s ease; }
@@ -329,7 +329,7 @@ const EXTRA = `
   .sd-stock-low      { background:#fffbeb; border:1px solid rgba(251,191,36,0.12); }
 
   .sd-supplier-table { width:100%; border-collapse:collapse; }
-  .sd-supplier-table th { text-align:left; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; padding:0 12px 10px; border-bottom:1px solid var(--border); }
+  .sd-supplier-table th { text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.06em; padding:0 12px 10px; border-bottom:1px solid var(--border); }
   .sd-supplier-table td { padding:11px 12px; font-size:13px; color:var(--text); border-bottom:1px solid var(--border); }
   .sd-supplier-table tr:last-child td { border-bottom:none; }
   .sd-supplier-table tbody tr:hover { background:rgba(167,139,250,0.03); }
@@ -638,7 +638,7 @@ export default function SellerDashboard() {
               </span>
             )}
             <span style={{ fontSize: 11, color: "var(--text2)", background: "var(--surface)", padding: "2px 10px", borderRadius: 20, border: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block", boxShadow: "0 0 6px #4ade80" }} />
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#16a34a", display: "inline-block", boxShadow: "0 0 6px #16a34a" }} />
               Auto-refreshes every 30s
             </span>
           </p>
@@ -1126,7 +1126,7 @@ export default function SellerDashboard() {
                           </div>
                           <div style={{
                             fontSize: 12, fontWeight: 800, marginTop: 2,
-                            color: c.diff > 0 ? "#4ade80" : c.diff < 0 ? "#f87171" : "var(--text2)",
+                            color: c.diff > 0 ? "#16a34a" : c.diff < 0 ? "#f87171" : "var(--text2)",
                           }}>
                             {c.diff > 0 ? `+${fmtINR(Math.round(c.diff))} cheaper` : c.diff < 0 ? `${fmtINR(Math.round(Math.abs(c.diff)))} above market` : "At market price"}
                           </div>
@@ -1261,7 +1261,7 @@ export default function SellerDashboard() {
                 { Icon: ShoppingCart, label: "Procure Produce",  to: "/seller/procurement",   color: "#15803d" },
                 { Icon: Package,      label: "Manage Orders",    to: "/seller/orders",        color: "#0369a1" },
                 { Icon: ShoppingBag,  label: "My Products",      to: "/seller/products",      color: "#7c3aed" },
-                { Icon: PlusCircle,   label: "Add Product",      to: "/seller/products/add",  color: "#c4b5fd" },
+                { Icon: PlusCircle,   label: "Add Product",      to: "/seller/products/add",  color: "#7c3aed" },
                 { Icon: IndianRupee,  label: "Revenue Report",   to: "/seller/revenue",       color: "#fb923c" },
                 { Icon: TrendingUp,   label: "Analytics",        to: "/seller/analytics",     color: "#f472b6" },
                 { Icon: Truck,        label: "Logistics",        to: "/seller/logistics",     color: "#b45309" },

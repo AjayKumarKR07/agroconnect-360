@@ -48,11 +48,11 @@ const EXTRA = `
   .sp-select option { background:#0d1020; color:#f0eeff; }
   .sp-stat     { background:rgba(167,139,250,0.04); border:1px solid var(--border); border-radius:14px; padding:14px 16px; text-align:center; }
   .sp-stat-val { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; margin-top:6px; }
-  .sp-stat-lbl { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; }
+  .sp-stat-lbl { font-size:10px; color:#475569; text-transform:uppercase; letter-spacing:0.06em; }
   .sp-info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
   .sp-info-row:last-child { border-bottom:none; }
   .sp-info-val { font-weight:600; color:#0f172a; text-align:right; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .sp-nav-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; border:1px solid var(--border); text-decoration:none; color:var(--text2); font-size:13px; font-weight:600; transition:all 0.18s; }
+  .sp-nav-link { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:12px; border:1px solid var(--border); text-decoration:none; color:#475569; font-size:13px; font-weight:600; transition:all 0.18s; }
   .sp-nav-link:hover { background:rgba(167,139,250,0.06); border-color:rgba(167,139,250,0.2); color:#7c3aed; }
   .sp-badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
   .sp-badge    { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
@@ -264,7 +264,7 @@ export default function SellerProfile() {
                   <span className="sp-badge" style={{ background: "rgba(167,139,250,0.12)", color: "#7c3aed", border: "1px solid rgba(167,139,250,0.25)", display: "inline-flex", alignItems: "center", gap: 5 }}>
                     <ShoppingBag size={12} /> Seller
                   </span>
-                  <span className="sp-badge" style={{ background: cached.profileCompleted ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", color: cached.profileCompleted ? "#4ade80" : "#fbbf24", border: `1px solid ${cached.profileCompleted ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}`, display: "inline-flex", alignItems: "center", gap: 5 }}>
+                  <span className="sp-badge" style={{ background: cached.profileCompleted ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", color: cached.profileCompleted ? "#16a34a" : "#fbbf24", border: `1px solid ${cached.profileCompleted ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}`, display: "inline-flex", alignItems: "center", gap: 5 }}>
                     {cached.profileCompleted ? <CheckCircle2 size={12} /> : <AlertTriangle size={12} />}
                     {cached.profileCompleted ? "Profile Complete" : "Incomplete"}
                   </span>
@@ -411,7 +411,7 @@ export default function SellerProfile() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {allOrders.slice(0, 4).map((o, i) => {
-                  const STATUS_COLOR = { pending:"#fbbf24", accepted:"#38bdf8", processing:"#a78bfa", shipped:"#fb923c", delivered:"#4ade80", rejected:"#f87171", cancelled:"#f87171" };
+                  const STATUS_COLOR = { pending:"#fbbf24", accepted:"#38bdf8", processing:"#a78bfa", shipped:"#fb923c", delivered:"#16a34a", rejected:"#f87171", cancelled:"#f87171" };
                   const stColor = STATUS_COLOR[o.status] || "#94a3b8";
                   return (
                     <div key={(o._id || "") + i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--surface)", borderRadius: 11, border: "1px solid var(--border)", flexWrap: "wrap", gap: 8 }}>
@@ -452,7 +452,7 @@ export default function SellerProfile() {
                 <span style={{ color: "var(--text2)", fontSize: 12, display: "inline-flex", alignItems: "center", gap: 6 }}>
                   <Icon size={14} color="#7c3aed" /> {label}
                 </span>
-                <span className="sp-info-val" style={{ color: label === "Profile" ? (cached.profileCompleted ? "#4ade80" : "#fbbf24") : "#0f172a" }}>{val}</span>
+                <span className="sp-info-val" style={{ color: label === "Profile" ? (cached.profileCompleted ? "#16a34a" : "#fbbf24") : "#0f172a" }}>{val}</span>
               </div>
             ))}
           </div>

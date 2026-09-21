@@ -118,7 +118,7 @@ export default function ViewCrop() {
   return (
     <>
       <style>{DS + `
-        .stage-btn { padding:8px 14px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; font-size:12px; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; gap:6px; }
+        .stage-btn { padding:8px 14px; border-radius:20px; border:1px solid var(--border); background:transparent; color:#475569; cursor:pointer; font-size:12px; font-weight:600; transition:all .2s; display:inline-flex; align-items:center; gap:6px; }
         .stage-btn:hover { border-color:rgba(34,197,94,0.3); color:#15803d; }
         .stage-btn.active-stage { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.4); color:#15803d; }
       `}</style>

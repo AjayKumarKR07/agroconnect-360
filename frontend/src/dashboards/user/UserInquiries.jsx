@@ -6,15 +6,15 @@ const DS_USER = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,28px);font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
   .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:24px;}
   .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s,transform 0.2s;box-shadow:0 4px 15px rgba(14,165,233,0.3);}
   .btn-cyan:hover{opacity:0.9;transform:translateY(-1px);}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#7dd3fc;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#0284c7;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
   .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
   .field-input:focus{border-color:rgba(14,165,233,0.4);}
-  .typing-dot{width:7px;height:7px;border-radius:50%;background:#7dd3fc;animation:typingBounce 1.2s ease infinite;}
+  .typing-dot{width:7px;height:7px;border-radius:50%;background:#0284c7;animation:typingBounce 1.2s ease infinite;}
   .typing-dot:nth-child(2){animation-delay:0.2s;}
   .typing-dot:nth-child(3){animation-delay:0.4s;}
   @keyframes typingBounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
@@ -97,7 +97,7 @@ const INITIAL_INQUIRIES = [
     crop: "Fresh Tomatoes",
     qty: "500 kg",
     status: "Replied",
-    statusColor: "#4ade80",
+    statusColor: "#16a34a",
     lastMsg: "Farmer: Yes, we can offer ₹24/kg for orders above 300kg. Delivery by Tuesday.",
     date: "4 Aug 2026",
     history: [
@@ -165,7 +165,7 @@ export default function UserInquiries() {
       setTimeout(() => {
         const farmerText = pickReply(buyerMsg, activeInq);
         const withReply = [...updatedHistory, { sender: "Farmer", text: farmerText }];
-        const repliedInq = { ...updatedInq, history: withReply, lastMsg: `Farmer: ${farmerText}`, status: "Replied", statusColor: "#4ade80" };
+        const repliedInq = { ...updatedInq, history: withReply, lastMsg: `Farmer: ${farmerText}`, status: "Replied", statusColor: "#16a34a" };
         const finalList = newList.map(i => i.id === activeInq.id ? repliedInq : i);
 
         setInquiries(finalList);
@@ -205,7 +205,7 @@ export default function UserInquiries() {
       setTimeout(() => {
         const farmerText = pickReply(newForm.message, item);
         const withReply = [...item.history, { sender: "Farmer", text: farmerText }];
-        const repliedInq = { ...item, history: withReply, lastMsg: `Farmer: ${farmerText}`, status: "Replied", statusColor: "#4ade80" };
+        const repliedInq = { ...item, history: withReply, lastMsg: `Farmer: ${farmerText}`, status: "Replied", statusColor: "#16a34a" };
         const finalList = [repliedInq, ...inquiries];
         setInquiries(finalList);
         setActiveInq(repliedInq);
@@ -355,7 +355,7 @@ export default function UserInquiries() {
 
       {/* ── New Inquiry Modal ──────────────────────────────────── */}
       {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.78)", backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", backdropFilter: "blur(10px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="card" style={{ maxWidth: 480, width: "100%", background: "#ffffff", border: "1px solid #e2e8f0", boxShadow: "0 20px 40px rgba(0,0,0,0.12)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>

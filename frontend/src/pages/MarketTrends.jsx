@@ -81,7 +81,7 @@ export default function MarketTrends() {
     <>
       <style>{DS + `
         .mt-filter-bar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:24px; }
-        .mt-filter-label { font-size:12px; color:var(--text2); font-weight:600; letter-spacing:0.04em; white-space:nowrap; }
+        .mt-filter-label { font-size:12px; color:#475569; font-weight:600; letter-spacing:0.04em; white-space:nowrap; }
         .mt-filter-select { flex:1; min-width:160px; max-width:260px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 14px; font-family:'Inter',sans-serif; font-size:13px; cursor:pointer; outline:none; transition:border-color 0.2s; }
         .mt-filter-select:focus { border-color:#15803d; }
         .mt-filter-select option { background:#1a2332; }
@@ -89,10 +89,10 @@ export default function MarketTrends() {
         .chip-x { cursor:pointer; opacity:.7; font-size:14px; }
         .chip-x:hover { opacity:1; }
         .mt-tabs { display:flex; gap:0; flex-wrap:wrap; background:var(--surface); border-radius:14px; padding:5px; border:1px solid var(--border); margin-bottom:24px; }
-        .mt-tab { padding:9px 18px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:none; color:var(--text2); font-family:'Inter',sans-serif; transition:all 0.2s; white-space:nowrap; }
+        .mt-tab { padding:9px 18px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; border:none; background:none; color:#475569; font-family:'Inter',sans-serif; transition:all 0.2s; white-space:nowrap; }
         .mt-tab.active { color:#0f172a; }
         .mt-table { width:100%; border-collapse:collapse; }
-        .mt-table th { text-align:left; font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; padding:11px 16px; border-bottom:1px solid var(--border); }
+        .mt-table th { text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.06em; padding:11px 16px; border-bottom:1px solid var(--border); }
         .mt-table th:last-child { text-align:right; }
         .mt-table td { padding:13px 16px; font-size:14px; color:var(--text); border-bottom:1px solid rgba(255,255,255,0.04); }
         .mt-table td:last-child { text-align:right; }
@@ -143,7 +143,7 @@ export default function MarketTrends() {
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12, marginBottom:28 }}>
         {[
-          [TrendingUp,   "Highest",     topHighest.length,        "#4ade80"],
+          [TrendingUp,   "Highest",     topHighest.length,        "#16a34a"],
           [TrendingDown, "Lowest",      topLowest.length,         "#f87171"],
           [Coins,        "Commodities", commodityAverage.length,  "#38bdf8"],
           [Store,        "Markets",     marketStats.length,       "#fbbf24"],
@@ -200,7 +200,7 @@ export default function MarketTrends() {
                   <tbody>
                     {topHighest.map((item, i) => (
                       <tr key={i}>
-                        <td><span className="mt-rank" style={{ background:i<3?"rgba(34,197,94,0.12)":"rgba(255,255,255,0.05)", color:i<3?"#4ade80":"var(--text2)" }}>{i+1}</span></td>
+                        <td><span className="mt-rank" style={{ background:i<3?"rgba(34,197,94,0.12)":"rgba(255,255,255,0.05)", color:i<3?"#16a34a":"var(--text2)" }}>{i+1}</span></td>
                         <td style={{ fontWeight:700, color: "#0f172a" }}>{item.commodity}</td>
                         <td style={{ color:"var(--text2)" }}>{item.variety || "—"}</td>
                         <td>{item.market}</td>

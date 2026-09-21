@@ -20,35 +20,36 @@ const DSX = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.18s;}
+  .pg-sub{font-size:14px;color:#64748b;margin-top:6px;}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#ffffff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.18s;}
   .btn-gold:hover{opacity:0.88;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
-  .btn-ghost:hover{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.12);}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  select.field-input option{background:#1a1206;color:#0f172a;}
-  .field-label{display:block;font-size:12px;font-weight:700;color:#a38a5d;margin-bottom:5px;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
+  .btn-ghost:hover{border-color:#cbd5e1;background:#f8fafc;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
+  .field-input:focus{border-color:rgba(245,158,11,0.5);box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
+  select.field-input option{background:#ffffff;color:#0f172a;}
+  .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px;}
 
   .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-  .badge-gold{background:rgba(245,158,11,0.15);color:#b45309;border:1px solid rgba(245,158,11,0.25);}
-  .badge-green{background:rgba(34,197,94,0.12);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
-  .badge-red{background:rgba(239,68,68,0.12);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
-  .badge-blue{background:rgba(56,189,248,0.12);color:#0369a1;border:1px solid rgba(56,189,248,0.2);}
-  .badge-grey{background:rgba(255,255,255,0.06);color:#7a8fa6;border:1px solid #e2e8f0;}
+  .badge-gold{background:rgba(245,158,11,0.1);color:#d97706;border:1px solid #e2e8f0;}
+  .badge-green{background:rgba(34,197,94,0.1);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
+  .badge-red{background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
+  .badge-blue{background:rgba(56,189,248,0.1);color:#0284c7;border:1px solid rgba(56,189,248,0.2);}
+  .badge-grey{background:rgba(100,116,139,0.1);color:#64748b;border:1px solid rgba(100,116,139,0.2);}
 
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
-  .modal-box{background:#1a1206;border:1px solid rgba(245,158,11,0.25);border-radius:24px;padding:28px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
   @keyframes fadeIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
   .modal-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px;}
-  .modal-sub{font-size:13px;color:#a38a5d;margin-bottom:20px;}
+  .modal-sub{font-size:13px;color:#475569;margin-bottom:20px;}
 
-  .toast{position:fixed;bottom:28px;right:28px;background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.3);color:#15803d;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:99999;backdrop-filter:blur(12px);animation:slideUp 0.3s ease;}
+  .toast{position:fixed;bottom:28px;right:28px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#15803d;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.1);animation:slideUp 0.3s ease;}
   @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-  .icard{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px;transition:border-color 0.2s;}
-  .icard:hover{border-color:rgba(245,158,11,0.3);}
+  .icard{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+  .icard:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
 `;
+
 
 const STATUS_CFG = {
   pending:     { label: "Pending",     cls: "badge-gold", desc: "Waiting for farmer response" },
@@ -108,7 +109,7 @@ function ActionModal({ interest, onClose, onUpdated }) {
             <div className="modal-title" style={{ fontSize: 17 }}>Export Interest Details</div>
             <SBadge status={interest.status} />
           </div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, fontSize: 18 }}>×</button>
+          <button onClick={onClose} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, color: "#64748b", cursor: "pointer", width: 30, height: 30, fontSize: 18 }}>×</button>
         </div>
 
         {statusInfo.desc && (
@@ -134,8 +135,8 @@ function ActionModal({ interest, onClose, onUpdated }) {
             ["Shipment Terms",  interest.shipmentTerms || "—"],
           ] : []),
         ].map(([k, v]) => (
-          <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid rgba(245,158,11,0.08)", fontSize: 13 }}>
-            <span style={{ color: "#a38a5d" }}>{k}</span>
+          <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f1f5f9", fontSize: 13 }}>
+            <span style={{ color: "#64748b" }}>{k}</span>
             <span style={{ color: "#0f172a", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
           </div>
         ))}
@@ -255,11 +256,11 @@ export default function ExportInterests() {
   }, {});
 
   const SUMMARY_STATS = [
-    { Icon: Inbox,        label: "Total",       v: interests.length, c: "#fbbf24" },
-    { Icon: Clock,        label: "Pending",     v: interests.filter(i => i.status === "pending").length, c: "#fbbf24" },
-    { Icon: CheckCircle2, label: "Accepted",    v: interests.filter(i => i.status === "accepted").length, c: "#15803d" },
+    { Icon: Inbox,        label: "Total",       v: interests.length, c: "#d97706" },
+    { Icon: Clock,        label: "Pending",     v: interests.filter(i => i.status === "pending").length, c: "#d97706" },
+    { Icon: CheckCircle2, label: "Accepted",    v: interests.filter(i => i.status === "accepted").length, c: "#16a34a" },
     { Icon: MessageSquare,label: "Negotiating", v: interests.filter(i => i.status === "negotiating").length, c: "#0284c7" },
-    { Icon: Handshake,    label: "Confirmed",   v: interests.filter(i => i.status === "confirmed").length, c: "#15803d" },
+    { Icon: Handshake,    label: "Confirmed",   v: interests.filter(i => i.status === "confirmed").length, c: "#16a34a" },
   ];
 
   return (
@@ -281,7 +282,7 @@ export default function ExportInterests() {
         {SUMMARY_STATS.map(({ Icon, label, v, c }) => (
           <div key={label} style={{ padding: "10px 16px", background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.14)", borderRadius: 12, display: "flex", gap: 8, alignItems: "center" }}>
             <Icon size={16} color={c} />
-            <span style={{ fontSize: 12, color: "#a38a5d" }}>{label}</span>
+            <span style={{ fontSize: 12, color: "#0f172a" }}>{label}</span>
             <span style={{ fontWeight: 800, color: c, fontSize: 16 }}>{v}</span>
           </div>
         ))}
@@ -296,14 +297,14 @@ export default function ExportInterests() {
               padding: "7px 14px", borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: "pointer",
               border: `1px solid ${filter === t.id ? "rgba(245,158,11,0.35)" : "rgba(245,158,11,0.15)"}`,
               background: filter === t.id ? "rgba(245,158,11,0.18)" : "rgba(245,158,11,0.06)",
-              color: filter === t.id ? "#fbbf24" : "#a38a5d",
+              color: filter === t.id ? "#d97706" : "#475569",
               transition: "all 0.15s",
               display: "flex", alignItems: "center", gap: 6,
             }}
           >
             {t.label}
             {counts[t.id] > 0 && (
-              <span style={{ minWidth: 18, height: 18, borderRadius: 9, background: filter === t.id ? "#f59e0b" : "rgba(245,158,11,0.3)", color: filter === t.id ? "#000" : "#fbbf24", fontSize: 10, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+              <span style={{ minWidth: 18, height: 18, borderRadius: 9, background: filter === t.id ? "#f59e0b" : "rgba(245,158,11,0.2)", color: filter === t.id ? "#ffffff" : "#d97706", fontSize: 10, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
                 {counts[t.id]}
               </span>
             )}
@@ -319,7 +320,7 @@ export default function ExportInterests() {
       )}
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "#a38a5d" }}>
+        <div style={{ textAlign: "center", padding: "60px 0", color: "#0f172a" }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
             <Loader2 size={32} color="#d97706" style={{ animation: "spin 1s linear infinite" }} />
           </div>
@@ -333,7 +334,7 @@ export default function ExportInterests() {
           <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>
             {filter === "all" ? "No interest requests yet" : `No ${filter} interests`}
           </div>
-          <div style={{ fontSize: 14, color: "#a38a5d" }}>
+          <div style={{ fontSize: 14, color: "#64748b" }}>
             {filter === "all"
               ? "Browse available farmer produce and express interest to start connecting."
               : "Try another filter."}
@@ -351,7 +352,7 @@ export default function ExportInterests() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 15, color: "#0f172a" }}>{lst.name || "—"}</div>
-                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2, display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: 12, color: "#475569", marginTop: 2, display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                         <Sprout size={13} color="#16a34a" /> {far.name || "Farmer"}
                       </span>
@@ -374,7 +375,7 @@ export default function ExportInterests() {
                     ["Date",        new Date(i.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short"})],
                   ].map(([k,v]) => (
                     <div key={k} style={{ background: "#f1f5f9", borderRadius: 8, padding: "6px 10px" }}>
-                      <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
+                      <div style={{ fontSize: 10, color: "#64748b", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "#0f172a" }}>{v}</div>
                     </div>
                   ))}
@@ -382,10 +383,10 @@ export default function ExportInterests() {
 
                 {i.status === "confirmed" && (
                   <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#15803d", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#16a34a", marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
                       <Sparkles size={14} color="#16a34a" /> Deal Confirmed!
                     </div>
-                    <div style={{ fontSize: 12, color: "#7a8fa6" }}>
+                    <div style={{ fontSize: 12, color: "#475569" }}>
                       Agreed: {fmt(i.agreedPrice)}/{i.agreedUnit || "MT"} · {i.agreedQty} {i.agreedUnit || "MT"}
                       {i.shipmentTerms ? ` · ${i.shipmentTerms}` : ""}
                     </div>

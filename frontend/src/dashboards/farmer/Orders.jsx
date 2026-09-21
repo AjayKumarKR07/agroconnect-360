@@ -271,7 +271,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                 }
                 const isLast = i === timelineSteps.length - 1;
                 const dotColor =
-                  state === "done"     ? { bg: "rgba(34,197,94,0.18)",   border: "rgba(34,197,94,0.5)",   text: "#4ade80" } :
+                  state === "done"     ? { bg: "rgba(34,197,94,0.18)",   border: "rgba(34,197,94,0.5)",   text: "#16a34a" } :
                   state === "active"   ? { bg: "rgba(34,197,94,0.30)",   border: "#22c55e",               text: "#fff"    } :
                   state === "negative" ? { bg: "rgba(239,68,68,0.18)",   border: "rgba(239,68,68,0.5)",   text: "#f87171" } :
                                          { bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.10)", text: "#7a8fa6" };
@@ -303,7 +303,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                       <div style={{
                         fontSize: 14,
                         fontWeight: (state === "active" || state === "negative") ? 700 : 500,
-                        color: state === "done" ? "#4ade80" : state === "active" ? "#fff" : state === "negative" ? "#f87171" : "#7a8fa6",
+                        color: state === "done" ? "#16a34a" : state === "active" ? "#fff" : state === "negative" ? "#f87171" : "#7a8fa6",
                       }}>
                         {sm.Icon && <sm.Icon size={13} strokeWidth={2} style={{ verticalAlign: "middle", marginRight: 4 }} />}{sm.label}
                         {(state === "active" || state === "negative") && (
@@ -346,7 +346,7 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
                   onClick={(e) => { e.stopPropagation(); onUpdateStatus(order._id, "shipped"); }}
                   disabled={updatingId === order._id}
                   className="od-btn-ghost"
-                  style={{ flex: 1, minWidth: 160, color: "#c4b5fd", borderColor: "rgba(167,139,250,0.25)" }}
+                  style={{ flex: 1, minWidth: 160, color: "#7c3aed", borderColor: "rgba(167,139,250,0.25)" }}
                 ><Truck size={15} /> Mark as Shipped</button>
               )}
               {order.status === "shipped" && (
@@ -396,8 +396,8 @@ function OrderDetailsModal({ order, onClose, updatingId, onUpdateStatus }) {
         .od-badge-green  { background:rgba(34,197,94,0.12);  color:#15803d; border:1px solid rgba(34,197,94,0.2);  }
         .od-badge-amber  { background:rgba(251,191,36,0.12); color:#fde68a; border:1px solid rgba(251,191,36,0.2); }
         .od-badge-red    { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2);  }
-        .od-badge-blue   { background:rgba(56,189,248,0.12); color:#7dd3fc; border:1px solid rgba(56,189,248,0.2); }
-        .od-badge-purple { background:rgba(167,139,250,0.12);color:#c4b5fd; border:1px solid rgba(167,139,250,0.2);}
+        .od-badge-blue   { background:rgba(56,189,248,0.12); color:#0284c7; border:1px solid rgba(56,189,248,0.2); }
+        .od-badge-purple { background:rgba(167,139,250,0.12);color:#7c3aed; border:1px solid rgba(167,139,250,0.2);}
         /* Scoped action buttons inside modal */
         .od-btn-green {
           display:inline-flex; align-items:center; justify-content:center; gap:8px;
@@ -548,7 +548,7 @@ export default function Orders() {
         .tab-btn{
           padding:7px 16px;border-radius:10px;font-size:13px;font-weight:600;
           cursor:pointer;border:1px solid var(--border);
-          background:var(--surface);color:var(--text2);
+          background:var(--surface);color:#475569;
           transition:all 0.2s;font-family:'Inter',sans-serif;
         }
         .tab-btn:hover{background:var(--surface2);color:var(--text);}
@@ -597,8 +597,8 @@ export default function Orders() {
         .badge-green{background:rgba(34,197,94,0.12);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
         .badge-amber{background:rgba(251,191,36,0.12);color:#fde68a;border:1px solid rgba(251,191,36,0.2);}
         .badge-red{background:rgba(239,68,68,0.12);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
-        .badge-blue{background:rgba(56,189,248,0.12);color:#7dd3fc;border:1px solid rgba(56,189,248,0.2);}
-        .badge-purple{background:rgba(167,139,250,0.12);color:#c4b5fd;border:1px solid rgba(167,139,250,0.2);}
+        .badge-blue{background:rgba(56,189,248,0.12);color:#0284c7;border:1px solid rgba(56,189,248,0.2);}
+        .badge-purple{background:rgba(167,139,250,0.12);color:#7c3aed;border:1px solid rgba(167,139,250,0.2);}
 
         /* Card action buttons */
         .card-btn-green{
@@ -799,7 +799,7 @@ export default function Orders() {
                   <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
                     <button
                       className="card-btn-ghost"
-                      style={{ color: "#c4b5fd", borderColor: "rgba(167,139,250,0.22)", justifyContent: "center", width: "100%" }}
+                      style={{ color: "#7c3aed", borderColor: "rgba(167,139,250,0.22)", justifyContent: "center", width: "100%" }}
                       disabled={updatingId === order._id}
                       onClick={(e) => { e.stopPropagation(); updateStatus(order._id, "shipped"); }}
                     ><Truck size={14} /> Mark as Shipped</button>

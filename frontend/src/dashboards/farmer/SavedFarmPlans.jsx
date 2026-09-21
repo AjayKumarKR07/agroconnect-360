@@ -12,7 +12,7 @@ const authHeaders = () => ({
 const fmt = n => `₹${Number(n || 0).toLocaleString("en-IN")}`;
 
 function ScoreBadge({ score }) {
-  const color = score >= 75 ? "#4ade80" : score >= 50 ? "#fbbf24" : "#f87171";
+  const color = score >= 75 ? "#16a34a" : score >= 50 ? "#fbbf24" : "#f87171";
   const bg    = score >= 75 ? "rgba(34,197,94,0.12)" : score >= 50 ? "rgba(251,191,36,0.12)" : "rgba(239,68,68,0.12)";
   return (
     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 12px", borderRadius: 20, background: bg, border: `1px solid ${color}30` }}>
@@ -111,15 +111,15 @@ export default function SavedFarmPlans() {
         .sp-card:hover { border-color:rgba(34,197,94,0.25); transform:translateY(-2px); }
         .sp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
         .sp-crop { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#0f172a; margin-bottom:6px; }
-        .sp-meta { font-size:12px; color:var(--text2); margin-bottom:14px; line-height:1.8; }
+        .sp-meta { font-size:12px; color:#475569; margin-bottom:14px; line-height:1.8; }
         .sp-actions { display:flex; gap:8px; flex-wrap:wrap; }
         .sp-detail-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:24px; }
         .sp-section { margin-bottom:20px; }
-        .sp-section-title { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
+        .sp-section-title { font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
         .sp-rec-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
         .sp-rank { font-size:20px; width:28px; flex-shrink:0; }
         .sp-rec-crop { font-weight:700; color:#0f172a; font-size:14px; }
-        .sp-rec-meta { font-size:11px; color:var(--text2); margin-top:2px; }
+        .sp-rec-meta { font-size:11px; color:#475569; margin-top:2px; }
       `}</style>
 
       <div className="pg-head">

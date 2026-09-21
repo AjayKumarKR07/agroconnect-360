@@ -107,13 +107,13 @@ const STYLES = `
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 4px 14px 14px 14px;
-    color: #0f172a;
+    color:#0f172a;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }
   .bubble.user {
     background: linear-gradient(135deg,#b45309,#f59e0b);
     border-radius: 14px 4px 14px 14px;
-    color: #0f172a;
+    color:#0f172a;
     box-shadow: 0 4px 20px rgba(245,158,11,0.35);
   }
 
@@ -184,7 +184,7 @@ const STYLES = `
   }
   .ai-input {
     flex: 1; background: transparent; border: none; outline: none;
-    color: #0f172a; font-size: 14.5px; font-family: 'Inter',sans-serif;
+    color:#0f172a; font-size: 14.5px; font-family: 'Inter',sans-serif;
     resize: none; line-height: 1.5; padding: 4px 0; max-height: 110px; overflow: auto;
   }
   .ai-input::placeholder { color: #94a3b8; }

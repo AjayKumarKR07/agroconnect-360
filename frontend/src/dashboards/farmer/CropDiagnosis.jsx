@@ -89,10 +89,10 @@ export default function CropDiagnosis() {
     <>
       <style>{DS + `
         .diag-tabs{display:flex;gap:0;margin-bottom:24px;background:var(--surface);border-radius:12px;padding:4px;border:1px solid var(--border);width:fit-content;}
-        .diag-tab{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text2);font-family:'Inter',sans-serif;transition:all 0.2s;}
+        .diag-tab{padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:#475569;font-family:'Inter',sans-serif;transition:all 0.2s;}
         .diag-tab.active{background:var(--green-dim);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
         /* Modal */
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
+        .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
         .modal-box{background:#07111a;border:1px solid #e2e8f0;border-radius:24px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
         @keyframes fadeIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
         .modal-img{width:100%;height:220px;object-fit:cover;border-radius:20px 20px 0 0;}
@@ -100,7 +100,7 @@ export default function CropDiagnosis() {
         .modal-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#0f172a;margin-bottom:4px;}
         .modal-row{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--border);}
         .modal-row:last-child{border-bottom:none;}
-        .modal-lbl{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;}
+        .modal-lbl{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;}
         .modal-val{font-size:14px;color:var(--text);line-height:1.7;}
         /* History buttons */
         .hist-btns{display:flex;gap:8px;}
@@ -188,7 +188,7 @@ export default function CropDiagnosis() {
               <div className="card" style={{ background: result.isHealthy ? "rgba(34,197,94,0.04)" : "rgba(239,68,68,0.04)", borderColor: result.isHealthy ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)" }}>
                 {/* Status Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <div className="card-title" style={{ fontSize: 18, color: result.isHealthy ? "#4ade80" : "#f87171", display: "flex", alignItems: "center", gap: 8 }}>
+                  <div className="card-title" style={{ fontSize: 18, color: result.isHealthy ? "#16a34a" : "#f87171", display: "flex", alignItems: "center", gap: 8 }}>
                     {result.isHealthy ? <><CheckCircle2 size={18} color="#15803d" /> Healthy Crop!</> : <><AlertTriangle size={18} color="#dc2626" /> Disease Detected</>}
                   </div>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -208,7 +208,7 @@ export default function CropDiagnosis() {
                       <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>
                         DISEASE IDENTIFIED
                       </div>
-                      <div style={{ fontSize: 18, fontWeight: 800, color: result.isHealthy ? "#4ade80" : "#fff" }}>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: result.isHealthy ? "#16a34a" : "#fff" }}>
                         {result.disease}
                       </div>
                     </div>
@@ -317,7 +317,7 @@ export default function CropDiagnosis() {
                         <span style={{ color: "#15803d", fontWeight: 700 }}>{result.confidence}%</span>
                       </div>
                       <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${result.confidence}%`, background: "linear-gradient(90deg,#16a34a,#4ade80)", borderRadius: 4, transition: "width 1s ease" }} />
+                        <div style={{ height: "100%", width: `${result.confidence}%`, background: "linear-gradient(90deg,#16a34a,#16a34a)", borderRadius: 4, transition: "width 1s ease" }} />
                       </div>
                     </div>
                   )}
@@ -430,7 +430,7 @@ export default function CropDiagnosis() {
               {viewItem.disease && (
                 <div className="modal-row">
                   <div className="modal-lbl" style={{ display: "flex", alignItems: "center", gap: 6 }}><Bug size={14} color="#dc2626" /> Disease Identified</div>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: viewItem.isHealthy ? "#4ade80" : "#f87171" }}>{viewItem.disease}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: viewItem.isHealthy ? "#16a34a" : "#f87171" }}>{viewItem.disease}</div>
                 </div>
               )}
 
@@ -506,7 +506,7 @@ export default function CropDiagnosis() {
                     <span style={{ color: "#15803d", fontWeight: 700 }}>{viewItem.confidence}%</span>
                   </div>
                   <div style={{ height: 8, background: "var(--surface)", borderRadius: 4, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${viewItem.confidence}%`, background: "linear-gradient(90deg,#16a34a,#4ade80)", borderRadius: 4 }} />
+                    <div style={{ height: "100%", width: `${viewItem.confidence}%`, background: "linear-gradient(90deg,#16a34a,#16a34a)", borderRadius: 4 }} />
                   </div>
                 </div>
               )}

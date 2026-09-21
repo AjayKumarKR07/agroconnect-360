@@ -334,7 +334,7 @@ export default function AdminDashboard() {
                 border: `1px solid ${data.system.api === "operational" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`,
                 borderRadius: 12,
                 fontSize: 12,
-                color: data.system.api === "operational" ? "#4ade80" : "#f87171",
+                color: data.system.api === "operational" ? "#16a34a" : "#f87171",
                 fontWeight: 700,
                 transition: "all 0.2s",
               }}
@@ -566,7 +566,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Real Trend Badge */}
-                  <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: k.trend?.positive ? "#4ade80" : k.trend?.positive === false ? "#f87171" : "#a5b4fc" }}>
+                  <div style={{ marginTop: 6, fontSize: 11, fontWeight: 700, color: k.trend?.positive ? "#16a34a" : k.trend?.positive === false ? "#f87171" : "#a5b4fc" }}>
                     {k.trend?.label}
                   </div>
 

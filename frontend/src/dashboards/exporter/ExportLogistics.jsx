@@ -17,21 +17,23 @@ const DS_EXPORTER = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  .field-input::placeholder{color:#7a8fa6;}
-  .field-label{font-size:11px;font-weight:700;color:#a38a5d;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
-  .modal-box{background:#080d12;border:1px solid rgba(245,158,11,0.18);border-radius:22px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
-  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+  .pg-sub{font-size:14px;color:#64748b;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#ffffff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
+  .btn-ghost:hover{border-color:#cbd5e1;background:#f8fafc;}
+  .field-input{width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
+  .field-input:focus{border-color:rgba(245,158,11,0.5);box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
+  .field-input::placeholder{color:#94a3b8;}
+  .field-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:22px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+  .spinner{width:28px;height:28px;border:3px solid rgba(0,0,0,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 `;
+
 
 const authH = () => ({ Authorization: `Bearer ${localStorage.getItem("agroconnect_token")}`, "Content-Type": "application/json" });
 
@@ -46,11 +48,11 @@ const STEPS = [
 
 const STATUS_MAP = {
   cfs_cold_storage:  { label: "CFS Cold Storage",       step: 1, color: "#7c3aed" },
-  customs_submitted: { label: "Customs Submitted",       step: 2, color: "#b45309" },
-  customs_cleared:   { label: "Customs Clearance Passed",step: 3, color: "#15803d" },
-  onboard_vessel:    { label: "Onboard Vessel",          step: 4, color: "#0369a1" },
-  in_transit:        { label: "In Transit",              step: 4, color: "#0369a1" },
-  delivered:         { label: "Destination Delivered",   step: 5, color: "#15803d" },
+  customs_submitted: { label: "Customs Submitted",       step: 2, color: "#d97706" },
+  customs_cleared:   { label: "Customs Clearance Passed",step: 3, color: "#16a34a" },
+  onboard_vessel:    { label: "Onboard Vessel",          step: 4, color: "#0284c7" },
+  in_transit:        { label: "In Transit",              step: 4, color: "#0284c7" },
+  delivered:         { label: "Destination Delivered",   step: 5, color: "#16a34a" },
   cancelled:         { label: "Cancelled",               step: 0, color: "#dc2626" },
 };
 
@@ -120,7 +122,7 @@ function AddShipmentModal({ onClose, onSaved }) {
             <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
               <Package size={20} color="#d97706" /> Add Container Shipment
             </div>
-            <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Track real export container from Indian port</div>
+            <div style={{ fontSize: 13, color: "#475569", marginTop: 2 }}>Track real export container from Indian port</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
         </div>
@@ -292,7 +294,7 @@ export default function ExportLogistics() {
 
   const getStep = (s) => STATUS_MAP[s.status]?.step ?? 0;
   const getStepLabel = (s) => STATUS_MAP[s.status]?.label ?? s.status;
-  const getStepColor = (s) => STATUS_MAP[s.status]?.color ?? "#a38a5d";
+  const getStepColor = (s) => STATUS_MAP[s.status]?.color ?? "#64748b";
 
   const fmtDate = (d) => d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
@@ -303,7 +305,7 @@ export default function ExportLogistics() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#15803d", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#16a34a", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -329,7 +331,7 @@ export default function ExportLogistics() {
       {loading ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <div className="spinner" />
-          <div style={{ marginTop: 14, fontSize: 14, color: "#a38a5d" }}>Loading shipments…</div>
+          <div style={{ marginTop: 14, fontSize: 14, color: "#64748b" }}>Loading shipments…</div>
         </div>
       ) : containers.length === 0 ? (
         /* ── Empty state ─────────────────────────────────────────────── */
@@ -338,7 +340,7 @@ export default function ExportLogistics() {
             <Ship size={56} color="#d97706" strokeWidth={1.5} />
           </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Shipments Yet</div>
-          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
+          <div style={{ fontSize: 14, color: "#64748b", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export container to start tracking port & customs pipeline status.
           </div>
           <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -358,7 +360,7 @@ export default function ExportLogistics() {
             />
 
             {filtered.length === 0 && (
-              <div style={{ padding: "24px 0", textAlign: "center", fontSize: 13, color: "#a38a5d" }}>No results</div>
+              <div style={{ padding: "24px 0", textAlign: "center", fontSize: 13, color: "#64748b" }}>No results</div>
             )}
 
             {filtered.map(c => {
@@ -370,8 +372,8 @@ export default function ExportLogistics() {
                   className="card"
                   style={{
                     padding: 14, cursor: "pointer", transition: "all 0.18s",
-                    background: isActive ? "rgba(245,158,11,0.12)" : "rgba(245,158,11,0.03)",
-                    borderColor: isActive ? "rgba(245,158,11,0.3)" : "rgba(245,158,11,0.1)",
+                    background: isActive ? "rgba(245,158,11,0.1)" : "#ffffff",
+                    borderColor: isActive ? "rgba(245,158,11,0.4)" : "#e2e8f0",
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -381,7 +383,7 @@ export default function ExportLogistics() {
                     </span>
                   </div>
                   <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 4 }}>{c.cargo} {c.quantityTons ? `(${c.quantityTons} MT)` : ""}</div>
-                  <div style={{ fontSize: 11, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ fontSize: 11, color: "#475569", display: "flex", alignItems: "center", gap: 4 }}>
                     <MapPin size={12} color="#d97706" /> {c.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{c.destPort}</strong>
                   </div>
                 </div>
@@ -393,26 +395,26 @@ export default function ExportLogistics() {
           {activeShipment && (
             <div className="card" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               {/* Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, borderBottom: "1px solid rgba(245,158,11,0.1)", paddingBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, borderBottom: "1px solid #e2e8f0", paddingBottom: 16 }}>
                 <div>
                   <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
                     <Package size={20} color="#d97706" /> {activeShipment.containerNo}
                   </div>
                   <div style={{ fontSize: 15, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>{activeShipment.cargo} {activeShipment.quantityTons ? `(${activeShipment.quantityTons} MT)` : ""}</div>
                   {activeShipment.vessel && (
-                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Vessel: <strong style={{ color: "#0f172a" }}>{activeShipment.vessel}</strong></div>
+                    <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>Vessel: <strong style={{ color: "#0f172a" }}>{activeShipment.vessel}</strong></div>
                   )}
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Estimated Arrival</div>
+                  <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Estimated Arrival</div>
                   <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>{fmtDate(activeShipment.eta)}</div>
-                  <div style={{ fontSize: 11, color: "#a38a5d" }}>ETD: {fmtDate(activeShipment.etd)}</div>
+                  <div style={{ fontSize: 11, color: "#64748b" }}>ETD: {fmtDate(activeShipment.etd)}</div>
                 </div>
               </div>
 
               {/* Pipeline stepper */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#a38a5d", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14 }}>
                   Port & Customs Clearance Pipeline
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -428,7 +430,7 @@ export default function ExportLogistics() {
                           background: done || current ? "linear-gradient(135deg,#d97706,#f59e0b)" : "rgba(245,158,11,0.06)",
                           border: `2px solid ${done || current ? "#f59e0b" : "rgba(245,158,11,0.2)"}`,
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: 12, fontWeight: 800, color: done || current ? "#fff" : "#a38a5d",
+                          fontSize: 12, fontWeight: 800, color: done || current ? "#ffffff" : "#94a3b8",
                         }}>
                           {done ? "✓" : idx + 1}
                         </div>
@@ -437,7 +439,7 @@ export default function ExportLogistics() {
                           background: current ? "rgba(245,158,11,0.1)" : "transparent",
                           border: `1px solid ${current ? "rgba(245,158,11,0.25)" : "transparent"}`,
                         }}>
-                          <div style={{ fontSize: 14, fontWeight: current ? 800 : done ? 600 : 400, color: current ? "#fef08a" : done ? "#fff" : "#a38a5d" }}>
+                          <div style={{ fontSize: 14, fontWeight: current ? 800 : done ? 600 : 400, color: current ? "#d97706" : done ? "#0f172a" : "#94a3b8" }}>
                             {step}
                           </div>
                           {current && (
@@ -453,18 +455,18 @@ export default function ExportLogistics() {
               </div>
 
               {/* POL / POD */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(0,0,0,0.25)", padding: 14, borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "#f8fafc", padding: 14, borderRadius: 14, border: "1px solid #e2e8f0" }}>
                 <div>
-                  <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Port of Loading (POL)</div>
+                  <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Port of Loading (POL)</div>
                   <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.portOfOrigin || "—"}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Port of Discharge (POD)</div>
+                  <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Port of Discharge (POD)</div>
                   <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.destPort || "—"}</div>
                 </div>
                 {activeShipment.destinationCountry && (
                   <div>
-                    <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Destination Country</div>
+                    <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Destination Country</div>
                     <div style={{ fontSize: 13, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{activeShipment.destinationCountry}</div>
                   </div>
                 )}
@@ -510,7 +512,7 @@ export default function ExportLogistics() {
                     {!isDelivered && !isCancelled && nextStatus !== "delivered" && (
                       <button
                         className="btn-ghost"
-                        style={{ flex: 1, justifyContent: "center", color: "#15803d", borderColor: "rgba(34,197,94,0.25)", display: "inline-flex", alignItems: "center", gap: 6 }}
+                        style={{ flex: 1, justifyContent: "center", color: "#16a34a", borderColor: "rgba(34,197,94,0.25)", display: "inline-flex", alignItems: "center", gap: 6 }}
                         disabled={statusUpdating}
                         onClick={() => updateStatus(activeShipment._id, "delivered")}
                       >
@@ -520,7 +522,7 @@ export default function ExportLogistics() {
 
                     {/* Delivered badge */}
                     {isDelivered && (
-                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", fontWeight: 800, fontSize: 14, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 12, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", color: "#16a34a", fontWeight: 800, fontSize: 14, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                         <CheckCircle2 size={18} color="#16a34a" /> Destination Delivered
                       </div>
                     )}
@@ -531,7 +533,7 @@ export default function ExportLogistics() {
                         <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)", color: "#dc2626", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteShipment(activeShipment._id)}>
                           Yes, Delete
                         </button>
-                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                        <button style={{ flex: 1, padding: "10px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#0f172a", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
                           Cancel
                         </button>
                       </>

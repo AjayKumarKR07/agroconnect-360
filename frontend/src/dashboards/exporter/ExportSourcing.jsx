@@ -8,35 +8,35 @@ const DSX = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px 22px;}
   .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.18s;}
   .btn-gold:hover{opacity:0.88;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
-  .btn-ghost:hover{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.12);}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  select.field-input option, .field-input option{background:#1a1206;color:#0f172a;}
-  .field-label{display:block;font-size:12px;font-weight:700;color:#a38a5d;margin-bottom:5px;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-weight:600;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.18s;}
+  .btn-ghost:hover{border-color:#94a3b8;background:#f8fafc;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid #cbd5e1;background:#ffffff;color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;box-sizing:border-box;}
+  .field-input:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
+  select.field-input option, .field-input option{background:#ffffff;color:#0f172a;}
+  .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px;}
 
   .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;}
-  .badge-gold{background:rgba(245,158,11,0.15);color:#b45309;border:1px solid rgba(245,158,11,0.25);}
+  .badge-gold{background:rgba(245,158,11,0.15);color:#b45309;border:1px solid #e2e8f0;}
   .badge-green{background:rgba(34,197,94,0.12);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
   .badge-red{background:rgba(239,68,68,0.12);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
 
   .toast{position:fixed;bottom:28px;right:28px;background:rgba(34,197,94,0.14);border:1px solid rgba(34,197,94,0.3);color:#15803d;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:99999;backdrop-filter:blur(12px);animation:slideUp 0.3s ease;}
   @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
-  .modal-box{background:#1a1206;border:1px solid rgba(245,158,11,0.25);border-radius:24px;padding:28px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;width:100%;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
   @keyframes fadeIn{from{opacity:0;transform:scale(0.96)}to{opacity:1;transform:scale(1)}}
   .modal-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px;}
-  .modal-sub{font-size:13px;color:#a38a5d;margin-bottom:20px;}
+  .modal-sub{font-size:13px;color:#0f172a;margin-bottom:20px;}
 
   .listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
   @media(max-width:640px){.listing-grid{grid-template-columns:1fr;}}
 
-  .lcard{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s,transform 0.2s;}
+  .lcard{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s,transform 0.2s;}
   .lcard:hover{border-color:rgba(245,158,11,0.3);transform:translateY(-2px);}
 
   .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:flex-end;}
@@ -87,7 +87,7 @@ function InterestModal({ listing, onClose, onSubmitted }) {
           <div className="modal-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Send size={18} style={{ color: "#d97706" }} /> Express Interest
           </div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#0f172a", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <X size={16} />
           </button>
         </div>
@@ -104,7 +104,7 @@ function InterestModal({ listing, onClose, onSubmitted }) {
             ["Destination", listing.preferredDestination || "Open"],
           ].map(([k, v]) => (
             <div key={k} style={{ background: "rgba(245,158,11,0.06)", borderRadius: 8, padding: "8px 12px" }}>
-              <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
+              <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase", marginBottom: 2 }}>{k}</div>
               <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{v}</div>
             </div>
           ))}
@@ -163,7 +163,7 @@ function DetailModal({ listing, onClose, onExpress }) {
             <div className="modal-title" style={{ fontSize: 18 }}>{f.name}</div>
             <div style={{ fontSize: 12, color: "#b45309", fontWeight: 700, marginTop: 2 }}>{f.exportGrade || "—"}</div>
           </div>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#a38a5d", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, color: "#0f172a", cursor: "pointer", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <X size={16} />
           </button>
         </div>
@@ -178,12 +178,12 @@ function DetailModal({ listing, onClose, onExpress }) {
           ["Listed On",     new Date(f.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})],
         ].map(([k, v]) => (
           <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(245,158,11,0.1)", fontSize: 13 }}>
-            <span style={{ color: "#a38a5d" }}>{k}</span>
+            <span style={{ color: "#0f172a" }}>{k}</span>
             <span style={{ color: "#0f172a", fontWeight: 600, maxWidth: "60%", textAlign: "right" }}>{v}</span>
           </div>
         ))}
         {f.description && (
-          <div style={{ marginTop: 12, padding: "10px 14px", background: "rgba(245,158,11,0.05)", borderRadius: 10, fontSize: 13, color: "#a38a5d", lineHeight: 1.6 }}>
+          <div style={{ marginTop: 12, padding: "10px 14px", background: "#ffffff", borderRadius: 10, fontSize: 13, color: "#0f172a", lineHeight: 1.6 }}>
             {f.description}
           </div>
         )}
@@ -329,7 +329,7 @@ export default function ExportSourcing() {
 
       {/* ── Loading ───────────────────────────────────────────────────── */}
       {loading ? (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "#a38a5d" }}>
+        <div style={{ textAlign: "center", padding: "60px 0", color: "#0f172a" }}>
           <Loader2 size={36} className="spinner" style={{ color: "#d97706", margin: "0 auto 12px" }} />
           <div>Loading farmer listings…</div>
         </div>
@@ -337,7 +337,7 @@ export default function ExportSourcing() {
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <Wheat size={48} style={{ color: "#d97706", opacity: 0.6, margin: "0 auto 16px" }} />
           <div style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>No export listings found</div>
-          <div style={{ fontSize: 14, color: "#a38a5d" }}>
+          <div style={{ fontSize: 14, color: "#0f172a" }}>
             {search || location || grade || dest
               ? "Try adjusting your search filters."
               : "Farmers haven't listed any export produce yet. Check back soon."}
@@ -355,26 +355,26 @@ export default function ExportSourcing() {
                   <span className="badge badge-gold">{l.exportGrade || "Export Ready"}</span>
                 </div>
 
-                <div style={{ fontSize: 12, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ fontSize: 12, color: "#0f172a", display: "flex", alignItems: "center", gap: 4 }}>
                   <MapPin size={12} style={{ color: "#d97706" }} /> {l.location}
                 </div>
-                <div style={{ fontSize: 12, color: "#a38a5d", display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ fontSize: 12, color: "#0f172a", display: "flex", alignItems: "center", gap: 4 }}>
                   <User size={12} style={{ color: "#d97706" }} /> Farmer: <strong style={{ color: "#0f172a" }}>{l.farmer?.name || "Verified Farmer"}</strong>
                 </div>
 
                 {/* Stats */}
                 <div style={{ display: "flex", justifyContent: "space-between", background: "#f1f5f9", padding: "10px 14px", borderRadius: 12 }}>
                   <div>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Quantity</div>
+                    <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase" }}>Quantity</div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
-                      {l.exportQuantity} <span style={{ fontSize: 12, color: "#a38a5d" }}>{l.exportUnit}</span>
+                      {l.exportQuantity} <span style={{ fontSize: 12, color: "#0f172a" }}>{l.exportUnit}</span>
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Price</div>
+                    <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase" }}>Price</div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a" }}>
                       {l.expectedExportPrice ? `${fmt(l.expectedExportPrice)}` : "Negotiate"}
-                      {l.expectedExportPrice && <span style={{ fontSize: 11, color: "#a38a5d" }}>/{l.exportUnit}</span>}
+                      {l.expectedExportPrice && <span style={{ fontSize: 11, color: "#0f172a" }}>/{l.exportUnit}</span>}
                     </div>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export default function ExportSourcing() {
                 {/* Tags */}
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {l.preferredDestination && (
-                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", color: "#0369a1", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                    <span style={{ fontSize: 11, padding: "3px 9px", borderRadius: 6, background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.2)", color: "#0284c7", display: "inline-flex", alignItems: "center", gap: 4 }}>
                       <Globe size={11} /> {l.preferredDestination}
                     </span>
                   )}

@@ -7,17 +7,19 @@ const DS = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
-  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{font-size:11px;font-weight:700;color:#a38a5d;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
-  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  .field-input::placeholder{color:#7a8fa6;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
-  .modal-box{background:#0f0a03;border:1px solid rgba(245,158,11,0.2);border-radius:22px;padding:28px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;}
-  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+  .pg-sub{font-size:14px;color:#64748b;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+  .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#ffffff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid #cbd5e1;background:#ffffff;color:#0f172a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+  .btn-ghost:hover{border-color:#94a3b8;background:#f8fafc;}
+  .field-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
+  .field-input{width:100%;background:#ffffff;border:1px solid #cbd5e1;border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
+  .field-input:focus{border-color:rgba(245,158,11,0.6);box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
+  .field-input::placeholder{color:#94a3b8;}
+  select.field-input option{background:#ffffff;color:#0f172a;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:22px;padding:28px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+  .spinner{width:28px;height:28px;border:3px solid rgba(0,0,0,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -86,9 +88,9 @@ function AddContractModal({ onClose, onSaved }) {
             <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
               <Scroll size={22} color="#d97706" /> Add LC / Contract
             </div>
-            <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Record a new Letter of Credit or trade contract</div>
+            <div style={{ fontSize: 13, color: "#475569", marginTop: 2 }}>Record a new Letter of Credit or trade contract</div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 20, lineHeight: 1 }}>✕</button>
         </div>
 
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -142,7 +144,7 @@ function AddContractModal({ onClose, onSaved }) {
             <textarea className="field-input" rows={2} style={{ resize: "none" }} placeholder="Any additional contract terms…" value={form.notes} onChange={e => set("notes", e.target.value)} />
           </div>
 
-          <div style={{ fontSize: 12, color: "#a38a5d", padding: "8px 12px", borderRadius: 8, background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.12)", display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ fontSize: 12, color: "#475569", padding: "8px 12px", borderRadius: 8, background: "#fffbeb", border: "1px solid #f59e0b", display: "flex", alignItems: "center", gap: 6 }}>
             <Info size={14} color="#0284c7" style={{ flexShrink: 0 }} />
             <span>Default payment milestones: 20% Advance → 50% BL Onboard → 30% Port Customs. You can mark each as released after saving.</span>
           </div>
@@ -248,7 +250,7 @@ export default function ExportContracts() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.3)", color: "#15803d", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.3)", color: "#16a34a", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -269,7 +271,7 @@ export default function ExportContracts() {
       {loading ? (
         <div style={{ textAlign: "center", padding: "64px 0" }}>
           <div className="spinner" />
-          <div style={{ marginTop: 14, fontSize: 14, color: "#a38a5d" }}>Loading contracts…</div>
+          <div style={{ marginTop: 14, fontSize: 14, color: "#0f172a" }}>Loading contracts…</div>
         </div>
       ) : contracts.length === 0 ? (
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
@@ -277,7 +279,7 @@ export default function ExportContracts() {
             <Scroll size={52} color="#d97706" strokeWidth={1.5} />
           </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Contracts Yet</div>
-          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
+          <div style={{ fontSize: 14, color: "#0f172a", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your first export LC or trade contract to track payment milestones and buyer details.
           </div>
           <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
@@ -296,30 +298,30 @@ export default function ExportContracts() {
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                       {c.lcRef && <span style={{ fontFamily: "monospace", fontWeight: 800, color: "#b45309", fontSize: 15 }}>{c.lcRef}</span>}
-                      <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "#fef08a", fontWeight: 800, border: "1px solid rgba(245,158,11,0.3)" }}>
+                      <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(245,158,11,0.15)", color: "#d97706", fontWeight: 800, border: "1px solid rgba(245,158,11,0.3)" }}>
                         {c.lcType}
                       </span>
                       {isCompleted && (
-                        <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#15803d", fontWeight: 800, border: "1px solid rgba(34,197,94,0.3)" }}>
+                        <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#16a34a", fontWeight: 800, border: "1px solid rgba(34,197,94,0.3)" }}>
                           ✓ COMPLETED
                         </span>
                       )}
                     </div>
                     <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 16, marginTop: 6 }}>
-                      {c.buyerName}{c.buyerCountry ? <span style={{ fontSize: 13, color: "#a38a5d", fontWeight: 400 }}> · {c.buyerCountry}</span> : ""}
+                      {c.buyerName}{c.buyerCountry ? <span style={{ fontSize: 13, color: "#0f172a", fontWeight: 400 }}> · {c.buyerCountry}</span> : ""}
                     </div>
                     {c.cropName && (
-                      <div style={{ fontSize: 13, color: "#0369a1", fontWeight: 600, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
-                        <Sprout size={14} color="#0369a1" /> {c.cropName}{c.quantityTons ? ` (${c.quantityTons} MT)` : ""}
+                      <div style={{ fontSize: 13, color: "#0284c7", fontWeight: 600, marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Sprout size={14} color="#0284c7" /> {c.cropName}{c.quantityTons ? ` (${c.quantityTons} MT)` : ""}
                       </div>
                     )}
-                    {c.issuingBank && <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>Issuing Bank: <strong style={{ color: "#0f172a" }}>{c.issuingBank}</strong></div>}
+                    {c.issuingBank && <div style={{ fontSize: 12, color: "#0f172a", marginTop: 2 }}>Issuing Bank: <strong style={{ color: "#0f172a" }}>{c.issuingBank}</strong></div>}
                   </div>
 
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>Contract Value</div>
+                    <div style={{ fontSize: 11, color: "#0f172a", textTransform: "uppercase" }}>Contract Value</div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 26, fontWeight: 800, color: "#0f172a" }}>{fmtUsd(c.contractValueUsd)}</div>
-                    <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: "#0f172a", marginTop: 2 }}>
                       Added {new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
                   </div>
@@ -328,13 +330,13 @@ export default function ExportContracts() {
                 {/* Payment milestones */}
                 {c.milestones?.length > 0 && (
                   <div style={{ background: "#f1f5f9", padding: "14px 16px", borderRadius: 14, marginBottom: 14 }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "#a38a5d", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
                       LC Payment Release Milestones — {label}
                     </div>
 
                     {/* Progress bar */}
                     <div style={{ height: 4, borderRadius: 4, background: "rgba(255,255,255,0.06)", marginBottom: 12, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: "linear-gradient(90deg,#d97706,#4ade80)", transition: "width 0.4s ease" }} />
+                      <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: "linear-gradient(90deg,#d97706,#16a34a)", transition: "width 0.4s ease" }} />
                     </div>
 
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -348,12 +350,12 @@ export default function ExportContracts() {
                             onClick={() => toggleMilestone(c._id, idx, m.released)}
                             style={{
                               flex: 1, minWidth: 110, padding: "10px 12px", borderRadius: 10, cursor: "pointer",
-                              background: m.released ? "rgba(34,197,94,0.12)" : "rgba(245,158,11,0.04)",
-                              border: `1px solid ${m.released ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.12)"}`,
+                              background: m.released ? "rgba(34,197,94,0.12)" : "#ffffff",
+                              border: `1px solid ${m.released ? "rgba(34,197,94,0.3)" : "rgba(245,158,11,0.08)"}`,
                               textAlign: "center", transition: "all 0.2s", opacity: busy ? 0.6 : 1,
                             }}
                           >
-                            <div style={{ fontSize: 11, fontWeight: 800, color: m.released ? "#4ade80" : "#a38a5d" }}>
+                            <div style={{ fontSize: 11, fontWeight: 800, color: m.released ? "#16a34a" : "#f8fafc" }}>
                               {busy ? "…" : m.released ? "✓ RELEASED" : "PENDING"}
                             </div>
                             <div style={{ fontSize: 12, color: "#0f172a", fontWeight: 700, marginTop: 2 }}>{m.label}</div>
@@ -361,7 +363,7 @@ export default function ExportContracts() {
                         );
                       })}
                     </div>
-                    <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 8 }}>
+                    <div style={{ fontSize: 11, color: "#0f172a", marginTop: 8 }}>
                       ↑ Click a milestone to mark it as released or pending
                     </div>
                   </div>
@@ -369,8 +371,8 @@ export default function ExportContracts() {
 
                 {/* Notes */}
                 {c.notes && (
-                  <div style={{ fontSize: 13, color: "#a38a5d", marginBottom: 12, fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: 6 }}>
-                    <FileText size={14} color="#a38a5d" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div style={{ fontSize: 13, color: "#0f172a", marginBottom: 12, fontStyle: "italic", display: "flex", alignItems: "flex-start", gap: 6 }}>
+                    <FileText size={14} color="#f8fafc" style={{ flexShrink: 0, marginTop: 2 }} />
                     <span>{c.notes}</span>
                   </div>
                 )}
@@ -382,7 +384,7 @@ export default function ExportContracts() {
                       <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#dc2626", fontWeight: 700, fontSize: 12, cursor: "pointer" }} onClick={() => deleteContract(c._id)}>
                         Yes, Delete
                       </button>
-                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "var(--surface, rgba(255,255,255,0.04))", border: "1px solid #e2e8f0", color: "#a38a5d", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                      <button style={{ flex: 1, padding: "8px 14px", borderRadius: 10, background: "var(--surface, rgba(255,255,255,0.04))", border: "1px solid #e2e8f0", color: "#0f172a", fontWeight: 600, fontSize: 12, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
                         Cancel
                       </button>
                     </>

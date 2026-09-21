@@ -34,7 +34,7 @@ const EXTRA_STYLES = `
     width: 88px; height: 88px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 32px; font-weight: 800; color: #0f172a; flex-shrink: 0;
+    font-size: 32px; font-weight: 800; color:#0f172a; flex-shrink: 0;
   }
 
   .pf-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -87,7 +87,7 @@ const EXTRA_STYLES = `
     display: inline-flex; align-items: center; gap: 8px;
     padding: 13px 28px; border-radius: 14px; border: none; cursor: pointer;
     font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
-    color: #0f172a;
+    color:#0f172a;
     background: linear-gradient(135deg, ${AMBER_DARK}, ${AMBER});
     box-shadow: 0 6px 20px rgba(245,158,11,0.35);
     transition: all 0.2s;
@@ -240,7 +240,7 @@ export default function ExporterProfile() {
           <div style={{
             display: "flex", alignItems: "center", gap: 20, marginBottom: 28,
             padding: "20px 24px",
-            background: "rgba(245,158,11,0.04)",
+            background: "#ffffff",
             borderRadius: 16,
             border: `1px solid rgba(245,158,11,0.15)`,
           }}>
@@ -261,7 +261,7 @@ export default function ExporterProfile() {
               <span style={{
                 marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6,
                 padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700,
-                background: "rgba(245,158,11,0.12)",
+                background: "rgba(245,158,11,0.08)",
                 color: AMBER_LIGHT,
                 border: `1px solid rgba(245,158,11,0.25)`,
               }}>
@@ -430,7 +430,7 @@ export default function ExporterProfile() {
               style={{
                 width: "100%", justifyContent: "center", padding: "12px",
                 borderRadius: 12, border: "1px solid rgba(239,68,68,0.2)",
-                background: "#fef2f2", color: "#dc2626",
+                background: "rgba(239,68,68,0.08)", color: "#dc2626",
                 cursor: "pointer", fontWeight: 700, fontSize: 14,
                 fontFamily: "'Inter',sans-serif", transition: "background 0.2s",
                 display: "flex", alignItems: "center", gap: 8,

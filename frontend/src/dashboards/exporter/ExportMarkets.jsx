@@ -6,8 +6,8 @@ const DS = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px 22px;}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
   .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.1);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;}
@@ -35,35 +35,35 @@ const DESTINATIONS = [
     country: "United Arab Emirates", cc: "AE", flag: "🇦🇪",
     tariff: "0% (CEPA Free Trade)",
     topImport: "Fresh Fruits, Mangoes, Spices",
-    demand: "VERY HIGH", demandColor: "#4ade80",
+    demand: "VERY HIGH", demandColor: "#16a34a",
     note: "India's largest agri export destination. CEPA in effect since May 2022.",
   },
   {
     country: "Saudi Arabia", cc: "SA", flag: "🇸🇦",
     tariff: "5% Standard GCC",
     topImport: "Basmati Rice, Onions, Spices",
-    demand: "VERY HIGH", demandColor: "#4ade80",
+    demand: "VERY HIGH", demandColor: "#16a34a",
     note: "GCC unified tariff applies. Halal certification mandatory.",
   },
   {
     country: "United States", cc: "US", flag: "🇺🇸",
     tariff: "3.2% avg. Import Duty",
     topImport: "Turmeric, Pepper, Sesame Seeds",
-    demand: "HIGH", demandColor: "#4ade80",
+    demand: "HIGH", demandColor: "#16a34a",
     note: "FDA registration mandatory. No GSP for India since 2019.",
   },
   {
     country: "United Kingdom", cc: "GB", flag: "🇬🇧",
     tariff: "0% (UK-India FTA expected)",
     topImport: "Organic Spices, Tea, Rice",
-    demand: "HIGH", demandColor: "#4ade80",
+    demand: "HIGH", demandColor: "#16a34a",
     note: "UK-India FTA under negotiation. Current preference rates apply.",
   },
   {
     country: "Netherlands (EU)", cc: "NL", flag: "🇳🇱",
     tariff: "4.5% EU MFN + Phytosanitary",
     topImport: "Mangoes, Grapes, Pomegranate",
-    demand: "HIGH", demandColor: "#4ade80",
+    demand: "HIGH", demandColor: "#16a34a",
     note: "Rotterdam is main EU entry port. Strict EU phytosanitary compliance required.",
   },
   {
@@ -91,7 +91,7 @@ const DESTINATIONS = [
     country: "Qatar", cc: "QA", flag: "🇶🇦",
     tariff: "0% (CEPA — under negotiation)",
     topImport: "Rice, Vegetables, Fruits",
-    demand: "HIGH", demandColor: "#4ade80",
+    demand: "HIGH", demandColor: "#16a34a",
     note: "GCC tariff applies. High demand post World Cup infrastructure buildup.",
   },
   {
@@ -176,20 +176,20 @@ export default function ExportMarkets() {
         </div>
         <div style={{ textAlign: "right" }}>
           {fxLoading ? (
-            <span style={{ fontSize: 13, color: "#a38a5d" }}><span className="spinner" /> Fetching live rates…</span>
+            <span style={{ fontSize: 13, color: "#0f172a" }}><span className="spinner" /> Fetching live rates…</span>
           ) : fxError ? (
             <span style={{ fontSize: 12, color: "#dc2626", display: "inline-flex", alignItems: "center", gap: 4 }}>
               <AlertTriangle size={13} /> FX fetch failed
             </span>
           ) : (
             <div>
-              <div style={{ fontSize: 11, color: "#a38a5d" }}>
+              <div style={{ fontSize: 11, color: "#0f172a" }}>
                 Updated {fxUpdated?.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
               </div>
-              <div style={{ fontSize: 12, color: "#15803d", fontWeight: 700 }}>● LIVE</div>
+              <div style={{ fontSize: 12, color: "#16a34a", fontWeight: 700 }}>● LIVE</div>
             </div>
           )}
-          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4 }}>
+          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#0f172a", cursor: "pointer", fontSize: 12, marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4 }}>
             <RefreshCw size={12} /> Refresh
           </button>
         </div>
@@ -212,23 +212,23 @@ export default function ExportMarkets() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                   <span style={{ fontSize: 13, fontWeight: 800, color: "#b45309" }}>{c.flag} {c.code} / INR</span>
                   {chg !== null && (
-                    <span style={{ fontSize: 10, color: up ? "#4ade80" : "#f87171", fontWeight: 700, background: up ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", padding: "2px 6px", borderRadius: 5 }}>
+                    <span style={{ fontSize: 10, color: up ? "#16a34a" : "#f87171", fontWeight: 700, background: up ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", padding: "2px 6px", borderRadius: 5 }}>
                       {up ? "▲" : "▼"} {Math.abs(chg).toFixed(3)}%
                     </span>
                   )}
-                  {chg === null && !fxLoading && <span style={{ fontSize: 9, color: "#15803d", fontWeight: 700, background: "rgba(34,197,94,0.1)", padding: "2px 6px", borderRadius: 5 }}>LIVE</span>}
+                  {chg === null && !fxLoading && <span style={{ fontSize: 9, color: "#16a34a", fontWeight: 700, background: "rgba(34,197,94,0.1)", padding: "2px 6px", borderRadius: 5 }}>LIVE</span>}
                 </div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a" }}>
-                  {rateStr === "—" ? <span className="pulse" style={{ color: "#a38a5d" }}>Loading…</span> : `₹${rateStr}`}
+                  {rateStr === "—" ? <span className="pulse" style={{ color: "#0f172a" }}>Loading…</span> : `₹${rateStr}`}
                 </div>
-                <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 4 }}>1 {c.code} = ₹{rateStr} INR</div>
+                <div style={{ fontSize: 11, color: "#0f172a", marginTop: 4 }}>1 {c.code} = ₹{rateStr} INR</div>
               </div>
             );
           })}
         </div>
 
         {fxError && (
-          <div style={{ marginTop: 10, fontSize: 12, color: "#dc2626", padding: "10px 14px", borderRadius: 10, background: "#fef2f2", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ marginTop: 10, fontSize: 12, color: "#dc2626", padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)", display: "flex", alignItems: "center", gap: 8 }}>
             <AlertTriangle size={15} style={{ flexShrink: 0 }} />
             <span>Could not fetch live FX rates. Showing last known values. Click Refresh to retry.</span>
           </div>
@@ -243,17 +243,17 @@ export default function ExportMarkets() {
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
-              <Search size={14} style={{ position: "absolute", left: 10, color: "#a38a5d", pointerEvents: "none" }} />
+              <Search size={14} style={{ position: "absolute", left: 10, color: "#0f172a", pointerEvents: "none" }} />
               <input
                 placeholder="Search country or product…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                style={{ padding: "8px 12px 8px 30px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", width: 220 }}
+                style={{ padding: "8px 12px 8px 30px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "#ffffff", color: "#0f172a", fontSize: 13, outline: "none", width: 220 }}
               />
             </div>
             <select
               value={sortBy} onChange={e => setSortBy(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "rgba(245,158,11,0.05)", color: "#0f172a", fontSize: 13, outline: "none", appearance: "none" }}
+              style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid rgba(245,158,11,0.18)", background: "#ffffff", color: "#0f172a", fontSize: 13, outline: "none", appearance: "none" }}
             >
               <option value="demand">Sort: Demand</option>
               <option value="country">Sort: Country</option>
@@ -270,18 +270,18 @@ export default function ExportMarkets() {
                     <span style={{ fontSize: 18 }}>{d.flag}</span>
                     <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 15 }}>{d.country}</span>
                   </div>
-                  <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 4 }}>
-                    Top Imports: <strong style={{ color: "#fef08a" }}>{d.topImport}</strong>
+                  <div style={{ fontSize: 13, color: "#0f172a", marginTop: 4 }}>
+                    Top Imports: <strong style={{ color: "#d97706" }}>{d.topImport}</strong>
                   </div>
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Import Tariff</div>
+                    <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase" }}>Import Tariff</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a" }}>{d.tariff}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase" }}>Demand</div>
+                    <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase" }}>Demand</div>
                     <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: `${d.demandColor}18`, color: d.demandColor, fontWeight: 800, border: `1px solid ${d.demandColor}30` }}>
                       {d.demand}
                     </span>
@@ -290,18 +290,18 @@ export default function ExportMarkets() {
               </div>
 
               {/* Note */}
-              <div style={{ fontSize: 12, color: "#a38a5d", paddingTop: 6, borderTop: "1px solid rgba(245,158,11,0.08)", display: "flex", alignItems: "flex-start", gap: 6 }}>
+              <div style={{ fontSize: 12, color: "#0f172a", paddingTop: 6, borderTop: "1px solid rgba(245,158,11,0.08)", display: "flex", alignItems: "flex-start", gap: 6 }}>
                 <Info size={14} style={{ color: "#d97706", flexShrink: 0, marginTop: 1 }} />
                 <span>{d.note}</span>
               </div>
             </div>
           ))}
           {filtered.length === 0 && (
-            <div style={{ textAlign: "center", padding: "32px 0", color: "#a38a5d", fontSize: 14 }}>No destinations match "{search}"</div>
+            <div style={{ textAlign: "center", padding: "32px 0", color: "#0f172a", fontSize: 14 }}>No destinations match "{search}"</div>
           )}
         </div>
 
-        <div style={{ marginTop: 16, fontSize: 11, color: "#a38a5d", padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 8 }}>
+        <div style={{ marginTop: 16, fontSize: 11, color: "#0f172a", padding: "10px 14px", borderRadius: 10, background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 8 }}>
           <Info size={15} style={{ color: "#0284c7", flexShrink: 0, marginTop: 1 }} />
           <span>Tariff rates are approximate standard MFN/FTA rates for agricultural commodities. Actual rates vary by HS code. Always verify with a licensed customs broker before shipment.</span>
         </div>

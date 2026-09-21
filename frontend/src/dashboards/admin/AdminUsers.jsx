@@ -24,11 +24,11 @@ function ConfirmModal({ user, onConfirm, onCancel, loading }) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
             <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
               <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Current</div>
-              <div style={{ fontSize: 13, color: user.isActive ? "#4ade80" : "#f87171", fontWeight: 800 }}>{user.isActive ? "ACTIVE" : "SUSPENDED"}</div>
+              <div style={{ fontSize: 13, color: user.isActive ? "#16a34a" : "#f87171", fontWeight: 800 }}>{user.isActive ? "ACTIVE" : "SUSPENDED"}</div>
             </div>
             <div style={{ padding: "9px 12px", borderRadius: 10, background: isSuspending ? "rgba(239,68,68,0.07)" : "rgba(34,197,94,0.07)", border: `1px solid ${isSuspending ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)"}` }}>
               <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>New State</div>
-              <div style={{ fontSize: 13, color: isSuspending ? "#f87171" : "#4ade80", fontWeight: 800 }}>{isSuspending ? "SUSPENDED" : "ACTIVE"}</div>
+              <div style={{ fontSize: 13, color: isSuspending ? "#f87171" : "#16a34a", fontWeight: 800 }}>{isSuspending ? "SUSPENDED" : "ACTIVE"}</div>
             </div>
           </div>
           <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(251,191,36,0.07)", border: "1px solid rgba(251,191,36,0.2)", fontSize: 12, color: "#b45309", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>

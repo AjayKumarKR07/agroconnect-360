@@ -102,17 +102,17 @@ export default function SellerLogistics() {
         .log-tab {
           padding: 8px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
           cursor: pointer; border: 1px solid var(--border);
-          background: var(--surface); color: var(--text2);
+          background: var(--surface); color: #475569;
           transition: all 0.2s; font-family: 'Inter', sans-serif;
         }
         .log-tab.active { background: rgba(167,139,250,0.1); color: #7c3aed; border-color: rgba(167,139,250,0.25); }
         .tracker { display:flex; align-items:center; margin: 20px 0; }
-        .tr-dot    { width:28px; height:28px; border-radius:50%; background:var(--surface); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--text2); flex-shrink:0; }
+        .tr-dot    { width:28px; height:28px; border-radius:50%; background:var(--surface); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#475569; flex-shrink:0; }
         .tr-dot.done { background:#7c3aed; border-color:#7c3aed; color:#0f172a; }
         .tr-dot.cur  { border-color:#a78bfa; color:#a78bfa; }
         .tr-line   { height:3px; flex:1; background:var(--border); }
         .tr-line.done { background:#7c3aed; }
-        .tr-label  { font-size:10px; color:var(--text2); text-align:center; white-space:nowrap; }
+        .tr-label  { font-size:10px; color:#475569; text-align:center; white-space:nowrap; }
         .tr-label.done,.tr-label.cur { color:#7c3aed; font-weight:700; }
       `}</style>
 
@@ -139,7 +139,7 @@ export default function SellerLogistics() {
           [Clock,        "Pending",    counts.pending,   "#fbbf24"],
           [Truck,        "Dispatched", counts.dispatched, "#a78bfa"],
           [MapPin,       "In Transit", counts.in_transit, "#38bdf8"],
-          [CheckCircle2, "Delivered",  counts.delivered,  "#4ade80"],
+          [CheckCircle2, "Delivered",  counts.delivered,  "#16a34a"],
         ].map(([IconComponent, label, val, color]) => (
           <div key={label} className="card" style={{ padding: "16px 18px", cursor: "pointer", transition: "border-color 0.2s" }}
             onClick={() => setFilter(label === "In Transit" ? "in_transit" : label.toLowerCase())}

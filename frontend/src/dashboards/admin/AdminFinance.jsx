@@ -80,7 +80,7 @@ export default function AdminFinance() {
           {/* KPI Cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16, marginBottom: 26 }}>
             {[
-              [Gem,      "#4ade80", "Delivered GMV", fmtINR(statusTotal("delivered")), `${statusCount("delivered")} delivered orders`],
+              [Gem,      "#16a34a", "Delivered GMV", fmtINR(statusTotal("delivered")), `${statusCount("delivered")} delivered orders`],
               [Clock,    "#fbbf24", "Pending GMV", fmtINR(statusTotal("pending")), `${statusCount("pending")} pending orders`],
               [Ban,      "#f87171", "Cancelled Value", fmtINR(statusTotal("cancelled")), `${statusCount("cancelled")} cancelled`],
               [BarChart3,"#818cf8", "Avg Order Value", fmtINR(data.avgOrderValue), `Across ${data.totalOrders} total orders`],

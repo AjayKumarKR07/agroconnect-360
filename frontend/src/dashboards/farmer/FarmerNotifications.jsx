@@ -86,9 +86,9 @@ export default function FarmerNotifications() {
         .notif-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
         .notif-body { flex:1; min-width:0; }
         .notif-title { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:3px; }
-        .notif-msg { font-size:12px; color:var(--text2); line-height:1.6; }
+        .notif-msg { font-size:12px; color:#475569; line-height:1.6; }
         .notif-footer { display:flex; align-items:center; justify-content:space-between; margin-top:6px; }
-        .notif-time { font-size:11px; color:var(--text2); }
+        .notif-time { font-size:11px; color:#475569; }
         .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:4px; }
       `}</style>
 

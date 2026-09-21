@@ -195,7 +195,7 @@ export default function ExporterLayout() {
         }
         .ul-page-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
         .ul-page-name { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:800; color:var(--text); }
-        .ul-time-chip { font-size:12px; color:var(--text2); background:#f8fafc; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-weight:500; }
+        .ul-time-chip { font-size:12px; color:#475569; background:#f8fafc; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-weight:500; }
         .ul-topbar-avatar {
           width:36px; height:36px; border-radius:8px;
           background:#d97706;
@@ -218,63 +218,63 @@ export default function ExporterLayout() {
 
         /* CSS variable override — dark amber content area */
         :root {
-          --bg:       #0f0b05;
-          --bg2:      #171006;
-          --surface:  #171006;
-          --surface2: #1e1508;
-          --border:   #3f2a08;
-          --border2:  #5a3d0c;
-          --text:     #f8fafc;
-          --text2:    #cbd5e1;
-          --text3:    #94a3b8;
+          --bg:       #f8fafc;
+          --bg2:      #f1f5f9;
+          --surface:  #ffffff;
+          --surface2: #f8fafc;
+          --border:   #e2e8f0;
+          --border2:  #cbd5e1;
+          --text:     #0f172a;
+          --text2:    #475569;
+          --text3:    #64748b;
           --accent:   #f59e0b;
           --accent2:  #d97706;
         }
 
         /* Main content area gets dark background */
-        body { background:#0f0b05; color:#f8fafc; }
+        body { background:#f8fafc; color:#0f172a; }
 
         /* ── Page-level typography ── */
-        .pg-title  { color:#f8fafc !important; }
-        .pg-sub    { color:#94a3b8 !important; }
+        .pg-title  { color:#0f172a !important; }
+        .pg-sub    { color:#64748b !important; }
         .eyebrow   { color:#f59e0b !important; }
-        .card-title{ color:#f8fafc !important; }
-        .card-sub  { color:#94a3b8 !important; }
+        .card-title{ color:#0f172a !important; }
+        .card-sub  { color:#64748b !important; }
 
         /* ── Cards ── */
         .card {
-          background:#171006 !important;
-          border:1px solid #3f2a08 !important;
+          background:#ffffff !important;
+          border:1px solid #e2e8f0 !important;
         }
         .stat-card {
-          background:#171006 !important;
-          border:1px solid #3f2a08 !important;
+          background:#ffffff !important;
+          border:1px solid #e2e8f0 !important;
         }
-        .stat-val { color:#f8fafc !important; }
-        .stat-lbl { color:#cbd5e1 !important; }
+        .stat-val { color:#0f172a !important; }
+        .stat-lbl { color:#475569 !important; }
 
         /* ── Form inputs ── */
         .field-input {
-          color:#f8fafc !important;
-          background:#1e1508 !important;
-          border:1px solid #3f2a08 !important;
+          color:#0f172a !important;
+          background:#ffffff !important;
+          border:1px solid #e2e8f0 !important;
         }
         .field-input::placeholder { color:#64748b !important; }
         .field-input:focus {
           border-color:rgba(245,158,11,0.5) !important;
           box-shadow:0 0 0 3px rgba(245,158,11,0.1) !important;
         }
-        select.field-input option { background:#1e1508; color:#f8fafc; }
-        .field-label { color:#94a3b8 !important; }
+        select.field-input option { background:#ffffff; color:#0f172a; }
+        .field-label { color:#64748b !important; }
 
         /* ── Badges — light enough to read on #0f0b05 ── */
-        .badge-green  { background:rgba(74,222,128,0.12);  color:#4ade80;  border:1px solid rgba(74,222,128,0.22);  }
-        .badge-amber  { background:rgba(251,191,36,0.12);  color:#fbbf24;  border:1px solid rgba(251,191,36,0.25);  }
-        .badge-red    { background:rgba(248,113,113,0.12); color:#f87171;  border:1px solid rgba(248,113,113,0.22); }
-        .badge-blue   { background:rgba(125,211,252,0.12); color:#7dd3fc;  border:1px solid rgba(125,211,252,0.2);  }
-        .badge-purple { background:rgba(196,181,253,0.12); color:#c4b5fd;  border:1px solid rgba(196,181,253,0.2);  }
-        .badge-grey   { background:rgba(203,213,225,0.08); color:#cbd5e1;  border:1px solid rgba(203,213,225,0.15); }
-        .badge-gold   { background:rgba(245,158,11,0.14);  color:#fbbf24;  border:1px solid rgba(245,158,11,0.28);  }
+        .badge-green  { background:rgba(34,197,94,0.1);   color:#15803d; border:1px solid rgba(34,197,94,0.25);  }
+        .badge-amber  { background:rgba(245,158,11,0.1);  color:#d97706; border:1px solid #e2e8f0; }
+        .badge-red    { background:rgba(239,68,68,0.1);   color:#dc2626; border:1px solid rgba(239,68,68,0.25);  }
+        .badge-blue   { background:rgba(56,189,248,0.1);  color:#0284c7; border:1px solid rgba(56,189,248,0.25); }
+        .badge-purple { background:rgba(139,92,246,0.1);  color:#7c3aed; border:1px solid rgba(139,92,246,0.25); }
+        .badge-grey   { background:rgba(100,116,139,0.1); color:#64748b; border:1px solid rgba(100,116,139,0.2); }
+        .badge-gold   { background:rgba(245,158,11,0.1);  color:#d97706; border:1px solid #e2e8f0; }
 
         /* ── Amber + ghost buttons ── */
         .btn-amber, .btn-gold {
@@ -288,24 +288,24 @@ export default function ExporterLayout() {
         }
         .btn-amber:hover, .btn-gold:hover { opacity:0.88; transform:translateY(-1px); }
         .btn-ghost {
-          color:#f8fafc !important;
-          border-color:#5a3d0c !important;
-          background:rgba(245,158,11,0.06) !important;
+          color:#0f172a !important;
+          border-color:#e2e8f0 !important;
+          background:#ffffff !important;
         }
         .btn-ghost:hover {
-          background:rgba(245,158,11,0.12) !important;
-          border-color:#7a5514 !important;
+          background:#f8fafc !important;
+          border-color:#cbd5e1 !important;
         }
 
         /* ── Tables ── */
         .data-table th {
-          color:#94a3b8 !important;
-          border-bottom-color:#3f2a08 !important;
-          background:#1e1508 !important;
+          color:#64748b !important;
+          border-bottom-color:#e2e8f0 !important;
+          background:#f8fafc !important;
         }
         .data-table td {
-          color:#f8fafc !important;
-          border-bottom-color:#2a1b04 !important;
+          color:#0f172a !important;
+          border-bottom-color:#f1f5f9 !important;
         }
         .data-table tr:hover td { background:rgba(245,158,11,0.04) !important; }
 

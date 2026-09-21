@@ -102,14 +102,14 @@ export default function MarketComparison() {
   return (
     <>
       <style>{DS + `
-        .mc-tab { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:30px; border:1px solid var(--border); font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; background:transparent; color:var(--text2); font-family:'Inter',sans-serif; }
+        .mc-tab { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:30px; border:1px solid var(--border); font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; background:transparent; color:#475569; font-family:'Inter',sans-serif; }
         .mc-tab.active { background:rgba(34,197,94,0.12); border-color:rgba(34,197,94,0.3); color:#15803d; }
         .mc-tab:hover:not(.active) { border-color:#cbd5e1; color:#0f172a; }
         .mc-row { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); transition:background .15s; }
         .mc-row:hover { background:var(--surface2); }
         .mc-crop { font-weight:700; color:#0f172a; font-size:14px; flex:1; }
         .mc-price { font-weight:800; color:#15803d; font-size:14px; white-space:nowrap; }
-        .mc-label { font-size:11px; color:var(--text2); }
+        .mc-label { font-size:11px; color:#475569; }
         .mc-search { padding:10px 16px; border-radius:30px; border:1px solid var(--border); background:var(--surface); color:#0f172a; font-size:13px; outline:none; width:220px; transition:border-color .2s; font-family:'Inter',sans-serif; }
         .mc-search:focus { border-color:rgba(34,197,94,0.4); }
         .mc-select { width:100%; appearance:none; padding:11px 16px; border-radius:12px; border:1px solid var(--border2); background:var(--surface); color:var(--text); font-size:13px; outline:none; font-family:'Inter',sans-serif; transition:border-color .2s; }
@@ -304,7 +304,7 @@ export default function MarketComparison() {
                           <TrendRow key={i} Icon={Wheat}
                             name={`${t.commodity}${t.variety ? ` (${t.variety})` : ""}`}
                             sub={`${t.market || ""}${t.district ? ` · ${t.district}` : ""}`}
-                            price={fmtQ(t.maxPrice)} label="Max price" color="#4ade80" />
+                            price={fmtQ(t.maxPrice)} label="Max price" color="#16a34a" />
                         ))}
                       </div>
                     </div>

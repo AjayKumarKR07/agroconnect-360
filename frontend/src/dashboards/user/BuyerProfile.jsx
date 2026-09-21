@@ -27,7 +27,7 @@ const S = `
   .btn-out{padding:10px 20px;border-radius:11px;border:1px solid rgba(239,68,68,0.2);background:#fef2f2;color:#dc2626;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
   .btn-out:hover{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);}
   .btn-switch{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(56,189,248,0.25);background:rgba(56,189,248,0.08);color:#0369a1;font-weight:700;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .btn-switch:hover{background:rgba(56,189,248,0.18);border-color:rgba(56,189,248,0.4);color:#7dd3fc;}
+  .btn-switch:hover{background:rgba(56,189,248,0.18);border-color:rgba(56,189,248,0.4);color:#0284c7;}
   @media(max-width:900px){.bp-grid{grid-template-columns:1fr;}}
 `;
 
@@ -159,7 +159,7 @@ export default function BuyerProfile() {
               <div style={{ marginBottom: 18, padding: "11px 16px", borderRadius: 11, fontSize: 13, fontWeight: 600,
                 background: msg.type === "ok" ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
                 border:     `1px solid ${msg.type === "ok" ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
-                color:      msg.type === "ok" ? "#4ade80" : "#f87171",
+                color:      msg.type === "ok" ? "#16a34a" : "#f87171",
               }}>
                 {msg.text}
               </div>

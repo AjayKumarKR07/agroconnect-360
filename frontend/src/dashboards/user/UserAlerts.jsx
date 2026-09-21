@@ -6,11 +6,11 @@ const DS_USER = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
   .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:22px;}
   .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#7dd3fc;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#0284c7;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
   .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
 `;
 
@@ -108,7 +108,7 @@ export default function UserAlerts() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <button onClick={() => toggleAlert(a.id)}
-                    style={{ padding: "5px 12px", borderRadius: 8, border: `1px solid ${a.active ? "rgba(34,197,94,0.3)" : "rgba(148,163,184,0.3)"}`, background: a.active ? "rgba(34,197,94,0.12)" : "rgba(148,163,184,0.1)", color: a.active ? "#4ade80" : "#94a3b8", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
+                    style={{ padding: "5px 12px", borderRadius: 8, border: `1px solid ${a.active ? "rgba(34,197,94,0.3)" : "rgba(148,163,184,0.3)"}`, background: a.active ? "rgba(34,197,94,0.12)" : "rgba(148,163,184,0.1)", color: a.active ? "#16a34a" : "#94a3b8", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>
                     {a.active ? "ON" : "OFF"}
                   </button>
                   <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: "#dc2626", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }} title="Remove alert">
@@ -148,7 +148,7 @@ export default function UserAlerts() {
 
       {/* Set Alert Modal */}
       {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div className="card" style={{ maxWidth: 420, width: "100%", background: "#041a1f", border: "1px solid rgba(14,165,233,0.3)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>

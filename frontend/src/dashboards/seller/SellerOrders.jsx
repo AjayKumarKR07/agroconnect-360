@@ -123,18 +123,18 @@ export default function SellerOrders() {
     <>
       <style>{DS + `
         .sf-tabs    { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:22px; }
-        .sf-tab     { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; font-family:'Inter',sans-serif; }
+        .sf-tab     { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:#475569; transition:all 0.2s; font-family:'Inter',sans-serif; }
         .sf-tab.active { background:rgba(167,139,250,0.1); color:#7c3aed; border-color:rgba(167,139,250,0.2); }
         .order-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; margin-bottom:12px; transition:border-color 0.2s; overflow:hidden; }
         .order-card:hover { border-color:rgba(167,139,250,0.25); }
         .pipeline   { display:flex; align-items:center; margin:16px 0; gap:0; }
         .pl-step    { display:flex; flex-direction:column; align-items:center; gap:4px; }
-        .pl-dot     { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:10px; color:var(--text2); }
+        .pl-dot     { width:22px; height:22px; border-radius:50%; border:2px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; font-size:10px; color:#475569; }
         .pl-dot.done{ background:#7c3aed; border-color:#7c3aed; color:#0f172a; }
         .pl-dot.cur { border-color:#a78bfa; color:#a78bfa; }
         .pl-line    { flex:1; height:2px; background:var(--border); margin-top:-14px; }
         .pl-line.done{ background:#7c3aed; }
-        .pl-label   { font-size:9px; color:var(--text2); }
+        .pl-label   { font-size:9px; color:#475569; }
         .pl-label.active { color:#7c3aed; font-weight:700; }
         @keyframes spin { to { transform:rotate(360deg); } }
         .spin { animation: spin 1s linear infinite; }

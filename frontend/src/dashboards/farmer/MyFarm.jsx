@@ -64,9 +64,9 @@ export default function MyFarm() {
         .mf-farm-icon { width:80px; height:80px; border-radius:20px; background:linear-gradient(135deg,#16a34a,#059669); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 8px 24px rgba(34,197,94,0.3); }
         .mf-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
         .mf-field-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; }
-        .mf-field-lbl { font-size:10px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+        .mf-field-lbl { font-size:10px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
         .mf-field-val { font-size:15px; font-weight:700; color:#0f172a; }
-        .mf-field-val.empty { color:var(--text2); font-weight:400; font-style:italic; }
+        .mf-field-val.empty { color:#475569; font-weight:400; font-style:italic; }
         .mf-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
         .mf-completion { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:12px; margin-bottom:20px; }
       `}</style>

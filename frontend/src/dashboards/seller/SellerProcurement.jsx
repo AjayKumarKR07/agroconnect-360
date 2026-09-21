@@ -166,7 +166,7 @@ export default function SellerProcurement() {
         .proc-ph   { width:100%; height:150px; background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(167,139,250,0.04)); display:flex; align-items:center; justify-content:center; font-size:48px; }
         .proc-body { padding:14px 16px; }
         .cat-pills { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
-        .cat-pill  { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text2); transition:all 0.2s; }
+        .cat-pill  { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:#475569; transition:all 0.2s; }
         .cat-pill.active { background:rgba(167,139,250,0.1); color:#7c3aed; border-color:rgba(167,139,250,0.2); }
       `}</style>
 
@@ -303,7 +303,7 @@ export default function SellerProcurement() {
       {/* ─── Order Modal ──────────────────────────────────────────────── */}
       {orderModal && (
         <div
-          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(8px)" }}
+          style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20, backdropFilter: "blur(8px)" }}
           onClick={e => { if (!ordering && e.target === e.currentTarget) setOrderModal(null); }}
         >
           <div style={{ background: "#0b0a1f", border: "1px solid rgba(167,139,250,0.2)", borderRadius: 24, padding: 28, width: "100%", maxWidth: 440 }}>

@@ -97,7 +97,7 @@ export default function Income() {
         .inc-bar:hover { filter: brightness(1.25); }
         .inc-month-lbl {
           font-size: 10px;
-          color: var(--text2);
+          color: #475569;
           margin-top: 6px;
           white-space: nowrap;
         }
@@ -106,7 +106,7 @@ export default function Income() {
         .inc-bar-has { background: rgba(56,189,248,0.35); }
         .inc-amount-tip {
           font-size: 9px;
-          color: var(--text2);
+          color: #475569;
           text-align: center;
           overflow: hidden;
           white-space: nowrap;
@@ -182,7 +182,7 @@ export default function Income() {
                         style={{ height: `${pct}%` }}
                       />
                       {/* Month label */}
-                      <div className="inc-month-lbl" style={{ color: isCur ? "#4ade80" : undefined }}>
+                      <div className="inc-month-lbl" style={{ color: isCur ? "#16a34a" : undefined }}>
                         {mon}
                       </div>
                     </div>

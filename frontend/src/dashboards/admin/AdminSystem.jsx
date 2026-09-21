@@ -4,7 +4,7 @@ import { DS_ADMIN, relativeTime } from "./adminStyles";
 import { Zap, Brain, Plug, Database, Clock, Cpu, Lightbulb, Globe, Bot, Microscope, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 
 const dbStateLabel = { connected: "Connected", disconnected: "Disconnected", connecting: "Connecting", disconnecting: "Disconnecting" };
-const dbStateColor = { connected: "#4ade80", disconnected: "#f87171", connecting: "#fbbf24", disconnecting: "#fb923c" };
+const dbStateColor = { connected: "#16a34a", disconnected: "#f87171", connecting: "#fbbf24", disconnecting: "#fb923c" };
 
 function Metric({ label, value, sub, color = "#818cf8", Icon }) {
   return (
@@ -108,7 +108,7 @@ export default function AdminSystem() {
           <div style={{ marginBottom: 24, padding: "16px 20px", background: health.api === "operational" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", borderRadius: 16, border: `1px solid ${health.api === "operational" ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, display: "flex", alignItems: "center", gap: 14 }}>
             <span style={{ display: "flex", alignItems: "center" }}>{health.api === "operational" ? <CheckCircle2 size={28} color="#16a34a" /> : <AlertTriangle size={28} color="#dc2626" />}</span>
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: health.api === "operational" ? "#4ade80" : "#f87171" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: health.api === "operational" ? "#16a34a" : "#f87171" }}>
                 API Status: {health.api.toUpperCase()}
               </div>
               <div style={{ fontSize: 13, color: "#a5b4fc", marginTop: 2 }}>
@@ -121,8 +121,8 @@ export default function AdminSystem() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 24 }}>
             <Metric Icon={Database} label="Database" value={dbStateLabel[health.database] || health.database} color={dbStateColor[health.database] || "#a5b4fc"} sub={health.databaseName ? `DB: ${health.databaseName}` : undefined} />
             <Metric Icon={Clock} label="Server Uptime" value={health.uptimeFormatted} color="#818cf8" sub={`${health.uptimeSeconds.toLocaleString()} seconds`} />
-            <Metric Icon={Zap} label="Response Time" value={`${health.responseTimeMs}ms`} color={health.responseTimeMs < 100 ? "#4ade80" : health.responseTimeMs < 500 ? "#fbbf24" : "#f87171"} sub="Time to process this health check" />
-            <Metric Icon={Cpu} label="Node.js Version" value={health.nodeVersion} color="#4ade80" sub={`Env: ${health.environment}`} />
+            <Metric Icon={Zap} label="Response Time" value={`${health.responseTimeMs}ms`} color={health.responseTimeMs < 100 ? "#16a34a" : health.responseTimeMs < 500 ? "#fbbf24" : "#f87171"} sub="Time to process this health check" />
+            <Metric Icon={Cpu} label="Node.js Version" value={health.nodeVersion} color="#16a34a" sub={`Env: ${health.environment}`} />
           </div>
 
           {/* Memory Usage */}
@@ -133,7 +133,7 @@ export default function AdminSystem() {
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13, color: "#a5b4fc" }}>
                   <span>Heap Used: <strong style={{ color: "#0f172a" }}>{health.memory.heapUsedMB} MB</strong></span>
                   <span>Heap Total: <strong style={{ color: "#0f172a" }}>{health.memory.heapTotalMB} MB</strong></span>
-                  <span style={{ color: heapPct > 85 ? "#f87171" : heapPct > 65 ? "#fbbf24" : "#4ade80" }}>{heapPct}%</span>
+                  <span style={{ color: heapPct > 85 ? "#f87171" : heapPct > 65 ? "#fbbf24" : "#16a34a" }}>{heapPct}%</span>
                 </div>
                 <div style={{ height: 10, background: "rgba(99,102,241,0.1)", borderRadius: 6, overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${heapPct}%`, borderRadius: 6, background: heapPct > 85 ? "#f87171" : heapPct > 65 ? "#fbbf24" : "linear-gradient(90deg,#4f46e5,#6366f1)", transition: "width 0.5s" }} />
@@ -163,7 +163,7 @@ export default function AdminSystem() {
                     <span style={{ display: "flex", alignItems: "center", color: "#4f46e5" }}>{svc.Icon && <svc.Icon size={18} strokeWidth={1.75} />}</span>
                     <span style={{ fontWeight: 800, color: "#0f172a", fontSize: 14 }}>{svc.name}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: svc.ok === true ? "#4ade80" : svc.ok === false ? "#f87171" : "#fbbf24", fontWeight: 700 }}>● {svc.status}</div>
+                  <div style={{ fontSize: 12, color: svc.ok === true ? "#16a34a" : svc.ok === false ? "#f87171" : "#fbbf24", fontWeight: 700 }}>● {svc.status}</div>
                   {svc.note && <div style={{ fontSize: 11, color: "#a5b4fc", marginTop: 4 }}>{svc.note}</div>}
                 </div>
               ))}

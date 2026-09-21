@@ -18,7 +18,7 @@ function ConfirmBroadcast({ title, message, targetRole, count, countLoading, onC
             </div>
             <div style={{ padding: "9px 12px", borderRadius: 10, background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.12)" }}>
               <div style={{ fontSize: 10, color: "#a5b4fc", fontWeight: 800, textTransform: "uppercase", marginBottom: 4 }}>Recipients</div>
-              <div style={{ fontSize: 13, color: countLoading ? "#a5b4fc" : "#4ade80", fontWeight: 800 }}>
+              <div style={{ fontSize: 13, color: countLoading ? "#a5b4fc" : "#16a34a", fontWeight: 800 }}>
                 {countLoading ? "Counting…" : `${(count || 0).toLocaleString()} users`}
               </div>
             </div>

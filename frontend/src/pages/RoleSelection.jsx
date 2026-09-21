@@ -19,7 +19,7 @@ const ROLES = [
     Icon: ShoppingCart,
     color: "#0284c7",
     glow: "rgba(2,132,199,0.12)",
-    border: "#7dd3fc",
+    border: "#0284c7",
     label: "Consumer / Buyer",
     desc: "Purchase fresh agricultural products directly from local farmers at transparent market prices.",
     features: ["Browse Fresh Produce", "Direct from Farmers", "Order Tracking", "Market Prices"],

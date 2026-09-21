@@ -196,21 +196,21 @@ export default function UserCart() {
     .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
     .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;margin-bottom:20px;}
     .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:20px 22px;}
-    .field-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
+    .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
     .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
     .field-input:focus{border-color:rgba(14,165,233,0.4);}
     .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:15px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:opacity 0.2s;justify-content:center;}
     .btn-cyan:hover{opacity:0.88;}
     .btn-cyan:disabled{opacity:0.5;cursor:not-allowed;}
-    .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:transparent;color:#7dd3fc;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
+    .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:transparent;color:#0284c7;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;transition:all 0.2s;}
     .pay-opt{padding:14px 18px;border-radius:14px;border:2px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.03);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:12px;}
     .pay-opt.sel{border-color:#0ea5e9;background:rgba(14,165,233,0.1);}
     .step-bar{display:flex;gap:0;margin-bottom:28px;}
     .step{display:flex;align-items:center;flex:1;}
-    .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--text2);flex-shrink:0;}
+    .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#475569;flex-shrink:0;}
     .step-dot.done{background:linear-gradient(135deg,#0284c7,#38bdf8);border-color:#0369a1;color:#0f172a;}
     .step-dot.active{border-color:#0ea5e9;color:#0ea5e9;background:rgba(14,165,233,0.1);}
-    .step-label{font-size:11px;color:var(--text2);margin-left:8px;white-space:nowrap;}
+    .step-label{font-size:11px;color:#475569;margin-left:8px;white-space:nowrap;}
     .step-label.active{color:#0369a1;font-weight:700;}
     .step-line{flex:1;height:2px;background:rgba(14,165,233,0.12);margin:0 8px;}
     .step-line.done{background:linear-gradient(90deg,#0284c7,#38bdf8);}
@@ -254,7 +254,7 @@ export default function UserCart() {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text2)" }}>
           <span>Delivery</span>
-          <span style={{ color: deliveryFee === 0 ? "#4ade80" : "#0f172a" }}>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
+          <span style={{ color: deliveryFee === 0 ? "#16a34a" : "#0f172a" }}>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
         </div>
         {deliveryFee > 0 && <div style={{ fontSize: 11, color: "var(--text2)" }}>Add ₹{500 - total} more for free delivery</div>}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 16, fontWeight: 800, marginTop: 6, paddingTop: 10, borderTop: "1px solid rgba(14,165,233,0.1)" }}>

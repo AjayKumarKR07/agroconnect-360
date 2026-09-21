@@ -27,17 +27,17 @@ const DS = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:20px 22px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:20px 22px;}
   .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{font-size:11px;font-weight:700;color:#a38a5d;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
-  .field-input{width:100%;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.18);border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .field-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;}
+  .field-input{width:100%;background:#ffffff;border:1px solid #cbd5e1;border-radius:11px;padding:10px 14px;color:#0f172a;outline:none;font-size:14px;font-family:'Inter',sans-serif;}
+  .field-input:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
   .field-input::placeholder{color:#7a8fa6;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
-  .modal-box{background:#0f0a03;border:1px solid rgba(245,158,11,0.2);border-radius:22px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
-  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:22px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+  .spinner{width:28px;height:28px;border:3px solid rgba(0,0,0,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -66,8 +66,8 @@ const DOC_TYPES = [
 const STATUSES = ["VERIFIED", "ACTIVE", "RENEWAL DUE", "EXPIRED", "PENDING"];
 
 const STATUS_CFG = {
-  "VERIFIED":     { color: "#15803d", bg: "rgba(34,197,94,0.08)"   },
-  "ACTIVE":       { color: "#0369a1", bg: "rgba(56,189,248,0.08)"  },
+  "VERIFIED":     { color: "#16a34a", bg: "rgba(34,197,94,0.08)"   },
+  "ACTIVE":       { color: "#0284c7", bg: "rgba(56,189,248,0.08)"  },
   "RENEWAL DUE":  { color: "#b45309", bg: "rgba(251,191,36,0.08)"  },
   "EXPIRED":      { color: "#dc2626", bg: "rgba(239,68,68,0.08)"   },
   "PENDING":      { color: "#7c3aed", bg: "rgba(167,139,250,0.08)" },
@@ -138,7 +138,7 @@ function AddDocModal({ onClose, onSaved }) {
             <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
               <FileText size={22} color="#d97706" /> Add Compliance Document
             </div>
-            <div style={{ fontSize: 13, color: "#a38a5d", marginTop: 2 }}>Add a real export licence, certificate, or clearance</div>
+            <div style={{ fontSize: 13, color: "#0f172a", marginTop: 2 }}>Add a real export licence, certificate, or clearance</div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#7a8fa6", cursor: "pointer", fontSize: 20 }}>✕</button>
         </div>
@@ -185,7 +185,7 @@ function AddDocModal({ onClose, onSaved }) {
             </div>
           </div>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, color: "#a38a5d" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, color: "#0f172a" }}>
             <input type="checkbox" checked={form.isLifetime} onChange={e => set("isLifetime", e.target.checked)} style={{ width: 16, height: 16 }} />
             Lifetime / No Expiry (e.g. IEC Code)
           </label>
@@ -239,7 +239,7 @@ function printDocPdf(doc, user) {
   <title>${doc.title} — AgroConnect 360</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@700;800&display=swap');
-    body{font-family:'Inter',sans-serif;padding:40px;color:#1e293b;background:#fff;}
+    body{font-family:'Inter',sans-serif;padding:40px;color:#0f172a;background:#ffffff;}
     .hdr{border-bottom:3px solid #d97706;padding-bottom:20px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:flex-start;}
     .logo{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#b45309;}
     .sub{font-size:12px;color:#64748b;margin-top:4px;}
@@ -353,7 +353,7 @@ export default function ExportCompliance() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#15803d", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.28)", color: "#16a34a", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -392,7 +392,7 @@ export default function ExportCompliance() {
       {loading ? (
         <div style={{ textAlign: "center", padding: "64px 0" }}>
           <div className="spinner" />
-          <div style={{ marginTop: 14, fontSize: 14, color: "#a38a5d" }}>Loading compliance vault…</div>
+          <div style={{ marginTop: 14, fontSize: 14, color: "#0f172a" }}>Loading compliance vault…</div>
         </div>
       ) : docs.length === 0 ? (
         <div style={{ textAlign: "center", padding: "72px 24px" }}>
@@ -400,7 +400,7 @@ export default function ExportCompliance() {
             <FileText size={52} color="#d97706" strokeWidth={1.5} />
           </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>No Documents Yet</div>
-          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
+          <div style={{ fontSize: 14, color: "#0f172a", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Add your export licences and certificates — Phytosanitary, FSSAI, APEDA, IEC Code, Certificate of Origin, etc.
           </div>
           <button className="btn-gold" onClick={() => setShowAdd(true)} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
@@ -431,12 +431,12 @@ export default function ExportCompliance() {
                 {/* Title + authority */}
                 <div>
                   <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 16, fontWeight: 800, color: "#0f172a", marginBottom: 4 }}>{doc.title}</div>
-                  {doc.authority && <div style={{ fontSize: 12, color: "#a38a5d" }}>Issuing Body: <strong style={{ color: "#0f172a" }}>{doc.authority}</strong></div>}
-                  {doc.refNumber && <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 2 }}>Ref: {doc.refNumber}</div>}
+                  {doc.authority && <div style={{ fontSize: 12, color: "#0f172a" }}>Issuing Body: <strong style={{ color: "#0f172a" }}>{doc.authority}</strong></div>}
+                  {doc.refNumber && <div style={{ fontSize: 11, color: "#0f172a", marginTop: 2 }}>Ref: {doc.refNumber}</div>}
                 </div>
 
                 {/* Validity pill */}
-                <div style={{ fontSize: 11, background: isExpired ? "rgba(239,68,68,0.1)" : isExpiring ? "rgba(251,191,36,0.1)" : "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 10, color: isExpired ? "#f87171" : isExpiring ? "#fbbf24" : "#a38a5d", fontWeight: isExpiring || isExpired ? 700 : 400, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 11, background: isExpired ? "rgba(239,68,68,0.1)" : isExpiring ? "rgba(251,191,36,0.1)" : "rgba(0,0,0,0.2)", padding: "8px 12px", borderRadius: 10, color: isExpired ? "#f87171" : isExpiring ? "#fbbf24" : "#f8fafc", fontWeight: isExpiring || isExpired ? 700 : 400, display: "flex", alignItems: "center", gap: 6 }}>
                   <Calendar size={13} style={{ flexShrink: 0 }} />
                   <span>{
                     doc.isLifetime ? "Lifetime License" :
@@ -470,7 +470,7 @@ export default function ExportCompliance() {
                       <button style={{ flex: 1, padding: "8px", borderRadius: 10, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)", color: "#dc2626", fontWeight: 700, fontSize: 11, cursor: "pointer" }} onClick={() => deleteDoc(doc._id)}>
                         Yes, Delete
                       </button>
-                      <button style={{ flex: 1, padding: "8px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#a38a5d", fontWeight: 600, fontSize: 11, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
+                      <button style={{ flex: 1, padding: "8px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0", color: "#0f172a", fontWeight: 600, fontSize: 11, cursor: "pointer" }} onClick={() => setDeleteConfId(null)}>
                         Cancel
                       </button>
                     </>

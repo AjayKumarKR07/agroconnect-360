@@ -13,7 +13,7 @@ const authHeaders = () => ({
   "Content-Type": "application/json",
 });
 
-const SEV_COLOR = { low: "#4ade80", medium: "#fbbf24", high: "#f87171", critical: "#ef4444", unknown: "#94a3b8" };
+const SEV_COLOR = { low: "#16a34a", medium: "#fbbf24", high: "#f87171", critical: "#ef4444", unknown: "#94a3b8" };
 const SEV_BG    = { low: "rgba(34,197,94,0.08)", medium: "rgba(251,191,36,0.08)", high: "rgba(239,68,68,0.08)", critical: "rgba(239,68,68,0.12)", unknown: "rgba(148,163,184,0.06)" };
 
 export default function CropHealthHistory() {
@@ -61,15 +61,15 @@ export default function CropHealthHistory() {
         .chh-img-placeholder { width:100%; height:140px; display:flex; align-items:center; justify-content:center; background:rgba(167,139,250,0.05); border-bottom:1px solid var(--border); }
         .chh-body { padding:16px; }
         .chh-crop { font-size:16px; font-weight:700; color:#0f172a; margin-bottom:4px; }
-        .chh-disease { font-size:13px; color:var(--text2); margin-bottom:10px; }
+        .chh-disease { font-size:13px; color:#475569; margin-bottom:10px; }
         .chh-meta { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
         .chh-sev { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
-        .chh-date { font-size:11px; color:var(--text2); }
+        .chh-date { font-size:11px; color:#475569; }
         .chh-actions { display:flex; gap:8px; }
         .chh-detail { background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:14px; }
-        .chh-section-lbl { font-size:11px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+        .chh-section-lbl { font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
         .chh-list-item { font-size:13px; color:var(--text); padding:4px 0; padding-left:12px; position:relative; }
-        .chh-list-item::before { content:"•"; position:absolute; left:0; color:var(--text2); }
+        .chh-list-item::before { content:"•"; position:absolute; left:0; color:#475569; }
       `}</style>
 
       <div className="pg-head">

@@ -20,10 +20,10 @@ const DS = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;}
   .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+  .spinner{width:28px;height:28px;border:3px solid rgba(0,0,0,0.08);border-top-color:#f59e0b;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
   @keyframes spin{to{transform:rotate(360deg)}}
   .pulse{animation:pulse 1.6s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -56,7 +56,7 @@ function simulateSensors(shipment) {
 
   const temp = hasSpike ? baseTemp + 2 : baseTemp;
   const status = !isActive ? "OFFLINE" : hasSpike ? "TEMP SPIKE" : "OPTIMAL";
-  const color  = status === "OFFLINE" ? "#7a8fa6" : status === "TEMP SPIKE" ? "#fbbf24" : "#4ade80";
+  const color  = status === "OFFLINE" ? "#7a8fa6" : status === "TEMP SPIKE" ? "#fbbf24" : "#16a34a";
 
   // Simulated 24h hourly log (6 sample points)
   const log = [0, 4, 8, 12, 16, 20].map((h, i) => ({
@@ -127,7 +127,7 @@ export default function ExportColdChain() {
       {loading ? (
         <div style={{ textAlign: "center", padding: "64px 0" }}>
           <div className="spinner" />
-          <div style={{ marginTop: 14, fontSize: 14, color: "#a38a5d" }}>Loading container data…</div>
+          <div style={{ marginTop: 14, fontSize: 14, color: "#0f172a" }}>Loading container data…</div>
         </div>
       ) : shipments.length === 0 ? (
         /* ── No shipments at all ──────────────────────────────────── */
@@ -138,7 +138,7 @@ export default function ExportColdChain() {
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             No Containers to Monitor
           </div>
-          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
+          <div style={{ fontSize: 14, color: "#0f172a", marginBottom: 28, maxWidth: 420, margin: "0 auto 28px" }}>
             Cold Chain IoT monitoring activates automatically once you add shipment containers.
             Add containers from the Shipments & Port page.
           </div>
@@ -155,7 +155,7 @@ export default function ExportColdChain() {
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>
             All Containers Delivered
           </div>
-          <div style={{ fontSize: 14, color: "#a38a5d", marginBottom: 24 }}>
+          <div style={{ fontSize: 14, color: "#0f172a", marginBottom: 24 }}>
             All your containers have been delivered or cancelled. Cold chain monitoring will appear for active shipments.
           </div>
           <Link to="/exporter/logistics" className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
@@ -178,7 +178,7 @@ export default function ExportColdChain() {
                   className="card"
                   style={{
                     padding: 14, cursor: "pointer", transition: "all 0.18s",
-                    background: isSelected ? "rgba(245,158,11,0.12)" : "rgba(245,158,11,0.03)",
+                    background: isSelected ? "rgba(245,158,11,0.08)" : "#ffffff",
                     borderColor: isSelected ? "rgba(245,158,11,0.3)" : "rgba(245,158,11,0.1)",
                   }}
                 >
@@ -191,10 +191,10 @@ export default function ExportColdChain() {
                   <div style={{ fontWeight: 700, color: "#0f172a", fontSize: 13, marginBottom: 6 }}>
                     {s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}
                   </div>
-                  <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#a38a5d", alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#0f172a", alignItems: "center" }}>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Thermometer size={13} color="#f59e0b" /> <strong style={{ color: "#0f172a" }}>{sensors.temp}</strong></span>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Droplets size={13} color="#38bdf8" /> <strong style={{ color: "#0f172a" }}>{sensors.humidity}</strong></span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Battery size={13} color="#4ade80" /> <strong style={{ color: "#0f172a" }}>{sensors.battery}</strong></span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Battery size={13} color="#16a34a" /> <strong style={{ color: "#0f172a" }}>{sensors.battery}</strong></span>
                   </div>
                 </div>
               );
@@ -213,7 +213,7 @@ export default function ExportColdChain() {
                   <div style={{ fontSize: 14, color: "#0f172a", fontWeight: 700, marginTop: 4 }}>
                     {selected.cargo} {selected.quantityTons ? `(${selected.quantityTons} MT)` : ""}
                   </div>
-                  <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ fontSize: 12, color: "#0f172a", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
                     <MapPin size={13} color="#d97706" /> Destination: {selected.destPort || selected.destinationCountry || "—"}
                   </div>
                 </div>
@@ -228,14 +228,14 @@ export default function ExportColdChain() {
                   { label: "Temperature",       Icon: Thermometer, val: selectedSensors.temp,     sub: `Target: ${selectedSensors.targetTemp}`, color: "#f59e0b" },
                   { label: "Relative Humidity",  Icon: Droplets,    val: selectedSensors.humidity, sub: "Optimal Range 80–95%",                  color: "#38bdf8" },
                   { label: "CO₂ Gas Level",     Icon: Cloud,       val: selectedSensors.co2,      sub: "Controlled Atmosphere",                 color: "#a78bfa" },
-                  { label: "IoT Battery",        Icon: Battery,     val: selectedSensors.battery,  sub: "Solar + Battery Backup",                color: "#4ade80" },
+                  { label: "IoT Battery",        Icon: Battery,     val: selectedSensors.battery,  sub: "Solar + Battery Backup",                color: "#16a34a" },
                 ].map(({ label, Icon, val, sub, color }) => (
                   <div key={label} style={{ background: "rgba(0,0,0,0.25)", padding: "14px 16px", borderRadius: 14, border: "1px solid rgba(245,158,11,0.1)" }}>
-                    <div style={{ fontSize: 10, color: "#a38a5d", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ fontSize: 10, color: "#0f172a", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 5 }}>
                       <Icon size={12} color={color} /> {label}
                     </div>
                     <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 22, fontWeight: 800, color: "#0f172a", marginTop: 4 }}>{val}</div>
-                    <div style={{ fontSize: 11, color: "#a38a5d", marginTop: 2 }}>{sub}</div>
+                    <div style={{ fontSize: 11, color: "#0f172a", marginTop: 2 }}>{sub}</div>
                   </div>
                 ))}
               </div>
@@ -255,8 +255,8 @@ export default function ExportColdChain() {
                 </div>
                 <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 8 }}>
                   {selectedSensors.log.map((entry, idx) => (
-                    <div key={idx} style={{ flex: 1, minWidth: 72, padding: "10px 8px", borderRadius: 10, background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)", textAlign: "center" }}>
-                      <div style={{ fontSize: 10, color: "#a38a5d" }}>{entry.time}</div>
+                    <div key={idx} style={{ flex: 1, minWidth: 72, padding: "10px 8px", borderRadius: 10, background: "#ffffff", border: "1px solid rgba(245,158,11,0.1)", textAlign: "center" }}>
+                      <div style={{ fontSize: 10, color: "#0f172a" }}>{entry.time}</div>
                       <div style={{ fontSize: 13, fontWeight: 800, color: "#0f172a", marginTop: 2 }}>+{entry.temp}°C</div>
                     </div>
                   ))}
@@ -264,7 +264,7 @@ export default function ExportColdChain() {
               </div>
 
               {/* Info note */}
-              <div style={{ padding: "10px 14px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#0369a1", display: "flex", alignItems: "flex-start", gap: 6 }}>
+              <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.15)", fontSize: 12, color: "#0284c7", display: "flex", alignItems: "flex-start", gap: 6 }}>
                 <Info size={14} color="#0284c7" style={{ flexShrink: 0, marginTop: 1 }} />
                 <span>Sensor readings are simulated from your container data. Connect real IoT devices (Carrier, Daikin, Emerson) to get live telemetry.</span>
               </div>

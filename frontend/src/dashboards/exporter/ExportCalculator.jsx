@@ -7,16 +7,16 @@ const DS = `
   .pg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#f59e0b;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
-  .pg-sub{font-size:14px;color:var(--text2);margin-top:6px;}
-  .card{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.12);border-radius:18px;padding:22px;}
+  .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;}
   .btn-gold{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#d97706,#f59e0b);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.06);color:#fef08a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .field-label{display:block;font-size:11px;font-weight:700;color:#a38a5d;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(245,158,11,0.18);background:rgba(245,158,11,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
-  .field-input:focus{border-color:rgba(245,158,11,0.4);}
-  .field-input option{background:#1a1206;color:#0f172a;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .field-label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid #cbd5e1;background:#ffffff;color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+  .field-input:focus{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.1);}
+  .field-input option{background:#ffffff;color:#0f172a;}
   .row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;}
-  .divider{border-top:1px solid rgba(245,158,11,0.12);margin:10px 0;}
+  .divider{border-top:1px solid #e2e8f0;margin:10px 0;}
 `;
 
 /* ── Tariff rates by destination (approximate WTO/FTA rates for agri) ── */
@@ -133,7 +133,7 @@ export default function ExportCalculator() {
     w.document.write(`<!DOCTYPE html><html><head>
       <title>Export Margin Estimate — ${crop} to ${dest}</title>
       <style>
-        body{font-family:sans-serif;padding:36px;color:#1e293b;}
+        body{font-family:sans-serif;padding:36px;color:#0f172a;}
         h1{font-size:20px;margin-bottom:4px;}
         .sub{font-size:13px;color:#64748b;margin-bottom:24px;}
         table{width:100%;border-collapse:collapse;margin:16px 0;}
@@ -170,7 +170,7 @@ export default function ExportCalculator() {
       <style>{DS}</style>
 
       {toast && (
-        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.3)", color: "#b45309", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
+        <div style={{ position: "fixed", bottom: 28, right: 28, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", color: "#b45309", padding: "12px 20px", borderRadius: 12, fontWeight: 700, fontSize: 14, zIndex: 99999 }}>
           {toast}
         </div>
       )}
@@ -186,13 +186,13 @@ export default function ExportCalculator() {
         </div>
         {/* Live FX badge */}
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 11, color: "#a38a5d", marginBottom: 4 }}>
+          <div style={{ fontSize: 11, color: "#0f172a", marginBottom: 4 }}>
             {fxLoading ? "Fetching FX…" : `Live FX · ${fxUpdated ? fxUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""}`}
           </div>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
             1 USD = ₹{usdInr.toFixed(2)}
           </div>
-          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#a38a5d", cursor: "pointer", fontSize: 12, marginTop: 2 }}>⟳ Refresh</button>
+          <button onClick={fetchFx} style={{ background: "none", border: "none", color: "#0f172a", cursor: "pointer", fontSize: 12, marginTop: 2 }}>⟳ Refresh</button>
         </div>
       </div>
 
@@ -264,9 +264,9 @@ export default function ExportCalculator() {
 
           {/* ── Price per ton summary ────────────────────────────── */}
           <div className="card" style={{ padding: "14px 18px" }}>
-            <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase", marginBottom: 4 }}>Landed Cost per MT</div>
+            <div style={{ fontSize: 11, color: "#0f172a", textTransform: "uppercase", marginBottom: 4 }}>Landed Cost per MT</div>
             <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 20, fontWeight: 800, color: "#0f172a" }}>{fmtUsd(pricePerTonUsd)}</div>
-            <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 2 }}>at destination port in {destCfg.flag} {dest}</div>
+            <div style={{ fontSize: 12, color: "#0f172a", marginTop: 2 }}>at destination port in {destCfg.flag} {dest}</div>
           </div>
         </div>
 
@@ -285,7 +285,7 @@ export default function ExportCalculator() {
               [`Destination Tariff (${tariffPct}%)`,       fmtUsd(tariffUsd),     "#fbbf24"],
             ].map(([label, val, color]) => (
               <div key={label} className="row">
-                <span style={{ color: "#a38a5d" }}>{label}</span>
+                <span style={{ color: "#0f172a" }}>{label}</span>
                 <span style={{ color, fontWeight: 700 }}>{val}</span>
               </div>
             ))}
@@ -295,27 +295,27 @@ export default function ExportCalculator() {
               <span style={{ color: "#f59e0b" }}>{fmtUsd(landedCostUsd)}</span>
             </div>
             <div className="row" style={{ fontSize: 13 }}>
-              <span style={{ color: "#a38a5d" }}>Selling Price ({markupPct}% markup)</span>
+              <span style={{ color: "#0f172a" }}>Selling Price ({markupPct}% markup)</span>
               <span style={{ color: "#0f172a", fontWeight: 700 }}>{fmtUsd(sellingUsd)}</span>
             </div>
           </div>
 
           {/* Profit box */}
           <div style={{ background: netMarginUsd > 0 ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", padding: "16px", borderRadius: 14, border: `1px solid ${netMarginUsd > 0 ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}` }}>
-            <div style={{ fontSize: 11, color: "#a38a5d", textTransform: "uppercase" }}>
+            <div style={{ fontSize: 11, color: "#0f172a", textTransform: "uppercase" }}>
               Estimated Net Profit ({markupPct}% Markup)
             </div>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: netMarginUsd > 0 ? "#4ade80" : "#f87171", marginTop: 4 }}>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 28, fontWeight: 800, color: netMarginUsd > 0 ? "#16a34a" : "#f87171", marginTop: 4 }}>
               {netMarginUsd > 0 ? "+" : ""}{fmtUsd(netMarginUsd)}
               <span style={{ fontSize: 14, color: "#0f172a", marginLeft: 8 }}>{fmtInr(netMarginUsd * usdInr)}</span>
             </div>
-            <div style={{ fontSize: 12, color: "#a38a5d", marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: "#0f172a", marginTop: 4 }}>
               ROI: {marginPctActual.toFixed(1)}% · Based on live rate 1 USD = ₹{usdInr.toFixed(2)}
             </div>
           </div>
 
           {/* Disclaimer */}
-          <div style={{ fontSize: 11, color: "#a38a5d", padding: "10px 12px", borderRadius: 10, background: "#f0f9ff", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 6 }}>
+          <div style={{ fontSize: 11, color: "#0f172a", padding: "10px 12px", borderRadius: 10, background: "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.12)", display: "flex", alignItems: "flex-start", gap: 6 }}>
             <Info size={14} style={{ flexShrink: 0, marginTop: 1 }} color="#0284c7" />
             <span>Estimates only. Actual freight, tariffs, and insurance vary by carrier, HS code, and trade agreement. Consult a customs broker for binding rates.</span>
           </div>

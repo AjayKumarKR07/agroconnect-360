@@ -77,7 +77,7 @@ export default function FarmAnalytics() {
         .fa-grid-2 { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
         .fa-grid-3 { grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
         .fa-chart-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; }
-        .fa-chart-title { font-size:13px; font-weight:700; color:var(--text2); margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em; }
+        .fa-chart-title { font-size:13px; font-weight:700; color:#475569; margin-bottom:14px; text-transform:uppercase; letter-spacing:.05em; }
         .fa-note { padding:14px 16px; background:#fffbeb; border:1px solid rgba(251,191,36,0.15); border-radius:12px; font-size:13px; color:#b45309; line-height:1.7; margin-top:16px; display:flex; align-items:center; gap:8px; }
       `}</style>
 

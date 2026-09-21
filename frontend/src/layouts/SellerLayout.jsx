@@ -208,7 +208,7 @@ export default function SellerLayout() {
         .sl-page-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
         .sl-page-name { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:800; color:var(--text); }
         .sl-topbar-right { display:flex; align-items:center; gap:12px; }
-        .sl-time-chip { font-size:12px; color:var(--text2); background:#f8fafc; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-weight:500; }
+        .sl-time-chip { font-size:12px; color:#475569; background:#f8fafc; border:1px solid var(--border); padding:5px 14px; border-radius:20px; font-weight:500; }
         .sl-topbar-avatar {
           width:36px; height:36px; border-radius:8px;
           background:#7c3aed;

@@ -157,7 +157,7 @@ export default function PricePrediction() {
     <>
       <style>{DS + `
         .price-table{width:100%;border-collapse:collapse;}
-        .price-table th{text-align:left;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;padding:10px 16px;border-bottom:1px solid var(--border);}
+        .price-table th{text-align:left;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;padding:10px 16px;border-bottom:1px solid var(--border);}
         .price-table td{padding:13px 16px;font-size:14px;border-bottom:1px solid var(--border);}
         .price-table tr:last-child td{border-bottom:none;}
         .price-table tbody tr:hover{background:var(--surface);}

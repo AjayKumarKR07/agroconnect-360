@@ -230,7 +230,7 @@ export default function AdminProfile() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <label className="field-label">Official Contact Phone (10 Digits)</label>
                       {formData.phone ? (
-                        <span style={{ fontSize: 11, color: formData.phone.length === 10 ? "#4ade80" : "#fbbf24", fontWeight: 700 }}>
+                        <span style={{ fontSize: 11, color: formData.phone.length === 10 ? "#16a34a" : "#fbbf24", fontWeight: 700 }}>
                           {formData.phone.length}/10
                         </span>
                       ) : null}

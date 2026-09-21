@@ -141,7 +141,7 @@ export default function FarmerLayout() {
         }
         .fl-logo-text { overflow:hidden; white-space:nowrap; }
         .fl-logo-name { font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:800; color:var(--text); }
-        .fl-logo-sub { font-size:11px; color:var(--text2); font-weight:500; }
+        .fl-logo-sub { font-size:11px; color:#475569; font-weight:500; }
 
         .fl-nav { flex:1; overflow-y:auto; padding:12px 10px; }
         .fl-nav::-webkit-scrollbar { width:4px; }
@@ -252,12 +252,12 @@ export default function FarmerLayout() {
           padding:0 28px;
         }
         .fl-topbar-left { display:flex; align-items:center; gap:12px; }
-        .fl-breadcrumb { font-size:13px; color:var(--text2); }
+        .fl-breadcrumb { font-size:13px; color:#475569; }
         .fl-breadcrumb-cur { color:var(--text); font-weight:600; }
 
         .fl-topbar-right { display:flex; align-items:center; gap:12px; }
         .fl-topbar-time {
-          font-size:13px; color:var(--text2);
+          font-size:13px; color:#475569;
           background:#f8fafc; padding:5px 12px; border-radius:8px;
           border:1px solid var(--border); font-weight:500;
         }

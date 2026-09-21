@@ -18,7 +18,7 @@ const authHeaders = () => ({
 
 const fmt = (n) => (n != null ? Number(n).toLocaleString("en-IN") : null);
 const scoreColor = (s) =>
-  s >= 75 ? "#4ade80" : s >= 50 ? "#fbbf24" : "#f87171";
+  s >= 75 ? "#16a34a" : s >= 50 ? "#fbbf24" : "#f87171";
 const scoreBg = (s) =>
   s >= 75
     ? "rgba(34,197,94,0.12)"
@@ -48,7 +48,7 @@ const SFP_CSS = `
     display:flex; align-items:center; gap:8px;
   }
   .sfp-score-bar-wrap { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-  .sfp-score-bar-label { font-size:12px; color:var(--text2); min-width:160px; }
+  .sfp-score-bar-label { font-size:12px; color:#475569; min-width:160px; }
   .sfp-score-bar-track { flex:1; height:6px; border-radius:3px; background:rgba(255,255,255,0.07); overflow:hidden; }
   .sfp-score-bar-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
   .sfp-score-badge {
@@ -66,7 +66,7 @@ const SFP_CSS = `
   .sfp-rec-head {
     display:grid; grid-template-columns:40px 1fr 80px 80px 80px 100px 90px;
     gap:8px; padding:10px 16px; font-size:11px; font-weight:700;
-    color:var(--text2); text-transform:uppercase; letter-spacing:0.06em;
+    color:#475569; text-transform:uppercase; letter-spacing:0.06em;
     border-bottom:1px solid var(--border);
   }
   .sfp-market-row {
@@ -76,13 +76,13 @@ const SFP_CSS = `
   }
   .sfp-weather-metric { text-align:center; padding:16px 12px; border-radius:14px; background:var(--surface); }
   .sfp-weather-val { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:800; color:#0f172a; }
-  .sfp-weather-lbl { font-size:12px; color:var(--text2); margin-top:4px; }
+  .sfp-weather-lbl { font-size:12px; color:#475569; margin-top:4px; }
   .sfp-profit-card { padding:20px; border-radius:16px; background:var(--surface); border:1px solid var(--border); text-align:center; }
   .sfp-profit-val { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:800; color:#0f172a; }
-  .sfp-profit-lbl { font-size:12px; color:var(--text2); margin-top:4px; }
+  .sfp-profit-lbl { font-size:12px; color:#475569; margin-top:4px; }
   .sfp-ai-text { font-size:14px; color:var(--text); line-height:1.8; white-space:pre-wrap; }
   .sfp-req-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
-  .sfp-req-label { color:var(--text2); min-width:160px; flex-shrink:0; }
+  .sfp-req-label { color:#475569; min-width:160px; flex-shrink:0; }
   .sfp-req-val { color:var(--text); font-weight:500; }
   .sfp-crop-btn {
     background:var(--surface); border:1px solid var(--border); border-radius:10px;
@@ -92,7 +92,7 @@ const SFP_CSS = `
   }
   .sfp-crop-btn:hover { background:var(--surface2); border-color:var(--border2); }
   .sfp-crop-btn.active { background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#15803d; }
-  .sfp-unavailable { font-size:13px; color:var(--text2); font-style:italic; }
+  .sfp-unavailable { font-size:13px; color:#475569; font-style:italic; }
   .sfp-skeleton {
     background:linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
     background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px;
@@ -267,7 +267,7 @@ function RecommendationsTable({ recommendations, selectedCrop, onSelect }) {
           <span className={`badge ${r.marketTrend === "Rising" ? "badge-green" : r.marketTrend === "Stable" ? "badge-amber" : "badge-red"}`}>
             {r.marketTrend}
           </span>
-          <span style={{ fontSize: 13, fontWeight: 700, color: r.financial.estimatedProfit > 0 ? "#4ade80" : "var(--text2)" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: r.financial.estimatedProfit > 0 ? "#16a34a" : "var(--text2)" }}>
             {r.financial.estimatedProfit != null ? `₹${fmt(r.financial.estimatedProfit)}` : <span className="sfp-unavailable">N/A</span>}
           </span>
           <span className={`badge ${r.risk === "Low" ? "badge-green" : r.risk === "Medium" ? "badge-amber" : "badge-red"}`}>
@@ -327,7 +327,7 @@ function CropDetailPanel({ rec }) {
             <div className="sfp-profit-lbl">Expected Yield ({rec.yield.perAcre} q/acre)</div>
           </div>
           <div className="sfp-profit-card">
-            <div className="sfp-profit-val" style={{ color: "#7dd3fc" }}>
+            <div className="sfp-profit-val" style={{ color: "#0284c7" }}>
               {fin.marketPrice ? `₹${fmt(fin.marketPrice)}` : <span className="sfp-unavailable" style={{ fontSize: 14 }}>N/A</span>}
             </div>
             <div className="sfp-profit-lbl">Market Price ({fin.marketPriceSource})</div>
@@ -339,13 +339,13 @@ function CropDetailPanel({ rec }) {
             <div className="sfp-profit-lbl">Estimated Investment</div>
           </div>
           <div className="sfp-profit-card">
-            <div className="sfp-profit-val" style={{ color: "#7dd3fc" }}>
+            <div className="sfp-profit-val" style={{ color: "#0284c7" }}>
               {fin.estimatedRevenue != null ? `₹${fmt(fin.estimatedRevenue)}` : <span className="sfp-unavailable" style={{ fontSize: 14 }}>N/A</span>}
             </div>
             <div className="sfp-profit-lbl">Estimated Revenue</div>
           </div>
           <div className="sfp-profit-card" style={{ gridColumn: "span 2", background: fin.estimatedProfit > 0 ? "rgba(34,197,94,0.08)" : "var(--surface)", border: fin.estimatedProfit > 0 ? "1px solid rgba(34,197,94,0.2)" : "1px solid var(--border)" }}>
-            <div className="sfp-profit-val" style={{ fontSize: 28, color: fin.estimatedProfit > 0 ? "#4ade80" : fin.estimatedProfit != null ? "#f87171" : "var(--text2)" }}>
+            <div className="sfp-profit-val" style={{ fontSize: 28, color: fin.estimatedProfit > 0 ? "#16a34a" : fin.estimatedProfit != null ? "#f87171" : "var(--text2)" }}>
               {fin.estimatedProfit != null ? `₹${fmt(Math.abs(fin.estimatedProfit))}` : "Data unavailable"}
             </div>
             <div className="sfp-profit-lbl">

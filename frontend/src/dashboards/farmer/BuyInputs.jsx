@@ -481,7 +481,7 @@ export default function BuyInputs() {
         .cat-tab {
           padding:7px 14px; border-radius:10px; font-size:12px; font-weight:600;
           cursor:pointer; border:1px solid var(--border);
-          background:var(--surface); color:var(--text2);
+          background:var(--surface); color:#475569;
           transition:all 0.18s; white-space:nowrap;
         }
         .cat-tab.active  { background:var(--green-dim); color:#15803d; border-color:rgba(34,197,94,0.2); }
@@ -513,9 +513,9 @@ export default function BuyInputs() {
           box-shadow:0 10px 32px rgba(0,0,0,0.45);
         }
         .item-name  { font-size:13px; font-weight:700; color:#0f172a; line-height:1.3; }
-        .item-brand { font-size:11px; color:var(--text2); }
+        .item-brand { font-size:11px; color:#475569; }
         .item-price { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800; color:#15803d; }
-        .item-unit  { font-size:10px; color:var(--text2); }
+        .item-unit  { font-size:10px; color:#475569; }
 
         /* ── Badge ── */
         .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:600; }
@@ -535,23 +535,23 @@ export default function BuyInputs() {
 
         /* ── Modal ── */
         .modal-overlay {
-          position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999;
+          position:fixed; inset:0; background:rgba(15,23,42,0.45); z-index:9999;
           display:flex; align-items:center; justify-content:center;
           padding:20px; backdrop-filter:blur(6px);
         }
         .modal-box {
-          background:#080d12; border:1px solid rgba(255,255,255,0.10);
+          background:#ffffff; border:1px solid rgba(255,255,255,0.10);
           border-radius:24px; padding:28px; width:100%; max-width:460px;
           max-height:90vh; overflow-y:auto; animation:fadeIn 0.2s ease;
         }
         @keyframes fadeIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
         .modal-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; color:#0f172a; margin-bottom:4px; }
-        .modal-sub { font-size:13px; color:var(--text2); margin-bottom:20px; }
+        .modal-sub { font-size:13px; color:#475569; margin-bottom:20px; }
 
         /* Checkout form */
         .checkout-fields { display:flex; flex-direction:column; gap:14px; margin-bottom:20px; }
         .pay-opts { display:flex; gap:10px; flex-wrap:wrap; }
-        .pay-opt { flex:1; min-width:100px; padding:11px; border-radius:12px; border:1px solid var(--border); background:var(--surface); cursor:pointer; text-align:center; font-size:12px; font-weight:600; color:var(--text2); transition:all 0.2s; }
+        .pay-opt { flex:1; min-width:100px; padding:11px; border-radius:12px; border:1px solid var(--border); background:var(--surface); cursor:pointer; text-align:center; font-size:12px; font-weight:600; color:#475569; transition:all 0.2s; }
         .pay-opt.selected { border-color:rgba(34,197,94,0.3); background:var(--green-dim); color:#15803d; }
 
         /* Success */
@@ -559,7 +559,7 @@ export default function BuyInputs() {
         .success-icon { font-size:64px; margin-bottom:16px; animation:pop 0.4s ease; }
         @keyframes pop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
         .success-title { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; color:#15803d; margin-bottom:8px; }
-        .success-sub { font-size:14px; color:var(--text2); margin-bottom:24px; }
+        .success-sub { font-size:14px; color:#475569; margin-bottom:24px; }
         .order-id-badge { display:inline-block; padding:8px 20px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); border-radius:100px; font-size:13px; color:#15803d; font-weight:700; margin-bottom:20px; }
 
         /* Cart qty */
@@ -824,7 +824,7 @@ export default function BuyInputs() {
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text2)", marginBottom: 8 }}>
                     <span>Delivery</span>
-                    <span style={{ color: deliveryFee === 0 ? "#4ade80" : undefined }}>{deliveryFee === 0 ? "FREE" : "₹150"}</span>
+                    <span style={{ color: deliveryFee === 0 ? "#16a34a" : undefined }}>{deliveryFee === 0 ? "FREE" : "₹150"}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 800, fontSize: 15 }}>
                     <span>Total</span>

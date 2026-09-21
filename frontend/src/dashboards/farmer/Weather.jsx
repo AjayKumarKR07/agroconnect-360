@@ -43,13 +43,13 @@ const fmtDate = (dateStr) => {
 };
 
 const rainColor = (p) =>
-  p >= 70 ? "#38bdf8" : p >= 40 ? "#7dd3fc" : p >= 20 ? "#bae6fd" : "#e0f7fa";
+  p >= 70 ? "#38bdf8" : p >= 40 ? "#0284c7" : p >= 20 ? "#bae6fd" : "#e0f7fa";
 
 const tempGradient = (t) => {
   if (t >= 40) return "linear-gradient(135deg,#ef4444,#f97316)";
   if (t >= 35) return "linear-gradient(135deg,#f97316,#fbbf24)";
-  if (t >= 28) return "linear-gradient(135deg,#fbbf24,#4ade80)";
-  if (t >= 20) return "linear-gradient(135deg,#4ade80,#38bdf8)";
+  if (t >= 28) return "linear-gradient(135deg,#fbbf24,#16a34a)";
+  if (t >= 20) return "linear-gradient(135deg,#16a34a,#38bdf8)";
   return "linear-gradient(135deg,#38bdf8,#818cf8)";
 };
 
@@ -58,7 +58,7 @@ const WCSS = `
 .w-tabs { display:flex; gap:8px; margin-bottom:28px; flex-wrap:wrap; }
 .w-tab {
   padding:9px 20px; border-radius:40px; border:1px solid var(--border);
-  background:var(--surface); color:var(--text2); font-size:13px; font-weight:600;
+  background:var(--surface); color:#475569; font-size:13px; font-weight:600;
   cursor:pointer; transition:all .2s; white-space:nowrap;
 }
 .w-tab.active { background:var(--green); color:#0f172a; border-color:var(--green); }
@@ -85,7 +85,7 @@ const WCSS = `
 .fc-day:hover:not(.sel) { background:var(--surface2); transform:translateY(-2px); }
 .fc-day .rbar { position:absolute; bottom:0; left:0; right:0; height:3px; border-radius:0 0 16px 16px; }
 .fc-day.ext { opacity:.78; }
-.fc-day.ext::after { content:"~"; position:absolute; top:6px; right:8px; font-size:10px; color:var(--text2); }
+.fc-day.ext::after { content:"~"; position:absolute; top:6px; right:8px; font-size:10px; color:#475569; }
 .fc-detail {
   background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(34,197,94,.05));
   border:1px solid rgba(56,189,248,.15); border-radius:20px; padding:28px 32px; margin-bottom:20px;
@@ -306,7 +306,7 @@ function RainBars({ days, onSelect }) {
 function WeatherCalendar({ days }) {
   const badge = (d) => {
     if (d.rainProb >= 70) return { label: "Heavy Rain", color: "#0369a1" };
-    if (d.rainProb >= 40) return { label: "Rain Risk", color: "#7dd3fc" };
+    if (d.rainProb >= 40) return { label: "Rain Risk", color: "#0284c7" };
     if (d.maxTemp >= 38) return { label: "Very Hot", color: "#ef4444" };
     if (d.maxTemp >= 33) return { label: "Hot", color: "#fb923c" };
     return { label: "Good", color: "#15803d" };
