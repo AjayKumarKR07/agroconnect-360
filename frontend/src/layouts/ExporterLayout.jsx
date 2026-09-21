@@ -210,6 +210,108 @@ export default function ExporterLayout() {
           .ul-main { margin-left:var(--ul-wc) !important; }
           .ul-content { padding:20px 16px; }
         }
+
+        /* ══════════════════════════════════════════════════════════════════
+           GLOBAL EXPORTER DARK AMBER THEME — applies to ALL sub-pages.
+           The sidebar (.ul-*) uses hardcoded classes and is unaffected.
+        ══════════════════════════════════════════════════════════════════ */
+
+        /* CSS variable override — dark amber content area */
+        :root {
+          --bg:       #0f0b05;
+          --bg2:      #171006;
+          --surface:  #171006;
+          --surface2: #1e1508;
+          --border:   #3f2a08;
+          --border2:  #5a3d0c;
+          --text:     #f8fafc;
+          --text2:    #cbd5e1;
+          --text3:    #94a3b8;
+          --accent:   #f59e0b;
+          --accent2:  #d97706;
+        }
+
+        /* Main content area gets dark background */
+        body { background:#0f0b05; color:#f8fafc; }
+
+        /* ── Page-level typography ── */
+        .pg-title  { color:#f8fafc !important; }
+        .pg-sub    { color:#94a3b8 !important; }
+        .eyebrow   { color:#f59e0b !important; }
+        .card-title{ color:#f8fafc !important; }
+        .card-sub  { color:#94a3b8 !important; }
+
+        /* ── Cards ── */
+        .card {
+          background:#171006 !important;
+          border:1px solid #3f2a08 !important;
+        }
+        .stat-card {
+          background:#171006 !important;
+          border:1px solid #3f2a08 !important;
+        }
+        .stat-val { color:#f8fafc !important; }
+        .stat-lbl { color:#cbd5e1 !important; }
+
+        /* ── Form inputs ── */
+        .field-input {
+          color:#f8fafc !important;
+          background:#1e1508 !important;
+          border:1px solid #3f2a08 !important;
+        }
+        .field-input::placeholder { color:#64748b !important; }
+        .field-input:focus {
+          border-color:rgba(245,158,11,0.5) !important;
+          box-shadow:0 0 0 3px rgba(245,158,11,0.1) !important;
+        }
+        select.field-input option { background:#1e1508; color:#f8fafc; }
+        .field-label { color:#94a3b8 !important; }
+
+        /* ── Badges — light enough to read on #0f0b05 ── */
+        .badge-green  { background:rgba(74,222,128,0.12);  color:#4ade80;  border:1px solid rgba(74,222,128,0.22);  }
+        .badge-amber  { background:rgba(251,191,36,0.12);  color:#fbbf24;  border:1px solid rgba(251,191,36,0.25);  }
+        .badge-red    { background:rgba(248,113,113,0.12); color:#f87171;  border:1px solid rgba(248,113,113,0.22); }
+        .badge-blue   { background:rgba(125,211,252,0.12); color:#7dd3fc;  border:1px solid rgba(125,211,252,0.2);  }
+        .badge-purple { background:rgba(196,181,253,0.12); color:#c4b5fd;  border:1px solid rgba(196,181,253,0.2);  }
+        .badge-grey   { background:rgba(203,213,225,0.08); color:#cbd5e1;  border:1px solid rgba(203,213,225,0.15); }
+        .badge-gold   { background:rgba(245,158,11,0.14);  color:#fbbf24;  border:1px solid rgba(245,158,11,0.28);  }
+
+        /* ── Amber + ghost buttons ── */
+        .btn-amber, .btn-gold {
+          display:inline-flex; align-items:center; gap:8px;
+          background:linear-gradient(135deg,#d97706,#f59e0b);
+          color:#0f172a !important; font-weight:700; font-size:14px;
+          padding:10px 20px; border-radius:12px; border:none;
+          cursor:pointer; font-family:'Inter',sans-serif;
+          box-shadow:0 4px 14px rgba(245,158,11,0.2);
+          transition:opacity 0.18s,transform 0.18s; text-decoration:none;
+        }
+        .btn-amber:hover, .btn-gold:hover { opacity:0.88; transform:translateY(-1px); }
+        .btn-ghost {
+          color:#f8fafc !important;
+          border-color:#5a3d0c !important;
+          background:rgba(245,158,11,0.06) !important;
+        }
+        .btn-ghost:hover {
+          background:rgba(245,158,11,0.12) !important;
+          border-color:#7a5514 !important;
+        }
+
+        /* ── Tables ── */
+        .data-table th {
+          color:#94a3b8 !important;
+          border-bottom-color:#3f2a08 !important;
+          background:#1e1508 !important;
+        }
+        .data-table td {
+          color:#f8fafc !important;
+          border-bottom-color:#2a1b04 !important;
+        }
+        .data-table tr:hover td { background:rgba(245,158,11,0.04) !important; }
+
+        /* ── Spinner ── */
+        .spinner { border-top-color:#f59e0b !important; }
+        .section-error { background:rgba(239,68,68,0.08) !important; border-color:rgba(239,68,68,0.2) !important; }
       `}</style>
 
       <div className="ul-wrap">

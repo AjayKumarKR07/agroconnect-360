@@ -11,29 +11,63 @@ import {
 
 /* ─── Exporter-specific overrides on top of DS ─────────────────────────── */
 const EX_STYLES = `
+  /* ── Design tokens ── */
   :root {
-    --bg:#0f0a03; --bg2:#170f05;
-    --surface:rgba(245,158,11,0.05); --surface2:rgba(245,158,11,0.09);
-    --border:rgba(245,158,11,0.14); --border2:rgba(245,158,11,0.25);
-    --text:#fffbeb; --text2:#a38a5d;
-    --green:#f59e0b; --green-dim:rgba(245,158,11,0.12);
-    --amber:rgba(251,191,36,0.1); --amber-text:#fde68a;
+    --bg:     #0f0b05;
+    --bg2:    #171006;
+    --surface:  #171006;
+    --surface2: #1e1508;
+    --border:   #3f2a08;
+    --border2:  #5a3d0c;
+    --text:   #f8fafc;
+    --text2:  #cbd5e1;
+    --text3:  #94a3b8;
+    --accent:     #f59e0b;
+    --accent2:    #d97706;
+    --green:  #f59e0b;
+    --green-dim: rgba(245,158,11,0.12);
+    --amber:rgba(251,191,36,0.1); --amber-text:#fbbf24;
     --blue:rgba(56,189,248,0.1); --blue-text:#7dd3fc;
   }
 
-  /* Eyebrow in amber */
+  /* Body */
+  body { background:#0f0b05; color:#f8fafc; }
+
+  /* ── Eyebrow ── */
   .eyebrow { color:#f59e0b !important; }
 
-  /* stat-card top shimmer in amber */
-  .stat-card::before {
-    background:linear-gradient(90deg,transparent,rgba(245,158,11,0.3),transparent) !important;
+  /* ── Page headings ── */
+  .pg-title { color:#f8fafc !important; }
+  .pg-sub   { color:#94a3b8 !important; }
+
+  /* ── Card headings ── */
+  .card-title { color:#f8fafc !important; }
+  .card-sub   { color:#94a3b8 !important; }
+
+  /* ── Cards ── */
+  .card {
+    background:#171006 !important;
+    border:1px solid #3f2a08 !important;
   }
 
-  /* amber btn */
+  /* ── Stat cards ── */
+  .stat-card {
+    background:#171006 !important;
+    border:1px solid #3f2a08 !important;
+  }
+  .stat-lbl { color:#cbd5e1 !important; }
+  .stat-val { color:#f8fafc !important; }
+
+  /* stat-card shimmer */
+  .stat-card::before {
+    background:linear-gradient(90deg,transparent,rgba(245,158,11,0.15),transparent) !important;
+  }
+
+  /* ── Amber button ── */
   .btn-amber {
     display:inline-flex; align-items:center; gap:8px;
     background:linear-gradient(135deg,#d97706,#f59e0b);
-    color:#0f172a; font-weight:700; font-size:14px;
+    color:#0f172a !important; font-weight:700; font-size:14px;
     padding:11px 22px; border-radius:12px; border:none; cursor:pointer;
     box-shadow:0 6px 20px rgba(245,158,11,0.25);
     transition:transform 0.2s,box-shadow 0.2s;
@@ -41,126 +75,131 @@ const EX_STYLES = `
   }
   .btn-amber:hover { transform:translateY(-1px); box-shadow:0 12px 32px rgba(245,158,11,0.35); }
 
+  /* ── Ghost button ── */
   .btn-ghost {
-    border-color:var(--border2) !important;
-    color:#fef08a !important;
+    border-color:#5a3d0c !important;
+    color:#f8fafc !important;
+    background:rgba(245,158,11,0.06) !important;
   }
-  .btn-ghost:hover { background:var(--surface2) !important; }
+  .btn-ghost:hover {
+    background:rgba(245,158,11,0.12) !important;
+    border-color:#7a5514 !important;
+  }
 
-  /* badge overrides */
-  .badge-green { background:rgba(34,197,94,0.12); color:#15803d; border:1px solid rgba(34,197,94,0.2); }
-  .badge-amber { background:rgba(245,158,11,0.12); color:#fde68a; border:1px solid rgba(245,158,11,0.2); }
-  .badge-red   { background:rgba(239,68,68,0.12);  color:#dc2626; border:1px solid rgba(239,68,68,0.2); }
-  .badge-blue  { background:rgba(56,189,248,0.12); color:#7dd3fc; border:1px solid rgba(56,189,248,0.2); }
-  .badge-purple{ background:rgba(167,139,250,0.12);color:#c4b5fd; border:1px solid rgba(167,139,250,0.2); }
-  .badge-grey  { background:rgba(148,163,184,0.12);color:#94a3b8; border:1px solid rgba(148,163,184,0.2); }
+  /* ── Badges — all light enough to read on dark background ── */
+  .badge-green  { background:rgba(74,222,128,0.12);  color:#4ade80;  border:1px solid rgba(74,222,128,0.22); }
+  .badge-amber  { background:rgba(251,191,36,0.12);  color:#fbbf24;  border:1px solid rgba(251,191,36,0.25); }
+  .badge-red    { background:rgba(248,113,113,0.12); color:#f87171;  border:1px solid rgba(248,113,113,0.22); }
+  .badge-blue   { background:rgba(125,211,252,0.12); color:#7dd3fc;  border:1px solid rgba(125,211,252,0.2);  }
+  .badge-purple { background:rgba(196,181,253,0.12); color:#c4b5fd;  border:1px solid rgba(196,181,253,0.2);  }
+  .badge-grey   { background:rgba(203,213,225,0.08); color:#cbd5e1;  border:1px solid rgba(203,213,225,0.15); }
+  .badge-gold   { background:rgba(245,158,11,0.14);  color:#fbbf24;  border:1px solid rgba(245,158,11,0.28); }
 
-  /* table */
-  .data-table th { border-bottom:1px solid rgba(245,158,11,0.14) !important; }
-  .data-table td { border-bottom:1px solid rgba(245,158,11,0.08) !important; }
+  /* ── Table ── */
+  .data-table th {
+    border-bottom:1px solid #3f2a08 !important;
+    color:#94a3b8 !important;
+    background:#1e1508 !important;
+  }
+  .data-table td {
+    border-bottom:1px solid #2a1b04 !important;
+    color:#f8fafc !important;
+  }
+  .data-table tr:hover td { background:rgba(245,158,11,0.04) !important; }
 
-  /* field-input amber focus */
-  .field-input:focus { border-color:rgba(245,158,11,0.4) !important; box-shadow:0 0 0 4px rgba(245,158,11,0.07) !important; }
+  /* ── Form inputs ── */
+  .field-input {
+    background:#1e1508 !important;
+    border:1px solid #3f2a08 !important;
+    color:#f8fafc !important;
+  }
+  .field-input::placeholder { color:#64748b !important; }
+  .field-input:focus { border-color:rgba(245,158,11,0.5) !important; box-shadow:0 0 0 3px rgba(245,158,11,0.1) !important; }
+  select.field-input option { background:#1e1508; color:#f8fafc; }
+  .field-label { color:#94a3b8 !important; }
 
-  /* spinner amber */
+  /* ── Spinner ── */
   .spinner { border-top-color:#f59e0b !important; }
 
-  /* pipeline stage */
-  .pipe-stage {
-    display:flex; flex-direction:column; align-items:center; gap:6px; flex:1;
-  }
+  /* ── Pipeline stage ── */
+  .pipe-stage { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
   .pipe-count {
     width:44px; height:44px; border-radius:12px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:800;
-    border:1px solid rgba(245,158,11,0.2); background:rgba(245,158,11,0.05);
-    color:#0f172a; transition:all 0.2s;
+    border:1px solid #3f2a08; background:#1e1508;
+    color:#f8fafc; transition:all 0.2s;
   }
-  .pipe-count.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:#b45309; }
-  .pipe-label { font-size:10px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
-  .pipe-arrow { color:rgba(245,158,11,0.3); font-size:16px; flex-shrink:0; padding-top:12px; }
+  .pipe-count.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:#f59e0b; }
+  .pipe-label { font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
+  .pipe-arrow { color:#3f2a08; font-size:16px; flex-shrink:0; padding-top:12px; }
 
-  /* section heading */
+  /* ── Section heading ── */
   .sec-head {
     display:flex; align-items:center; justify-content:space-between;
     margin-bottom:16px; flex-wrap:wrap; gap:8px;
   }
 
-  /* listing card */
+  /* ── Listing card ── */
   .listing-card {
     padding:14px 16px; border-radius:14px;
-    border:1px solid rgba(245,158,11,0.1);
-    background:rgba(245,158,11,0.03);
+    border:1px solid #3f2a08;
+    background:#1e1508;
     transition:border-color 0.2s,background 0.2s;
   }
-  .listing-card:hover { border-color:rgba(245,158,11,0.22); background:rgba(245,158,11,0.06); }
+  .listing-card:hover { border-color:#5a3d0c; background:#261c09; }
 
-  /* action item */
+  /* ── Action item (quick alert rows) ── */
   .action-item {
     display:flex; align-items:center; justify-content:space-between;
     padding:13px 16px; border-radius:12px; gap:12px;
-    border:1px solid rgba(251,191,36,0.18);
-    background:#fffbeb;
+    border:1px solid #3f2a08;
+    background:#1e1508;
     text-decoration:none; transition:background 0.18s,border-color 0.18s;
   }
-  .action-item:hover {
-    background:rgba(251,191,36,0.09);
-    border-color:rgba(251,191,36,0.28);
-  }
+  .action-item:hover { background:#261c09; border-color:#5a3d0c; }
 
-  /* ship alert row */
+  /* ── Ship alert row ── */
   .ship-alert-item {
     display:flex; align-items:center; justify-content:space-between;
     padding:12px 14px; border-radius:12px; gap:10px; flex-wrap:wrap;
-    border:1px solid rgba(245,158,11,0.12);
-    background:rgba(245,158,11,0.04);
+    border:1px solid #3f2a08;
+    background:#1e1508;
     transition:background 0.18s;
   }
-  .ship-alert-item:hover { background:rgba(245,158,11,0.08); }
+  .ship-alert-item:hover { background:#261c09; }
 
-  /* activity timeline item */
+  /* ── Activity timeline ── */
   .activity-item {
     display:flex; align-items:flex-start; gap:12px;
-    padding:10px 0; border-bottom:1px solid rgba(245,158,11,0.07);
+    padding:10px 0; border-bottom:1px solid #2a1b04;
   }
   .activity-item:last-child { border-bottom:none; }
-  .activity-dot {
-    width:8px; height:8px; border-radius:50%; flex-shrink:0;
-    margin-top:5px;
-  }
+  .activity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
 
-  /* interest status row */
+  /* ── Interest row ── */
   .int-row {
     display:flex; align-items:center; justify-content:space-between;
-    padding:9px 0; border-bottom:1px solid rgba(245,158,11,0.08);
+    padding:9px 0; border-bottom:1px solid #2a1b04;
   }
   .int-row:last-child { border-bottom:none; }
 
-  /* fx card */
-  .fx-card {
-    padding:14px 16px; border-radius:14px;
-    border:1px solid rgba(245,158,11,0.12);
-    background:rgba(245,158,11,0.04);
-  }
+  /* ── FX card ── */
+  .fx-card { padding:14px 16px; border-radius:14px; border:1px solid #3f2a08; background:#1e1508; }
 
-  /* skeleton pulse */
-  .skel {
-    border-radius:8px; background:rgba(245,158,11,0.07);
-    animation:pulse 1.8s ease-in-out infinite;
-  }
+  /* ── Skeleton ── */
+  .skel { border-radius:8px; background:#1e1508; animation:pulse 1.8s ease-in-out infinite; }
 
-  /* compliance row */
+  /* ── Compliance row ── */
   .comp-row {
     display:flex; align-items:center; justify-content:space-between;
-    padding:10px 0; border-bottom:1px solid rgba(245,158,11,0.07);
-    gap:8px;
+    padding:10px 0; border-bottom:1px solid #2a1b04; gap:8px;
   }
   .comp-row:last-child { border-bottom:none; }
 
-  /* two-col responsive grid */
-  .two-col  { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  .three-col{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
-
+  /* ── Responsive grids ── */
+  .two-col   { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
   @media(max-width:900px) {
     .two-col   { grid-template-columns:1fr !important; }
     .three-col { grid-template-columns:1fr 1fr !important; }
@@ -243,10 +282,10 @@ function Skeleton({ h = 60, mb = 0 }) {
 
 function SectionError({ msg, onRetry }) {
   return (
-    <div style={{ padding:"16px", borderRadius:12, background: "#fef2f2", border:"1px solid rgba(239,68,68,0.15)", color:"#dc2626", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
+    <div style={{ padding:"16px", borderRadius:12, background:"rgba(239,68,68,0.08)", border:"1px solid rgba(248,113,113,0.2)", color:"#f87171", fontSize:13, display:"flex", alignItems:"center", justifyContent:"space-between", gap:12 }}>
       <span style={{ display:"inline-flex", alignItems:"center", gap:8 }}><AlertTriangle size={16} style={{ flexShrink: 0 }} /> {msg}</span>
       {onRetry && (
-        <button onClick={onRetry} style={{ background:"none", border:"1px solid rgba(239,68,68,0.25)", color: "#dc2626", borderRadius:8, padding:"5px 12px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
+        <button onClick={onRetry} style={{ background:"none", border:"1px solid rgba(248,113,113,0.25)", color:"#f87171", borderRadius:8, padding:"5px 12px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
           Retry
         </button>
       )}
@@ -257,10 +296,12 @@ function SectionError({ msg, onRetry }) {
 function EmptyState({ icon: Icon, msg, action }) {
   return (
     <div style={{ textAlign:"center", padding:"28px 16px", color:"var(--text2)", fontSize:13 }}>
-      <div style={{ display:"flex", justifyContent:"center", marginBottom:8, color:"#d97706" }}>
-        {typeof Icon === "function" ? <Icon size={32} /> : Icon ? Icon : <Package size={32} />}
+      <div style={{ display:"flex", justifyContent:"center", marginBottom:8, color:"#f59e0b" }}>
+        {/* Lucide icons are React.forwardRef objects — typeof === "object", not "function".
+            Always call as JSX; fall back to <Package> if nothing provided. */}
+        {Icon ? <Icon size={32} /> : <Package size={32} />}
       </div>
-      <div style={{ color: "#0f172a", fontWeight:600, marginBottom:6 }}>{msg}</div>
+      <div style={{ color:"#f8fafc", fontWeight:600, marginBottom:6 }}>{msg}</div>
       {action}
     </div>
   );
@@ -488,7 +529,7 @@ export default function ExporterDashboard() {
           >
             {(() => { const Icon = q.Icon; return <Icon size={20} strokeWidth={1.75} style={{ color: "#d97706", flexShrink: 0 }} />; })()}
             <div>
-              <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{q.label}</div>
+              <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{q.label}</div>
               <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>{q.sub}</div>
             </div>
           </Link>
@@ -512,22 +553,22 @@ export default function ExporterDashboard() {
           { Icon: Ship,         label:"Active Shipments",
             val: stats.activeContainers ?? "—",
             sub: `${stats.totalShipments} total shipment${stats.totalShipments !== 1 ? "s" : ""}`,
-            color: "#0369a1",
+            color: "#7dd3fc",
           },
           { Icon: Package,      label:"Export Volume",
             val: totalVolume > 0 ? `${totalVolume} MT` : "—",
             sub: "metric tons across all shipments",
-            color: "#7c3aed",
+            color: "#c4b5fd",
           },
           { Icon: CheckCircle2, label:"Customs Cleared",
             val: stats.customsCleared ?? "—",
             sub: "shipments past customs",
-            color: "#15803d",
+            color: "#4ade80",
           },
           { Icon: Inbox,        label:"Export Interests",
             val: loadingInt ? "…" : interests.length,
             sub: loadingInt ? "" : `${pendingInt.length} pending · ${confirmedInt.length} confirmed`,
-            color: "#b45309",
+            color: "#f59e0b",
           },
           { Icon: ClipboardList,label:"Active RFQs",
             val: loadingRfqs ? "…" : rfqs.length,
@@ -538,9 +579,9 @@ export default function ExporterDashboard() {
           <div key={label} className="stat-card">
             <div className="stat-glow" style={{ background: color }} />
             <div className="stat-icon" style={{ color }}><Icon size={22} strokeWidth={1.75} /></div>
-            <div className="stat-val" style={{ color }}>{val}</div>
-            <div className="stat-lbl">{label}</div>
-            <div style={{ fontSize:11, color:"var(--text2)", marginTop:4 }}>{sub}</div>
+            <div className="stat-val" style={{ color:"#f8fafc" }}>{val}</div>
+            <div className="stat-lbl" style={{ color:"#cbd5e1" }}>{label}</div>
+            <div style={{ fontSize:11, color:"#94a3b8", marginTop:4 }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -579,7 +620,7 @@ export default function ExporterDashboard() {
                 <div key={l._id} className="listing-card">
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontWeight:700, color: "#0f172a", fontSize:14 }}>{l.name}</div>
+                      <div style={{ fontWeight:700, color: "#f8fafc", fontSize:14 }}>{l.name}</div>
                       <div style={{ fontSize:12, color:"var(--text2)", marginTop:3, display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
                         <span style={{ display:"inline-flex", alignItems:"center", gap:4 }}>
                           <User size={12} style={{ color: "#d97706" }} /> {l.farmer?.name || "Farmer"}
@@ -682,7 +723,7 @@ export default function ExporterDashboard() {
                     <div style={{ fontSize:10, color:"var(--text2)", textTransform:"uppercase", fontWeight:700, marginBottom:6 }}>
                       Latest Pending
                     </div>
-                    <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{top.listing?.name || "—"}</div>
+                    <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{top.listing?.name || "—"}</div>
                     <div style={{ fontSize:12, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
                       <User size={12} style={{ color: "#d97706" }} /> {top.farmer?.name || "Farmer"} &nbsp;·&nbsp; {top.requestedQty} {top.requestedUnit || "MT"}
                     </div>
@@ -716,7 +757,7 @@ export default function ExporterDashboard() {
           if (negotiatingInt.length > 0)
             actions.push({
               Icon: MessageSquare,
-              color: "#7c3aed",
+              color: "#c4b5fd",
               msg:`${negotiatingInt.length} interest${negotiatingInt.length > 1 ? "s" : ""} in active negotiation`,
               sub: negotiatingInt[0]?.listing?.name ? `Latest: ${negotiatingInt[0].listing.name}` : undefined,
               to:"/exporter/my-interests",
@@ -726,7 +767,7 @@ export default function ExporterDashboard() {
         if (!loadingShip && !errShip && approachingShipments.length > 0)
           actions.push({
             Icon: Ship,
-            color: "#0369a1",
+            color: "#7dd3fc",
             msg:`${approachingShipments.length} shipment${approachingShipments.length > 1 ? "s" : ""} arriving within 3 days`,
             sub: approachingShipments[0]?.containerNo ? `Container: ${approachingShipments[0].containerNo}` : undefined,
             to:"/exporter/logistics",
@@ -736,7 +777,7 @@ export default function ExporterDashboard() {
         if (!loadingShip && !errShip && overdueShipments.length > 0)
           actions.push({
             Icon: AlertTriangle,
-            color: "#dc2626",
+            color: "#f87171",
             msg:`${overdueShipments.length} shipment${overdueShipments.length > 1 ? "s" : ""} past ETA — follow up required`,
             sub: overdueShipments[0]?.containerNo ? `Container: ${overdueShipments[0].containerNo}` : undefined,
             to:"/exporter/logistics",
@@ -754,7 +795,7 @@ export default function ExporterDashboard() {
         if (!loadingComp && !errComp && complianceAlerts.length > 0)
           actions.push({
             Icon: FileText,
-            color: "#dc2626",
+            color: "#f87171",
             msg:`${complianceAlerts.length} compliance document${complianceAlerts.length > 1 ? "s" : ""} need attention`,
             sub: complianceAlerts[0]?.title || undefined,
             to:"/exporter/compliance",
@@ -768,7 +809,7 @@ export default function ExporterDashboard() {
             <div className="sec-head">
               <div>
                 <div className="card-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <AlertTriangle size={18} style={{ color: "#dc2626" }} /> Action Required
+                  <AlertTriangle size={18} style={{ color: "#f87171" }} /> Action Required
                 </div>
                 <div className="card-sub">Items that need your attention right now</div>
               </div>
@@ -781,8 +822,8 @@ export default function ExporterDashboard() {
                 {[1,2].map(i => <Skeleton key={i} h={52} />)}
               </div>
             ) : actions.length === 0 ? (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background: "#f0fdf4", border:"1px solid rgba(34,197,94,0.15)", color: "#15803d", fontSize:13, fontWeight:600 }}>
-                <CheckCircle2 size={16} style={{ color: "#15803d" }} /> No urgent actions right now. Everything looks good.
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", borderRadius:10, background:"rgba(74,222,128,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
+                <CheckCircle2 size={16} style={{ color:"#4ade80" }} /> No urgent actions right now. Everything looks good.
               </div>
             ) : (
               <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -793,8 +834,8 @@ export default function ExporterDashboard() {
                         <a.Icon size={18} style={{ color: a.color }} />
                       </div>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:13, fontWeight:600, color: "#0f172a" }}>{a.msg}</div>
-                        {a.sub && <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>{a.sub}</div>}
+                        <div style={{ fontSize:13, fontWeight:600, color:"#f8fafc" }}>{a.msg}</div>
+                        {a.sub && <div style={{ fontSize:11, color:"#94a3b8", marginTop:2 }}>{a.sub}</div>}
                       </div>
                     </div>
                     <span style={{ fontSize:12, fontWeight:700, color:a.color, whiteSpace:"nowrap", flexShrink:0, padding:"6px 12px", borderRadius:8, border:`1px solid ${a.color}30`, background:`${a.color}10` }}>
@@ -840,8 +881,8 @@ export default function ExporterDashboard() {
               .forEach(s => alerts.push({ s, kind:'cancelled' }));
 
             if (alerts.length === 0) return (
-              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background: "#f0fdf4", border:"1px solid rgba(34,197,94,0.15)", color: "#15803d", fontSize:13, fontWeight:600 }}>
-                <CheckCircle2 size={16} style={{ color: "#15803d" }} /> No shipment alerts.
+              <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px", borderRadius:10, background:"rgba(74,222,128,0.08)", border:"1px solid rgba(74,222,128,0.18)", color:"#4ade80", fontSize:13, fontWeight:600 }}>
+                <CheckCircle2 size={16} style={{ color:"#4ade80" }} /> No shipment alerts.
               </div>
             );
 
@@ -862,8 +903,8 @@ export default function ExporterDashboard() {
                           <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#b45309" }}>{s.containerNo}</span>
                           <span style={{ fontSize:11, fontWeight:700, color:kindCfg.color }}>{kindCfg.label}</span>
                         </div>
-                        <div style={{ fontSize:12, color: "#0f172a", fontWeight:600 }}>{s.cargo}{s.quantityTons ? ` · ${s.quantityTons} MT` : ""}</div>
-                        <div style={{ fontSize:11, color:"var(--text2)" }}>{s.portOfOrigin} → {s.destPort || s.destinationCountry}</div>
+                        <div style={{ fontSize:12, color:"#f8fafc", fontWeight:600 }}>{s.cargo}{s.quantityTons ? ` · ${s.quantityTons} MT` : ""}</div>
+                        <div style={{ fontSize:11, color:"#94a3b8" }}>{s.portOfOrigin} → {s.destPort || s.destinationCountry}</div>
                       </div>
                       <Link
                         to="/exporter/logistics"
@@ -967,7 +1008,7 @@ export default function ExporterDashboard() {
                     <div className="activity-dot" style={{ background:ev.color, boxShadow:`0 0 6px ${ev.color}60` }} />
                     <div style={{ flex:1 }}>
                       <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:8 }}>
-                        <div style={{ fontSize:13, color: "#0f172a", fontWeight:500, lineHeight:1.4, display:"flex", alignItems:"flex-start", gap:6 }}>
+                        <div style={{ fontSize:13, color: "#f8fafc", fontWeight:500, lineHeight:1.4, display:"flex", alignItems:"flex-start", gap:6 }}>
                           <ev.Icon size={14} style={{ color: ev.color, flexShrink: 0, marginTop: 2 }} />
                           <span>{ev.text}</span>
                         </div>
@@ -1041,7 +1082,7 @@ export default function ExporterDashboard() {
                               <span style={{ fontFamily:"monospace", fontSize:13, fontWeight:800, color: "#b45309" }}>{s.containerNo}</span>
                               <span className={`badge ${cfg.badge}`}>{cfg.label}</span>
                             </div>
-                            <div style={{ fontSize:12, color: "#0f172a", fontWeight:600 }}>{s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}</div>
+                            <div style={{ fontSize:12, color: "#f8fafc", fontWeight:600 }}>{s.cargo} {s.quantityTons ? `(${s.quantityTons} MT)` : ""}</div>
                             <div style={{ fontSize:11, color:"var(--text2)", marginTop:2 }}>
                               {s.portOfOrigin} → <strong style={{ color:"#e5e7eb" }}>{s.destPort || s.destinationCountry}</strong>
                               {s.vessel && <> &nbsp;·&nbsp; <Ship size={11} style={{ verticalAlign: "middle", color: "#d97706" }} /> {s.vessel}</>}
@@ -1112,7 +1153,7 @@ export default function ExporterDashboard() {
                   return (
                     <div key={r._id} style={{ padding:"10px 12px", borderRadius:10, background:"var(--surface)", border:"1px solid var(--border)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                       <div>
-                        <div style={{ fontSize:13, fontWeight:700, color: "#0f172a" }}>{r.cropName}</div>
+                        <div style={{ fontSize:13, fontWeight:700, color: "#f8fafc" }}>{r.cropName}</div>
                         <div style={{ fontSize:11, color:"var(--text2)", marginTop:2, display:"flex", alignItems:"center", gap:4 }}>
                           <Globe size={11} style={{ color: "#d97706" }} /> {r.destinationCountry} &nbsp;·&nbsp; {r.quantityTons} MT
                           {r.targetPriceUsd > 0 && <> &nbsp;·&nbsp; ${r.targetPriceUsd}/MT</>}
@@ -1166,7 +1207,7 @@ export default function ExporterDashboard() {
             {fxRates.map(f => (
               <div key={f.pair} className="fx-card">
                 <div style={{ fontSize:11, color:"var(--text2)", fontWeight:700, marginBottom:4 }}>{f.flag} {f.pair}</div>
-                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:20, fontWeight:800, color: "#0f172a" }}>
+                <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontSize:20, fontWeight:800, color: "#f8fafc" }}>
                   ₹{f.from === "JPY" ? f.rate.toFixed(4) : f.rate.toFixed(2)}
                 </div>
               </div>
@@ -1227,7 +1268,7 @@ export default function ExporterDashboard() {
                   return (
                     <div key={doc._id} className="comp-row">
                       <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontSize:13, fontWeight:600, color: "#0f172a", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                        <div style={{ fontSize:13, fontWeight:600, color: "#f8fafc", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                           {doc.title}
                         </div>
                         {doc.isLifetime ? (
@@ -1293,7 +1334,7 @@ export default function ExporterDashboard() {
                     <Icon size={16} style={{ color: "#d97706" }} />
                     <span style={{ fontSize:13, color:"var(--text2)" }}>{label}</span>
                   </div>
-                  <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color: "#0f172a" }}>{val}</span>
+                  <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, fontSize:16, color: "#f8fafc" }}>{val}</span>
                 </div>
               ))}
               <div style={{ padding:"10px 12px", borderRadius:10, background:"rgba(245,158,11,0.04)", border:"1px solid rgba(245,158,11,0.1)", fontSize:12, color:"var(--text2)", textAlign:"center", marginTop:4 }}>
@@ -1352,7 +1393,7 @@ export default function ExporterDashboard() {
                       <td style={{ fontWeight:600 }}>{s.cargo}</td>
                       <td style={{ color:"var(--text2)" }}>{s.vessel || "—"}</td>
                       <td className="nowrap" style={{ color:"var(--text2)" }}>
-                        {s.portOfOrigin} → <strong style={{ color: "#0f172a" }}>{s.destPort || s.destinationCountry}</strong>
+                        {s.portOfOrigin} → <strong style={{ color: "#f8fafc" }}>{s.destPort || s.destinationCountry}</strong>
                       </td>
                       <td style={{ color: "#b45309" }}>{s.quantityTons ? `${s.quantityTons} MT` : "—"}</td>
                       <td className="nowrap"><EtaDisplay eta={s.eta} status={s.status} /></td>
