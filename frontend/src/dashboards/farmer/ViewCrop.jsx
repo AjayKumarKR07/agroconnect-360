@@ -138,7 +138,7 @@ export default function ViewCrop() {
               </div>
             ) : (
               <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", borderBottom: "1px solid var(--border)" }}>
-                <Sprout size={80} color="#86efac" />
+                <Sprout size={80} color="#16a34a" />
               </div>
             )}
 

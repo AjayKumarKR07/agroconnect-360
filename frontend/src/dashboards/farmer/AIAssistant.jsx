@@ -70,7 +70,7 @@ const STYLES = `
     font-size: 15px; flex-shrink: 0; margin-top: 2px;
   }
   .msg-avatar.ai   { background: #f0fdf4; border: 1px solid #bbf7d0; }
-  .msg-avatar.user { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .msg-avatar.user { background: #eff6ff; border: 1px solid #93c5fd; }
 
   .bubble-wrap { max-width: 74%; display: flex; flex-direction: column; }
   .msg-row.user .bubble-wrap { align-items: flex-end; }
@@ -111,7 +111,7 @@ const STYLES = `
     color: #15803d; border-radius: 20px; font-size: 12px; font-weight: 600;
     cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; white-space: nowrap;
   }
-  .quick-chip:hover { background: #dcfce7; border-color: #86efac; color: #14532d; transform: translateY(-1px); }
+  .quick-chip:hover { background: #dcfce7; border-color: #4ade80; color: #14532d; transform: translateY(-1px); }
   .quick-chip:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
   .input-row {

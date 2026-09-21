@@ -142,7 +142,7 @@ export default function MyCrops() {
                 </div>
               ) : (
                 <div style={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", borderBottom: "1px solid var(--border)" }}>
-                  <Sprout size={56} color="#86efac" />
+                  <Sprout size={56} color="#16a34a" />
                 </div>
               )}
 

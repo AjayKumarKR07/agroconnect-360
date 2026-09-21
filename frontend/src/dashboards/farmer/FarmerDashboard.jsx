@@ -29,7 +29,7 @@ const EXTRA = `
     text-decoration:none; transition:background 0.18s, border-color 0.18s;
     cursor:pointer;
   }
-  .fd-action-row:hover { background:#dcfce7; border-color:#86efac; }
+  .fd-action-row:hover { background:#dcfce7; border-color:#4ade80; }
   .fd-action-row.urgent { border-color:#fecaca; background:#fef2f2; }
   .fd-action-row.urgent:hover { background:#fee2e2; border-color:#fca5a5; }
   .fd-action-row.attention { border-color:#fde68a; background:#fffbeb; }

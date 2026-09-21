@@ -103,7 +103,7 @@ const EXTRA_STYLES = `
     width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;
     padding: 12px; border-radius: 12px; cursor: pointer;
     border: 1px solid rgba(245,158,11,0.25);
-    background: rgba(245,158,11,0.06);
+    background: #ffffff;
     color: ${AMBER_LIGHT};
     font-size: 14px; font-weight: 700;
     font-family: 'Inter', sans-serif;

@@ -101,7 +101,7 @@ export default function CompleteProfile() {
           transition: all 0.2s; color: #0f172a;
         }
         .role-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
-        .role-btn.selected { background: #f0fdf4; border-color: #86efac; box-shadow: 0 0 0 2px rgba(22,163,74,0.15); }
+        .role-btn.selected { background: #f0fdf4; border-color: #4ade80; box-shadow: 0 0 0 2px rgba(22,163,74,0.15); }
         .role-emoji { font-size: 26px; margin-bottom: 6px; }
         .role-label { font-size: 14px; font-weight: 700; color: #0f172a; }
         .role-desc { font-size: 12px; color: #64748b; line-height: 1.5; }

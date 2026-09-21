@@ -9,7 +9,7 @@ const ROLES = [
     Icon: Wheat,
     color: "#16a34a",
     glow: "rgba(22,163,74,0.12)",
-    border: "#86efac",
+    border: "#16a34a",
     label: "Farmer",
     desc: "Produce and sell agricultural products directly to buyers and exporters with AI-powered tools.",
     features: ["List & Sell Crops", "AI Crop Diagnosis", "Weather Advisory", "Income Tracking"],

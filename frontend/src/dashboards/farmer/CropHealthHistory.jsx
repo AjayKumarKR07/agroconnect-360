@@ -121,7 +121,7 @@ export default function CropHealthHistory() {
               <div key={diag._id} className="chh-card">
                 {diag.imageUrl
                   ? <img src={diag.imageUrl} alt={diag.cropName} className="chh-img" />
-                  : <div className="chh-img-placeholder"><Sprout size={42} color="#86efac" /></div>
+                  : <div className="chh-img-placeholder"><Sprout size={42} color="#16a34a" /></div>
                 }
                 <div className="chh-body">
                   <div className="chh-crop">{diag.cropName}</div>

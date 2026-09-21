@@ -336,7 +336,7 @@ export default function CropDiagnosis() {
             {!loading && !result && (
               <div className="card" style={{ padding: "40px 24px", textAlign: "center" }}>
                 <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>
-                  <Sprout size={60} color="#86efac" />
+                  <Sprout size={60} color="#16a34a" />
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>AI Disease Scanner Ready</div>
                 <div style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.7 }}>Upload a clear photo of a diseased leaf or crop. The AI will identify the disease, its cause, and provide treatment recommendations.</div>

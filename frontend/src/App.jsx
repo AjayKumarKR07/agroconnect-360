@@ -69,7 +69,6 @@ import ExportCalculator from "./dashboards/exporter/ExportCalculator";
 import ExporterAIAssistant from "./dashboards/exporter/ExporterAIAssistant";
 import ExporterProfile from "./dashboards/exporter/ExporterProfile";
 
-// Admin
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./dashboards/admin/AdminDashboard";
 import AdminUsers from "./dashboards/admin/AdminUsers";
@@ -83,6 +82,9 @@ import AdminOrders from "./dashboards/admin/AdminOrders";
 import AdminExports from "./dashboards/admin/AdminExports";
 import AdminAIModels from "./dashboards/admin/AdminAIModels";
 import AdminProfile from "./dashboards/admin/AdminProfile";
+import AdminListings from "./dashboards/admin/AdminListings";
+import AdminAnalytics from "./dashboards/admin/AdminAnalytics";
+import AdminSettings from "./dashboards/admin/AdminSettings";
 
 
 export default function App() {
@@ -290,13 +292,15 @@ export default function App() {
           <Route path="broadcast" element={<AdminBroadcast />} />
           <Route path="audit-logs"element={<AdminAuditLogs />} />
           <Route path="finance"   element={<AdminFinance />} />
-
           <Route path="disputes"  element={<AdminDisputes />} />
           <Route path="system"    element={<AdminSystem />} />
           <Route path="orders"    element={<AdminOrders />} />
           <Route path="exports"   element={<AdminExports />} />
           <Route path="ai-models" element={<AdminAIModels />} />
           <Route path="profile"   element={<AdminProfile />} />
+          <Route path="listings"  element={<AdminListings />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="settings"  element={<AdminSettings />} />
         </Route>
 
 
