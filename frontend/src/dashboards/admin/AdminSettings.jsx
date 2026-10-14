@@ -21,7 +21,7 @@ const SECTIONS = [
     label: "Security",
     color: "#dc2626",
     settings: [
-      { key:"otpExpiry",      label:"OTP Expiry (minutes)",   type:"number", value:"10",   hint:"Time before OTP codes expire." },
+      { key:"tokenExpiry",      label:"Session Expiry (days)",   type:"number", value:"7",    hint:"JWT token validity period before re-login." },
       { key:"sessionTimeout", label:"Session Timeout (hours)", type:"number", value:"24",  hint:"Inactive sessions expire after this period." },
       { key:"maxLoginAttempts",label:"Max Login Attempts",    type:"number", value:"5",    hint:"Account locked after this many failed attempts." },
     ],

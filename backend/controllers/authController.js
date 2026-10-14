@@ -1,214 +1,166 @@
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
-const Otp = require("../models/Otp");
 const User = require("../models/User");
-const { sendOtpEmail } = require("../services/emailService");
 
-// Hash OTP
-const hashOtp = (otp) => {
-  return crypto
-    .createHash("sha256")
-    .update(otp)
-    .digest("hex");
-};
-
-// ================================
-// SEND OTP
-// ================================
-
-const sendOtp = async (req, res) => {
+// ==========================================
+// REGISTER (Simple & Secure)
+// ==========================================
+const register = async (req, res) => {
   try {
-    let { email } = req.body;
+    let { name, email, password, confirmPassword, role } = req.body;
 
-    if (!email) {
+    // Validate required fields
+    if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
-        message: "Email address is required",
+        message: "Full Name, Email, Password, and Role are required.",
       });
     }
 
+    name = name.trim();
     email = email.trim().toLowerCase();
 
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: "Please enter a valid email address",
+        message: "Please provide a valid email address.",
       });
     }
 
-    // Generate secure 6-digit OTP
-    const otp = crypto.randomInt(
-      100000,
-      1000000
-    ).toString();
+    // Validate password length
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long.",
+      });
+    }
 
-    const otpHash = hashOtp(otp);
-    console.log("========== SEND OTP ==========");
-console.log("Email:", email);
-console.log("Generated OTP:", otp);
-console.log("Generated Hash:", otpHash);
+    // Validate password confirmation if provided
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match.",
+      });
+    }
 
-    // OTP valid for 5 minutes
-    const expiresAt = new Date(
-      Date.now() + 5 * 60 * 1000
-    );
+    // Role validation: Do NOT allow public users to register as Admin
+    const roleLower = String(role).trim().toLowerCase();
+    if (roleLower === "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Admin registration is not permitted. Admin accounts must be authorized by an administrator.",
+      });
+    }
 
-    // Delete previous OTPs
-    await Otp.deleteMany({ email });
+    const ALLOWED_ROLES = ["farmer", "user", "exporter"];
+    if (!ALLOWED_ROLES.includes(roleLower)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role selected. Allowed roles: Farmer, Consumer / Buyer, or Exporter.",
+      });
+    }
 
-    // Store hashed OTP
-    await Otp.create({
+    // Check whether the email is already registered
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "This email address is already registered. Please sign in or use another email.",
+      });
+    }
+
+    // Secure password hashing
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user in MongoDB
+    const user = await User.create({
+      name,
       email,
-      otpHash,
-      expiresAt,
-      attempts: 0,
+      password: hashedPassword,
+      role: roleLower,
+      isEmailVerified: true,
+      profileCompleted: true,
+      isActive: true,
+      lastLogin: null,
     });
 
-    // Send OTP email
-    await sendOtpEmail(email, otp);
-
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Verification code sent successfully",
+      message: "Account created successfully! Please sign in to continue.",
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
     });
   } catch (error) {
-    console.error("Send OTP error:", error);
-
+    console.error("Register error:", error);
     return res.status(500).json({
       success: false,
-      message: "Unable to send verification code",
+      message: "Unable to complete registration. Please try again later.",
     });
   }
 };
 
-// ================================
-// VERIFY OTP
-// ================================
-
-const verifyOtp = async (req, res) => {
+// ==========================================
+// LOGIN (Simple & Secure)
+// ==========================================
+const login = async (req, res) => {
   try {
-    let { email, otp } = req.body;
+    let { email, password } = req.body;
 
-    if (!email || !otp) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and verification code are required",
+        message: "Email and password are required.",
       });
     }
 
     email = email.trim().toLowerCase();
-    otp = String(otp).trim();
 
-    if (!/^\d{6}$/.test(otp)) {
-      return res.status(400).json({
-        success: false,
-        message: "Verification code must contain 6 digits",
-      });
-    }
-
-    // Find OTP record
-    const otpRecord = await Otp.findOne({
-      email,
-    });
-
-    console.log("========== VERIFY OTP ==========");
-    console.log("Email:", email, "| Entered OTP:", otp);
-    if (!otpRecord) {
-      console.log("OTP RECORD NOT FOUND for", email);
-    } else {
-      console.log("Stored Hash:", otpRecord.otpHash);
-      console.log("Entered Hash:", hashOtp(otp));
-      console.log("Match:", hashOtp(otp) === otpRecord.otpHash);
-      console.log("Expires At:", otpRecord.expiresAt, "| Now:", new Date());
-    }
-
-    if (!otpRecord) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Verification code is invalid or expired",
-      });
-    }
-
-    // Check expiry
-    if (
-      otpRecord.expiresAt.getTime() <
-      Date.now()
-    ) {
-      await Otp.deleteOne({
-        _id: otpRecord._id,
-      });
-
-      return res.status(400).json({
-        success: false,
-        message: "Verification code has expired",
-      });
-    }
-
-    // Maximum incorrect attempts
-    if (otpRecord.attempts >= 5) {
-      await Otp.deleteOne({
-        _id: otpRecord._id,
-      });
-
-      return res.status(429).json({
-        success: false,
-        message:
-          "Too many incorrect attempts. Request a new code.",
-      });
-    }
-
-    // Hash entered OTP
-    const enteredOtpHash = hashOtp(otp);
-
-    // Compare OTP hashes
-    if (
-      enteredOtpHash !== otpRecord.otpHash
-    ) {
-      otpRecord.attempts += 1;
-
-      await otpRecord.save();
-
-      return res.status(400).json({
-        success: false,
-        message: "Incorrect verification code",
-      });
-    }
-
-    // OTP successful — delete it
-    await Otp.deleteOne({
-      _id: otpRecord._id,
-    });
-
-    // Find existing user
-    let user = await User.findOne({
-      email,
-    });
-
-    let isNewUser = false;
-
-    // Create first-time user
+    // Find user in MongoDB
+    const user = await User.findOne({ email });
     if (!user) {
-      user = await User.create({
-        email,
-        isEmailVerified: true,
-        profileCompleted: false,
-        lastLogin: new Date(),
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password.",
       });
-
-      isNewUser = true;
-    } else {
-      // Existing user
-      user.isEmailVerified = true;
-      user.lastLogin = new Date();
-
-      await user.save();
     }
 
-    // Generate JWT
+    // Check for password presence (in case of legacy accounts created before password auth)
+    if (!user.password) {
+      return res.status(401).json({
+        success: false,
+        message: "This account was created without a password. Please register a new account or contact support.",
+      });
+    }
+
+    // Account active check
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account has been deactivated. Please contact support.",
+      });
+    }
+
+    // Compare password hash
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password.",
+      });
+    }
+
+    // Update lastLogin timestamp
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT token
     const token = jwt.sign(
       {
         userId: user._id,
@@ -222,38 +174,58 @@ const verifyOtp = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Email verified successfully",
-
+      message: "Login successful.",
       token,
-      isNewUser,
-      profileCompleted:
-        user.profileCompleted,
-
       user: {
         id: user._id,
         email: user.email,
         name: user.name,
         role: user.role,
+        profileCompleted: user.profileCompleted,
       },
     });
   } catch (error) {
-    console.error(
-      "Verify OTP error:",
-      error
-    );
-
+    console.error("Login error:", error);
     return res.status(500).json({
       success: false,
-      message: "Unable to verify code",
+      message: "Unable to sign in. Please try again later.",
     });
   }
 };
 
-// ================================
-// EXPORT CONTROLLERS
-// ================================
+// ==========================================
+// GET CURRENT USER (/api/auth/me)
+// ==========================================
+const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        profileCompleted: user.profileCompleted,
+      },
+    });
+  } catch (error) {
+    console.error("GetMe error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching user profile.",
+    });
+  }
+};
 
 module.exports = {
-  sendOtp,
-  verifyOtp,
+  register,
+  login,
+  getMe,
 };

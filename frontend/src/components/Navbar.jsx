@@ -98,7 +98,7 @@ export default function Navbar() {
       <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="navbar-inner">
           <Link to="/" className="nav-brand">
-            <div className="nav-logo"><Sprout size={20} strokeWidth={2} color="#16a34a" /></div>
+            <div className="nav-logo"><Sprout size={20} strokeWidth={2} color="#ffffff" /></div>
             <div>
               <div className="nav-brand-text">AgroConnect 360</div>
               <div className="nav-brand-sub">Smart Agriculture Platform</div>

@@ -25,7 +25,7 @@
 * 📈 **Market Trends** — Historical market analysis and charts
 * 👥 **Multi-Role Dashboards** — Farmer, Seller, Exporter, Admin, and User
 * ☁️ **Cloud Image Storage** — Cloudinary integration
-* 🔐 **JWT Authentication & OTP Verification**
+* 🔐 **Secure JWT & Password Authentication**
 
 ---
 
@@ -210,7 +210,7 @@ AgroConnect-360/
 | **Database**             | MongoDB                 |
 | **ODM**                  | Mongoose                |
 | **Authentication**       | JWT                     |
-| **OTP**                  | Nodemailer + Gmail SMTP |
+| **Password Hashing**     | bcryptjs                |
 | **Payments**             | Razorpay                |
 | **AI Disease Detection** | Google Gemini Vision    |
 | **Machine Learning**     | scikit-learn            |
@@ -454,11 +454,11 @@ The webhook provides backup payment confirmation for production reliability.
 
 ## 🔐 Authentication
 
-| Method | Endpoint               | Description                 |
-| ------ | ---------------------- | --------------------------- |
-| POST   | `/api/auth/send-otp`   | Send OTP                    |
-| POST   | `/api/auth/verify-otp` | Verify OTP and authenticate |
-| GET    | `/api/auth/me`         | Get authenticated user      |
+| Method | Endpoint               | Description                                |
+| ------ | ---------------------- | ------------------------------------------ |
+| POST   | `/api/auth/register`   | Register new user (Farmer, User, Exporter) |
+| POST   | `/api/auth/login`      | Authenticate user with password & JWT      |
+| GET    | `/api/auth/me`         | Get authenticated user profile             |
 
 ---
 

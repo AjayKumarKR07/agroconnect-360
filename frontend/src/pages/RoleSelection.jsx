@@ -161,7 +161,7 @@ export default function RoleSelection() {
         .rs-brand-logo {
           width: 40px; height: 40px; border-radius: 10px;
           background: #16a34a; display: flex; align-items: center;
-          justify-content: center; font-size: 20px; color: #0f172a;
+          justify-content: center; font-size: 20px; color: #ffffff;
         }
         .rs-brand-name { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; }
         .rs-eyebrow { font-size: 11px; font-weight: 700; color: #16a34a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
@@ -279,7 +279,7 @@ export default function RoleSelection() {
           {/* Header */}
           <div className="rs-header">
             <Link to="/" className="rs-brand">
-              <div className="rs-brand-logo"><Sprout size={20} strokeWidth={2} color="#16a34a" /></div>
+              <div className="rs-brand-logo"><Sprout size={20} strokeWidth={2} color="#ffffff" /></div>
               <div className="rs-brand-name">AgroConnect 360</div>
             </Link>
 

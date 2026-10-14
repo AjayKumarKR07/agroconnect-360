@@ -136,7 +136,7 @@ export default function Home() {
   ];
 
   const steps = [
-    { n: "01", Icon: Smartphone, title: "Quick OTP Login", desc: "Sign in with your email in 30 seconds. No passwords required." },
+    { n: "01", Icon: Smartphone, title: "Fast & Secure Login", desc: "Sign in with your email and password in seconds to unlock your workspace." },
     { n: "02", Icon: Sprout,     title: "Select Your Role", desc: "Choose Farmer, Exporter, Buyer, or Admin to unlock your tailored workspace." },
     { n: "03", Icon: Zap,        title: "Access Smart Tools", desc: "Check live mandi rates, scan diseased crops, or forecast commodity prices." },
     { n: "04", Icon: TrendingUp, title: "Grow Your Business", desc: "Make data-backed decisions, eliminate middlemen, and increase income." },
@@ -1255,7 +1255,7 @@ export default function Home() {
           <div className="footer-legal">
             <div>&copy; {new Date().getFullYear()} AgroConnect 360. All rights reserved.</div>
             <div style={{ display: "flex", gap: 16 }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Lock size={12} /> Secure OTP Auth</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Lock size={12} /> Secure JWT Auth</span>
               <span>🇮🇳 Built for India</span>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Sprout size={12} /> 100% Free Plan</span>
             </div>

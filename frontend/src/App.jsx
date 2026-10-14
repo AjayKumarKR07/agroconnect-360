@@ -9,7 +9,7 @@ import {
 // Public pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import VerifyOTP from "./pages/VerifyOTP";
+import Register from "./pages/Register";
 import CompleteProfile from "./pages/CompleteProfile";
 import RoleSelection from "./pages/RoleSelection";
 import NotFound from "./pages/NotFound";
@@ -107,8 +107,13 @@ export default function App() {
         />
 
         <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        <Route
           path="/verify-otp"
-          element={<VerifyOTP />}
+          element={<Navigate to="/login" replace />}
         />
 
         <Route
