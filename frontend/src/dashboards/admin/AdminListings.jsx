@@ -128,7 +128,8 @@ export default function AdminListings() {
                     </tr>
                   </thead>
                   <tbody>
-                    {paged.map(c => {
+                    {paged.map((c, idx) => {
+                      const serialNumber = (page - 1) * PAGE_SIZE + idx + 1;
                       const sb = STATUS_BADGE[c.status] || STATUS_BADGE["listed"];
                       const isDel = delConfId === c._id;
                       return (
@@ -138,9 +139,8 @@ export default function AdminListings() {
                               <div style={{ width:30, height:30, borderRadius:8, background:"#f0fdf4", display:"flex", alignItems:"center", justifyContent:"center" }}>
                                 <Wheat size={13} color="#16a34a" />
                               </div>
-                              <div>
-                                <div style={{ fontWeight:700, color:"#0f172a", fontSize:13 }}>{c.cropName||"—"}</div>
-                                <div style={{ fontSize:11, color:"#94a3b8" }}>{c.variety||""}</div>
+                              <div style={{ fontWeight:700, color:"#0f172a", fontSize:13 }}>
+                                {serialNumber}
                               </div>
                             </div>
                           </td>
