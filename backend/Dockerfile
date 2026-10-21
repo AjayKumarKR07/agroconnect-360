@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production \
     PORT=5000 \
+    ML_DIR=/app/ml \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:${PATH}"

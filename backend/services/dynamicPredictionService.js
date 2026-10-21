@@ -72,12 +72,16 @@ const markAsRefreshed = (
   );
 };
 
-const projectRoot = path.resolve(__dirname, "../..");
+// ── Path resolution ──────────────────────────────────────────────────────────
+// In Docker: ML_DIR=/app/ml (set in Dockerfile). __dirname = /app/services
+//   path.resolve(__dirname, '../..') would resolve to / — WRONG (EACCES on mkdir)
+// In local Windows dev: ML_DIR is unset, fallback is __dirname/../../ml which
+//   resolves to <repo-root>/ml — correct.
+const mlDirectory =
+  process.env.ML_DIR ||
+  path.resolve(__dirname, "../../ml");
 
-const mlDirectory = path.join(
-  projectRoot,
-  "ml"
-);
+const projectRoot = path.resolve(mlDirectory, "..");
 
 const tempDirectory = path.join(
   mlDirectory,
@@ -89,7 +93,7 @@ const modelsDirectory = path.join(
   "models"
 );
 
-// Create required directories
+// Create required directories (idempotent — recursive:true is safe to re-run)
 fs.mkdirSync(tempDirectory, {
   recursive: true,
 });

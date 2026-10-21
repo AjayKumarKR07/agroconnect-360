@@ -458,16 +458,16 @@ const getPricePrediction = async (
   res
 ) => {
   try {
-    const projectRoot =
-      path.resolve(
-        __dirname,
-        "../.."
-      );
+    // ML_DIR=/app/ml in Docker; fallback resolves to <repo-root>/ml in local dev
+    const mlDir =
+      process.env.ML_DIR ||
+      path.resolve(__dirname, "../../ml");
+
+    const projectRoot = path.resolve(mlDir, "..");
 
     const scriptPath =
       path.join(
-        projectRoot,
-        "ml",
+        mlDir,
         "predict_price.py"
       );
 
