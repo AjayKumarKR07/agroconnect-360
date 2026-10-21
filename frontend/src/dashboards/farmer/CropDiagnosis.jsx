@@ -93,15 +93,15 @@ export default function CropDiagnosis() {
         .diag-tab.active{background:var(--green-dim);color:#15803d;border:1px solid rgba(34,197,94,0.2);}
         /* Modal */
         .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
-        .modal-box{background:#07111a;border:1px solid #e2e8f0;border-radius:24px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;}
+        .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:24px;padding:0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn 0.2s ease;box-shadow:0 20px 60px rgba(0,0,0,0.12);}
         @keyframes fadeIn{from{opacity:0;transform:scale(0.96);}to{opacity:1;transform:scale(1);}}
         .modal-img{width:100%;height:220px;object-fit:cover;border-radius:20px 20px 0 0;}
         .modal-body{padding:24px 28px;}
         .modal-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#0f172a;margin-bottom:4px;}
-        .modal-row{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid var(--border);}
+        .modal-row{display:flex;flex-direction:column;gap:6px;padding:14px 0;border-bottom:1px solid #e2e8f0;}
         .modal-row:last-child{border-bottom:none;}
         .modal-lbl{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;}
-        .modal-val{font-size:14px;color:var(--text);line-height:1.7;}
+        .modal-val{font-size:14px;color:#1e293b;line-height:1.7;}
         /* History buttons */
         .hist-btns{display:flex;gap:8px;}
         .btn-view{padding:7px 16px;border-radius:9px;border:1px solid rgba(56,189,248,0.25);background:rgba(56,189,248,0.07);color:#0369a1;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;white-space:nowrap;}
@@ -415,7 +415,7 @@ export default function CropDiagnosis() {
                     <Calendar size={13} /> {new Date(viewItem.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
                   </div>
                 </div>
-                <button onClick={() => setViewItem(null)} style={{ background: "rgba(255,255,255,0.06)", border: "none", borderRadius: 8, padding: "6px 12px", color: "var(--text2)", cursor: "pointer", fontSize: 16 }}>✕</button>
+                <button onClick={() => setViewItem(null)} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, padding: "6px 12px", color: "#475569", cursor: "pointer", fontSize: 16, lineHeight: 1 }}>✕</button>
               </div>
 
               {/* Status badges */}
@@ -469,7 +469,7 @@ export default function CropDiagnosis() {
                   {viewItem.treatments?.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {viewItem.treatments.map((t, i) => (
-                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "#f1f5f9", padding: "8px 10px", borderRadius: 8 }}>
+                        <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start", background: "#ffffff", border: "1px solid #e2e8f0", padding: "8px 10px", borderRadius: 8 }}>
                           <span>✓</span>
                           <span className="modal-val" style={{ fontSize: 13 }}>{t}</span>
                         </div>
@@ -483,12 +483,12 @@ export default function CropDiagnosis() {
 
               {(viewItem.preventions?.length > 0 || viewItem.prevention) && (
                 <div style={{ background: "rgba(59,130,246,0.05)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(59,130,246,0.18)", margin: "8px 0" }}>
-                  <div className="modal-lbl" style={{ color: "#60a5fa", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><ShieldCheck size={14} color="#60a5fa" /> Prevention Guidelines</div>
+                  <div className="modal-lbl" style={{ color: "#0369a1", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><ShieldCheck size={14} color="#0369a1" /> Prevention Guidelines</div>
                   {viewItem.preventions?.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       {viewItem.preventions.map((p, i) => (
                         <div key={i} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                          <span style={{ color: "#60a5fa" }}>•</span>
+                          <span style={{ color: "#0369a1", fontWeight: 700 }}>•</span>
                           <span className="modal-val" style={{ fontSize: 13 }}>{p}</span>
                         </div>
                       ))}
@@ -505,7 +505,7 @@ export default function CropDiagnosis() {
                     <span>AI Confidence</span>
                     <span style={{ color: "#15803d", fontWeight: 700 }}>{viewItem.confidence}%</span>
                   </div>
-                  <div style={{ height: 8, background: "var(--surface)", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ height: 8, background: "#e2e8f0", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${viewItem.confidence}%`, background: "linear-gradient(90deg,#16a34a,#16a34a)", borderRadius: 4 }} />
                   </div>
                 </div>
