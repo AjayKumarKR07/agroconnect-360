@@ -1,4 +1,8 @@
-scikit-learn>=1.3.0
+# Pin scikit-learn to the version used during model training.
+# Models were pickled with 1.8.0; upgrading past minor versions
+# triggers InconsistentVersionWarning and may cause silent wrong results.
+# Re-train and re-verify all 13 models before bumping this constraint.
+scikit-learn==1.8.0
 pandas>=2.0.0
 numpy>=1.24.0
 joblib>=1.3.0
