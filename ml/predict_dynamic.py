@@ -6,6 +6,10 @@ import os
 import joblib
 import pandas as pd
 
+# ── Resolve paths relative to this script's own location ─────────────────────
+_DIR = os.path.dirname(os.path.abspath(__file__))
+_MODELS_DIR = os.path.join(_DIR, "models")
+
 
 # ==========================================
 # ARGUMENTS
@@ -47,8 +51,7 @@ model_name = (
 )
 
 model_path = os.path.join(
-    "ml",
-    "models",
+    _MODELS_DIR,
     f"{model_name}.joblib"
 )
 

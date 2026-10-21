@@ -14,9 +14,20 @@ const { getLiveMandiPrices } = require("../services/mandiService");
 const Groq = require("groq-sdk");
 
 // ============================================================
-// GROQ CLIENT (same pattern as assistantRoutes.js)
+// GROQ CLIENT — lazy-initialised (missing key must not crash boot)
 // ============================================================
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+let _groq = null;
+const getGroq = () => {
+  if (!_groq) {
+    const key = process.env.GROQ_API_KEY;
+    if (!key) throw new Error("GROQ_API_KEY is not configured");
+    _groq = new Groq({ apiKey: key });
+  }
+  return _groq;
+};
+const groq = {
+  chat: { completions: { create: (...a) => getGroq().chat.completions.create(...a) } },
+};
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
