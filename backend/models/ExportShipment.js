@@ -72,6 +72,17 @@ const exportShipmentSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // ── Pricing ──────────────────────────────────────────────────────────
+    pricePerTon: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    totalValueUsd: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

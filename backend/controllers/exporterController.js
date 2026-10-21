@@ -60,18 +60,22 @@ const getExporterShipments = async (req, res) => {
 // ==========================================
 const createExportShipment = async (req, res) => {
   try {
-    const { containerNo, vessel, cargo, quantityTons, portOfOrigin, destPort, destinationCountry, etd, eta } = req.body;
+    const { containerNo, vessel, cargo, quantityTons, portOfOrigin, destPort, destinationCountry, etd, eta, pricePerTon } = req.body;
 
     if (!containerNo || !vessel || !cargo || !portOfOrigin || !destPort || !destinationCountry) {
       return res.status(400).json({ success: false, message: "All shipment details are required" });
     }
+
+    const qty       = Number(quantityTons || 10);
+    const ppt       = Number(pricePerTon  || 0);
+    const totalVal  = ppt * qty;
 
     const shipment = await ExportShipment.create({
       exporter: req.user._id,
       containerNo,
       vessel,
       cargo,
-      quantityTons: Number(quantityTons || 10),
+      quantityTons: qty,
       portOfOrigin,
       destPort,
       destinationCountry,
@@ -79,6 +83,8 @@ const createExportShipment = async (req, res) => {
       statusStep: 1,
       etd: etd ? new Date(etd) : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       eta: eta ? new Date(eta) : new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      pricePerTon:  ppt,
+      totalValueUsd: totalVal,
     });
 
     return res.status(201).json({ success: true, message: "Container shipment created", shipment });

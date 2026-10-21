@@ -86,7 +86,7 @@ function AddShipmentModal({ onClose, onSaved }) {
   const [form, setForm] = useState({
     containerNo: "", vessel: "", cargo: "", quantityTons: "",
     portOfOrigin: "", destPort: "", destinationCountry: "",
-    etd: "", eta: "",
+    etd: "", eta: "", pricePerTon: "",
   });
   const [saving, setSaving] = useState(false);
   const [err,    setErr]    = useState("");
@@ -105,7 +105,11 @@ function AddShipmentModal({ onClose, onSaved }) {
       const r = await fetch(`${API_URL}/api/exporter/shipments`, {
         method: "POST",
         headers: authH(),
-        body: JSON.stringify({ ...form, quantityTons: Number(form.quantityTons) || 0 }),
+        body: JSON.stringify({
+          ...form,
+          quantityTons: Number(form.quantityTons) || 0,
+          pricePerTon:  Number(form.pricePerTon)  || 0,
+        }),
       });
       const d = await r.json();
       if (!d.success) throw new Error(d.message);
@@ -182,6 +186,20 @@ function AddShipmentModal({ onClose, onSaved }) {
               <input className="field-input" type="date" value={form.eta} onChange={e => set("eta", e.target.value)} />
             </div>
           </div>
+
+          <div>
+            <label className="field-label">Price per Ton (USD) <span style={{ color: "#94a3b8", fontWeight: 400 }}>— for revenue tracking</span></label>
+            <input
+              className="field-input"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 1200"
+              value={form.pricePerTon}
+              onChange={e => set("pricePerTon", e.target.value)}
+            />
+          </div>
+
 
           {err && (
             <div style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "#dc2626", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
@@ -472,7 +490,25 @@ export default function ExportLogistics() {
                 )}
               </div>
 
-              {/* ── Action buttons ─────────────────────────────────── */}
+              {/* ── Shipment Value ──────────────────────────────────── */}
+              {(activeShipment.totalValueUsd > 0 || activeShipment.pricePerTon > 0) && (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, background: "rgba(245,158,11,0.06)", padding: 14, borderRadius: 14, border: "1px solid rgba(245,158,11,0.2)" }}>
+                  <div>
+                    <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Price per Ton</div>
+                    <div style={{ fontSize: 16, color: "#d97706", fontWeight: 800, marginTop: 2 }}>
+                      ${Number(activeShipment.pricePerTon || 0).toLocaleString("en-US")} / MT
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 11, color: "#64748b", textTransform: "uppercase" }}>Cargo Value (USD)</div>
+                    <div style={{ fontSize: 16, color: "#d97706", fontWeight: 800, marginTop: 2 }}>
+                      ${Number(activeShipment.totalValueUsd || 0).toLocaleString("en-US")}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
               {(() => {
                 const STATUS_NEXT = {
                   cfs_cold_storage:  "port_gate_in",
