@@ -1,0 +1,16 @@
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/dist
+**/coverage
+**/__pycache__
+**/*.pyc
+**/ml/temp
+.git
+.vscode
+.idea
+README.md
+images
+ml/*.xlsx
+ml/clean_kaggle_mandi_prices.csv

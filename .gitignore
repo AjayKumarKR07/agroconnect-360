@@ -9,6 +9,9 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+backend/.env
+frontend/.env
+
 
 # ─── Build outputs ──────────────────────────────────────────────────────────
 dist/
