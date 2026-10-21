@@ -197,8 +197,42 @@ app.get("/api/health", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(
     `AgroConnect 360 server running on port ${PORT}`
   );
 });
+
+// ── Graceful shutdown ─────────────────────────────────────────────────────────
+// ECS Fargate (and any POSIX runtime) sends SIGTERM on container stop.
+// We close the HTTP server first (no new connections), then MongoDB,
+// with a hard timeout so we never get stuck.
+let _shuttingDown = false;
+
+const shutdown = (signal) => {
+  if (_shuttingDown) return;
+  _shuttingDown = true;
+  console.log(`[${signal}] Graceful shutdown initiated`);
+
+  // Force-exit after 20 s if something hangs
+  const timer = setTimeout(() => {
+    console.error("Shutdown timeout — forcing exit");
+    process.exit(1);
+  }, 20_000);
+  timer.unref(); // don't let this timer keep the process alive
+
+  server.close(async () => {
+    try {
+      await mongoose.connection.close();
+      console.log("MongoDB connection closed");
+    } catch (err) {
+      console.error("Error closing MongoDB:", err.message);
+    } finally {
+      clearTimeout(timer);
+      process.exit(0);
+    }
+  });
+};
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT",  () => shutdown("SIGINT"));

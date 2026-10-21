@@ -4,8 +4,9 @@ import {
   TrendingUp, TrendingDown, Coins, Store, MapPin,
   Clock, BarChart3, RotateCcw, AlertTriangle, X
 } from "lucide-react";
+import { API_URL } from "../config/api";
 
-const API_URL = "http://localhost:5000/api";
+const API_BASE = `${API_URL}/api`;
 
 const SECTIONS = [
   { key: "highest",   label: "Top Highest Prices",   Icon: TrendingUp,   color: "#15803d", accent: "rgba(34,197,94,0.08)",   border: "rgba(34,197,94,0.15)"  },
@@ -37,7 +38,7 @@ export default function MarketTrends() {
   const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
-    fetch(`${API_URL}/prices/options/states`, { headers })
+    fetch(`${API_BASE}/prices/options/states`, { headers })
       .then(r => r.json())
       .then(d => { if (d.success) setStates(d.states || []); })
       .catch(() => {});
@@ -47,7 +48,7 @@ export default function MarketTrends() {
     setSelDistrict("");
     setDistricts([]);
     if (!selState) return;
-    fetch(`${API_URL}/prices/options/districts?state=${encodeURIComponent(selState)}`, { headers })
+    fetch(`${API_BASE}/prices/options/districts?state=${encodeURIComponent(selState)}`, { headers })
       .then(r => r.json())
       .then(d => { if (d.success) setDistricts(d.districts || []); })
       .catch(() => {});
@@ -60,7 +61,7 @@ export default function MarketTrends() {
       if (selState)    params.set("state", selState);
       if (selDistrict) params.set("district", selDistrict);
       const qs = params.toString() ? "?" + params : "";
-      const r = await fetch(`${API_URL}/prices/market-trends${qs}`, { headers });
+      const r = await fetch(`${API_BASE}/prices/market-trends${qs}`, { headers });
       const d = await r.json();
       if (!r.ok || !d.success) throw new Error(d.message || "Unable to load market trends.");
       setTopHighest(d.topHighest || []);

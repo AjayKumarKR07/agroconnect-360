@@ -10,8 +10,9 @@ import {
 } from "recharts";
 import { Bot, BarChart3, TrendingUp, TrendingDown, ArrowRight, AlertTriangle, Clock, Sparkles, Cpu } from "lucide-react";
 import { DS } from "../../styles/ds";
+import { API_URL } from "../../config/api";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = `${API_URL}/api`;
 
 export default function PricePrediction() {
   const token = localStorage.getItem("agroconnect_token");
