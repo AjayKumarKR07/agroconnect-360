@@ -2,10 +2,23 @@ const { GoogleGenAI } = require("@google/genai");
 const Groq = require("groq-sdk");
 
 // ==========================================
-// CLIENTS
+// CLIENTS  (lazy-initialised)
 // ==========================================
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const groq  = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+// Groq: lazily initialised so missing key does not crash the server at boot
+let _groq = null;
+const getGroq = () => {
+  if (!_groq) {
+    const key = process.env.GROQ_API_KEY;
+    if (!key) throw new Error("GROQ_API_KEY is not configured");
+    _groq = new Groq({ apiKey: key });
+  }
+  return _groq;
+};
+
+// Keep backward-compatible export alias used elsewhere in this file
+const groq = { chat: { completions: { create: (...a) => getGroq().chat.completions.create(...a) } } };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

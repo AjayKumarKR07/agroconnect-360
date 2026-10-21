@@ -71,8 +71,8 @@ connectDB();
 
 const app = express();
 
-// Middleware — allow any localhost Vite dev port (5173-5179)
-const ALLOWED_ORIGINS = [
+// Middleware — allow any localhost Vite dev port (5173-5179) + production origin
+const DEV_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
@@ -81,6 +81,13 @@ const ALLOWED_ORIGINS = [
   "http://localhost:5178",
   "http://localhost:5179",
 ];
+
+// CORS_ORIGIN can be a comma-separated list for production (e.g. "https://agroconnect360.com")
+const PROD_ORIGINS = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+  : [];
+
+const ALLOWED_ORIGINS = [...DEV_ORIGINS, ...PROD_ORIGINS];
 
 app.use(
   cors({

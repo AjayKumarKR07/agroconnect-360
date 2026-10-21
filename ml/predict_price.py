@@ -1,11 +1,13 @@
 import sys
 import json
+import os
 import joblib
 import pandas as pd
 
-
-MODEL_PATH = "ml/bangarpet_tomato_model.joblib"
-CSV_PATH = "ml/bangarpet_tomato.csv"
+# ── Resolve paths relative to this script's own location ─────────────────────
+_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(_DIR, "bangarpet_tomato_model.joblib")
+CSV_PATH   = os.path.join(_DIR, "bangarpet_tomato.csv")
 
 
 # ==========================================

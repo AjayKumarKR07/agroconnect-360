@@ -5,11 +5,19 @@ const Groq = require("groq-sdk");
 const router = express.Router();
 
 // ==========================================
-// GROQ CLIENT
+// GROQ CLIENT  (lazy-initialised — missing key does not crash boot)
 // ==========================================
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+let _groq = null;
+const getGroq = () => {
+  if (!_groq) {
+    const key = process.env.GROQ_API_KEY;
+    if (!key) throw new Error("GROQ_API_KEY is not configured");
+    _groq = new Groq({ apiKey: key });
+  }
+  return _groq;
+};
+// Proxy object so existing call-sites (groq.chat.completions.create) are unchanged
+const groq = { chat: { completions: { create: (...a) => getGroq().chat.completions.create(...a) } } };
 
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
