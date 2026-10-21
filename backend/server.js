@@ -71,18 +71,24 @@ connectDB();
 
 const app = express();
 
-// Middleware — allow any localhost Vite dev port (5173-5179) + production origin
-const DEV_ORIGINS = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  "http://localhost:5176",
-  "http://localhost:5177",
-  "http://localhost:5178",
-  "http://localhost:5179",
-];
+// ── CORS ─────────────────────────────────────────────────────────────────────
+// In production (NODE_ENV=production) only the configured CORS_ORIGIN is
+// allowed. In development, Vite dev server ports are also permitted.
+const DEV_ORIGINS =
+  process.env.NODE_ENV !== "production"
+    ? [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5177",
+        "http://localhost:5178",
+        "http://localhost:5179",
+      ]
+    : [];
 
-// CORS_ORIGIN can be a comma-separated list for production (e.g. "https://agroconnect360.com")
+// CORS_ORIGIN can be a comma-separated list for production
+// e.g. "https://app.agroconnect360.com,https://www.agroconnect360.com"
 const PROD_ORIGINS = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
   : [];
@@ -92,7 +98,7 @@ const ALLOWED_ORIGINS = [...DEV_ORIGINS, ...PROD_ORIGINS];
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. curl, Postman)
+      // Allow requests with no origin (curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
       if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
       callback(new Error(`CORS: origin ${origin} not allowed`));
@@ -146,11 +152,13 @@ app.use(
 );
 app.use(
   "/api/farmer",
-  smartFarmRoutes
+  smartFarmRoutes  // routes: /smart-farm-plan, /smart-farm-plans
 );
 app.use(
   "/api/farmer",
-  farmerRoutes
+  farmerRoutes     // routes: /analytics, /notifications
+  // Both routers share /api/farmer — Express chains them correctly.
+  // smartFarmRoutes handles /smart-farm-plan(s); farmerRoutes handles /analytics + /notifications.
 );
 app.use(
   "/api/contracts",
@@ -182,16 +190,39 @@ app.get("/", (req, res) => {
   });
 });
 
-// Health Check
+// ── Liveness probe (/api/health) ─────────────────────────────────────────────
+// Always returns 200 if the Node.js process is alive.
+// Used by: ECS container HEALTHCHECK, Dockerfile HEALTHCHECK
+// Must NOT fail solely because MongoDB is disconnected.
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    status: "healthy",
+    status: "alive",
     project: "AgroConnect 360",
     database:
       mongoose.connection.readyState === 1
         ? "connected"
         : "disconnected",
+  });
+});
+
+// ── Readiness probe (/api/ready) ──────────────────────────────────────────────
+// Returns 200 only when MongoDB is connected and the app can serve requests.
+// Returns 503 when the database is unavailable.
+// Used by: ALB target group health check (routes traffic only to ready tasks)
+app.get("/api/ready", (req, res) => {
+  const dbReady = mongoose.connection.readyState === 1;
+  if (dbReady) {
+    return res.status(200).json({
+      success: true,
+      status: "ready",
+      database: "connected",
+    });
+  }
+  res.status(503).json({
+    success: false,
+    status: "not_ready",
+    database: "disconnected",
   });
 });
 

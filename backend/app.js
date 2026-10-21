@@ -30,11 +30,19 @@ const complianceRoutes   = require("./routes/complianceRoutes");
 const disputeRoutes      = require("./routes/disputeRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 
-const DEV_ORIGINS = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-];
+// In production only CORS_ORIGIN is allowed; in dev Vite ports are also permitted
+const DEV_ORIGINS =
+  process.env.NODE_ENV !== "production"
+    ? [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5177",
+        "http://localhost:5178",
+        "http://localhost:5179",
+      ]
+    : [];
 const PROD_ORIGINS = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
   : [];
@@ -83,13 +91,23 @@ app.get("/", (_req, res) =>
   res.json({ success: true, message: "AgroConnect 360 API is running" })
 );
 
+// Liveness: always 200 if Node.js process is alive (ECS HEALTHCHECK)
 app.get("/api/health", (_req, res) =>
   res.status(200).json({
     success:  true,
-    status:   "healthy",
+    status:   "alive",
     project:  "AgroConnect 360",
     database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
   })
 );
+
+// Readiness: 200 only when MongoDB connected, 503 otherwise (ALB target group check)
+app.get("/api/ready", (_req, res) => {
+  const dbReady = mongoose.connection.readyState === 1;
+  if (dbReady) {
+    return res.status(200).json({ success: true,  status: "ready",     database: "connected" });
+  }
+  res.status(503).json({ success: false, status: "not_ready", database: "disconnected" });
+});
 
 module.exports = app;

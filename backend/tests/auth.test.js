@@ -346,11 +346,21 @@ describe("Admin-only routes", () => {
 // ════════════════════════════════════════════════════════════════════════════
 // HEALTH CHECK
 // ════════════════════════════════════════════════════════════════════════════
-describe("GET /api/health", () => {
-  test("200 — health check returns healthy status", async () => {
+describe("GET /api/health — liveness", () => {
+  test("200 — liveness returns alive status (not database-dependent)", async () => {
     const res = await request(app).get("/api/health");
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.status).toBe("healthy");
+    expect(res.body.status).toBe("alive");  // changed from 'healthy'
+    expect(res.body).toHaveProperty("database");
+  });
+});
+
+describe("GET /api/ready — readiness", () => {
+  test("503 — not ready when DB disconnected in test env", async () => {
+    const res = await request(app).get("/api/ready");
+    expect(res.status).toBe(503);
+    expect(res.body.success).toBe(false);
+    expect(res.body.status).toBe("not_ready");
   });
 });
