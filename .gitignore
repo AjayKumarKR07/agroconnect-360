@@ -28,8 +28,10 @@ __pycache__/
 .venv/
 venv/
 
-# ML model binaries (large files — tracked via Git LFS if needed)
+# ML model binaries
 *.joblib
+!ml/models/
+!ml/models/*.joblib
 *.pkl
 *.h5
 *.keras
