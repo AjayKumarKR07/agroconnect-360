@@ -26,36 +26,55 @@
 
 ---
 
+## 🚀 Live Demo
+
+<div align="center">
+
+| Service | URL | Status |
+|---|---|---|
+| 🌐 **Frontend (Vercel)** | [https://agroconnect-360.vercel.app](https://agroconnect-360.vercel.app) | ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel) |
+| 🌾 **Farmer Dashboard** | [https://agroconnect-360.vercel.app/farmer/dashboard](https://agroconnect-360.vercel.app/farmer/dashboard) | ![Live](https://img.shields.io/badge/Route-Live-brightgreen?style=flat-square) |
+| ⚙️ **Backend API (Render)** | [https://agroconnect-360.onrender.com](https://agroconnect-360.onrender.com) | ![Render](https://img.shields.io/badge/Render-Deployed-46E3B7?style=flat-square&logo=render) |
+| 🏥 **Backend Health Check** | [https://agroconnect-360.onrender.com/api/health](https://agroconnect-360.onrender.com/api/health) | ![API](https://img.shields.io/badge/API-Online-brightgreen?style=flat-square) |
+
+</div>
+
+> [!NOTE]
+> The frontend is deployed on **Vercel** (React + Vite SPA) and the backend REST API is deployed on **Render** (Node.js + Express). All React Router routes — including `/farmer/dashboard`, `/user/dashboard`, `/exporter/dashboard`, and `/admin/dashboard` — are served correctly when accessed directly or refreshed, via a `vercel.json` SPA rewrite rule.
+
+---
+
 ## 📑 Table of Contents
 
-1. [Project Overview](#1-project-overview)
-2. [Problem Statement](#2-problem-statement)
-3. [Project Objectives](#3-project-objectives)
-4. [Feature Comparison Table](#4-feature-comparison-table)
-5. [User Roles and Permissions](#5-user-roles-and-permissions)
-6. [System Architecture](#6-system-architecture)
-7. [Major Workflow Diagrams](#7-major-workflow-diagrams)
+1. [Live Demo](#-live-demo)
+2. [Project Overview](#1-project-overview)
+3. [Problem Statement](#2-problem-statement)
+4. [Project Objectives](#3-project-objectives)
+5. [Feature Comparison Table](#4-feature-comparison-table)
+6. [User Roles and Permissions](#5-user-roles-and-permissions)
+7. [System Architecture](#6-system-architecture)
+8. [Major Workflow Diagrams](#7-major-workflow-diagrams)
    - [A. Authentication & Session Management](#a-authentication--session-management-workflow)
    - [B. Farmer-to-Buyer Marketplace & Order Workflow](#b-farmer-to-buyer-marketplace--order-workflow)
    - [C. AI Crop Disease Diagnosis Workflow](#c-ai-crop-disease-diagnosis-workflow)
    - [D. Market Intelligence & Price Forecasting Workflow](#d-market-intelligence--price-forecasting-workflow)
    - [E. Agricultural Export Workflow](#e-agricultural-export-workflow)
    - [F. Administration & Governance Workflow](#f-administration--governance-workflow)
-8. [Technology Stack](#8-technology-stack)
-9. [Database Design & Data Models](#9-database-design--data-models)
-10. [RESTful API Documentation](#10-restful-api-documentation)
-11. [Security Architecture & Implementation](#11-security-architecture--implementation)
-12. [Installation and Local Setup](#12-installation-and-local-setup)
-13. [Environment Variables Reference](#13-environment-variables-reference)
-14. [Razorpay Payment Integration Workflow](#14-razorpay-payment-integration-workflow)
-15. [Project Directory Structure](#15-project-directory-structure)
-16. [Visual Interface Gallery](#16-visual-interface-gallery)
-17. [Testing and Verification](#17-testing-and-verification)
-18. [Current Limitations & Future Enhancements](#18-current-limitations--future-enhancements)
-19. [Project Impact & Engineering Significance](#19-project-impact--engineering-significance)
-20. [Contributing](#20-contributing)
-21. [License](#21-license)
-22. [Author & Acknowledgments](#22-author--acknowledgments)
+9. [Technology Stack](#8-technology-stack)
+10. [Database Design & Data Models](#9-database-design--data-models)
+11. [RESTful API Documentation](#10-restful-api-documentation)
+12. [Security Architecture & Implementation](#11-security-architecture--implementation)
+13. [Installation and Local Setup](#12-installation-and-local-setup)
+14. [Environment Variables Reference](#13-environment-variables-reference)
+15. [Razorpay Payment Integration Workflow](#14-razorpay-payment-integration-workflow)
+16. [Project Directory Structure](#15-project-directory-structure)
+17. [Visual Interface Gallery](#16-visual-interface-gallery)
+18. [Testing and Verification](#17-testing-and-verification)
+19. [Current Limitations & Future Enhancements](#18-current-limitations--future-enhancements)
+20. [Project Impact & Engineering Significance](#19-project-impact--engineering-significance)
+21. [Contributing](#20-contributing)
+22. [License](#21-license)
+23. [Author & Acknowledgments](#22-author--acknowledgments)
 
 ---
 
@@ -943,6 +962,7 @@ AgroConnect-360/
 │   │   └── main.jsx               # React DOM bootstrap entry point
 │   ├── index.html
 │   ├── package.json
+│   ├── vercel.json                # Vercel SPA rewrite rule (fixes React Router 404 on refresh)
 │   └── vite.config.js             # Vite configuration with React plugin
 │
 ├── images/                        # Verified application interface screenshots
