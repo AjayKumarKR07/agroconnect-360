@@ -7,11 +7,16 @@ const DS_USER = `
   .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0ea5e9;margin-bottom:6px;}
   .pg-title{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#0f172a;line-height:1.2;}
   .pg-sub{font-size:14px;color:#475569;margin-top:6px;}
-  .card{background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:18px;padding:22px;}
-  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid rgba(14,165,233,0.2);background:rgba(14,165,233,0.06);color:#0284c7;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+  .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#ffffff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s;}
+  .btn-cyan:hover{opacity:0.9;}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;color:#0284c7;font-weight:600;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+  .btn-ghost:hover{background:#e0f2fe;border-color:#bae6fd;}
   .field-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid rgba(14,165,233,0.18);background:rgba(14,165,233,0.05);color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+  .field-input{width:100%;padding:10px 14px;border-radius:11px;border:1px solid #e2e8f0;background:#ffffff;color:#0f172a;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
+  .field-input:focus{border-color:#0284c7;box-shadow:0 0 0 3px rgba(2,132,199,0.1);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.4);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.12);}
 `;
 
 const INITIAL_ALERTS = [
@@ -148,24 +153,24 @@ export default function UserAlerts() {
 
       {/* Set Alert Modal */}
       {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", backdropFilter: "blur(8px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div className="card" style={{ maxWidth: 420, width: "100%", background: "#041a1f", border: "1px solid rgba(14,165,233,0.3)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: 18, fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: 8 }}>
-                <Bell size={18} color="#0ea5e9" /> Create Price Alert
+                <Bell size={18} color="#0284c7" /> Create Price Alert
               </div>
-              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", display: "flex", alignItems: "center" }}><X size={18} /></button>
+              <button onClick={() => setShowModal(false)} style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex", alignItems: "center", padding: 4, borderRadius: 6, transition: "color 0.15s" }} onMouseOver={e => e.currentTarget.style.color="#0f172a"} onMouseOut={e => e.currentTarget.style.color="#94a3b8"}><X size={18} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
                 <label className="field-label">Crop Name</label>
-                <input className="field-input" value={form.crop} onChange={e => setForm({ ...form, crop: e.target.value })} />
+                <input className="field-input" placeholder="e.g. Fresh Tomatoes" value={form.crop} onChange={e => setForm({ ...form, crop: e.target.value })} />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <div>
                   <label className="field-label">Target Price (₹)</label>
-                  <input className="field-input" type="number" value={form.targetPrice} onChange={e => setForm({ ...form, targetPrice: e.target.value })} />
+                  <input className="field-input" type="number" placeholder="e.g. 25" value={form.targetPrice} onChange={e => setForm({ ...form, targetPrice: e.target.value })} />
                 </div>
                 <div>
                   <label className="field-label">Unit</label>
@@ -178,8 +183,8 @@ export default function UserAlerts() {
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-              <button className="btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancel</button>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button className="btn-ghost" style={{ flex: 1, justifyContent: "center" }} onClick={() => setShowModal(false)}>Cancel</button>
               <button className="btn-cyan" style={{ flex: 2, justifyContent: "center" }} onClick={addAlert}>Create Alert →</button>
             </div>
           </div>
