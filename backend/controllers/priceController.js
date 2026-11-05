@@ -137,16 +137,13 @@ const getLivePrices = async (
       lowest,
     });
 
+
   } catch (error) {
-    console.error(
-      "Live mandi price error:",
-      error
-    );
+    console.error("Live mandi price error:", error.message);
 
     return res.status(500).json({
       success: false,
-      message:
-        "Unable to retrieve live mandi prices",
+      message: "Unable to retrieve live mandi prices",
     });
   }
 };
