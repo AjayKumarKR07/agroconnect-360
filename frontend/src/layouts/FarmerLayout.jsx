@@ -5,12 +5,13 @@ import {
   LayoutDashboard, Tractor, BarChart3, Sprout, HeartPulse, Microscope,
   TrendingUp, LineChart, GitCompare, CalendarDays, Bookmark, Bot,
   Package, IndianRupee, ShoppingCart, Ship, CloudSun, User, Bell,
-  Repeat2, LogOut, Leaf, ChevronLeft, ChevronRight
+  Repeat2, LogOut, Leaf, ChevronLeft, ChevronRight, Menu, X
 } from "lucide-react";
 
 export default function FarmerLayout() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const user = JSON.parse(localStorage.getItem("agroconnect_user") || "{}");
 
@@ -286,16 +287,45 @@ export default function FarmerLayout() {
         .fl-content { flex:1; padding:28px 32px; }
 
         @media(max-width:768px){
-          .fl-sidebar { width:var(--sidebar-w-c) !important; }
-          .fl-nav-group-label,.fl-nav-label,.fl-user-name,.fl-user-role { display:none; }
-          .fl-main { margin-left:var(--sidebar-w-c) !important; }
-          .fl-content { padding:20px 16px; }
+          .fl-sidebar {
+            width:var(--sidebar-w) !important;
+            transform:translateX(-100%);
+            transition:transform 0.25s ease, width 0.25s ease;
+            z-index:50;
+          }
+          .fl-sidebar.mobile-open { transform:translateX(0); }
+          .fl-mobile-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.45); z-index:49;
+          }
+          .fl-mobile-overlay.active { display:block; }
+          .fl-toggle { display:none !important; }
+          .fl-main { margin-left:0 !important; }
+          .fl-hamburger { display:flex !important; }
+          .fl-topbar-time { display:none; }
+          .fl-topbar-role-btn span { display:none; }
+          .fl-topbar { padding:0 16px; }
+          .fl-content { padding:16px; }
+          .fl-nav-group-label,.fl-nav-label,.fl-user-name,.fl-user-role { display:block; }
+        }
+        .fl-hamburger {
+          display:none; align-items:center; justify-content:center;
+          width:36px; height:36px; border-radius:8px;
+          background:#ffffff; border:1px solid var(--border);
+          cursor:pointer; flex-shrink:0;
+          box-shadow:0 1px 3px rgba(0,0,0,0.08);
         }
       `}</style>
 
       <div className="fl-wrap">
+        {/* MOBILE OVERLAY */}
+        <div
+          className={`fl-mobile-overlay ${mobileOpen ? "active" : ""}`}
+          onClick={() => setMobileOpen(false)}
+        />
+
         {/* SIDEBAR */}
-        <aside className={`fl-sidebar ${collapsed ? "collapsed" : ""}`}>
+        <aside className={`fl-sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
           <div className="fl-sidebar-head">
             <div className="fl-logo-icon"><Leaf size={18} color="#ffffff" strokeWidth={2} /></div>
             {!collapsed && (
@@ -316,6 +346,7 @@ export default function FarmerLayout() {
                     to={item.path}
                     className={({ isActive }) => `fl-nav-item ${isActive ? "active" : ""}`}
                     title={collapsed ? item.name : undefined}
+                    onClick={() => setMobileOpen(false)}
                   >
                     <span className="fl-nav-icon">{(() => { const Icon = item.icon; return <Icon size={17} strokeWidth={1.75} />; })()}</span>
                     {!collapsed && <span className="fl-nav-label">{item.name}</span>}
@@ -369,6 +400,10 @@ export default function FarmerLayout() {
         <div className={`fl-main ${collapsed ? "collapsed" : ""}`}>
           <header className="fl-topbar">
             <div className="fl-topbar-left">
+              {/* Hamburger — mobile only */}
+              <button className="fl-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
+                {mobileOpen ? <X size={18} strokeWidth={2} /> : <Menu size={18} strokeWidth={2} />}
+              </button>
               <span className="fl-breadcrumb">
                  Farmer Portal / <span className="fl-breadcrumb-cur">{user.name || "Dashboard"}</span>
               </span>

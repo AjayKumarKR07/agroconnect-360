@@ -40,6 +40,18 @@ const DS_USER = `
   .ql-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
   .ql-link{text-decoration:none;padding:14px 12px;background:rgba(14,165,233,0.04);border:1px solid rgba(14,165,233,0.1);border-radius:14px;display:flex;align-items:center;gap:9px;transition:all 0.2s;}
   .ql-link:hover{background:rgba(14,165,233,0.09);border-color:rgba(14,165,233,0.2);}
+  .ud-two-col{display:grid;grid-template-columns:1fr 340px;gap:20px;margin-bottom:24px;align-items:start;}
+  @media(max-width:768px){
+    .ud-stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .ud-two-col{grid-template-columns:1fr;}
+    .feat-grid{grid-template-columns:repeat(2,1fr);}
+    .ql-grid{grid-template-columns:repeat(3,1fr);}
+    .pg-head{flex-direction:column;align-items:flex-start;}
+  }
+  @media(max-width:420px){
+    .feat-grid{grid-template-columns:1fr;}
+    .ql-grid{grid-template-columns:repeat(2,1fr);}
+  }
 `;
 
 const renderCatIcon = (cat) => {
@@ -181,7 +193,7 @@ export default function UserDashboard() {
           </div>
 
           {/* Two-column main layout */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20, marginBottom: 24, alignItems: "start" }}>
+          <div className="ud-two-col">
 
             {/* Left: Recent Orders */}
             <div className="card">

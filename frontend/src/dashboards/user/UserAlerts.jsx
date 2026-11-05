@@ -17,6 +17,11 @@ const DS_USER = `
   .field-input:focus{border-color:#0284c7;box-shadow:0 0 0 3px rgba(2,132,199,0.1);}
   .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.4);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
   .modal-box{background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.12);}
+  .ua-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:768px){
+    .ua-two-col{grid-template-columns:1fr;}
+    .pg-head{flex-direction:column;align-items:flex-start;}
+  }
 `;
 
 const INITIAL_ALERTS = [
@@ -93,7 +98,7 @@ export default function UserAlerts() {
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      <div className="ua-two-col">
         {/* Left column: Price Trackers */}
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>

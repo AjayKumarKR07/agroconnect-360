@@ -917,12 +917,21 @@ export default function Home() {
           .footer-cols { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 640px) {
-          .stats-grid { grid-template-columns: 1fr; }
+          .stats-grid { grid-template-columns: 1fr 1fr; }
           .roles-grid { grid-template-columns: 1fr; }
           .how-grid { grid-template-columns: 1fr; }
           .footer-cols { grid-template-columns: 1fr; }
-          .hero-section { padding-top: 100px; }
+          .hero-section { padding-top: 100px; padding-left: 16px; padding-right: 16px; }
           .ai-banner { padding: 28px 20px; }
+          .hero-title { font-size: clamp(28px, 7vw, 40px); }
+          .hero-desc { font-size: 14px; }
+          .preview-card { padding: 16px; }
+          .preview-grid { grid-template-columns: 1fr; gap: 10px; }
+          .hero-badges-row { gap: 12px; }
+          .ticker-track { animation-duration: 25s; }
+        }
+        @media (max-width: 400px) {
+          .stats-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 

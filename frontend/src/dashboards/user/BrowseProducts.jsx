@@ -37,6 +37,18 @@ const DS_USER = `
   .stock-out{background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.2);}
   .cart-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(14,165,233,0.18);border:1px solid rgba(14,165,233,0.35);color:#0369a1;font-weight:700;font-size:14px;padding:12px 24px;border-radius:14px;backdrop-filter:blur(12px);z-index:200;animation:fadeup 0.3s ease;pointer-events:none;}
   @keyframes fadeup{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+  .bp-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .bp-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:20px;}
+  @media(max-width:768px){
+    .prod-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .bp-filter-row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+    .bp-filter-row::-webkit-scrollbar{display:none;}
+    .bp-controls{flex-direction:column;align-items:stretch;}
+    .bp-controls .field-input{width:100%;}
+  }
+  @media(max-width:380px){
+    .prod-grid{grid-template-columns:1fr;}
+  }
 `;
 
 const CATS = ["all", "vegetables", "fruits", "grains", "spices", "dairy", "poultry", "other"];

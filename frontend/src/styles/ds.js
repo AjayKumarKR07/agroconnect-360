@@ -205,4 +205,20 @@ export const DS = `
 
   /* Scroll wrapper */
   .scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .pg-head { flex-direction: column; align-items: flex-start; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .modal-box { padding: 20px; }
+    .modal-actions { flex-direction: column; }
+    .tab-row { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .tab-row::-webkit-scrollbar { display: none; }
+    .action-row { flex-wrap: wrap; }
+  }
+  @media(max-width:480px){
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .stat-val { font-size: 22px !important; }
+    .stat-card { padding: 14px 12px; }
+  }
 `;

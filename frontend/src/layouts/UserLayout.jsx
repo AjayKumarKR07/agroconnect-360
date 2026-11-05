@@ -3,13 +3,14 @@ import { NavLink, Outlet, useNavigate, useLocation, Link } from "react-router-do
 import {
   LayoutDashboard, Search, Package, Heart, ShoppingCart, Archive,
   MessageSquare, Bell, Bot, User, ShoppingBag,
-  Repeat2, LogOut, ChevronLeft, ChevronRight
+  Repeat2, LogOut, ChevronLeft, ChevronRight, Menu, X
 } from "lucide-react";
 
 export default function UserLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("agroconnect_user") || "{}"));
 
   // Re-read user from localStorage whenever profile is saved
@@ -225,14 +226,42 @@ export default function UserLayout() {
         .ul-content { flex:1; padding:28px 32px; }
 
         @media(max-width:768px){
-          .ul-sidebar { width:var(--ul-wc) !important; }
-          .ul-main { margin-left:var(--ul-wc) !important; }
-          .ul-content { padding:20px 16px; }
+          .ul-sidebar {
+            width:var(--ul-w) !important;
+            transform:translateX(-100%);
+            transition:transform 0.25s ease, width 0.25s ease;
+            z-index:50;
+          }
+          .ul-sidebar.mobile-open { transform:translateX(0); }
+          .ul-mobile-overlay {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.45); z-index:49;
+          }
+          .ul-mobile-overlay.active { display:block; }
+          .ul-toggle { display:none !important; }
+          .ul-main { margin-left:0 !important; }
+          .ul-hamburger { display:flex !important; }
+          .ul-time-chip { display:none; }
+          .ul-topbar-role-btn { display:none; }
+          .ul-topbar { padding:0 16px; }
+          .ul-content { padding:16px; }
+        }
+        .ul-hamburger {
+          display:none; align-items:center; justify-content:center;
+          width:36px; height:36px; border-radius:8px;
+          background:#ffffff; border:1px solid var(--border);
+          cursor:pointer; flex-shrink:0;
+          box-shadow:0 1px 3px rgba(0,0,0,0.08);
         }
       `}</style>
 
       <div className="ul-wrap">
-        <aside className={`ul-sidebar ${collapsed ? "collapsed" : ""}`}>
+        {/* MOBILE OVERLAY */}
+        <div
+          className={`ul-mobile-overlay ${mobileOpen ? "active" : ""}`}
+          onClick={() => setMobileOpen(false)}
+        />
+        <aside className={`ul-sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
           <div className="ul-head">
             <div className="ul-logo"><ShoppingBag size={17} color="#ffffff" strokeWidth={2} /></div>
             {!collapsed && (
@@ -246,7 +275,7 @@ export default function UserLayout() {
           <nav className="ul-nav">
             {!collapsed && <div className="ul-divider">Main Menu</div>}
             {nav.map(n => (
-              <NavLink key={n.path} to={n.path} className={({ isActive }) => `ul-link${isActive ? " active" : ""}`} title={collapsed ? n.name : undefined}>
+              <NavLink key={n.path} to={n.path} className={({ isActive }) => `ul-link${isActive ? " active" : ""}`} title={collapsed ? n.name : undefined} onClick={() => setMobileOpen(false)}>
                 {(() => { const Icon = n.icon; return <Icon size={17} strokeWidth={1.75} />; })()}
                 {!collapsed && <span>{n.name}</span>}
               </NavLink>
@@ -287,6 +316,10 @@ export default function UserLayout() {
         <div className={`ul-main ${collapsed ? "collapsed" : ""}`}>
           <header className="ul-topbar">
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              {/* Hamburger — mobile only */}
+              <button className="ul-hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
+                {mobileOpen ? <X size={18} strokeWidth={2} /> : <Menu size={18} strokeWidth={2} />}
+              </button>
               <div className="ul-page-dot" />
               <div className="ul-page-name">{currentPage}</div>
             </div>

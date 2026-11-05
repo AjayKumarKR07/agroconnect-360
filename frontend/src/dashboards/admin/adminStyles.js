@@ -114,6 +114,17 @@ export const DS_ADMIN = `
 
   /* ── Responsive table wrapper ── */
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .pg-head { flex-direction: column; align-items: flex-start; }
+    .modal-box { padding: 18px; }
+    .modal-actions { flex-direction: column; }
+    .tab-btn { font-size: 11px; padding: 6px 12px; }
+  }
+  @media(max-width:480px){
+    .pg-title { font-size: 20px; }
+  }
 `;
 
 // Role color map (consistent across all admin components)

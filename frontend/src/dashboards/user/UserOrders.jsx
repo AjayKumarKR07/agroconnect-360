@@ -25,6 +25,13 @@ const DS_USER = `
   .btn-cyan{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#0f172a;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;font-family:'Inter',sans-serif;}
   .tab-btn{padding:7px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(14,165,233,0.12);background:rgba(14,165,233,0.04);color:#475569;transition:all 0.2s;font-family:'Inter',sans-serif;}
   .tab-btn.active{background:rgba(14,165,233,0.12);color:#0369a1;border-color:rgba(14,165,233,0.25);}
+  .uo-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  @media(max-width:768px){
+    .pg-head{flex-direction:column;align-items:flex-start;}
+    .uo-filter-row{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+    .uo-filter-row::-webkit-scrollbar{display:none;}
+    .tab-btn{flex-shrink:0;}
+  }
 `;
 
 const STATUS_CONFIG = {

@@ -20,6 +20,11 @@ const DS_USER = `
   .wl-card:hover{border-color:rgba(14,165,233,0.25);transform:translateY(-2px);}
   .wl-img{width:100%;height:150px;object-fit:cover;}
   .wl-ph{width:100%;height:150px;background:linear-gradient(135deg,rgba(14,165,233,0.1),rgba(56,189,248,0.04));display:flex;align-items:center;justify-content:center;}
+  @media(max-width:768px){
+    .wl-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+    .pg-head{flex-direction:column;align-items:flex-start;}
+  }
+  @media(max-width:380px){ .wl-grid{grid-template-columns:1fr;} }
 `;
 
 const DEMO_CROPS = [

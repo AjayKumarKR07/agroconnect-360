@@ -214,6 +214,17 @@ export default function UserCart() {
     .step-label.active{color:#0369a1;font-weight:700;}
     .step-line{flex:1;height:2px;background:rgba(14,165,233,0.12);margin:0 8px;}
     .step-line.done{background:linear-gradient(90deg,#0284c7,#38bdf8);}
+    .cart-layout{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
+    .cart-main{flex:1;min-width:0;}
+    .cart-sidebar{display:flex;flex-direction:column;gap:12px;width:280px;flex-shrink:0;}
+    .addr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:768px){
+      .cart-sidebar{width:100%;}
+      .cart-layout{flex-direction:column;}
+      .addr-grid{grid-template-columns:1fr;}
+      .addr-grid > div[style*="span 2"]{grid-column:span 1!important;}
+      .step-label{display:none;}
+    }
   `;
 
   /* ─────────────── STEP COMPONENTS ─────────────── */
@@ -287,8 +298,8 @@ export default function UserCart() {
           </Link>
         </div>
       ) : (
-        <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="cart-layout">
+          <div className="cart-main">
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {cart.map(c => (
                 <div key={c._id} className="card" style={{ display: "flex", gap: 16, alignItems: "center" }}>
@@ -317,7 +328,7 @@ export default function UserCart() {
               </button>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, width: 280, flexShrink: 0 }}>
+          <div className="cart-sidebar">
             <Summary />
             <button className="btn-cyan" style={{ width: "100%" }} onClick={() => setStep(2)}>Proceed to Address →</button>
           </div>
@@ -339,7 +350,7 @@ export default function UserCart() {
         <Steps />
         <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
           <div className="card" style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div className="addr-grid">
               {[
                 { label: "Full Name *",    key: "name",    placeholder: "Ajay Kumar",     type: "text",   cols: 1 },
                 { label: "Phone Number * (10 digits)", key: "phone", placeholder: "9876543210", type: "tel", cols: 1, maxLength: 10 },
@@ -410,8 +421,8 @@ export default function UserCart() {
             <AlertTriangle size={16} /> {error}
           </div>
         )}
-        <div style={{ display: "flex", gap: 20, alignItems: "flex-start", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="cart-layout">
+          <div className="cart-main">
             <div className="card" style={{ marginBottom: 16 }}>
               <div style={{ fontWeight: 800, color: "#0f172a", fontSize: 15, marginBottom: 14 }}>Select Payment Method</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
